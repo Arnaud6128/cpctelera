@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Augusto Ruiz / RetroWorks (@augurui)
-;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,21 @@
 ;;  You should have received a copy of the GNU Lesser General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
-.module cpct_memutils
+.module cpct_asic
 
-;;
-;; Assembly binding for <cpct_pageMemory> function
+;; Include Asic constants 
+.include "../asic.s" 
+
 ;; 
-cpct_pageMemory_asm::
+;; C call binding for <cpct_asicSetPalette>
+;;
+;;   13 us, 4 bytes
+;;
+_cpct_asicSetPalette::         
+   ;; Getting parameters from stack
+   pop  af                         ;; [3] AF = Return address
+   pop  hl                         ;; [3] HL = Pointer to the start of the array with asic colour values to be set as palette
+   pop  de                         ;; [3] DE = E = Size of the colour array
+   push af                         ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention   
 
-.include /cpct_pageMemory.asm/
+.include /cpct_asicSetPalette.asm/   

@@ -1,6 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2014-2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+//  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -16,23 +17,18 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //-------------------------------------------------------------------------------
 
-#ifndef CPCTELERA_ALL_H
-#define CPCTELERA_ALL_H
+//#####################################################################
+//### MODULE: asic
+//#####################################################################
+//### This module contains routines to use Asic Hardware sprites and
+//### Palette of 4096 colours
+//#####################################################################
 
-#include <types.h>
-#include <firmware/firmware.h>
-#include <memutils/memutils.h>
-#include <keyboard/keyboard.h>
-#include <bitarray/bitarray.h>
-#include <sprites/sprites.h>
-#include <strings/strings.h>
-#include <video/videomode.h>
-#include <audio/audio.h>
-#include <random/random.h>
-#include <macros/allmacros.h>
-#include <easytilemaps/easytilemaps.h>
-#include <compression/compression.h>
-#include <loaders/loaders.h>
-#include <cpcplus_asic/cpcplus.h>
+#ifndef CPCT_ASIC_H
+#define CPCT_ASIC_H
+
+#include "./sprites/sprites.h"
+#include "./video/video.h"
+#include "./firmware/firmware.h"
 
 #endif

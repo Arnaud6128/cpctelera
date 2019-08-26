@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Augusto Ruiz / RetroWorks (@augurui)
-;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,22 @@
 ;;  You should have received a copy of the GNU Lesser General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
-.module cpct_memutils
+.module cpct_asic
+
+;; Include Asic constants 
+.include "../asic.s" 
 
 ;;
-;; Assembly binding for <cpct_pageMemory> function
-;; 
-cpct_pageMemory_asm::
-
-.include /cpct_pageMemory.asm/
+;; C call binding for <cpct_asicSetSpritePalColour>
+;;
+;;   14 us, 5 bytes
+;;
+_cpct_asicSetSpritePalColour::   
+   ;; Get Parameters from the stack 
+   pop  de                        ;; [3] DE = Return address  
+   pop  hl                        ;; [3] H (useless) / L (color_index)
+   ld   a, l                      ;; [1] A = L (color_index)
+   pop  bc                        ;; [3] BC = RGB (0x00GGRRBB)
+   push de                        ;; [4] DE = Returning back address in the stack because function uses __z88dk_callee convention  
+   
+.include /cpct_asicSetSpritePalColour.asm/

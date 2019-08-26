@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Augusto Ruiz / RetroWorks (@augurui)
-;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,19 @@
 ;;  You should have received a copy of the GNU Lesser General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
-.module cpct_memutils
+.module cpct_asic
+
+;; Include macros
+.include "../../macros/cpct_undocumentedOpcodes.h.s"
+
+;; Include Asic constants 
+.include "../asic.s"  
 
 ;;
-;; Assembly binding for <cpct_pageMemory> function
-;; 
-cpct_pageMemory_asm::
+;; ASM binding for <cpct_asicDrawToSpriteData>
+;;
+cpct_asicDrawToSpriteData_asm::   ;; Assembly entry point
 
-.include /cpct_pageMemory.asm/
+.include /cpct_asicDrawToSpriteData.asm/   
+
+  ret  ;; [3] Return to caller

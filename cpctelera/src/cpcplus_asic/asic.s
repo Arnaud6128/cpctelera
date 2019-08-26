@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Augusto Ruiz / RetroWorks (@augurui)
-;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,14 @@
 ;;  You should have received a copy of the GNU Lesser General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
-.module cpct_memutils
+.module cpct_asic
 
-;;
-;; Assembly binding for <cpct_pageMemory> function
-;; 
-cpct_pageMemory_asm::
+.equ ASIC_OFFS_CONFIG_ZOOM, 0x04
 
-.include /cpct_pageMemory.asm/
+.equ ASIC_HW_SPRITE_DATA,   0x40
+.equ ASIC_HW_SPRITE_CONFIG, 0x60
+.equ ASIC_PALETTE_COLOUR,   0x6400
+.equ ASIC_BORDER_COLOUR,    0x6420 ;; Border color is index 0 of Sprite hardware palette
+.equ ASIC_PALETTE_SPRITE,   0x6420
+
+.equ ASIC_RASTER_INT,       0x6800
