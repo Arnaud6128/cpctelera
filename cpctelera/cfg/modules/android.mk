@@ -34,43 +34,56 @@ AND_OBJAPKDIR     := $(AND_OBJDIR)/apkcontents
 AND_OBJAPKDIR_ASS := $(AND_OBJAPKDIR)/assets
 AND_OBJAPKDIR_RES := $(AND_OBJAPKDIR)/res
 AND_OBJAPKMANIFEST:= $(AND_OBJAPKDIR)/AndroidManifest.xml
+AND_OBJAPKTOOLYML := $(AND_OBJAPKDIR)/apktool.yml
 AND_STRINGRESFILE := $(AND_OBJAPKDIR_RES)/values/strings.xml
 AND_OBJPAYLOADSNA := $(AND_OBJAPKDIR_ASS)/payload.sna
 AND_APPIDTAG      := XXXCPCT.RVMEngine.AppIDXXX
 AND_APPNAMETAG    := %%%CPCTRVMEngineAppName%%%
 AND_APPSPLASHTAG  := %%%CPCTRVMEngineSplash%%%
+AND_APPVERCODETAG := versionCode:
+AND_APPVERNAMETAG := versionName:
 AND_DEFAULT_APK   := $(call SYSPATH,$(ANDROID_PATH)rvmengine/defaultRVMapp.apk)
 AND_KEYSTORE_DIR  := $(ANDROID_PATH)certs
 AND_LICENSE_FILE  := $(ANDROID_PATH)LICENSE
 AND_LICENSE_ACC   := $(AND_KEYSTORE_DIR)/.CPCTRVMEngineEndUserLicenseAccepted
-AND_TMPAPK        := $(AND_OBJDIR)/$(AND_APK).tmp
 ZIPALIGN_LINUX    := $(ANDROID_PATH)bin/zipalign/linux/zipalign32
 ZIPALIGN_WIN      := $(ANDROID_PATH)bin/zipalign/win/32/zipalign.exe
 ZIPALIGN          := $(if $(call CHECKSYSTEMCYGWIN),$(ZIPALIGN_WIN),$(ZIPALIGN_LINUX))
 KEYTOOL_JAR       := $(call SYSPATH,$(ANDROID_PATH)bin/sun/keytool.jar)
 JARSIGNER_JAR     := $(call SYSPATH,$(ANDROID_PATH)bin/sun/jarsigner.jar)
 APKTOOL_JAR       := $(call SYSPATH,$(ANDROID_PATH)bin/apktool/apktool_2.4.0.jar)
+APKSIGNER_JAR     := $(call SYSPATH,$(ANDROID_PATH)bin/sun/apksigner.jar)
 KEYTOOL           := $(JAVA) -jar "$(KEYTOOL_JAR)"
 JARSIGNER         := $(JAVA) -jar "$(JARSIGNER_JAR)"
+APKSIGNER			:= $(JAVA) -jar "$(APKSIGNER_JAR)"
 APKTOOL           := $(JAVA) -jar "$(APKTOOL_JAR)"
 
 ## User configurable values
-AND_APK      := game.apk
-AND_APPNAME  := CPCtelera game
-AND_SNAFILE  := $(if $(SNA),$(SNA),)
-AND_ASSETS   := android/assets
-AND_RES      := android/res
-AND_APPID    := $(AND_APPID_PREFIX).game
-AND_KEYSTORE := $(call SYSPATH,$(AND_KEYSTORE_DIR)/cpctelera.user.keystore.jks)
-AND_KEYALIAS := cpctelera.user.cert
-AND_KEYVALID := 10000
-AND_KEYSIZE  := 2048
-AND_KEYALG   := RSA
-AND_STORETYPE:= pkcs12
+AND_APK         :=game.apk
+AND_APPNAME     :=CPCtelera game
+AND_VERSIONCODE :=  versionCode: '1'
+AND_VERSIONNAME :=  versionName: 1.0
+AND_SNAFILE     :=$(if $(SNA),$(SNA),)
+AND_ASSETS      :=android/assets
+AND_RES         :=android/res
+AND_APPID       :=$(AND_APPID_PREFIX).game
+AND_KEYSTORE    :=$(call SYSPATH,$(AND_KEYSTORE_DIR)/cpctelera.user.keystore.jks)
+AND_KEYALIAS    :=cpctelera.user.cert
+AND_KEYVALID    :=10000
+AND_KEYSIZE     :=2048
+AND_KEYALG      :=RSA
+AND_STORETYPE   :=pkcs12
+
+## Values depending on user config
+AND_TMPAPK        := $(AND_OBJDIR)/$(AND_APK).tmp
+AND_TMPAPKALIGNED := $(AND_OBJDIR)/$(AND_APK).aligned.tmp
 
 ## JAVA Version
-AND_JAVA_VER     := $(shell java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\.\(.*\)_.*"/\1\2\3/p;')
-AND_JAVA_UPD     := $(shell java -version 2>&1 | sed -n ';s/.* version ".*\..*\..*_\(.*\)"/\1/p;')
+#AND_JAVA_VER     := $(shell java -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\.\(.*\)_.*"/\1\2\3/p;')
+#AND_JAVA_UPD     := $(shell java -version 2>&1 | sed -n ';s/.* version ".*\..*\..*_\(.*\)"/\1/p;')
+## Commented by now. TODO: Differentiate OpenJDK and Java versions
+AND_JAVA_VER     := 200
+AND_JAVA_UPD     := 200
 AND_MIN_JAVA_VER := 180
 AND_MIN_JAVA_UPD := 101
 
@@ -96,6 +109,29 @@ define AND_SET_APPID
  # Set APP ID
  $(eval AND_APPID := $(AND_APPID_PREFIX).$(strip $(1)))
 endef
+
+#################
+# AND_SET_VESIONCODE: Sets the VersionCode number that identifies
+# the current version of this application 
+#
+# $(1): VERSIONCODE
+#
+define AND_SET_VERSIONCODE
+ # Set Version Code
+ $(eval AND_VERSIONCODE :=versionCode: '$(strip $(1))')
+endef
+
+#################
+# AND_SET_VESIONNAME: Sets the VersionName, which is an string given
+# to name the current version of this application
+#
+# $(1): VERSIONNAME
+#
+define AND_SET_VERSIONNAME
+ # Set Version Name
+ $(eval AND_VERSIONNAME :=versionName: $(strip $(1)))
+endef
+
 
 #################
 # AND_SET_ASSET_FOLDERS: Sets the paths to the folders with 
@@ -327,6 +363,10 @@ $(_AND_RULENAME): $(AND_SNAFILE)
 	@$(call REPLACETAG_RT,$(AND_APPNAMETAG),$(AND_APPNAME),$(AND_STRINGRESFILE)) &>> $(AND_OBJLOG)
 	@# REPLACE APPLICATION ID
 	@$(call REPLACETAG_RT,$(AND_APPIDTAG),$(AND_APPID),$(AND_OBJAPKMANIFEST)) &>> $(AND_OBJLOG)
+	@# REPLACE VERSIONCODE
+	@$(call REPLACETAGGEDLINE_RT,$(AND_APPVERCODETAG),  $(AND_VERSIONCODE),$(AND_OBJAPKTOOLYML)) &>> $(AND_OBJLOG)
+	@# REPLACE VERSIONNAME
+	@$(call REPLACETAGGEDLINE_RT,$(AND_APPVERNAMETAG),  $(AND_VERSIONNAME),$(AND_OBJAPKTOOLYML)) &>> $(AND_OBJLOG)
 	@printf "$(COLOR_GREEN)OK$(COLOR_NORMAL)\n"
 	@# BUILD APK
 	@printf "  -c: Rebuilding..."
@@ -335,17 +375,20 @@ $(_AND_RULENAME): $(AND_SNAFILE)
 	@printf "$(COLOR_GREEN)OK$(COLOR_NORMAL)\n"
 	@printf "\n[[COMMAND]]: $(RM) -r \"./$(AND_OBJAPKDIR)\"\n\n" &>> $(AND_OBJLOG)
 	@$(RM) -r "./$(AND_OBJAPKDIR)" &>> $(AND_OBJLOG)
-	@# SIGN APK
-	@printf "$(COLOR_CYAN) (3/4): Signing APK...\n$(COLOR_NORMAL)"
-	@printf "\n[[COMMAND]]: $(JARSIGNER) -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $(AND_KEYSTORE) $(AND_TMPAPK) $(AND_KEYALIAS)\n\n" &>> $(AND_OBJLOG)
-	@$(JARSIGNER) -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$(AND_KEYSTORE)" "$(AND_TMPAPK)" $(AND_KEYALIAS)
 	@# ALIGN APK
-	@printf "$(COLOR_CYAN) (4/4): Aligning...$(COLOR_NORMAL)"
-	@printf "\n[[COMMAND]]: $(ZIPALIGN) -f -v 4 $(AND_TMPAPK) $(AND_APK)\n\n" &>> $(AND_OBJLOG)
-	@$(ZIPALIGN) -f -v 4 "$(AND_TMPAPK)" "$(AND_APK)" &>> $(AND_OBJLOG)
-	@printf "\n[[COMMAND]]: $(RM) ./$(AND_TMPAPK)\n\n" &>> $(AND_OBJLOG)
-	@$(RM) "./$(AND_TMPAPK)" &>> $(AND_OBJLOG)
+	@printf "$(COLOR_CYAN) (3/4): Aligning...$(COLOR_NORMAL)"
+	@printf "\n[[COMMAND]]: $(ZIPALIGN) -f -v 4 $(AND_TMPAPK) $(AND_TMPAPKALIGNED)\n\n" &>> $(AND_OBJLOG)
+	@$(ZIPALIGN) -f -v 4 "$(AND_TMPAPK)" "$(AND_TMPAPKALIGNED)" &>> $(AND_OBJLOG)
 	@printf "$(COLOR_GREEN)OK$(COLOR_NORMAL)\n"
+	@# SIGN APK
+	@printf "$(COLOR_CYAN) (4/4): Signing APK...\n$(COLOR_NORMAL)"
+	@printf "\n[[COMMAND]]: $(APKSIGNER) sign --ks $(AND_KEYSTORE) --out $(AND_APK) $(AND_TMPAPKALIGNED)\n\n" &>> $(AND_OBJLOG)
+	@$(APKSIGNER) sign --ks "$(AND_KEYSTORE)" --out "$(AND_APK)" "$(AND_TMPAPKALIGNED)"
+	@#printf "\n[[COMMAND]]: $(JARSIGNER) -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $(AND_KEYSTORE) $(AND_TMPAPK) $(AND_KEYALIAS)\n\n" &>> $(AND_OBJLOG)
+	@#$(JARSIGNER) -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore "$(AND_KEYSTORE)" "$(AND_TMPAPK)" $(AND_KEYALIAS)
+	@printf "\n[[COMMAND]]: $(RM) ./$(AND_TMPAPK) ./$(AND_TMPAPKALIGNED)\n\n" &>> $(AND_OBJLOG)
+	@$(RM) "./$(AND_TMPAPK)" "./$(AND_TMPAPKALIGNED)" &>> $(AND_OBJLOG)
+	@printf "$(COLOR_GREEN)Signed with APK Signature Scheme v2$(COLOR_NORMAL)\n"
 
 	@# APK Successfully generated
 	$(call PRINT,$(PROJNAME),"Successfully created '$(AND_APK)'")
@@ -363,7 +406,7 @@ endef
 #
 define APKMAN
  # Set the list of valid commands
- $(eval APKGEN_F_FUNCTIONS := SET_SNA SET_APPID SET_APPNAME SET_ASSET_FOLDERS GENERATE_APK_RULE)
+ $(eval APKGEN_F_FUNCTIONS := SET_SNA SET_APPID SET_APPNAME SET_VERSIONNAME SET_VERSIONCODE SET_ASSET_FOLDERS GENERATE_APK_RULE)
 
  # Check that command parameter ($(1)) is exactly one-word after stripping whitespaces
  $(call ENSURE_SINGLE_VALUE,$(1),<<ERROR>> [APKGEN] '$(strip $(1))' is not a valid command. Commands must be exactly one-word in lenght with no whitespaces. Valid commands: {$(APKGEN_F_FUNCTIONS)})

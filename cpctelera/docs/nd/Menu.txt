@@ -93,86 +93,13 @@ Group: Commandline  {
    File: cpct_installrslib  (commandline/cpct_installrslib)
    File: cpct_mkproject  (commandline/cpct_mkproject)
    File: cpct_pack  (commandline/cpct_pack)
-   File: cpct_png2chars  (commandline/c_scripts/png2udg/src/main.h)
    File: cpct_png2chars  (commandline/c_scripts/png2chars/src/main.h)
+   File: cpct_png2chars  (commandline/c_scripts/png2udg/src/main.h)
    File: cpct_rgas2c  (commandline/cpct_rgas2c)
    File: cpct_rvm  (commandline/cpct_rvm)
    File: cpct_sp2tile  (commandline/cpct_sp2tiles)
    File: cpct_tmx2csv  (commandline/cpct_tmx2csv)
    File: cpct_winape  (commandline/cpct_winape)
-
-   Group: Kk  {
-
-      Group: Sdcc-3.8.5-r10892  {
-
-         File: int getlnm&lparen;&rparen;  (no auto-title, commandline/kk/sdcc-3.8.5-r10892/src/sdas/asxxsrc/aslex.c)
-         File: promote to int  (commandline/kk/sdcc-3.8.5-r10892/src/src/SDCCast.c)
-         File: sdas/asxxsrc/assubr.c  (commandline/kk/sdcc-3.8.5-r10892/src/sdas/asxxsrc/assubr.c)
-
-         Group: Support  {
-
-            Group: Scripts  {
-
-               File: cinc2h.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/cinc2h.pl)
-               File: gen_known_bugs.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/gen_known_bugs.pl)
-               File: mcs51-disasm.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/mcs51-disasm.pl)
-               File: optimize_pic16devices.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/optimize_pic16devices.pl)
-               File: pic14-header-parser.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/pic14-header-parser.pl)
-               File: pic16-header-parser.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/pic16-header-parser.pl)
-               File: pic16fam-h-gen.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/pic16fam-h-gen.pl)
-               File: pic18fam-h-gen.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/pic18fam-h-gen.pl)
-               File: z80-disasm.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/scripts/z80-disasm.pl)
-               }  # Group: Scripts
-
-            Group: Sdbinutils  {
-
-               File: elfcore_write_note  (commandline/kk/sdcc-3.8.5-r10892/src/support/sdbinutils/bfd/elf.c)
-               File: mep-relocs.pl  (commandline/kk/sdcc-3.8.5-r10892/src/support/sdbinutils/bfd/mep-relocs.pl)
-               File: Returns true if the bfd is a PE executable as opposed to a  (commandline/kk/sdcc-3.8.5-r10892/src/support/sdbinutils/bfd/libcoff.h)
-               }  # Group: Sdbinutils
-
-            File: simple assignment  (commandline/kk/sdcc-3.8.5-r10892/src/support/regression/tests/structassign.c)
-            File: util_xor_arrays.c  (commandline/kk/sdcc-3.8.5-r10892/src/support/regression/tests/bug3304184.c)
-            }  # Group: Support
-
-         }  # Group: Sdcc-3.8.5-r10892
-
-      Group: Sdcc-3.9.0-r11321  {
-
-         File: int getlnm&lparen;&rparen;  (no auto-title, commandline/kk/sdcc-3.9.0-r11321/src/sdas/asxxsrc/aslex.c)
-         File: promote to int  (commandline/kk/sdcc-3.9.0-r11321/src/src/SDCCast.c)
-         File: sdas/asxxsrc/assubr.c  (commandline/kk/sdcc-3.9.0-r11321/src/sdas/asxxsrc/assubr.c)
-
-         Group: Support  {
-
-            Group: Scripts  {
-
-               File: cinc2h.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/cinc2h.pl)
-               File: gen_known_bugs.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/gen_known_bugs.pl)
-               File: mcs51-disasm.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/mcs51-disasm.pl)
-               File: optimize_pic16devices.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/optimize_pic16devices.pl)
-               File: pic14-header-parser.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/pic14-header-parser.pl)
-               File: pic16-header-parser.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/pic16-header-parser.pl)
-               File: pic16fam-h-gen.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/pic16fam-h-gen.pl)
-               File: pic18fam-h-gen.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/pic18fam-h-gen.pl)
-               File: z80-disasm.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/scripts/z80-disasm.pl)
-               }  # Group: Scripts
-
-            Group: Sdbinutils  {
-
-               File: elfcore_write_note  (commandline/kk/sdcc-3.9.0-r11321/src/support/sdbinutils/bfd/elf.c)
-               File: mep-relocs.pl  (commandline/kk/sdcc-3.9.0-r11321/src/support/sdbinutils/bfd/mep-relocs.pl)
-               File: Returns true if the bfd is a PE executable as opposed to a  (commandline/kk/sdcc-3.9.0-r11321/src/support/sdbinutils/bfd/libcoff.h)
-               }  # Group: Sdbinutils
-
-            File: simple assignment  (commandline/kk/sdcc-3.9.0-r11321/src/support/regression/tests/structassign.c)
-            File: util_xor_arrays.c  (commandline/kk/sdcc-3.9.0-r11321/src/support/regression/tests/bug3304184.c)
-            }  # Group: Support
-
-         }  # Group: Sdcc-3.9.0-r11321
-
-      }  # Group: Kk
-
    }  # Group: Commandline
 
 Group: Compression  {
@@ -226,8 +153,11 @@ Group: Macros  {
 
    File: allmacros.h  (macros/allmacros.h)
    File: allmacros.h.s  (macros/allmacros.h.s)
+   File: Combined operations  (macros/cpct_combinedOperations.h.s)
+   File: LUTs &lparen;Look-Up-Tables&rparen;  (macros/cpct_luts.h.s)
    File: Math Macros  (macros/cpct_maths.h.s)
    File: Opcodes  (macros/cpct_opcodeConstants.h.s)
+   File: Push - Pop Macros  (macros/cpct_pushpop.h.s)
    File: Reverse Bits  (macros/cpct_reverseBits.h.s)
    File: Undocumented Opcodes  (macros/cpct_undocumentedOpcodes.h.s)
    }  # Group: Macros
@@ -326,14 +256,42 @@ Group: Sprites  {
       File: Pixel Horizontally Flipping Tables  (sprites/flipping/flipping_tables.h)
       }  # Group: Flipping
 
+   Group: ColorReplace  {
+
+      Group: M0  {
+
+         File: cpct_drawSpriteColorizeM0  (sprites/colorReplace/M0/cpct_drawSpriteColorizeM0.asm)
+         File: cpct_drawSpriteMaskedAlignedColorizeM0  (sprites/colorReplace/M0/cpct_drawSpriteMaskedAlignedColorizeM0.asm)
+         File: cpct_drawSpriteMaskedColorizeM0  (sprites/colorReplace/M0/cpct_drawSpriteMaskedColorizeM0.asm)
+         File: cpct_setSpriteColourizeM0  (sprites/colorReplace/M0/cpct_setSpriteColourizeM0.asm)
+         File: cpct_setSpriteMaskedColourizeM0  (sprites/colorReplace/M0/cpct_setSpriteMaskedColourizeM0.asm)
+         File: cpct_spriteColourizeM0  (sprites/colorReplace/M0/cpct_spriteColourizeM0.asm)
+         File: cpct_spriteMaskedColourizeM0  (sprites/colorReplace/M0/cpct_spriteMaskedColourizeM0.asm)
+         }  # Group: M0
+
+      Group: M1  {
+
+         File: cpct_drawSpriteColorizeM1  (sprites/colorReplace/M1/cpct_drawSpriteColorizeM1.asm)
+         File: cpct_drawSpriteMaskedAlignedColorizeM1  (sprites/colorReplace/M1/cpct_drawSpriteMaskedAlignedColorizeM1.asm)
+         File: cpct_drawSpriteMaskedColorizeM1  (sprites/colorReplace/M1/cpct_drawSpriteMaskedColorizeM1.asm)
+         File: cpct_spriteColourizeM1  (sprites/colorReplace/M1/cpct_spriteColourizeM1.asm)
+         File: cpct_spriteMaskedColourizeM1  (sprites/colorReplace/M1/cpct_spriteMaskedColourizeM1.asm)
+         }  # Group: M1
+
+      }  # Group: ColorReplace
+
    File: cpct_drawSolidBox  (sprites/cpct_drawSolidBox.asm)
    File: cpct_drawSprite  (sprites/cpct_drawSprite.asm)
    File: cpct_drawSpriteMasked  (sprites/cpct_drawSpriteMasked.asm)
    File: cpct_drawSpriteMaskedAlignedTable  (sprites/cpct_drawSpriteMaskedAlignedTable.asm)
    File: cpct_getScreenToSprite  (sprites/screenToSprite/cpct_getScreenToSprite.asm)
+   File: cpct_pen2fourPixelM1_table  (sprites/cpct_pen2fourPixelM1_table.s)
+   File: cpct_pen2pixelPatternM1  (sprites/cpct_pen2pixelPatternM1.asm)
+   File: cpct_pens2pixelPatternPairM1  (sprites/cpct_pens2pixelPatternPairM1.asm)
    File: cpct_px2byteM0  (sprites/cpct_px2byteM0.asm)
    File: cpct_px2byteM1  (sprites/cpct_px2byteM1.s)
-   File: pixel_macros.h  (sprites/pixel_macros.h)
+   File: Pixel Macros &lparen;ASM&rparen;  (sprites/pixel_macros.h.s)
+   File: Pixel Macros &lparen;C&rparen;  (sprites/pixel_macros.h)
    File: Transparency Macros  (sprites/transparency_table_macros.h)
    File: Transparency Tables for Mode 0  (sprites/transparency_tables_m0.h)
    File: Transparency Tables for Mode 1  (sprites/transparency_tables_m1.h)
@@ -370,6 +328,7 @@ Group: Video  {
    File: cpct_fw2hw  (video/cpct_fw2hw.asm)
    File: cpct_getHWColour  (video/cpct_getHWColour.s)
    File: cpct_getScreenPtr  (video/cpct_getScreenPtr.asm)
+   File: cpct_getVSYNCStatus  (video/cpct_getVSYNCStatus.asm)
    File: cpct_setCRTCReg  (video/cpct_setCRTCReg.asm)
    File: cpct_setPALColour  (video/cpct_setPALColour.asm)
    File: cpct_setPalette  (video/cpct_setPalette.asm)
@@ -377,6 +336,7 @@ Group: Video  {
    File: cpct_setVideoMemoryPage  (video/cpct_setVideoMemoryPage.s)
    File: cpct_setVideoMode  (video/cpct_setVideoMode.asm)
    File: cpct_waitVSYNC  (video/cpct_waitVSYNC.s)
+   File: cpct_waitVSYNCStart  (video/cpct_waitVSYNCStart.s)
    File: Macros &lparen;asm&rparen;  (video/video_macros.h.s)
    File: Macros &lparen;C&rparen;  (video/video_macros.h)
    }  # Group: Video
@@ -393,7 +353,6 @@ Group: Buildsys  {
 
 Group: Index  {
 
-   Class Index: Classes
    Constant Index: Constants
    Index: Everything
    File Index: Files
