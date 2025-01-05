@@ -23,9 +23,14 @@
 ## PNG, GIF, etc. into C-arrays.                                          ##
 ############################################################################
 
-PALETTE_PLANET={0 11 23 26}
-PALETTE_FIRE={0 7 8 17}
+PALETTE_PLANET=0 11 23 26
+PALETTE_FIRE=0 7 8 17
 
-$(eval $(call IMG2SPRITES,assets/planet.png,1,pre,0,0,$(PALETTE_PLANET),,src/))
-$(eval $(call IMG2SPRITES,assets/stars.png,1,pre,8,5,$(PALETTE_FIRE),tileset,src/))
-
+$(eval $(call IMG2SP, SET_MODE        , 1 )) 
+$(eval $(call IMG2SP, SET_FOLDER      , src/ ))
+$(eval $(call IMG2SP, SET_OUTPUT      , c ))  # { bin, c }
+$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites ))  #{ sprites, zgtiles, screen }
+$(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE_PLANET) ))
+$(eval $(call IMG2SP, CONVERT         , assets/planet.png , 0, 0, pre_planet , , ))
+$(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE_FIRE)   ))
+$(eval $(call IMG2SP, CONVERT         , assets/stars.png , 8, 5, pre_stars , , pre_tileset ))
