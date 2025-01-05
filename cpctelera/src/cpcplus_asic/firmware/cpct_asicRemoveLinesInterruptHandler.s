@@ -69,7 +69,7 @@ cpct_asicRemoveLinesInterruptHandler_asm::
    ei                             ;; [1] Reenable interrupts
    ex   de, hl                    ;; [1] HL = Pointer to previous interrupt handler (return value)
    
-   ld  a, #00                     ;; [2] Reset CRTC default interrupt at 300hz
+   xor  a                         ;; [1] Reset CRTC default interrupt at 300hz
    ld  (#ASIC_RASTER_INT), a      ;; [4] | by setting asic raster interrupt to 0
 
    ret                            ;; [3] Return
