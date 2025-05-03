@@ -65,7 +65,7 @@
 
 # Script configuration
 CPCT_SCRIPTS_FOLDER=$(dirname $0)
-CPCT_TOOLS_FOLDER=${CPCT_SCRIPTS_FOLDER}/..
+CPCT_TOOLS_FOLDER=$(realpath ${CPCT_SCRIPTS_FOLDER}/..)
 WWW_WINAPE=http://winape.net/download/WinAPE20B2.zip
 WINAPE_EXE=WinApe.exe
 WINAPE_INI=WinAPE.ini
