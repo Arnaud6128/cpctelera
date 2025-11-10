@@ -25,8 +25,7 @@
 #include <cpctelera.h>
 
 // Sprites
-#include "sprites/g_palette.h"
-#include "sprites/balloon.h"
+#include "sprites/baloon.h"
 #include "sprites/roof.h"
 #include "sprites/cloud.h"
 #include "sprites/square.h"
@@ -74,11 +73,11 @@ enum
 #define POS_CLOUD_X         0
 #define POS_CLOUD_Y         20
 
-#define NB_BALLOONS         8
-#define BALLOON_TRAIL       8
+#define NB_BALOONS          8
+#define BALOON_TRAIL        8
 
-#define BALLOON_ACTIVE      1
-#define BALLOON_INACTIVE    0
+#define BALOON_ACTIVE       1
+#define BALOON_INACTIVE     0
 
 #define NB_STARS            10
 #define NB_COLORS_STAR      7

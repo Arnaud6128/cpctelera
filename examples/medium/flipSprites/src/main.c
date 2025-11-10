@@ -81,7 +81,7 @@ void main(void) {
 
    // Initialize the Amstrad CPC
    initialize();
-
+ 
    // 
    // Infinite moving loop
    //

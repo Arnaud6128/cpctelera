@@ -58,9 +58,9 @@ void main(void)
     // Main Loop
     while (TRUE)
     {
-        UpdateBalloons();
-        DrawSceneBalloons();
-        DrawStars();
+        UpdateBaloons();
+        DrawSceneBaloons();
+		DrawStars();
         
         // Flip buffers to display the present back buffer
         // and stop displaying the current video memory

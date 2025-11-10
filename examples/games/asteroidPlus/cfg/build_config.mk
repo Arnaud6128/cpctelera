@@ -1,6 +1,6 @@
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-##  Copyright (C) 2020 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+##  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
 ##  it under the terms of the GNU Lesser General Public License as published by
@@ -48,8 +48,8 @@
 
 # Name of the project (without spaces, as it will be used as filename)
 #   and Z80 memory location where code will start in the generated binary
-PROJNAME   := colors
-Z80CODELOC := 0x40
+PROJNAME   := asteroidPlus
+Z80CODELOC := 0x8000
 
 ##
 ## Folders 
@@ -88,9 +88,7 @@ DSKINC_EXT := dskinc
 ##
 IHXFILE := $(OBJDIR)/$(PROJNAME).ihx
 BINFILE := $(OBJDIR)/$(PROJNAME).bin
-CDT     := $(PROJNAME).cdt
 DSK     := $(PROJNAME).dsk
-SNA     := $(PROJNAME).sna
 DSKINC  := $(OBJDIR)/$(DSK).$(DSKINC_EXT)
 
 ##
@@ -101,7 +99,7 @@ DSKINC  := $(OBJDIR)/$(DSK).$(DSKINC_EXT)
 ##  $(SNA):    Generates the SNA file with main binary
 ##  $(DSKINC): Includes all files from DSKFILESDIR into DSK as binaries 
 ##
-TARGET := $(CDT) $(DSK) $(DSKINC) $(SNA)
+TARGET := $(DSK) $(DSKINC) 
 
 ##
 ## OBJS2CLEAN: Additional objects to be removed when running "make clean"

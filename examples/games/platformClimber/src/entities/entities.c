@@ -117,6 +117,7 @@ const TCharacter g_Character = {
 //   Sets up entities at their initial values
 //
 void initializeEntities() {
+   TPhysics *p = ((TPhysics*)&g_Character.entity.phys); 
    G_platfColour = cpct_px2byteM0(8, 8);
    G_scrollVel = 3 * SCALE / FPS;  // Scroll down velocity, 3 px/sec
    g_movingBlocks = 0;
@@ -318,7 +319,7 @@ u8 moveBlock(u8 b_idx) {
 // scrolls the world (all the blocks) at the given velocity
 //
 void scrollWorld() {
-   TEntity *ce = &(getCharacter()->entity);
+   TEntity *ce = &g_Character.entity;
    TPhysics *p = &ce->phys;
    u8 i;
 
