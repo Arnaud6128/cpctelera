@@ -34,13 +34,51 @@ void Initialization()
     // We need to disable firmware in order to set the palette and
     // to be able to use a second screen between 0x8000 and 0xBFFF
     cpct_disableFirmware();
-    cpct_setVideoMode(0);            // Set mode 0
     cpct_setPalette(g_palette, 16);  // Set the palette
-    cpct_setBorder(HW_SKY_BLUE);     // Set the border color with Hardware color
-    
+	cpct_setVideoMode(1);  
+}
+
+///////////////////////////////////////////////////////
+/// INITIALIZATION TEST MODE 0
+/// 
+//    Initializes the the next test in mode 0
+//
+void InitializationMode0Test()
+{
+	cpct_setVideoMode(0); 
+    cpct_setBorder(HW_SKY_BLUE);     // Set the border color with Hardware color    
     InitializeVideoMemoryBuffers();  // Initialize video buffers    
     InitializeDrawing();             // Initialize drawing elements
 }
+
+///////////////////////////////////////////////////////
+/// SMALL TEST FOR MODE1
+/// 
+void TestMode1()
+{          
+    // Calculate and return screen pointer
+    u8* vmem = cpct_getScreenPtr((u8*)CPCT_VMEM_START, 0, 0);
+	
+	// No color replace
+	cpct_drawSprite(g_baloon_m1, vmem + G_BALOON_M1_W, G_BALOON_M1_W, G_BALOON_M1_H);
+	
+	// Replace color while drawing sprite Masked aligned
+	u16 replacePatColor = cpct_pens2pixelPatternPairM1(2, 3);
+	cpct_drawSpriteMaskedAlignedColorizeM1(g_baloon_m1, vmem + (G_BALOON_M1_W + 1)*2, G_BALOON_M1_W, G_BALOON_M1_H, gMaskTable, replacePatColor);
+
+	// Replace color while drawing sprite masked
+	replacePatColor = CPCTM_PENS2PIXELPATTERNPAIR_M1(2, 3);
+	cpct_drawSpriteMaskedColorizeM1(g_baloon_m1_masked, vmem + (G_BALOON_M1_W + 1)*3, G_BALOON_M1_W, G_BALOON_M1_H, replacePatColor);
+
+	// Replace color in sprite
+	cpct_spriteColourizeM1(replacePatColor, G_BALOON_M1_W*G_BALOON_M1_H, g_baloon_m1);
+	cpct_drawSprite(g_baloon_m1, vmem + (G_BALOON_M1_W + 1)*4, G_BALOON_M1_W, G_BALOON_M1_H);
+	
+	// Wait for any key
+	while(!cpct_isAnyKeyPressed()){
+		cpct_scanKeyboard();
+	}
+}           
 
 ///////////////////////////////////////////////////////
 /// MAIN PROGRAM
@@ -52,9 +90,15 @@ void main(void)
     // the stack must not be there or it will get overwritten
     cpct_setStackLocation((u8*)NEW_STACK_LOC);
     
-    // Initialize everything
+	// Initialize everything
     Initialization();
-    
+	
+	// Small test for mode1
+	TestMode1();
+	
+	// Initialize next test in mode 0
+	InitializationMode0Test();
+	   
     // Main Loop
     while (TRUE)
     {

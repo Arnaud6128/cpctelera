@@ -283,7 +283,7 @@ void DrawStars()
         else if ((i%3) == 1)
         {
             // Color and draw sprite
-            cpct_drawSpriteColorizeM0(g_square, pvmem, G_SQUARE_W, G_SQUARE_H, replacePatColor);
+            cpct_drawSpriteColorizeM1(g_square, pvmem, G_SQUARE_W, G_SQUARE_H, replacePatColor);
         }
         else
         {

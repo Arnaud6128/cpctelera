@@ -31,6 +31,8 @@
 #include "sprites/square.h"
 #include "sprites/star_trans.h"
 #include "sprites/circle_trans.h"
+#include "sprites/baloon_m1.h"
+#include "sprites/baloon_m1_masked.h"
 
 // Other modules
 #include "manageVideoMem.h"

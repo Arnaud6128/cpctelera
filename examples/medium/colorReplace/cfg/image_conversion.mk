@@ -55,12 +55,15 @@
 ############################################################################
 
 ## Firmware palette to be used for sprite conversion
-PALETTE={13 1 2 3 6 4 5 8 17 9 18 15 24 0 11 26}
+PALETTE_M0={13 1 2 3 6 4 5 8 17 9 18 15 24 0 11 26}
+PALETTE_M1={13 1 2 3}
 
 ## Sprites to be converted automatically on compilation
-$(eval $(call IMG2SPRITES,img/baloon.png,0,g,0,0,$(PALETTE),,src/sprites,hwpalette))
-$(eval $(call IMG2SPRITES,img/square.png,0,g,0,0,$(PALETTE),,src/sprites,))
-$(eval $(call IMG2SPRITES,img/star_trans.png,0,g,0,0,$(PALETTE),mask,src/sprites,))
-$(eval $(call IMG2SPRITES,img/circle_trans.png,0,g,0,0,$(PALETTE),mask,src/sprites,))
-$(eval $(call IMG2SPRITES,img/roof.png,0,g,0,0,$(PALETTE),,src/sprites,))
-$(eval $(call IMG2SPRITES,img/cloud.png,0,g,0,0,$(PALETTE),,src/sprites,))
+$(eval $(call IMG2SPRITES,img/baloon.png,0,g,0,0,$(PALETTE_M0),,src/sprites,hwpalette))
+$(eval $(call IMG2SPRITES,img/square.png,0,g,0,0,$(PALETTE_M0),,src/sprites,))
+$(eval $(call IMG2SPRITES,img/star_trans.png,0,g,0,0,$(PALETTE_M0),mask,src/sprites,))
+$(eval $(call IMG2SPRITES,img/circle_trans.png,0,g,0,0,$(PALETTE_M0),mask,src/sprites,))
+$(eval $(call IMG2SPRITES,img/roof.png,0,g,0,0,$(PALETTE_M0),,src/sprites,))
+$(eval $(call IMG2SPRITES,img/cloud.png,0,g,0,0,$(PALETTE_M0),,src/sprites,))
+$(eval $(call IMG2SPRITES,img/baloon_m1.png,1,g,0,0,$(PALETTE_M1),,src/sprites,))
+$(eval $(call IMG2SPRITES,img/baloon_m1_masked.png,1,g,0,0,$(PALETTE_M1),mask,src/sprites,))
