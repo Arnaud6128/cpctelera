@@ -24,23 +24,24 @@
 ;;
 ;; C bindings for <cpct_drawToSpriteBufferMaskedAlignedTable>
 ;;
-;;   37 us, 17 bytes
+;;   31 us, 10 bytes
 ;;
 _cpct_drawToSpriteBufferMaskedAlignedTable::
-   ;; GET Parameters from the stack following __z88dk_callee convention
-   ld (restore_ix), ix  ;; [6] Save IX to restore it before returning
-   pop hl        ;; [3] HL  = Return Address
-   pop bc        ;; [3] C   = Back_Buffer_Width (B is ignored)
-   pop de        ;; [3] DE  = Pointer to Back Buffer 
-   ld  a, c      ;; [1] A   = Back_Buffer_Width
-   pop ix        ;; [5] IXH = Sprite Height, IXL = Sprite Width
-   pop bc        ;; [3] BC  = Pointer to the Sprite to be drawn
-   ex (sp), hl   ;; [6] HL  = Pointer to the Mask Table (must be 256-byte aligned),
-                 ;;    (SP) = Return Address. This address is the only required
-                 ;;    thing to be kept in the stack with this convention.
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Back_Buffer_Width
+   ;; DE = Pointer to Back Buffer 
+   ld   a, l            ;; [1] A = L = Back_Buffer_Width
+
+   ld  (restore_ix), ix ;; [6] Save IX to restore it before returning
+
+   ;; GET next parameters from the stack
+   pop  hl              ;; [3] HL = Return Address
+   pop  ix              ;; [5] IXH = Sprite Height, IXL = Sprite Width
+   pop  bc              ;; [3] BC  = Pointer to the Sprite to be drawn
+   ex  (sp), hl         ;; [6] HL = Pointer to the Mask Table (must be 256-byte aligned) <-> (SP) = Return address because _z88dk_callee convention
 				 
 .include /cpct_drawToSpriteBufferMaskedAlignedTable.asm/
 
 restore_ix = .+2
-   ld   ix, #0000  ;; [4] Restore IX before returning
-   ret             ;; [3] Return to caller
+   ld   ix, #0000       ;; [4] Restore IX before returning
+   ret                  ;; [3] Return to caller

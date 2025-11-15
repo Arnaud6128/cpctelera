@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Bouche Arnaud
-;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2022 Bouche Arnaud
+;;  Copyright (C) 2022 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -20,24 +20,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_drawToSpriteBuffer
+;; Function: cpct_drawToSpriteBufferHFlipM1
 ;;
-;;    Draws an sprite inside another sprite's buffer. This permits using the 
-;; destination sprite as a temporary screen back buffer.
+;; Draws a Mode 1 sprite from an array inside another sprite's buffer
+;; flipping it Horizontally (right to left).
+;; This permits using the destination sprite as a temporary screen back buffer.
 ;;
 ;; C Definition:
-;;    void <cpct_drawToSpriteBuffer> (<u16> *buffer_width*, void* *inbuffer_ptr*, 
-;;                                     <u8> *width*, <u8> *height*, void* *sprite*) __z88dk_callee;
+;;    void <cpct_drawToSpriteBufferHFlipM1> (<u16> *buffer_width*, void* *inbuffer_ptr*, 
+;;                                           <u8> *width*, <u8> *height*, void* *sprite*) __z88dk_callee;
 ;;
 ;; Input Parameters (7 bytes):
-;;    (1B B)  buffer_width - Width in bytes of the Sprite used as Buffer (>0, >=width)
+;;    (1B A)  buffer_width - Width in bytes of the Sprite used as Buffer (>0, >=width)
 ;;    (2B DE) inbuffer_ptr - Destination pointer (pointing inside sprite buffer)
 ;;    (1B C)  width        - Sprite Width in bytes (>0)
-;;    (1B A)  height       - Sprite Height in bytes (>0)
+;;    (1B B)  height       - Sprite Height in bytes (>0)
 ;;    (2B HL) sprite       - Source Sprite Pointer (array with pixel data)
 ;;
 ;; Assembly Call (Input parameters on Registers)
-;;    > call cpct_drawToSpriteBuffer_asm
+;;    > call cpct_drawToSpriteBufferHFlipM1_asm
 ;;
 ;; Parameter Restrictions:
 ;;  * *buffer_width* must be greater or equal than *width*. Drawing a sprite into  
@@ -114,47 +115,41 @@
 ;;  // minimizes the amount of data to be writen to the screen after
 ;;  // waiting to VSYNC, eliminating flicking and tearing.
 ;;  void redrawActionScreen(u8 *scr_p, TEntity *en, TEntity *ch) {
-;;      cpct_drawToSpriteBuffer(BACK_W, g_background + ch->y*BACK_W + ch->x, ENT_W, ENT_H, g_character);
-;;      cpct_drawToSpriteBuffer(BACK_W, g_background + en->y*BACK_W + en->x, ENT_W, ENT_H, g_enemy);
+;;      if (ch->dir == LEFT)
+;;         cpct_drawToSpriteBuffer(BACK_W, g_background + ch->y*BACK_W + ch->x, ENT_W, ENT_H, g_character);
+;;      else
+;;         cpct_drawToSpriteBufferHFlipM1(BACK_W, g_background + ch->y*BACK_W + ch->x, ENT_W, ENT_H, g_character);
+;;
+;;      if (ch->dir == LEFT)
+;;         cpct_drawToSpriteBuffer(BACK_W, g_background + en->y*BACK_W + en->x, ENT_W, ENT_H, g_enemy);
+;;      else
+;;         cpct_drawToSpriteBufferHFlipM1(BACK_W, g_background + en->y*BACK_W + en->x, ENT_W, ENT_H, g_enemy);
+;;
 ;;      cpct_waitVSync();
 ;;      cpct_drawSprite(g_background, scr_p, BACK_W, BACK_H);
 ;;  }
 ;; (end code)
-;;     
-;;     Drawing to sprites instead of the screen lets us do as many draw 
-;; operations as required without worrying about the raster and flickering
-;; or tearing effects. As nothing is being changed in video memory, no 
-;; problematic effects are produced. Once the image is composed in one or 
-;; a few sprites, these can be drawn to the screen. This minimizes the 
-;; total cycles required to copy data from memory to video memory.
 ;;
-;;         Also, as destination sprite is a normal sprite with its data 
-;; distributed linear in memory, calculating a position inside the sprite 
-;; is easier than in video memory. It only requires multiplying the 
-;; y-coordinate by the width of the sprite-buffer (to jump from its start 
-;; point to the y-th line), then adding the x-coordinate. Everything is 
-;; also added to the starting point of the sprite buffer. Moreover, this 
-;; calculations can be easily sped up by carefully selecting the width 
-;; of the sprite-buffer. If it is a power of 2, then multiplications will 
-;; become simple shifts, speeding up the proccess.
+;; See cpct_drawToSpriteBuffer for drawing to buffer operation
+;; See cpct_drawSpriteHFlipM1 for flipping operation
 ;;
 ;; Destroyed Register values:
-;;       AF, BC, DE, HL
+;;       AF, BC, DE, HL, IX
 ;;
 ;; Required memory:
-;;    C-bindings   - 30 bytes
-;;    ASM-bindings - 24 bytes
+;;    C-bindings   - 54 bytes
+;;    ASM-bindings - 48 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
 ;;   Case      |   microSecs (us)   |     CPU Cycles
 ;;  -----------------------------------------------------
-;;   Any       |  24 + (12 + 6W)H   | 96 + (48 + 24W)H
+;;   Any       |  20 + (13 + 20W)H   | 80 + (52 + 80W)H
 ;;  -----------------------------------------------------
-;;   W=2,H=16  |         408        |        1632
-;;   W=4,H=32  |        1176        |        4704
+;;   W=2,H=16  |         868        |        3472
+;;   W=4,H=32  |        2996        |       11976
 ;;  -----------------------------------------------------
-;;  Asm saving |         -19        |        -76
+;;  Asm saving |         -28        |        -112
 ;;  -----------------------------------------------------
 ;; (end code)
 ;;  W = Sprite width in bytes
@@ -168,45 +163,45 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-   ;; Calculate offset to be added to Destiny pointer (DE, BackBuffer Pointer)
-   ;; After copying each sprite line, to point to the start of the next line
-   sub c                         ;; [1] A = Back_Buffer_Width - Sprite Width
-   ld (offset_to_next_line), a   ;; [4] Modify the offset size inside the copy loop
+   ;; Use IXL as counter for sprite rows (B will be used for other operations)
+   ld__ixl_b                     ;; [2] IXL = Height
+   ex   de, hl                   ;; [1] HL  = Destination Buffer <-> DE = Sprite Pointer
+  
+   ;; Calculate offset to be added to Destination pointer (HL BackBuffer Pointer)   
+   add  c                        ;; [1] A = Back_Buffer_Width + Sprite Width
+   ld  (offsetToNextLine), a     ;; [4] Modify the offset size inside the copy loop
 
-   ;; Set the sprite with inside the loop to be restored
-   ;; into BC (counter) previous to starting the copy of every line
-   ld  a, c                        ;; [1] A = Sprite Width
-   ld (sprite_width_restore), a    ;; [4] Set the sprite width inside the copy loop
+   ;; Save C to restore sprite width for each new row
+   ld__ixh_c                     ;; [2] IXH = C = Sprite Width 
+   
+   ;; Make HL point to the right-most byte of the first row of the buffer to be drawn
+   ld   a, c                     ;; [1] A = C = width
+   dec  a                        ;; [1] A--
+   add_hl_a                      ;; [5] HL += width - 1 (Point to last byte at the buffer)
 
-   ;; A Holds the Height of the sprite to be used as counter for the
-   ;; copy loop. There will be as many iterations as Height lines
-   ld  a, b       ;; [1] A = Sprite Height
+   jr  firstByte                 ;; [3] First byte does not require C to be restored nor DE/HL to be changed
+  
+;; Perform the copy
+nextByte:
+   inc  de                       ;; [2] DE++ (Next sprite byte)
+   dec  hl                       ;; [2] HL-- (Destination previous byte in buffer memory. We draw right-to-left)
+firstByte:
+   ld   a, (de)                       ;; [2] A = Next sprite byte
+   ld   b, a                          ;; [1] B = A (For temporary calculations)
+  cpctm_reverse_mode_1_pixels_of_A b  ;; [7] Reverses both pixels of sprite byte in A
+   ld  (hl), a                        ;; [2] Save Sprite byte with both pixels reversed
 
-   ;; BC will hold either the offset from the end of one line to the
-   ;; start of the other, or the width of the sprite. None of them
-   ;; will be greater than 256, so B will always be 0.
-   ld  b, #00     ;; [2] Set B to 0 so as BC holds the value of C 
-      
-   ;; Perform the copy
-   copy_loop:
-      ;; Make BC = sprite width to use it as counter for LDIR,
-      ;; which will copy next sprite line
-      sprite_width_restore = .+1
-      ld   c, #00    ;; [2] BC = Sprite Width (B is always 0, and 00 is a placeholder that gets modified)
+   dec  c                        ;; [1] C-- (One less byte in this row to go)
+   jr   nz, nextByte             ;; [2/3] If C!=0, there are more bytes, so continue with nextbyte
+  
+  ;; Update the Destination Pointer, so we have to add Backbuffer Width
+offsetToNextLine = .+1
+  ld    bc, #0000                ;; [3] BC = Offset = Backbuffer Width + Sprite Width (0000 is a placeholder that gets modified)  
+  add   hl, bc                   ;; [3] Add the offset to the Destination Pointer (BackBuffer Pointer)
+  ld__c_ixh                      ;; [2] Restore Width into C before looping over next row bytes one by one    
+  
+  dec__ixl                       ;; [2]   IXL-- (One less sprite row to go)
+  jr    nz, nextByte             ;; [2/3] Repeat copy_loop if IXL!=0 (Iterations pending)
 
-      ;; Copy next sprite line to the sprite buffer
-      ldir           ;; [6*C-1] Copy one whole line of bytes from sprite to backbuffer
-      
-      ;; Update the Destiny Pointer. DE must point to the place where the
-      ;; next sprite line will be copied. So we have to add Backbuffer Width - Sprite Width
-      ex  de, hl     ;; [1] HL holds temporarily the Destiny Pointer (points to backbuffer)
-                     ;;     Only for math purposes
-      offset_to_next_line = .+1
-      ld   c, #00    ;; [2] BC = Offset = Backbuffer Width - Sprite Width (00 is a placeholder that gets modified)
-      add hl, bc     ;; [3] Add the offset to the Destiny Pointer (BackBuffer Pointer)
-      ex  de, hl     ;; [1] Restore the Destiny Pointer to DE (and HL to what it was)
-      
-      dec  a         ;; [1]   One less iteration to complete Sprite Height
-   jr  nz, copy_loop ;; [2/3] Repeat copy_loop if A!=0 (Iterations pending)
-
-   ret               ;; [3] Return to the caller
+return:
+  ;; Ret instruction provided by C/ASM bindings

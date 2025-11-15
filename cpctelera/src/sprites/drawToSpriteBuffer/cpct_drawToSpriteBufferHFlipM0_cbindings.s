@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Bouche Arnaud
-;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2022 Bouche Arnaud
+;;  Copyright (C) 2022 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -18,14 +18,16 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_sprites
 
+.include "macros/cpct_undocumentedOpcodes.h.s"
+.include "macros/cpct_reverseBits.h.s"
 .include "macros/cpct_maths.h.s"
 
 ;;
-;; C bindings for <cpct_drawToSpriteBuffer>
+;; C bindings for <cpct_drawToSpriteBufferHFlipM0>
 ;;
-;;   13 us, 4 bytes
+;;   25 us, 7 bytes
 ;;
-_cpct_drawToSpriteBuffer::
+_cpct_drawToSpriteBufferHFlipM0::
    ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
    ;; HL = Back_Buffer_Width
    ;; DE = Pointer to Back Buffer 
@@ -36,4 +38,9 @@ _cpct_drawToSpriteBuffer::
    pop  bc        ;; [3] BC = Height/Width (B = Height, C = Width)
    ex  (sp), hl   ;; [6] HL = Pointer to Sprite <-> (SP) = Return address because _z88dk_callee convention
 
-.include /cpct_drawToSpriteBuffer.asm/
+   push ix        ;; [5] Save IX
+
+.include /cpct_drawToSpriteBufferHFlipM0.asm/
+
+   pop  ix        ;; [4] Restore IX before returning
+   ret            ;; [3] Return to caller
