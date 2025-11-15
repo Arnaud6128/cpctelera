@@ -20,13 +20,11 @@
 ;;
 ;; C bindings for <cpct_setDrawCharM1>
 ;;
-;;   10 us, 3 bytes
+;;   2 us, 2 bytes
 ;;
 _cpct_setDrawCharM1::
-   pop   af       ;; [3] AF = Return Address
-   pop   de       ;; [3] DE => E = Foreground Pen, D = Background Pen, 1st and 2nd 8-bit parameter
-   push  af       ;; [4] Leaving again Return Address where SP is located now
-                  ;; ... as this function is using __z88dk_callee convention
-
+   ;; Get parameters from A and L registers (8 + 8 bits), with __sdcccall(1) convention
+   ld  d, l        ;; [1] D = L = Background Pen
+   ld  e, a        ;; [1] E = A = Foreground Pen
 
 .include /cpct_setDrawCharM1.asm/

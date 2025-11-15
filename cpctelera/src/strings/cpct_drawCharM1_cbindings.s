@@ -25,16 +25,13 @@
 ;;
 ;; C bindings for <cpct_drawCharM1>
 ;;
-;;   28 us, 13 bytes
+;;   15 us, 13 bytes
 ;;
 _cpct_drawCharM1::
-   ;; GET Parameters from the stack 
-   pop   hl          ;; [3] HL = Return Address
-   pop   de          ;; [3] DE = Pointer to Video Memory
-   ex    (sp), hl    ;; [6] L = ASCII Value of the character to be drawn, and
-                     ;; ...leaving Return Address on top of the stack at the same time
-                     ;; ...as this function uses __z88dk_callee convention
-   ex    de, hl      ;; [1] E = ASCII Value, HL = Pointer to video memory
+   ;; Get parameters from HL and DE registers (16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Pointer to Video Memory 
+   ;; DE = (E) ASCII Value of the character to be drawn
+  
    ld   (saveix), ix ;; [6] Save IX value before using it
 
 .include /cpct_drawCharM1.asm/

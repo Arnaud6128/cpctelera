@@ -25,9 +25,8 @@
 ;;   9 us, 2 bytes
 ;;
 _cpct_setDrawCharM2::
-   pop   hl       ;; [3] HL = Return Address
-   ex   (sp), hl  ;; [6] L = Foreground Pen, H = Background Pen
-                  ;; ... Leaving again Return Address where SP is located now
-                  ;; ... as this function is using __z88dk_callee convention
+   ;; Get parameters from A and L registers (8 + 8 bits), with __sdcccall(1) convention
+   ;; L = Background Pen
+   ld  h, a        ;; [1] H = A = Foreground Pen
 
 .include /cpct_setDrawCharM2.asm/

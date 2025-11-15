@@ -20,17 +20,16 @@
 ;;
 ;; C bindings for <cpct_pens2pixelPatternPairM1>
 ;;
-;;    14 microSecs, 5 bytes
+;;    5 microSecs, 3 bytes
 ;;
 _cpct_pens2pixelPatternPairM1_real::    ;; C-Entry Point
-   
-   pop   bc       ;; [3] BC = Return Address
-   pop   de       ;; [3] E = NewPen, D = OldPen
-   push  bc       ;; [4] Leave Return Address in the stack
-                  ;;     and fulfill z88dk_callee requirement
+   ;; Get parameters from A and L registers (8 + 8 bits) with __sdcccall(1) convention
+   ;; A = NewPen
+   ;; L = OldPen
+   ld e, a        ;; [1] E = A = NewPen
+   ld d, l        ;; [1] D = L = OldPen
    
    ;; Include common code
    .include /cpct_pens2pixelPatternPairM1.asm/
    
-   ex    de, hl   ;; [1] HL = Return value in C (H=Pattern for Pen 1, L=Pattern for Pen 2)
-   ret            ;; [3] Return
+   ret            ;; [3] Return value in C (D=Pattern for Pen 1, E=Pattern for Pen 2)

@@ -99,7 +99,7 @@
 .globl cpct_char2pxM1   ;; Screen Pixel Format conversion table (16 pairs of pixels BG-BG-BG-BG, BG-BG-BG-FG, BG-BG-FG-BG...., FG-FG-FG-FG)
 
    ;; Get Colour values converted to Screen Pixel Format
-   ;; B = bg colours :: C = fg colours
+   ;; D = bg colours :: E = fg colours
    ;;
    ld    hl, #dc_mode1_ct     ;; [3] HL = Pointer to the start of the Conversion Colour Table
    ld     a, d                ;; [1] A  = bg_pen  (save the value for later use)

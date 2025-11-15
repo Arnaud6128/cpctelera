@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2018 Arnaud Bouche (@Arnaud6128)
-;;  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2022 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2022 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -58,6 +58,18 @@
 ;; Any value is valid, but values different of what you actually want will probably
 ;; result in estrange colours in the final array/sprite.
 ;;
+;;  Following is a code sample for replacing a color directly in draw process
+;; (start code)
+;;    // This function directly draw a star with a new color without modify the sprite
+;;    void drawSpriteStar(u8* vmem, u8 newColor) {
+;;       // Set pixel pattern pair for color 15 to be replaced
+;;       u16 replacePatColor = cpct_pens2pixelPatternPairM0(15, newColor);
+;;       
+;;       // Color and draw sprite with transparency
+;;       cpct_drawSpriteMaskedColorizeM0(g_star, vmem, G_STAR_W, G_STAR_H, replacePatColor);
+;;    }
+;; (end code)
+;;
 ;; Known limitations:
 ;;     * This function does not do any kind of boundary check or clipping. If you 
 ;; try to draw sprites on the frontier of your video memory or screen buffer 
@@ -101,7 +113,7 @@
 ;; Thanks to all of them for their help and support.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-   push  af        ;; [4] Save AF (Source Sprite Pointer) in Stack
+   push  hl        ;; [4] Save HL (Source Sprite Pointer) in stack
 
    ;; Compute E = (FindPat ^ InsrPat). This will be used at the end of the routine
    ;; to insert InsrPat in the byte by XORing again, as the final operation will
@@ -109,15 +121,14 @@
    ;; FindPat). This final operation will then be (1) XOR against FindPat (Zeroing bits,
    ;; because they are equal) and (2) XOR againts InsrPat (Inserting InsrPat bits, 
    ;; because its an XOR against zeros). That way, we will perform 2 operations on 1.
-   ld    a, l      ;; [1] / IYL = (InsrPat ^ FindPat)
-   xor   h         ;; [1] |
+   ld__a_ixl       ;; [2] / IYL = (InsrPat ^ FindPat)
+   xor__ixh        ;; [2] |
    ld__iyl_a       ;; [2] \ 
 
-   ld    a, h      ;; [1] / IXL = H (FindPat) Save for later use
-   ld__ixl_a       ;; [2] \
+   ld__ixl_ixh     ;; [2] IXL = IXH (FindPat) Save for later use
 
    ld__iyh_c       ;; [2] IYH = C (Sprite Width) Save for later use
-   pop   hl        ;; [3] HL = Recover from Stack (Source Sprite Pointer)
+   pop   hl        ;; [3] HL = Recover from stack (Source Sprite Pointer)
 
    ;; Loop for all the bytes of the Sprite then Modify pixels of each byte using Patterns
 height_loop:

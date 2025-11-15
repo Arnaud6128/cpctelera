@@ -20,15 +20,19 @@
 ;;
 ;; C bindings for <cpct_memcpy>
 ;;
-;;   16 us, 5 bytes
+;;   13 us, 4 bytes
 ;;
 _cpct_memcpy::
-   ;; Get parameters from stack
-   pop  af   ;; [3] AF = Return Address
-   pop  de   ;; [3] DE = Destination address
-   pop  hl   ;; [3] HL = Source Address
-   pop  bc   ;; [3] BC = size - Number of bytes to be set (>= 1)
+   ;; Get parameters from HL, DE register and stack ((16 + 16) + (16) bits) with __sdcccall(1) convention
+   ;; HL = Destination address
+   ;; DE = Source Address
+   
+   ex de, hl ;; [1] DE <-> HL
+   ;; DE = Destination address
+   ;; HL = Source Address
 
+   pop  af   ;; [3] AF = Return Address
+   pop  bc   ;; [3] BC = size - Number of bytes to be set (>= 1)
    push af   ;; [4] Put returning address in the stack again
              ;;      as this function uses __z88dk_callee convention
 

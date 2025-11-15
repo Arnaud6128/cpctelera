@@ -59,7 +59,7 @@
 ;; (start code)
 ;;   Case      | microSecs (us) | CPU Cycles 
 ;; -------------------------------------------
-;; Any         |       48       |    192
+;; Any         |       47       |    188
 ;; -------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -96,5 +96,4 @@ cpct_isAnyKeyPressed_f_asm::
                         ;; ... be 1, so A=0xFF. If we add 1, A=0, we return FALSE (no key is pressed).
                         ;; ... If any key is pressed, some bit will be 0, so A != 0xFF, which means A+1 != 0, and 
                         ;; ... we will be returning TRUE (A > 0)
-   ld    l, a           ;; [1] L = A (Set return value for C calls in L)
-   ret                  ;; [3] Return
+   ret                  ;; [3] Return A value for sdccall(1)

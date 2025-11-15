@@ -20,14 +20,15 @@
 ;;
 ;; C bindings for <cpct_getBottomLeftPtr>
 ;;
-;;   13 us, 4 bytes
+;;   2 us, 1 bytes
 ;;
 _cpct_getBottomLeftPtr::
-   ;; Parameter retrieval from stack
-   pop   af       ;; [3] AF = return address
-   pop   de       ;; [3] DE = Sprite start address pointer
-   pop   bc       ;; [3] B = Ignored, C = height of the sprite
-   push  af       ;; [4] Leave only return address in the stack,
-                  ;; ... as this function uses __z88dk_callee convention
+   ;; Get parameters from HL and DE registers(16 + 16 bits) with __sdcccall(1) convention
+   ;; HL = Sprite start address pointer
+   ;; DE = D = Ignored, E = height of the sprite
+   
+   ld  c, e       ;; [1] C = E = height of the sprite
+   ex  de, hl     ;; [1] DE <-> HL
+   ;; DE = Sprite start address pointer
 
 .include /cpct_getBottomLeftPtr.asm/

@@ -121,12 +121,13 @@
 
    ;; Get Pixel Pattern for NewPen (E) -> Put it temporarily in A
    ld    bc, #cpct_pen2fourPixelM1_table  ;; [3] BC Points to the start of the Replace Colours Pattern Conversion Array
-   ld     h, #0                           ;; [2] / HL = E = NewPen (H = 0, L = E)
+   xor    a                               ;; [1] A = 0
+   ld     h, a                            ;; [1] / HL = E = NewPen (H = 0, L = E)
    ld     l, e                            ;; [1] \
    add   hl, bc                           ;; [3] HL += BC // HL now points to the Colour Pattern for the NewPen
    ld     e, (hl)                         ;; [1] E = Pixel Pattern for NewPen
    ;; Get Pixel Pattern for OldPen (E) -> Put it in E
-   ld     h, #0      ;; [2] / HL = D = OldPen (H = 0, L = D)
+   ld     h, a       ;; [1] / HL = D = OldPen (H = 0, L = D)
    ld     l, d       ;; [1] \ 
    add   hl, bc      ;; [3] ;; [3] HL += BC // HL now points to the Colour Pattern for the OldPen
    ld     d, (hl)    ;; [2] D = Pixel Pattern for OldPen

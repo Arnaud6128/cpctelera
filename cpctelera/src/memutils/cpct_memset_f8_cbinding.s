@@ -20,17 +20,17 @@
 ;;
 ;; C Binding for cpct_memset_f8
 ;; 
-;;   16 us, 5 bytes
+;;   10 us, 3 bytes
 ;;
 
 _cpct_memset_f8::
-   ;; Recover parameters from stack
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + 16 bits), with __sdcccall(1) convention
+   ;; HL = Array pointer
+   ;; DE = value to be set
+   
+   ;; Get next parameter from stack
    pop  af   ;; [3] AF = Return address
-   pop  hl   ;; [3] HL = Array pointer
-   pop  de   ;; [3] DE = value to be set
    pop  bc   ;; [3] BC = Size of the array
-
-   push af   ;; [4] Put returning address in the stack again
-             ;;      as this function uses __z88dk_callee convention
+   push af   ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
 
 .include /cpct_memset_f8.asm/      ;; Include function code

@@ -21,14 +21,13 @@
 ;;
 ;; C bindings for <cpct_setCRTCReg>
 ;;
-;;   10 microSecs, 3 bytes
+;;   2 microSecs, 2 bytes
 ;;
 _cpct_setCRTCReg::
-   ;; Get Parameters from stack
-   pop  af   ;; [3] AF = Return Address
-   pop  bc   ;; [3] B = New Value for Register, C = CRTC Register Number
-
-   push af   ;; [4] Put returning address in the stack again
-             ;;      as this function uses __z88dk_callee convention
+   ;; Get parameters from A and L registers (8 + 8 bits) with __sdcccall(1) convention
+   ;; A = CRTC Register Number
+   ;; L = New Value for Register
+   ld  b, l  ;; [1] B = L = New Value for Register
+   ld  c, a  ;; [1] C = A = CRTC Register Number
 
 .include /cpct_setCRTCReg.asm/

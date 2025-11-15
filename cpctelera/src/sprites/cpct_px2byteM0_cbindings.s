@@ -20,12 +20,13 @@
 ;;
 ;; C bindings for <cpct_px2byteM0>
 ;;
-;;   9 us, 2 bytes
+;;   2 us, 2 bytes
 ;;
 _cpct_px2byteM0::
-   ;; Recover parameters from the stack
-   pop hl           ;; [3] HL = Return Address
-   ex (sp), hl      ;; [6] HL => L = Pixel, H = Pixel 1, 1st and 2nd 8-bit parameter
-                    ;; ... also putting again Return Address where SP is located now
-                    ;; ... as this function is using __z88dk_callee convention
+   ;; Get parameters from A and L registers  (8 + 8 bits), with __sdcccall(1) convention
+   ;; A = px0
+   ;; L = px1
+   ld h, l   ;; [1] H = L = px1
+   ld l, a   ;; [1] L = A = px0
+   
 .include /cpct_px2byteM0.asm/

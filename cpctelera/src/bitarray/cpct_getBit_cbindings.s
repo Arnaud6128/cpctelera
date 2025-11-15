@@ -23,19 +23,20 @@
 ;;  12 microSecs, 3 bytes
 ;;
 _cpct_getBit::
-   ;; Recover parameters from the stack
-   pop hl           ;; [3] HL = Return Address
-   pop de           ;; [3] DE = Pointer to the array in memory
-   ex (sp), hl      ;; [6] HL = Index of the bit we want to get
+   ;; Get parameters from HL and DE registers (16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Pointer to the array in memory
+   ;; DE = Index of the bit we want to get
+   ld b, h
+   ld c, l
+   ld h, d
+   ld l, e
+   ld d, b
+   ld e, c
+   ;;pop hl           ;; [3] HL = Return Address
+   ;;pop de           ;; [3] DE = Pointer to the array in memory
+   ;;ex (sp), hl      ;; [6] HL = Index of the bit we want to get
                     ;; ... also putting again Return Address where SP is located now
                     ;; ... as this function is using __z88dk_callee convention
 
 
 .include /cpct_getBit.asm/
-
-   ;; After testing the target bit, return true or false
-   ld    l, a     ;; [1] L = A > 0  -- Return value (>0) Return Flag Z=0 (NZ)
-   ret   nz       ;; [2/4] Return !0 only if bit test was Non-Zero
-   xor   a        ;; [1] A = 0
-   ld    l, a     ;; [1] L = A = 0  -- Return value (0) Return Flag Z=1 (Z)
-   ret            ;; [3] Return 0 otherwise

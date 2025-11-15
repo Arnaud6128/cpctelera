@@ -23,12 +23,17 @@
 ;;
 ;; C bindings for <cpct_hflipSpriteM2>
 ;;
-;;   12 us, 3 bytes
+;;   11 us, 3 bytes
 ;;
 _cpct_hflipSpriteM2::
-   ;; Parameter retrieval from stack
+   ;; Get parameters from A and L registers and stack ((8 + 8) + (16) bits), with __sdcccall(1) convention
+   ;; A = Width
+   ;; L = Height
+   ld b, l     ;; [1] B = L = Height
+   ld c, a     ;; [1] C = A = Width
+   
+   ;; Next Pparameters retrieval from stack
    pop  hl     ;; [3] HL = return address
-   pop  bc     ;; [3] BC = height / width of the sprite
    ex (sp), hl ;; [6] HL = Sprite start address pointer, while leaving return address 
                ;; ... in the stack, as this function uses __z88dk_callee convention
 

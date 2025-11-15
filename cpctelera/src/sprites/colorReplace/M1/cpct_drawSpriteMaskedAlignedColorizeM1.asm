@@ -114,7 +114,7 @@
 ;; Thanks to all of them for their help and support.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-   push  af        ;; [4] Save AF (Source Sprite Pointer) in Stack
+   push  af                      ;; [4] Save AF (Source Sprite Pointer) in Stack
    ld   (aligned_mask_table), ix ;; [6] Set Aligned Mask Table pointer in placeholder
 
    ;; Compute E = (FindPat ^ InsrPat). This will be used at the end of the routine
@@ -171,8 +171,9 @@ width_loop:
    xor  (hl)       ;; [2] A = (~MASK & (InsrPat ^ FindPat)) ^ SpriteByte
    
    push  hl        ;; [4] Save HL during the mask computation
+   
 aligned_mask_table = .+1 
-  ld     hl, #0000 ;; [3] HL = Aligned mask table for transparencies (placeholder)
+   ld     hl, #0000;; [3] HL = Aligned mask table for transparencies (placeholder)
    
    ld    l, a      ;; [1] Access mask table element (table must be 256-byte aligned)
    ld    a, (de)   ;; [2] Get the value of the byte of the screen where we are going to draw

@@ -76,7 +76,7 @@
 ;; (start code)
 ;;    Case     | microSecs (us) | CPU Cycles
 ;; -----------------------------------------
-;;    Any      |      45        |    180
+;;    Any      |      44        |    176
 ;; -----------------------------------------
 ;; (end code)
 ;;
@@ -136,6 +136,5 @@ cpct_getRandom_xsp40_u8_asm::
    ;; operation against a Weyl sequence created by rotating v value
    _cpct_seed3_xsp40_u8 == .+1
    xor #0xFD       ;; [2] A = w' ^ v' (as this operand contains updated v' value)
-   ld  l, a        ;; [1] L = A       (put resulting value as return value)
   
-   ret             ;; [3] Return final 8 pseudo-random bits
+   ret             ;; [3] Return final 8 pseudo-random bits A value in sdccall(1)

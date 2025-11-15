@@ -21,6 +21,7 @@
 ;; Include constants and general values
 ;;
 .include "strings.s"
+.include "./macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
 ;; C bindings for <cpct_drawStringM1>
@@ -28,16 +29,18 @@
 ;;   29 us, 13 bytes
 ;;
 _cpct_drawStringM1::
-   ld (saveiy), iy   ;; [6] Save IY before modifying them
-
-   pop   hl          ;; [3] HL = Return Address
-   pop   iy          ;; [5] BC = Pointer to the null terminated string
-   ex  (sp), hl      ;; [6] HL = Destination address (Video memory location where character will be printed)
-                     ;; ... and leave only return address at the top of the stack,
-                     ;; ... to fullfill __z88dk_callee calling convention
+   ;; Get parameters from HL and DE registers (16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Pointer to the null terminated string 
+   ;; DE = Destination address (Video memory location where character will be printed)
+   ex de, hl ;; [1] HL <-> DE :  HL = Destination address
+   
+   ld (save_iy), iy  ;; [6] Save IY before modifying them
+   
+   ld__iyh_d ;; [2] IY = DE = Pointer to the null terminated string 
+   ld__iyl_e ;; [2] |
 
 .include /cpct_drawStringM1.asm/
 
-saveiy = .+2
+save_iy = .+2
    ld    iy, #0000   ;; [6] Restore IY before returning (0000 is a placeholder)
    ret               ;; [3] Return

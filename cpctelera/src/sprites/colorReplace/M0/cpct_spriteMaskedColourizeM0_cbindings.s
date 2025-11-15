@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2021 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
-;;  Copyright (C) 2021 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2022 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2022 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -23,18 +23,27 @@
 ;;
 ;; C bindings for <cpct_spriteMaskedColourizeM0>
 ;;
-;;   27 us, 7 bytes
+;;   24 us, 8 bytes
 ;;
+
 _cpct_spriteMaskedColourizeM0::
-   ;; GET Parameters from the stack 
-   pop   hl          ;; [3] HL = Return Address  
-   pop   de          ;; [3] DE = Replace Pattern (D=Find Pattern [OldPen], E=Insert Pattern (NewPen))
-   pop   bc          ;; [3] BC = Size of the array/sprite (width*height)
-   ex   (sp), hl     ;; [6] HL = Pointer to the sprite
-                     ;; ... and leave Return Address at (SP) as we don't need to restore
-                     ;; ... stack status because callin convention is __z88dk_callee
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + 16 bits) with __sdcccall(1) convention
+   ;; HL = Replace Pattern (D=Find Pattern [OldPen], E=Insert Pattern (NewPen))
+   ;; DE = Size of the array/sprite (width*height)
+
+   ex    de, hl                  ;; [1] DE <-> HL
+   ;; DE = Replace Pattern (D=Find Pattern [OldPen], E=Insert Pattern (NewPen))
+   ;; HL = Size of the array/sprite (width*height)
+   ld    b, h                    ;; [1] BC = HL = Size of the array/sprite (width*height)
+   ld    c, l                    ;; [1] |
    
-   push  ix          ;; [5] Save IX to let this function use and restore them before returning
+   ;; GET next parameters from the stack 
+   pop   hl                      ;; [3] HL = Return Address  
+   ex   (sp), hl                 ;; [6] HL = Pointer to the sprite
+                                 ;; ... and leave Return Address at (SP) as we don't need to restore
+                                 ;; ... stack status because callin convention is __z88dk_callee
+   
+   push  ix                      ;; [5] Save IX to let this function use and restore them before returning
 
    ;; Include Common code
    .include /cpct_spriteMaskedColourizeM0.asm/
@@ -43,5 +52,5 @@ _cpct_spriteMaskedColourizeM0::
    ;; as the array/sprite is to be composed of consecutive bytes 
    cpctm_generate_spriteMaskedColourizeM0 2
 
-   pop   ix          ;; [4] Restore IX
-   ret               ;; [3] Return to caller
+   pop   ix                      ;; [4] Restore IX
+   ret                           ;; [3] Return to caller

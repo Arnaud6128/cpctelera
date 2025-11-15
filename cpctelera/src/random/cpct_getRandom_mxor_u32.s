@@ -81,5 +81,6 @@ cpct_getRandom_mxor_u32_asm::
 
    ld   (_cpct_mxor32_seed+0), de     ;; [6] |
    ld   (_cpct_mxor32_seed+2), hl     ;; [5] | Store new value as next seed
+   ex    de, hl                       ;; [1]
 
-   ret                                ;; [3] Returns next 32-bits random value (DE:HL)
+   ret                                ;; [3] Returns next 32-bits random value (DHL:DE)

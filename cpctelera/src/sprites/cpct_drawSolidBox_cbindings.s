@@ -27,10 +27,15 @@
 ;;   16 us, 5 bytes
 ;;
 _cpct_drawSolidBox::
-   ;; GET Parameters from the stack 
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits), with __sdcccall(1) convention
+   ;; HL = Video Memory Address
+   ;; DE = Colour Pattern
+   
+   ex de, hl        ;; [1] HL <-> DE
+   ;; DE = Video Memory Address
+   ;; L = Colour Pattern
+   
    pop   af          ;; [3] AF = Return address
-   pop   de          ;; [3] DE = Video Memory Address
-   pop   hl          ;; [3] L = Colour Pattern
    pop   bc          ;; [3] B = Height, C = Width
    push  af          ;; [4] Leave return address in the stack to fullfill __z88dk_callee convention
   

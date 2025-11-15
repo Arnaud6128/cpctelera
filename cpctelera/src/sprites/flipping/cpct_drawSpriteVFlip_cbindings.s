@@ -20,17 +20,22 @@
 ;;
 ;; C bindings for <cpct_drawSpriteVFlip>
 ;;
-;;   17 us, 6 bytes
+;;   12 us, 65 bytes
 ;;
 _cpct_drawSpriteVFlip::
-   ;; GET Parameters from the stack 
-   pop   af    ;; [3] AF = Return Address
-   pop   de    ;; [3] DE = Source Address (Sprite data array)
-   pop   hl    ;; [3] HL = Destination address (Video memory location)
-   pop   bc    ;; [3] BC = Height/Width (B = Height, C = Width)
- 
-   push  af    ;; [4] Put returning address in the stack again
-               ;;      as this function uses __z88dk_callee convention
-   ld     a, c ;; [1] A = width
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Source Address (Sprite data array)
+   ;; DE = Destination address (Video memory location)
+   
+   ex   de, hl    ;; [1] DE <-> HL
+   ;; HL = Destination address (Video memory location)
+   ;; DE = Source Address (Sprite data array)
+   
+   ;; GET next parameters from the stack
+   pop  af        ;; [3] AF = Return Address
+   pop  bc        ;; [3] BC = Height/Width (B = Height, C = Width)
+   push af        ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
+
+   ld   a, c      ;; [1] A = C = width
 
 .include /cpct_drawSpriteVFlip.asm/

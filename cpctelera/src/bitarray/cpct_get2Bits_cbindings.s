@@ -20,14 +20,15 @@
 ;;
 ;; C-bindings for calling function <cpct_get2Bits>
 ;;
-;;  12 microSecs, 3 bytes
+;;  1 microSecs, 1 bytes
 ;;
 _cpct_get2Bits::
-   ;; Recover parameters from the stack
-   pop hl           ;; [3] HL = Return Address
-   pop de           ;; [3] DE = Pointer to the array in memory
-   ex (sp), hl      ;; [6] HL = Index of the group of 2 bits we want to get
-                    ;; ... also putting again Return Address where SP is located now
-                    ;; ... as this function is using __z88dk_callee convention
+   ;; Recover parameters from the HL and DE
+   ;; HL = Pointer to the array in memory
+   ;; DE = Index of the group of 2 bits we want to get
+  
+   ex  de, hl        ;; [1] DE <-> HL
+   ;; DE = Pointer to the array in memory
+   ;; HL = Index of the group of 2 bits we want to get
 
 .include /cpct_get2Bits.asm/

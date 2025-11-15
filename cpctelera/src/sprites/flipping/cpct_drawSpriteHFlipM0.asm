@@ -203,7 +203,7 @@ addWidth = .+1
    add   hl, bc         ;; [3] HL += 0x800 + width (HL points to right-most byte of next row)
  
    ;; Check if HL has moved outside of video memory boundaries
-   ld     a, h          ;; [1]   Bits 13,12,11 of H become 0 at the same time when moving outside video memory boundaries
+   ld    a, h           ;; [1]   Bits 13,12,11 of H become 0 at the same time when moving outside video memory boundaries
    and   #0x38          ;; [2]   Isolate bits 13,12,11 
    jr    nz, nextbyte   ;; [2/3] If A!=0, someone of the 3 bits is not 0, so boundaries have not been crossed
 

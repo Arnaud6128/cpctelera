@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2021 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
-;;  Copyright (C) 2021 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2022 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2022 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -98,7 +98,7 @@
 ;;       
 ;;       // Calculate size of our enemy sprite and replace T-Shirt Pattern
 ;;       u8  const size    = ene->width * ene->height;
-;;       cpct_spriteColourizeM0(rplcPat, size, ene->maskedSprite);
+;;       cpct_spriteMaskedColourizeM0(rplcPat, size, ene->maskedSprite);
 ;;     
 ;;       // Remember the new T-shirt Pattern for later changes
 ;;       ene->tsPattern = newPattern;

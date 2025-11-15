@@ -25,11 +25,16 @@
 ;; 15 microseconds, 4 bytes
 ;;
 _cpct_etm_setDrawTilemap4x8_agf::
-   pop   hl                ;; [3] HL = Return Address
-   pop   bc                ;; [3] BC = B:Height, C:Width
-   pop   de                ;; [3] DE = Tileset Pointer
-   ex  (sp), hl            ;; [6] HL = TilemapWidth, leaving previous HL value (return address)
-                           ;; ... at the top of the stack (following __z88dk_callee convention)
+   ;; Get parameters from HL and DE registers and stack ((8 + 8) + (16 + 16) bits), with __sdcccall(1) convention
+   ;; A = Width
+   ;; L = Height  
+   ld    b, l        ;; [1] BC = L:Height, A:Width
+   ld    c, a        ;; [1] |
+   
+   ;; Get next parameters from stack
+   pop   hl          ;; [3] HL = Return address
+   pop   de          ;; [3] DE = Tilemap Width
+   ex   (sp), hl     ;; [6] HL = Tileset Pointer, leaving previous HL value (return address)
 
 .include /cpct_etm_setDrawTilemap4x8_agf.asm/
 

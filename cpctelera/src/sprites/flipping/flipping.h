@@ -47,7 +47,6 @@ extern void cpct_drawSpriteHFlipMasked_at (const void *sprite, void* memory, u8 
 
 //==== Vertically flipping functions
 extern void cpct_vflipSprite     (u8 width, u8 height, void* spbl, void* sprite) __z88dk_callee;
-// cpctm_vflipSpriteMasked (u8 width, u8 height, void* spbl, void* sprite); << DEFINED AS MACRO
 
 //==== Horizontally flipping functions
 extern void cpct_hflipSpriteM0   (u8 width, u8 height, void* sprite) __z88dk_callee;

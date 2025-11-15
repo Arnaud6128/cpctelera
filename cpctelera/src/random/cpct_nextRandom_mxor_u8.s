@@ -93,7 +93,7 @@
 ;; (start code)
 ;;    Case     | microSecs (us) | CPU Cycles
 ;; -----------------------------------------
-;;    Any      |      19        |    76
+;;    Any      |      20        |    80
 ;; -----------------------------------------
 ;; (end code)
 ;;
@@ -144,5 +144,6 @@ cpct_nextRandom_mxor_u8_asm::
    ;; Store y' and w' and return
    ld   h, l   ;; [1] H = y' = z
    ld   l, a   ;; [1] L = w'
+   ex   de, hl ;; [1]
 
-   ret         ;; [3] New state is returned in DE:HL, being L the 8 random bits generated
+   ret         ;; [3] New state is returned in HL:DE, being L the 8 random bits generated

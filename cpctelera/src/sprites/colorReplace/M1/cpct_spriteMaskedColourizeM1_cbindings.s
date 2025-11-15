@@ -23,13 +23,21 @@
 ;;
 ;; C bindings for <cpct_spriteMaskedColourizeM1>
 ;;
-;;   27 us, 7 bytes
+;;   24 us, 8 bytes
 ;;
 _cpct_spriteMaskedColourizeM1::
-   ;; GET Parameters from the stack 
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + 16 bits) with __sdcccall(1) convention
+   ;; HL = Replace Pattern (D=Find Pattern [OldPen], E=Insert Pattern (NewPen))
+   ;; DE = Size of the array/sprite (width*height)
+
+   ex    de, hl                  ;; [1] DE <-> HL
+   ;; DE = Replace Pattern (D=Find Pattern [OldPen], E=Insert Pattern (NewPen))
+   ;; HL = Size of the array/sprite (width*height)
+   ld    b, h                    ;; [1] BC = HL = Size of the array/sprite (width*height)
+   ld    c, l                    ;; [1] |
+   
+   ;; GET next parameters from the stack 
    pop   hl                      ;; [3] HL = Return Address  
-   pop   de                      ;; [3] DE = Replace Pattern (D=Find Pattern [OldPen], E=Insert Pattern (NewPen))
-   pop   bc                      ;; [3] BC = Size of the array/sprite (width*height)
    ex   (sp), hl                 ;; [6] HL = Pointer to the sprite
                                  ;; ... and leave Return Address at (SP) as we don't need to restore
                                  ;; ... stack status because callin convention is __z88dk_callee

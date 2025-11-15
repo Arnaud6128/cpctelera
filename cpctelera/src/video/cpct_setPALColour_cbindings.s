@@ -27,11 +27,13 @@
 ;;
 ;; C bindings for <cpct_setPALColour>
 ;;
-;;   9 us, 2 bytes
+;;   2 us, 2 bytes
 ;;
 _cpct_setPALColour::
-   ;; Get parameters from the stack, with __z88dk_callee convention
-   pop   hl                ;; [3] HL = Return Address
-   ex  (sp), hl            ;; [6] H = hw_ink, L = pen, Return address left at the top of the stack
-
+   ;; Get parameters from A and L registers (8 + 8 bits) with __sdcccall(1) convention
+   ;; A = pen
+   ;; L = hw_ink
+   ld   h, l   ;; [1] H = L = hw_ink
+   ld   l, a   ;; [1] L = A = pen
+   
 .include /cpct_setPALColour.asm/

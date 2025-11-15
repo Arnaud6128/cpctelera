@@ -21,13 +21,21 @@
 ;;
 ;; C bindings for <cpct_etm_drawTilemap4x8_agf>
 ;;
-;; 33 microseconds, 12 bytes
+;; 1 microseconds, 1 bytes
 ;;
 _cpct_etm_drawTilemap4x8_agf::
+   ;; Get parameters from HL and DE registers and stack (16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Video Memory Pointer
+   ;; DE = Tilemap Pointer
+   
+   ex de, hl      ;; [1] DE <-> HL
+   ;; HL = Tilemap Pointer
+   ;; DE = Video Memory Pointer
+
    ;; Parameters
-   pop   hl          ;; [3] HL = Return address
-   pop   de          ;; [3] DE = Video Memory Pointer
-   ex  (sp), hl      ;; [6] HL = Tilemap Pointer, leaving previous HL value (return address)
+  ; pop   hl          ;; [3] HL = Return address
+  ; pop   de          ;; [3] DE = Video Memory Pointer
+  ; ex  (sp), hl      ;; [6] HL = Tilemap Pointer, leaving previous HL value (return address)
                      ;; ... at the top of the stack (following __z88dk_callee convention)
    push  ix          ;; [5] Save IX and IY to let this function...
    push  iy          ;; [5] ...use and restore them before returning

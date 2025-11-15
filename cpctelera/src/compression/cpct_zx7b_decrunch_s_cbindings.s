@@ -23,13 +23,15 @@
 ;;
 ;; ASM bindings for <cpct_zx7b_decrunch>
 ;;
-;;   12 microSecs, 3 bytes
+;;   1 microSecs, 1 bytes
 ;;
 _cpct_zx7b_decrunch_s::
-
-   pop   hl       ;; [3] Get Return address
-   pop   de       ;; [3] DE = Destination
-   ex   (sp), hl  ;; [6] HL = Source (leaving return address at the 
-                  ;;     top of the stack, as convention is __z88dk_callee)
+   ;; Get parameters from HL and DE registers and stack (16 + 16 bits) with __sdcccall(1) convention
+   ;; HL = Destination pointer
+   ;; DE = Source pointer
+   
+   ex  de, hl     ;; [1] HL <-> DE
+   ;; HL = Source pointer
+   ;; DE = Destination pointer
 
 .include  /cpct_zx7b_decrunch_s.asm/

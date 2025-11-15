@@ -215,7 +215,7 @@
 
 .mdelete cpctm_generate_spriteColourizeM1
 .macro cpctm_generate_spriteColourizeM1 _NumIncsHL
-   ;; Calculante E = (FindPat ^ InsrPat). This will be used at the end of the routine
+   ;; Calculate E = (FindPat ^ InsrPat). This will be used at the end of the routine
    ;; to insert InsrPat in the byte by XORing again, as the final operation will
    ;; be performed only on the bits of the SelectedPixels (those coinciding with
    ;; FindPat). This final operation will then be (1) XOR against FindPat (Zeroing bits,

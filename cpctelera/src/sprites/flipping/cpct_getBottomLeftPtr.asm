@@ -127,6 +127,7 @@ add   hl, de      ;; [3] HL = HL + DE = 0x50 * int(He1 / 8) + 0x800 * (He1 % 8)
 ex    af, af'     ;; [1] A = A'     (Restore saved memory 16K bank)
 xor    h          ;; [1] A ^= H     (XOR will make bits 14-15 = 0, ONLY IF both are equal in A and H)
 and   #0b11000000 ;; [2] A &= 0xC0  (Make 0 all bits except 14-15)
+ex    de, hl      ;; [1] DE = return value
 ret    z          ;; [2/4] If result is Zero, HL is at the same memory bank, then we return.
    
 ;; If Ret Z failed, it means that HL points to a different 16K memory bank than 
@@ -136,8 +137,10 @@ ret    z          ;; [2/4] If result is Zero, HL is at the same memory bank, the
 ;; 3 16K memory banks ahead to perform a full cycle around the 4 16K banks of memory.
 ;; That will place our final pointer in the same memory bank as it started, but
 ;; correctly advanced 1 more 8-lines character ahead
+ex    de, hl      ;; [1] DE <-> HL
 ld    bc, #0xC050 ;; [3] BC = 0xC000 + 0x50 (Size of 3 16K Banks + 0x50 for the 8-lines block)
 add   hl, bc      ;; [3] HL = HL + BC = HL + 0xC000 + 0x50
+ex    de, hl      ;; [1] DE = return value
 ret               ;; [3] Final address is ready, return.
 
 

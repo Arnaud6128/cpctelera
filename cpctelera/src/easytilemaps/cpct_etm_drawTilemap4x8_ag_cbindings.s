@@ -24,12 +24,10 @@
 ;; 34 microseconds, 13 bytes
 ;;
 _cpct_etm_drawTilemap4x8_ag::
-   ;; Parameters
-   pop   af          ;; [3] AF = Return address
-   pop   hl          ;; [3] HL = Video Memory Pointer
-   pop   de          ;; [3] DE = Tilemap Pointer
-   push  af          ;; [4] Leave previous AF value (return address)
-                     ;; ... at the top of the stack (following __z88dk_callee convention)
+   ;; Get parameters from HL and DE registers and stack (16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Video Memory Pointer
+   ;; DE = Tilemap Pointer
+   
    push  ix          ;; [5] Save IX and IY to let this function...
    push  iy          ;; [5] ...use and restore them before returning
 

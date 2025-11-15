@@ -21,15 +21,11 @@
 ;;
 ;; C bindings for <cpct_drawTileAligned4x8_f>
 ;;
-;;   13 us, 4 bytes
+;;   0 us, 0 bytes
 ;;
 _cpct_drawTileAligned4x8_f::
-   ;; GET Parameters from the stack (Push+Pop is faster than referencing with IX)
-   pop  af   ;; [3] AF = Return Address
-   pop  hl   ;; [3] HL = Source address
-   pop  de   ;; [3] DE = Destination address
-
-   push af   ;; [4] Put returning address in the stack again
-             ;;      as this function uses __z88dk_callee convention
-
+   ;; Get parameters from HL and DE registers (16 + 16 bits) with __sdcccall(1) convention
+   ;; HL = Pointer to sprite data array
+   ;; DE = Pointer to video memory location where the sprite will be drawn
+   
 .include /cpct_drawTileAligned4x8_f.asm/

@@ -49,7 +49,7 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    14 bytes
+;;    4 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
@@ -65,15 +65,11 @@
 
 _putchar::
 _putchar_rr_s:: 
-   ld   hl, #2    ;; [3] HL points to SP+2 (place where parameters start) 
-   add  hl, sp    ;; [3]
-   ld    a, (hl)  ;; [2] A = Character to be printed out
-
+   ;; A = Character to be printed out
    call  0xBB5A   ;; [5] Firmware function for printing characters
    ret            ;; [3]
 
 _putchar_rr_dbs::
-   ld    a,e      ;; [1] A = Character to be printed out
-
+   ;; A = Character to be printed out
    call  0xBB5A   ;; [5] Firmware function for printing characters
    ret            ;; [3]

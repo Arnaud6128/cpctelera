@@ -23,23 +23,26 @@
 ;;
 ;; C bindings for <cpct_drawSpriteMaskedColorizeM1>
 ;;
-;;   33 us, 10 bytes
+;;   33 us, 13 bytes
 ;;
 _cpct_drawSpriteMaskedColorizeM1::
-   ;; GET Parameters from the stack 
-   pop   hl          ;; [3] HL = Return Address
-   pop   af          ;; [3] AF = Source Sprite Pointer
-   pop   de          ;; [3] DE = Destination video memory pointer
-   pop   bc          ;; [3] BC = (B = Sprite Height, C = Width)
-   ex   (sp), hl     ;; [6] HL = Replace Pattern (H=Find Pattern [OldPen], L=Insert Pattern (NewPen))
-                     ;; ... and leave Return Address at (SP) as we don't need to restore
-                     ;; ... stack status because callin convention is __z88dk_callee
-					 
-   push  ix          ;; [5] Save IX and IY to let this function...
-   push  iy          ;; [5] ...use and restore them before returning        
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Source Sprite Pointer
+   ;; DE = Destination video memory pointer
+
+   ld   (restore_ix), ix ;; [6] Save IX
+
+   ;; GET next parameters from the stack 
+   pop   af              ;; [3] AF = Return Address
+   pop   bc              ;; [3] BC = (B = Sprite Height, C = Width)
+   pop   ix              ;; [4] Replace Pattern (IXH=Find Pattern [OldPen], IXL=Insert Pattern (NewPen))
+   push  af              ;; [4] Restore Return Address at (SP) = AF because __z88dk_callee
+   
+   push  iy              ;; [5] Save IY  
 
 .include /cpct_drawSpriteMaskedColorizeM1.asm/
 
-   pop   iy          ;; [4] / Restore IX, IY
-   pop   ix          ;; [4] \   
-   ret               ;; [3] Return to caller
+restore_ix =.+2
+   ld   ix, #0000        ;; [4] Restore IX
+   pop  iy               ;; [4] Restore IY
+   ret                   ;; [3] Return to caller

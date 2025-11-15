@@ -23,28 +23,29 @@
 ;;
 ;; C bindings for <cpct_drawSpriteMaskedAlignedColorizeM1>
 ;;
-;;   41 us, 19 bytes
+;;   41 us, 16 bytes
 ;;
 _cpct_drawSpriteMaskedAlignedColorizeM1::
-   ;; GET Parameters from the stack 
-   ld (colour_sprite_restore_ix), ix  ;; [6] Save IX to restore it before returning
-   ld (colour_sprite_restore_iy), iy  ;; [6] Save IX to restore it before returning
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Source Sprite Pointer
+   ;; DE = Destination video memory pointer
    
-   ;; GET Parameters from the stack 
+   ld (colour_sprite_restore_ix), ix  ;; [6] Save IX to restore it before returning
+   
+   push hl           ;; [4] Flip HL <-> AF via stack
+   pop  af           ;; [3] | AF = HL Source Sprite Pointer
+   
+   ;; GET next parameters from the stack 
    pop   hl          ;; [3] HL = Return Address
-   pop   af          ;; [3] AF = Source Sprite Pointer
-   pop   de          ;; [3] DE = Destination video memory pointer
    pop   bc          ;; [3] BC = (B = Sprite Height, C = Width)
    pop   ix          ;; [4] IX = Pointer to an Aligned Mask Table for transparencies with palette index 0
    ex   (sp), hl     ;; [6] HL = Replace Pattern (H=Find Pattern [OldPen], L=Insert Pattern (NewPen))
-                     ;; ... and leave Return Address at (SP) as we don't need to restore
-                     ;; ... stack status because callin convention is __z88dk_callee
-
+   
+   push  iy          ;; [5] Save IY to restore it before returning
+  
 .include /cpct_drawSpriteMaskedAlignedColorizeM1.asm/
 
 colour_sprite_restore_ix = .+2
-   ld   ix, #0000               ;; [4] Restore IX before returning 
-   
-colour_sprite_restore_iy = .+2
-   ld   iy, #0000               ;; [4] Restore IX before returning    
-   ret                          ;; [3] Return to caller
+   ld   ix, #0000    ;; [4] Restore IX before returning  
+   pop  iy           ;; [4] Restore IY before returning    
+   ret               ;; [3] Return to caller

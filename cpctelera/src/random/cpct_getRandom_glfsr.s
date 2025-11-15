@@ -108,9 +108,9 @@
 ;; (start code)
 ;;   Case | microSecs(us) | CPU Cycles
 ;; -------------------------------------
-;;  Best  |      19       |     76
+;;  Best  |      18       |     72
 ;; -------------------------------------
-;;  Worst |      26       |    104
+;;  Worst |      25       |    100
 ;; -------------------------------------
 ;; (end code)
 ;;
@@ -191,4 +191,4 @@ end:
    ;; Save new machine state and return
    ld (cpct_randUnif_glfsr16_seed), hl ;; [5] Saves the new state into its place
 
-   ret              ;; [3] Return
+   ret              ;; [3] Return L value

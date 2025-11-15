@@ -23,12 +23,16 @@
 ;;
 ;; C bindings for <cpct_hflipSpriteM2_r>
 ;;
-;;   12 us, 3 bytes
+;;   10 us, 3 bytes
 ;;
 _cpct_hflipSpriteM2_r::
+   ;; Get parameters from HL registers and stack ((16) + (8 + 8) bits), with __sdcccall(1) convention
+   ;; HL = Sprite start address pointer
+   ex  de, hl  ;; [1] DE <-> HL
+   ;; DE = Sprite start address pointer
+   
    ;; Parameter retrieval from stack
    pop  hl     ;; [3] HL = return address
-   pop  de     ;; [3] DE = Sprite start address pointer
    ex (sp), hl ;; [6] HL = height / width, while leaving return address in the
                ;; ... stack, as this function uses __z88dk_callee convention
                

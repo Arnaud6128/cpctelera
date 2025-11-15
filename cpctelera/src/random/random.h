@@ -37,8 +37,8 @@ extern void cpct_setSeed_lcg_u8    (u8      newseed) __z88dk_fastcall;
 //
 extern void cpct_setSeed_glfsr16      (u16       newseed) __z88dk_fastcall;
 extern void cpct_setTaps_glfsr16      (GLFSR16_TAPS taps) __z88dk_fastcall;
-extern u8   cpct_getRandom_glfsr16_u8 ();
-extern u16  cpct_getRandom_glfsr16_u16();
+extern u8   cpct_getRandom_glfsr16_u8 () __z88dk_fastcall;
+extern u16  cpct_getRandom_glfsr16_u16() __z88dk_fastcall;
 
 // -- Based on Marsaglia's XOR-shift algorithm
 //
@@ -50,16 +50,16 @@ extern u32  cpct_nextRandom_mxor532_u8  (u32 seed) __z88dk_fastcall;
 
 // RNG direct user generators (return the random value)
 extern u32  cpct_mxor32_seed;
-extern u8   cpct_getRandom_mxor_u8      ();
-extern u16  cpct_getRandom_mxor_u16     ();
-extern u32  cpct_getRandom_mxor_u32     ();
+extern u8   cpct_getRandom_mxor_u8      () __z88dk_fastcall;
+extern u16  cpct_getRandom_mxor_u16     () __z88dk_fastcall; 
+extern u32  cpct_getRandom_mxor_u32     () __z88dk_fastcall;
 extern void cpct_setSeed_mxor           (u32 newseed) __z88dk_fastcall;
 extern void cpct_restoreState_mxor_u8   ();
 extern void cpct_restoreState_mxor_u16  ();
 
 // -- Based on Marsaglia's XOR-shift+ algorithm
 //
-extern u8   cpct_getRandom_xsp40_u8  ();
+extern u8   cpct_getRandom_xsp40_u8  () __z88dk_fastcall;
 extern void cpct_setSeed_xsp40_u8    (u16 seed8, u32 seed32) __z88dk_callee;
 
 ///

@@ -48,7 +48,7 @@
 ;;    AF, L
 ;;
 ;; Required memory:
-;;     5 bytes
+;;     4 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
@@ -62,5 +62,4 @@
 
 _getchar::
    call  0xBB06   ;; [5] Firmware function to wait for a character input from keyboard
-   ld    l, a     ;; [1] L=A (ASCII code of the keyboard input to be returned)
-   ret            ;; [3]
+   ret            ;; [3] return = A = (ASCII code of the keyboard input to be returned)

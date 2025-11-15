@@ -21,15 +21,15 @@
 ;;
 ;; C bindings for <cpct_drawTileGrayCode2x8_af>
 ;;
-;;   12 us, 3 bytes
+;;   1 us, 1 bytes
 ;;
 _cpct_drawTileGrayCode2x8_af::
-
-   ;; GET Parameters from the stack
-   pop  hl     ;; [3] HL = Return Address
-   pop  de     ;; [3] DE = Pointer to video memory location where the sprite will be drawn
-   ex (sp), hl ;; [6] HL = Pointer to the end of the sprite array...
-               ;;     ...  and put returning address in the stack again
-               ;;     ... as this function uses __z88dk_callee convention
+   ;; Get parameters from HL and DE registers (16 + 16 bits) with __sdcccall(1) convention
+   ;; HL = Pointer to video memory location where the sprite will be drawn
+   ;; DE = Pointer to the end of the sprite array
+  
+   ex  de, hl  ;; [1] DE <-> HL
+   ;; HL = Pointer to the end of the sprite array
+   ;; DE = Pointer to video memory location where the sprite will be drawn
 
 .include /cpct_drawTileGrayCode2x8_af.asm/

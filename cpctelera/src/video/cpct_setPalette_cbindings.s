@@ -22,14 +22,11 @@
 ;;
 ;; C bindings for <cpct_setPalette>
 ;;
-;;   13 microSecs, 4 bytes
+;;   0 microSecs, 0 bytes
 ;;  
 _cpct_setPalette::
-   ;; Getting parameters from stack
-   pop  af  ;; [3] AF = Return address
-   pop  hl  ;; [3] HL = Pointer to the start of the array with hardware colour valures to be established as palette
-   pop  de  ;; [3] DE = Size of the colour array
-   push af  ;; [4] Put returning address in the stack again
-            ;;     as this function uses __z88dk_callee convention
-
+   ;; Get parameters from HL and DE registers(16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Pointer to the start of the array with hardware colour valures to be established as palette
+   ;; DE = Size of the colour array
+   
 .include /cpct_setPalette.asm/

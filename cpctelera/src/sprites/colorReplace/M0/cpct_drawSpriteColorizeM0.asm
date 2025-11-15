@@ -113,7 +113,7 @@
 ;; Thanks to all of them for their help and support.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-   push  af        ;; [4] Save AF (Source Sprite Pointer) in stack
+   push  hl        ;; [4] Save HL (Source Sprite Pointer) in stack
 
    ;; Compute E = (FindPat ^ InsrPat). This will be used at the end of the routine
    ;; to insert InsrPat in the byte by XORing again, as the final operation will
@@ -121,12 +121,11 @@
    ;; FindPat). This final operation will then be (1) XOR against FindPat (Zeroing bits,
    ;; because they are equal) and (2) XOR againts InsrPat (Inserting InsrPat bits, 
    ;; because its an XOR against zeros). That way, we will perform 2 operations on 1.
-   ld    a, l      ;; [1] / IYL = (InsrPat ^ FindPat)
-   xor   h         ;; [1] |
+   ld__a_ixl       ;; [2] / IYL = (InsrPat ^ FindPat)
+   xor__ixh        ;; [2] |
    ld__iyl_a       ;; [2] \ 
 
-   ld    a, h      ;; [1] / IXL = H (FindPat) Save for later use
-   ld__ixl_a       ;; [2] \
+   ld__ixl_ixh     ;; [2] IXL = IXH (FindPat) Save for later use
 
    ld__iyh_c       ;; [2] IYH = C (Sprite Width) Save for later use
    pop   hl        ;; [3] HL = Recover from stack (Source Sprite Pointer)

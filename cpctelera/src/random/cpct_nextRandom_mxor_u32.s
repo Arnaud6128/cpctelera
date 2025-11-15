@@ -95,7 +95,7 @@
 ;; (start code)
 ;;    Case     | microSecs (us) | CPU Cycles
 ;; -----------------------------------------
-;;    Any      |      37        |    148
+;;    Any      |      38        |    152
 ;; -----------------------------------------
 ;; (end code)
 ;;
@@ -153,5 +153,6 @@ cpct_nextRandom_mxor_u32_asm::
    xor   b      ;; [1] |    b = (d' >> 1)
    xor   c      ;; [1] |    c = [ bit0 of l' | 0000000 ]
    ld    e, a   ;; [1] | e'' = e' XOR b XOR c 
+   ex    de, hl ;; [1]
 
-   ret          ;; [3] New value is returned in DE:HL
+   ret          ;; [3] New value is returned in HL:DE

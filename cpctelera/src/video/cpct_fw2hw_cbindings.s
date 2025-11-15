@@ -31,11 +31,20 @@
 ;;   13 microSecs, 4 bytes
 ;;  
 _cpct_fw2hw::
-   ;; Get parameters from the stack
-   pop  af  ;; [3] AF = Return Address
-   pop  de  ;; [3] DE = Pointer to the array of firmware colour values to be converted (1st parameter)
-   pop  bc  ;; [3] BC = Number of colors to convert (2nd parameter)
-   push af  ;; [4] Put returning address in the stack again
+   ;; Get parameters from HL and DE registers(16 + 16 bits), with __sdcccall(1) convention
+   ;; HL = Pointer to the array of firmware colour values to be converted
+   ;; DE = Number of colors to convert
+   
+   ex de, hl ;; [1] DE <-> HL
+             ;; DE = Pointer to the array of firmware colour values to be converted 
+   
+   ld b, h   ;; [1] BC = HL = Number of colors to convert
+   ld c, l   ;; [1] |
+   
+  ; pop  af  ;; [3] AF = Return Address
+  ; pop  de  ;; [3] DE = Pointer to the array of firmware colour values to be converted (1st parameter)
+  ; pop  bc  ;; [3] BC = Number of colors to convert (2nd parameter)
+  ; push af  ;; [4] Put returning address in the stack again
             ;;     as this function uses __z88dk_callee convention
 
 .include /cpct_fw2hw.asm/

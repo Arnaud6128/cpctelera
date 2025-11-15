@@ -23,10 +23,14 @@
 ;;  23 microSecs, 12 bytes
 ;;
 _cpct_etm_drawTileBox2x4::
+   ;; Get parameters from HL and DE registers and stack ((8 + 8) + (16 + 16) bits), with __sdcccall(1) convention
+   ;; A = x coordinate
+   ;; L = y coordinate  
+   ld   b, l                   ;; [1] BC = L:y coordinate, A:x coordinate
+   ld   c, a                   ;; [1] |
   
    pop  hl                     ;; [3] HL = Return address
    ld (simulated_return+1), hl ;; [5] Save return address for simulated return
-   pop  bc                     ;; [3] C = x coordinate, B = y coordinate
    pop  hl                     ;; [3] H = height in tiles, L = width in tiles
    dec  sp                     ;; [2] Move SP 1 byte as next parameter (map_width is 1-byte length)
    pop  af                     ;; [3] A = map_width (width in tiles of a complete row of the tilemap)
@@ -39,7 +43,3 @@ _cpct_etm_drawTileBox2x4::
 simulated_return:
    ld   hl, #0000              ;; [3] HL = return address
    jp   (hl)                   ;; [1] Do a manual "ret"
-
-;; extern void cpct_etm_redrawTileBox  
-;;    (u8 x, u8 y, u8 w, u8 h, u8 map_width, 
-;;     void* pvideomem, const void* ptilemap) __z88dk_callee;

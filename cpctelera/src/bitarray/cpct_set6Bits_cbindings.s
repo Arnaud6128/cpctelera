@@ -20,14 +20,21 @@
 ;;
 ;; C-bindings for calling function <cpct_set6Bits>
 ;;
-;;  15 microSecs, 4 bytes
+;;  11 microSecs, 4 bytes
 ;;
 _cpct_set6Bits::
-   ;; Recover parameters from the stack
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (16) bits), with __sdcccall(1) convention
+   ;; HL = Pointer to the array in memory
+   ;; DE = Value to be set (Only E is used)
+   
+   ex de, hl        ;; [1] DE <-> HL : 
+   ;; DE = Pointer to the array in memory
+   ;; HL = Value to be set (Only L is used)
+   ld c, l          ;; [1] C = Value to be set = L
+
+   ;; Recover next parameters from the stack
    pop hl           ;; [3] HL = Return Address
-   pop de           ;; [3] DE = Pointer to the array in memory
-   pop bc           ;; [3] BC = New value to be stored
-   ex (sp), hl      ;; [6] HL = Index of the 6-bits value we want to get
+   ex (sp), hl      ;; [6] HL = Index of the group of 2 bits we want to set
                     ;; ... also putting again Return Address where SP is located now
                     ;; ... as this function is using __z88dk_callee convention
 

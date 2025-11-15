@@ -20,18 +20,20 @@
 ;;
 ;; C call binding for <cpct_memset>
 ;;
-;;   18 us, 6 bytes
+;;   15 us, 6 bytes
 ;;
 _cpct_memset::
-   ;; Recover parameters from stack
-   pop  hl   ;; [3] HL = Return address
-   pop  de   ;; [3] DE = Pointer to the array to be set (1st parameter)
-   dec  sp   ;; [2] 
-   pop  af   ;; [3] A  = Value to be set (2nd parameter)
-   pop  bc   ;; [3] BC = Size of the array (3rd parameter)
-
-   push hl   ;; [4] Put returning address in the stack again
-             ;;      as this function uses __z88dk_callee convention
+   ;; Get parameters from HL register and stack (16 + (8 + 16) bits), with __sdcccall(1) convention
+   ex   de, hl ;; [1] DE <-> HL
+   ;; DE = HL Pointer to the array to be set (1st parameter)
+   
+   ;; Get next parameters from the stack 
+   pop  hl     ;; [3] HL = Return address
+   dec  sp     ;; [2] 
+   pop  af     ;; [3] A  = Value to be set (2nd parameter)
+   pop  bc     ;; [3] BC = Size of the array (3rd parameter)
+   push hl     ;; [4] Put returning address in the stack again
+               ;;      as this function uses __z88dk_callee convention
 
 .include /cpct_memset.asm/
 

@@ -26,13 +26,13 @@
 ;;   16 us, 5 bytes
 ;;
 _cpct_drawSprite::
-   ;; GET Parameters from the stack 
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits), with __sdcccall(1) convention
+   ;; HL = Source Address (Sprite data array)
+   ;; DE = Destination address (Video memory location)
+
+   ;; Get next parameters from the stack 
    pop  af   ;; [3] AF = Return Address
-   pop  hl   ;; [3] HL = Source Address (Sprite data array)
-   pop  de   ;; [3] DE = Destination address (Video memory location)
    pop  bc   ;; [3] BC = Height/Width (B = Height, C = Width)
- 
-   push af   ;; [4] Put returning address in the stack again
-             ;;      as this function uses __z88dk_callee convention
+   push af   ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
 
 .include /cpct_drawSprite.asm/

@@ -95,16 +95,16 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    C-bindings - 22 bytes
-;;  ASM-bindings - 18 bytes
+;;    C-bindings - 24 bytes
+;;  ASM-bindings - 20 bytes
 ;;
 ;; Time Measures: 
 ;; (start code)
 ;;     Case   | microSecs (us) | CPU Cycles
 ;; -----------------------------------------
-;;     Any    |      43        |     172
+;;     Any    |      45        |     159
 ;; -----------------------------------------
-;; Asm saving |     -13        |     -52
+;; Asm saving |     -13        |     -41
 ;; -----------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -134,7 +134,8 @@
                   ;;     Therefore, this is like doing HL += 256*L
 
    ;; Now extract Screen Character Row (R) from Y-Coordinate
-   xor   b        ;; [1] / rA = ( rB and #0x07 ) xor rB  =  rB and #0xF8
+   ld    a, b     ;; [1] rA = Y-Coordinate
+   and   #0xF8    ;; [2] /
    ld    l, a     ;; [1] \ rL = 8*int(Y/8) ;; << L contains Screen Character Row multiplied by 8
                                            ;;    as bits are shifted 3-bits to the left because
                                            ;;    the 3-least-significant-bits had the line number (L)
@@ -168,5 +169,6 @@
    ;; Add up screen start address we still keep in DE
    add   hl, de   ;; [3] rHL' = rHL + screen_start
 
-   ;; HL now contains the pointer to the byte in the video buffer. Just return it
+   ;; DE now contains the pointer to the byte in the video buffer. Just return it
+   ex    de, hl   ;; [1] HL <-> DE
    ret            ;; [3] return rHL = Pointer to the video buffer at (X,Y) byte coordinates

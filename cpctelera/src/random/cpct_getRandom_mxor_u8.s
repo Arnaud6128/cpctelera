@@ -108,6 +108,6 @@ next_rand:
    adc  h                        ;; [1] |  seed buffer that will be returned as random value
    sub  l                        ;; [1] |  (A is the number of random bytes left)
    ld   h, a                     ;; [1] \  
-   ld   l, (hl)                  ;; [2] L = next 8-bits random value 
+   ld   l, (hl)                  ;; [2] L = next 8-bits random value                   ;; [1]
 
    ret          ;; [3] Returns next 8-bits random value

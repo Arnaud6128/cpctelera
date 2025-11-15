@@ -23,12 +23,13 @@
 ;;   13 microSecs, 4 bytes
 ;;
 _cpct_getScreenPtr::
-   ;; Get Parameters from stack
-   pop  af   ;; [3] AF = Return Address
-   pop  de   ;; [3] DE = Pointer to start of screen memory
-   pop  bc   ;; [3] B = y coordinate in bytes, C = x coordinate in bytes
-
-   push af   ;; [4] Put returning address in the stack again
-             ;;      as this function uses __z88dk_callee convention
+    ;; Get parameters from HL registers and stack (16 + (8 + 8) bits), with __sdcccall(1) convention   
+    ld d, h   ;; [1] DE = HL = Pointer to start of screen memory
+    ld e, l   ;; [1]
+   
+    pop  af   ;; [3] AF = Return Address
+    pop  bc   ;; [3] B = y coordinate in bytes, C = x coordinate in bytes
+    push af   ;; [4] Put returning address in the stack again
+              ;;      as this function uses __z88dk_callee convention
 
 .include /cpct_getScreenPtr.asm/

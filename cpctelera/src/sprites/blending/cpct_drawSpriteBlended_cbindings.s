@@ -23,12 +23,15 @@
 ;;
 ;; C bindings for <cpct_drawSpriteBlended>
 ;;
-;;   15 us, 4 bytes
+;;   14 us, 5 bytes
 ;;
 _cpct_drawSpriteBlended::
-   ;; GET Parameters from the stack 
+   ;; Get parameters from HL registers and stack (16 + (16 + 16) bits), with __sdcccall(1) convention
+   ;; HL = Destination address (Video memory location)
+   ld   d, h   ;; [1] DE = HL = Destination address (Video memory location)
+   ld   e, l   ;; [1]
+   
    pop  hl     ;; [3] HL = Return Address
-   pop  de     ;; [3] DE = Destination address (Video memory location)
    pop  bc     ;; [3] BC = Height/Width (B = Width, C = Height)
    ex (sp), hl ;; [6] HL = Source Address (Sprite data array)
                ;; ... And put returning address in the stack again
