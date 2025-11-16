@@ -788,15 +788,16 @@ function checkSystem {
          "cygwin32") 
             if [[ "$SYS" =~ "CYGWIN" ]]; then
                SYS=$(uname -a)
-               if [[ ! "$SYS" =~ "64" ]]; then
+               if [[ ! "$SYS" =~ "i686" ]]; then
                   return 0
+				  
                fi
             fi
          ;;
          "cygwin64") 
             if [[ "$SYS" =~ "CYGWIN" ]]; then
                SYS=$(uname -a)
-               if [[ "$SYS" =~ "64" ]]; then
+               if [[ "$SYS" =~ "x86_64" ]]; then
                   return 0
                fi
             fi
