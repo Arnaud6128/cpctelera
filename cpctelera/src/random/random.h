@@ -54,8 +54,8 @@ extern u8   cpct_getRandom_mxor_u8      () __z88dk_fastcall;
 extern u16  cpct_getRandom_mxor_u16     () __z88dk_fastcall; 
 extern u32  cpct_getRandom_mxor_u32     () __z88dk_fastcall;
 extern void cpct_setSeed_mxor           (u32 newseed) __z88dk_fastcall;
-extern void cpct_restoreState_mxor_u8   ();
-extern void cpct_restoreState_mxor_u16  ();
+extern void cpct_restoreState_mxor_u8   (void);
+extern void cpct_restoreState_mxor_u16  (void);
 
 // -- Based on Marsaglia's XOR-shift+ algorithm
 //
@@ -82,8 +82,8 @@ extern void cpct_setSeed_xsp40_u8    (u16 seed8, u32 seed32) __z88dk_callee;
 #define cpct_rand8         cpct_getRandom_mxor_u8
 #define cpct_rand16        cpct_getRandom_mxor_u16
 #define cpct_rand32        cpct_getRandom_mxor_u32
-#define cpct_srand8(SEED)  cpct_setSeed_mxor((SEED)); cpct_restoreState_mxor_u8();
-#define cpct_srand16(SEED) cpct_setSeed_mxor((SEED)); cpct_restoreState_mxor_u16();
+#define cpct_srand8(SEED)  cpct_setSeed_mxor((SEED)); cpct_restoreState_mxor_u8(void);
+#define cpct_srand16(SEED) cpct_setSeed_mxor((SEED)); cpct_restoreState_mxor_u16(void);
 #define cpct_rand          cpct_rand8
 #define cpct_srand         cpct_srand8
 

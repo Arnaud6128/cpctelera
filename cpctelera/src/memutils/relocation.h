@@ -80,7 +80,7 @@
 //    // Failing to add a relocation macro here will produce 
 //    // the compiler to add a ".area _CODE" directive before 
 //    // music data. This happens in data-only files.
-//    CPCT_RELOCATABLE_AREA();
+//    CPCT_RELOCATABLE_AREA(void);
 //
 //    // This is the end of the file music.c
 // (end code)
@@ -211,7 +211,7 @@ void dummy_absolute_##MEM (void) __naked
 //       // .. 1000 bytes of data
 //    };
 //    
-//    CPCT_RELOCATABLE_AREA();
+//    CPCT_RELOCATABLE_AREA(void);
 //
 //    // 
 //    // Next data and functions will be added to the _CODE area, 
@@ -234,7 +234,7 @@ void dummy_absolute_##MEM (void) __naked
 //       // function code...
 //    }
 //
-//    CPCT_RELOCATABLE_AREA();
+//    CPCT_RELOCATABLE_AREA(void);
 //
 //    // Main function will be placed in relative _CODE area managed
 //    // by the linker. 

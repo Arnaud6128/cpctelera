@@ -29,16 +29,16 @@
 
 // Enabling and disabling Firmware
 extern void cpct_reenableFirmware(u16 firmware_ROM_code) __z88dk_fastcall;
-extern  u16 cpct_disableFirmware();
+extern  u16 cpct_disableFirmware(void);
 
 // Setting a user defined interrupt handler routine
 extern void cpct_setInterruptHandler( void(*intHandler)(void) ) __z88dk_fastcall;
-extern  u16 cpct_removeInterruptHandler();
+extern  u16 cpct_removeInterruptHandler(void);
 
 // Upper and Lower ROM control
-extern void cpct_enableLowerROM();
-extern void cpct_disableLowerROM();
-extern void cpct_enableUpperROM();
-extern void cpct_disableUpperROM();
+extern void cpct_enableLowerROM(void);
+extern void cpct_disableLowerROM(void);
+extern void cpct_enableUpperROM(void);
+extern void cpct_disableUpperROM(void);
 
 #endif

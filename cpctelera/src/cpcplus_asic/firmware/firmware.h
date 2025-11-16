@@ -23,12 +23,12 @@
 #include <types.h>
 
 // Asic unlock and connect/disconnect page
-extern void cpct_asicUnlock();
-extern void cpct_asicPageConnect();
-extern void cpct_asicPageDisconnect();
+extern void cpct_asicUnlock(void);
+extern void cpct_asicPageConnect(void);
+extern void cpct_asicPageDisconnect(void);
 
 // Setting a user defined lines interrupt handler routine
 extern void cpct_asicSetLinesInterruptHandler(void(*intHandler)(u8 line) __z88dk_fastcall, u8* lines_interrupt, u16 nb_lines) __z88dk_callee;
-extern u16 cpct_asicRemoveLinesInterruptHandler();
+extern u16 cpct_asicRemoveLinesInterruptHandler(void);
 
 #endif

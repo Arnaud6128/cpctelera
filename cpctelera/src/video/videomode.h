@@ -28,10 +28,10 @@
 extern void cpct_setVideoMode (u8 videoMode) __z88dk_fastcall;
 
 // VSYNC functions
-extern void cpct_waitVSYNC      ();
-extern void cpct_waitVSYNCStart ();
-extern   u8 cpct_getVSYNCStatus ();
-extern  u16 cpct_count2VSYNC    ();
+extern void cpct_waitVSYNC      (void);
+extern void cpct_waitVSYNCStart (void);
+extern   u8 cpct_getVSYNCStatus (void);
+extern  u16 cpct_count2VSYNC    (void);
 
 // Palette functions
 extern void cpct_fw2hw        (void *fw_colour_array, u16 size) __z88dk_callee;
