@@ -23,7 +23,7 @@
 ;;   12 us, 65 bytes
 ;;
 _cpct_drawSpriteVFlip::
-   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits) with __sdcccall(1) convention
    ;; HL = Source Address (Sprite data array)
    ;; DE = Destination address (Video memory location)
    

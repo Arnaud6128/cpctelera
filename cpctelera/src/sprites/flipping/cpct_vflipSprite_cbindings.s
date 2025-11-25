@@ -20,12 +20,17 @@
 ;;
 ;; C bindings for <cpct_vflipSprite>
 ;;
-;;   15 us, 4 bytes
+;;   14 us, 5 bytes
 ;;
 _cpct_vflipSprite::
+   ;; Get parameters from HL registers and stack ((8 + 8) + (16 + 16) bits), with __sdcccall(1) convention
+   ;; A = Width
+   ;; L = Height
+   ld   b, a    ;; [1] B = Width
+   ld   c, l    ;; [1] C = Height
+
    ;; Parameter retrieval from stack
    pop  hl     	;; [3] HL = return address
-   pop  bc     	;; [3] BC = height / width of the sprite
    pop  de     	;; [3] DE = sprite bottom-left pointer
    ex (sp), hl 	;; [6] HL = Sprite start address pointer, while leaving return address 
                	;; ... in the stack, as this function uses __z88dk_callee convention

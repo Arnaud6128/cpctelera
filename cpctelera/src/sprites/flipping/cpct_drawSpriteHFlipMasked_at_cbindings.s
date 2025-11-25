@@ -23,21 +23,22 @@
 ;;
 ;; C bindings for <cpct_drawSpriteHFlipMasked_at>
 ;;
-;;   34 us, 17 bytes
+;;   28 us, 10 bytes
 ;;
 
 _cpct_drawSpriteHFlipMasked_at::
-   ld (restoreIX), ix   ;; [6] Save IX before using it
-
-;; Parameter retrieval
-   pop   af          ;; [3] AF = Return address
-   pop   de          ;; [3] DE = Sprite start address pointer
-   pop   hl          ;; [3] HL = Video memory address to draw the sprite
-   pop   ix          ;; [4] IXL = Width, IXH = Height
-   pop   bc          ;; [3] BC = Pointer to Pixel Flipping Table
-   push  af          ;; [4] Leave only return address in the stack, 
-                     ;; ... as this function uses __z88dk_callee convention
-   ld    a, b        ;; [1] A = Most Significant byte of Pixel Flipping Table Address
+   ld (restoreIX), ix  ;; [6] Save IX before using it
+   
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Source Address (Sprite data array)
+   ;; DE = Destination address (Video memory location)
+   
+   ;; GET next parameters from the stack
+   pop   af            ;; [3] AF = Return address
+   pop   ix            ;; [4] IXL = Width, IXH = Height
+   pop   bc            ;; [3] BC = Pointer to Pixel Flipping Table
+   push  af            ;; [4] Leave only return address in the stack as this function uses __z88dk_callee convention
+   ld    a, b          ;; [1] A = Most Significant byte of Pixel Flipping Table Address
 
 .include /cpct_drawSpriteHFlipMasked_at.asm/
 

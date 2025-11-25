@@ -24,21 +24,23 @@
 ;;
 ;; C bindings for <cpct_drawSpriteHFlipM0>
 ;;
-;;   28 us, 10 bytes
+;;   14 us, 5 bytes
 ;;
 
 _cpct_drawSpriteHFlipM0::
-;; Parameter retrieval
-   pop   af    ;; [3] AF = Return address
-   pop   de    ;; [3] DE = Sprite start address pointer
-   pop   hl    ;; [3] HL = Video memory address to draw the sprite
-   pop   bc    ;; [3] BC = height / width
-   push  af    ;; [4] Leave only return address in the stack, 
-               ;; ... as this function uses __z88dk_callee convention
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits) with __sdcccall(1) convention
+   ;; HL = Source Address (Sprite data array)
+   ;; DE = Destination address (Video memory location)
+
+   ex   de, hl    ;; [1] DE <-> HL
+   ;; HL = Destination address (Video memory location)
+   ;; DE = Source Address (Sprite data array)
    
-   push  ix    ;; [5] Save IX
+   ;; GET next parameters from the stack
+   pop  af        ;; [3] AF = Return Address
+   pop  bc        ;; [3] BC = Height/Width (B = Height, C = Width)
+   push af        ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention		 
 
 .include /cpct_drawSpriteHFlipM0.asm/
 
-   pop   ix    ;; [4] Restore IX before returning
-   ret         ;; [3] Return to caller
+   ret            ;; [3] Return to caller

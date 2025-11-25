@@ -121,7 +121,7 @@ px1_repeat:
    inc  hl               ;; [2] HL points to next pixel in firmware colour (next parameter)
    djnz px1_repeat       ;; [3/4] Repeat until B=0 (until 4 pixels have been converted)
 
-   ld    l, c            ;; [1] L = B, put return value into L
+   ld    a, c            ;; [1] A = B, put return value into A
 
    ret                   ;; [3] return
 

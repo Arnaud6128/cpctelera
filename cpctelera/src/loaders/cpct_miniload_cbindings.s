@@ -18,19 +18,24 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_loaders
 
+;; Macros for easy use of undocumented opcodes
+.include "macros/cpct_undocumentedOpcodes.h.s"
+
 ;;
 ;; C bindings for <cpct_miniload>
 ;;
-;;   28 us, 13 bytes
+;;   19 us, 12 bytes
 ;;
 _cpct_miniload::
-   ld   (saveix), ix ;; [6] Save IX before using it
-
-   pop   hl          ;; [3] HL = Return address
-   pop   ix          ;; [5] IX = Loading memory address
-   pop   de          ;; [3] DE = Size in bytes of the block to read from Cassette
-   push  hl          ;; [4] Save return address on the top of the stack to fullfill
-                     ;; .... __z88dk_callee convention
+   ld   (saveix), ix  ;; [6] Save IX before using it
+   
+   ;; Get parameters from HL and DE registers and stack (16 + 16 bits) with __sdcccall(1) convention
+   ;; HL = Loading memory address
+   ;; DE = Size in bytes of the block to read from Cassette
+   ld   a, h          ;; [1] IX = HL = Loading memory address
+   ld__ixh_a          ;; [2] |
+   ld   a, l          ;; [1] |
+   ld__ixl_a          ;; [2] |
 
 .include /cpct_miniload.asm/
 
