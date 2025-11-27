@@ -29,7 +29,7 @@ cpctm_createTransparentMaskTable(gMaskTable, MASK_TABLE_LOC, M0, 0);
 /// 
 //    Initializes the CPC and all systems before starting the main loop
 //
-void Initialization()
+void Initialization(void)
 {
     // We need to disable firmware in order to set the palette and
     // to be able to use a second screen between 0x8000 and 0xBFFF
@@ -43,7 +43,7 @@ void Initialization()
 /// 
 //    Initializes the the next test in mode 0
 //
-void InitializationMode0Test()
+void InitializationMode0Test(void)
 {
 	cpct_setVideoMode(0); 
     cpct_setBorder(HW_SKY_BLUE);     // Set the border color with Hardware color    
@@ -54,7 +54,7 @@ void InitializationMode0Test()
 ///////////////////////////////////////////////////////
 /// SMALL TEST FOR MODE1
 /// 
-void TestMode1()
+void TestMode1(void)
 {          
     // Calculate and return screen pointer
     u8* vmem = cpct_getScreenPtr((u8*)CPCT_VMEM_START, 0, 0);

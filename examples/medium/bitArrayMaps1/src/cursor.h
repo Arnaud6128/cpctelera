@@ -40,7 +40,7 @@ typedef enum {
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 void cursor_setLocation(u8 x, u8 y);
-void cursor_draw       ();
+void cursor_draw       (void);
 void cursor_move       (TMoveDir dir);
-u8   cursor_getX       ();
-u8   cursor_getY       ();
+u8   cursor_getX       (void);
+u8   cursor_getY       (void);

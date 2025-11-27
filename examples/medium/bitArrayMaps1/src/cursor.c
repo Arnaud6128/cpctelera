@@ -61,7 +61,7 @@ void cursor_setLocation(u8 x, u8 y) {
 // redraws the tile under the cursor to be sure that it is updated
 // and will be seen through the transparent part of the cursor.
 //
-void cursor_draw() {
+void cursor_draw(void) {
    u8 *pmem;
 
    // Draw the tile that lies at the current cursor location
@@ -99,5 +99,5 @@ void cursor_move(TMoveDir dir) {
 // getX, getY
 //    Returns X or Y coordinate of the cursor location
 //
-u8 cursor_getX() { return cursor_x; }
-u8 cursor_getY() { return cursor_y; }
+u8 cursor_getX(void) { return cursor_x; }
+u8 cursor_getY(void) { return cursor_y; }

@@ -48,7 +48,7 @@ u8* video_buffer;
 // back buffer. There it is safe to draw anything, as it will not be displayed 
 // until a call to switchBuffers is performed.
 //
-u8* video_getBackBufferPtr() {
+u8* video_getBackBufferPtr(void) {
    return video_buffer;
 }
 
@@ -58,7 +58,7 @@ u8* video_getBackBufferPtr() {
 // screen immediately (after next VSYNC), also shadowing current displayed screen,
 // that will be considered next hardware backbuffer.
 //
-void video_switchBuffers() {
+void video_switchBuffers(void) {
    // Check were the current backbuffer is pointing and switch buffers
    // accordingly (if video_buffer points to our default HW_BACKBUFFER,
    // make it point to default VMEM_START, else make it point to HW_BACKBUFFER)
@@ -80,7 +80,7 @@ void video_switchBuffers() {
 // INITIALIZE VIDEO BUFFERS
 //    Ensures initial conditions for both video buffers to be used.
 //
-void video_initBuffers() {
+void video_initBuffers(void) {
    // Hardware backbuffer has to be cleared as it usually has code in it that
    // would be displayed as coloured pixels if not set to 0.
    cpct_memset(HW_BACKBUFFER, 0, 0x4000);  // 16K HW_BACKBUFFER set to 0

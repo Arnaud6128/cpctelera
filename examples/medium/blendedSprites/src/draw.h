@@ -25,9 +25,9 @@
 ///   Declared here to let other modules use them
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
-void drawBackground();
-void drawCurrentSpriteAtRandom();
-void drawUserInterfaceStatus();
-void drawUserInterfaceMessages();
+void drawBackground(void);
+void drawCurrentSpriteAtRandom(void);
+void drawUserInterfaceStatus(void);
+void drawUserInterfaceMessages(void);
 
 #endif

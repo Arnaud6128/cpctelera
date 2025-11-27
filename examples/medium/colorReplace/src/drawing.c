@@ -134,7 +134,7 @@ void DeleteBaloons(SBaloon* baloons, SBaloon* baloonToDel, u8* nb)
 ///////////////////////////////////////////////////////
 /// UPDATE BALOONS
 ///
-void UpdateBaloons()
+void UpdateBaloons(void)
 {
     SBaloon* itBaloon = gBaloons.baloons;
     u8 i;
@@ -250,7 +250,7 @@ void DrawBaloon(SBaloon* baloon, u8* spriteBaloon)
 ///////////////////////////////////////////////////////
 /// DRAW STARS
 ///
-void DrawStars()
+void DrawStars(void)
 {  
     // Colors of stars
     const static u8 sColorStar[NB_COLORS_STAR]  = { 2, 4, 7, 8, 10, 11, 12 };	
@@ -296,7 +296,7 @@ void DrawStars()
 ///////////////////////////////////////////////////////
 /// DRAW CLOUD
 /// 
-void DrawCloud()
+void DrawCloud(void)
 {
     // Draw cloud at fixed place
     u8* pvmem = GetBackBufferPtr(0, POS_CLOUD_Y);
@@ -306,7 +306,7 @@ void DrawCloud()
 ///////////////////////////////////////////////////////
 /// DRAW SCENE WITH ALL BALOONS
 ///
-void DrawSceneBaloons()
+void DrawSceneBaloons(void)
 {
     // Clear background for all baloons
     SBaloon* itBaloon = gBaloons.baloons; // Get first baloon pointer
@@ -339,7 +339,7 @@ void DrawSceneBaloons()
 ///////////////////////////////////////////////////////
 /// DRAW BACKGROUND BLUE SKY AND ROOF
 /// 
-void DrawBackground()
+void DrawBackground(void)
 {
     u8* pvmem;
     
@@ -363,7 +363,7 @@ void DrawBackground()
 /// 
 /// Initializes global variables and general status for drawing functions
 /// 
-void InitializeDrawing()
+void InitializeDrawing(void)
 {
     gBackGroundColor = cpctm_px2byteM0(14, 14);             // Get byte color of background for M0
     gBaloons.nb = 0;                                        // No baloon to draw at start

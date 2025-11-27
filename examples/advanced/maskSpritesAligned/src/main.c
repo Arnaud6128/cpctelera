@@ -48,7 +48,7 @@ typedef struct {
 //    Disables firmware, initializes palette and video mode and
 // draws the background
 //
-void initialization (){ 
+void initialization (void){ 
    cpct_disableFirmware();          // Disable firmware to prevent it from interfering
    cpct_setPalette(g_palette, 7);   // Set palette using hardware colour values
    cpct_setBorder (HW_BLACK);       // Set border colour same as background (Black)

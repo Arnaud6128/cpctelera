@@ -91,7 +91,7 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////////
 
     u8 * getScreenPointer(u8 y);
-TEntity* getPersea();
+TEntity* getPersea(void);
     void updateEntity(TEntity *ent);
     void setAnimation(TEntity *ent, TEntityStatus newstatus);
       i8 moveEntityX (TEntity* ent, i8 mx);

@@ -39,7 +39,7 @@
 //
 // INITIALIZE: Initialize CPC, Draw Floor and Instructions
 //
-void initialize() {
+void initialize(void) {
    u8* pvideomem;               // Pointer to video memory
 
    // Disable firmware to prevent it from interfering with setPalette and setVideoMode

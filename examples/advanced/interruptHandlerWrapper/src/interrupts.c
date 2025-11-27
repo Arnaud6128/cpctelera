@@ -24,7 +24,7 @@
 //    To let us see when do this happen visually, this code changes the color
 // of the border each time it is called.
 //
-void myInterruptHandler() {
+void myInterruptHandler(void) {
    static u8 i;            // Static variable to be preserved from call to call
    cpct_setBorder(i+1);    // Set the color of the border differently for each interrupt  
    if (++i > 5) i=0;       // Count one more interrupt. There are 6 interrupts in total (0-5)

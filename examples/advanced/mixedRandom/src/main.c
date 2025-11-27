@@ -25,13 +25,13 @@
 // It also shows how to do a visual test of the random occurrence of 
 // the numbers generated
 //
-void initializeRandomGenerators() {
+void initializeRandomGenerators(void) {
    cpct_setSeed_lcg_u8 (0x55);
    cpct_setSeed_glfsr16(0x1120);
    cpct_setTaps_glfsr16(GLFSR16_TAPSET_0512);
 }
 
-u8 mixedRandomGenerator() {
+u8 mixedRandomGenerator(void) {
    return cpct_getRandom_lcg_u8( cpct_getRandom_glfsr16_u8() );
 }
 

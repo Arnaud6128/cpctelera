@@ -28,7 +28,7 @@ u8 gVMem;    // Current video mem
 // INITITALIZE VIDEO MEMORY BUFFERS
 //    Initializes tracking of video memory buffers
 //
-void InitializeVideoMemoryBuffers() {
+void InitializeVideoMemoryBuffers(void) {
    gVMem = VIDEO_MEM;   
 }
 
@@ -41,7 +41,7 @@ void InitializeVideoMemoryBuffers() {
 //    In order to prevent intermediate flickering, this function waits until
 // VSYNC signal is up before flipping both buffers
 //
-void FlipBuffers() {
+void FlipBuffers(void) {
    cpct_waitVSYNC(); // Wait until VSYNC is up
 
    // Depending on present video memory, flip from 

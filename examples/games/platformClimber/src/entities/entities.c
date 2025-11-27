@@ -44,7 +44,7 @@
       u8 isOverFloor(TEntity *e);
       u8 randomCreateNewBlock(u8 y, u8 h, u8 rndinc);
 TEntity* newSolidBlock(u8 x, u8 y, u8 width, u8 height, u8 colour);
-TCharacter* getCharacter();
+TCharacter* getCharacter(void);
 TCollision* checkCollisionEntBlock(TEntity *a, TEntity *b);
 
 //////////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ const TCharacter g_Character = {
 // Initialize entities
 //   Sets up entities at their initial values
 //
-void initializeEntities() {
+void initializeEntities(void) {
    TPhysics *p = ((TPhysics*)&g_Character.entity.phys); 
    G_platfColour = cpct_px2byteM0(8, 8);
    G_scrollVel = 3 * SCALE / FPS;  // Scroll down velocity, 3 px/sec
@@ -148,8 +148,8 @@ void initializeEntities() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Getter functions
 //
-        u16 getScore() { return G_score; }
-TCharacter* getCharacter() { return &g_Character; }
+        u16 getScore(void)     { return G_score; }
+TCharacter* getCharacter(void) { return &g_Character; }
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +318,7 @@ u8 moveBlock(u8 b_idx) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // scrolls the world (all the blocks) at the given velocity
 //
-void scrollWorld() {
+void scrollWorld(void) {
    TEntity *ce = &g_Character.entity;
    TPhysics *p = &ce->phys;
    u8 i;
@@ -745,7 +745,7 @@ void drawBlockEntity (TEntity* e){
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Draw all the scene 
 //
-void drawAll() {
+void drawAll(void) {
    u8  i = g_lastBlock;
 
    // Draw Blocks (from last to first)

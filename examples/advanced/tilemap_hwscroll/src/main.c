@@ -40,7 +40,7 @@ typedef struct {
 /////////////////////////////////////////////////////////////////////////////////
 // Read User Keyboard Input and do associated actions
 //
-i16 wait4KeyboardInput(){
+i16 wait4KeyboardInput(void){
    // Read keyboard continuously until the user perfoms an action
    while(1) {
       // Scan Keyboard
@@ -98,7 +98,7 @@ void scrollScreenTilemap(TScreenTilemap *scr, i16 scroll) {
 /////////////////////////////////////////////////////////////////////////////////
 // Machine initialization code
 //
-void initialize_CPC() {
+void initialize_CPC(void) {
    // Initialize the application
    cpct_disableFirmware();         // Firmware must be disabled for this application to work
    cpct_setVideoMode(0);           // Set Mode 0 (160x200, 16 Colours)

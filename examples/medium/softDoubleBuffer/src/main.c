@@ -28,7 +28,7 @@ cpctm_createTransparentMaskTable(gMaskTable, MASK_TABLE_LOCATION, M1, 0);
 // 
 //    Reads user input and changes selected draw function accordingly
 //
-void CheckUserInput() {
+void CheckUserInput(void) {
    cpct_scanKeyboard_f();
    
    if       (cpct_isKeyPressed(Key_1)) { SelectDrawFunction(1); DrawTextSelectionSign(1); }
@@ -41,7 +41,7 @@ void CheckUserInput() {
 // 
 //    Initializes the CPC and all systems before starting the main loop
 //
-void Initialization() {
+void Initialization(void) {
    // We need to disable firmware in order to set the palette and
    // to be able to use a second screen between 0x8000 and 0xBFFF
    cpct_disableFirmware(); 

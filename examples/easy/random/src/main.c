@@ -30,7 +30,7 @@
 // Returns:
 //    <u32> Number of iterations passed
 //
-u32 wait4UserKeypress() {
+u32 wait4UserKeypress(void) {
    u32 c = 0;     // Count the number of cycles passed till user k
 
    // Wait 'till the user presses a key, counting loop iterations
@@ -47,7 +47,7 @@ u32 wait4UserKeypress() {
 //    Shows introductory messages and initializes the pseudo-random
 // number generator
 //
-void initialize() {
+void initialize(void) {
    u32 seed;    // Value to initialize the random seed
 
    // Introductory message

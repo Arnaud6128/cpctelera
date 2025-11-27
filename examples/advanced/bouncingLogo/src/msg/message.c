@@ -23,7 +23,7 @@
 // Draw message (if any) on the screen
 //
 TMessage g_message;
-void drawMessage() {
+void drawMessage(void) {
    // Draw message only if there is time to draw it
    if (g_message.time > 1) {
       // Draw the message

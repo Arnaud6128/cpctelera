@@ -24,10 +24,10 @@
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 void map_setBaseMem  (u8* mem_location);
- u8* map_getBaseMem  ();
+ u8* map_getBaseMem  (void);
   u8 map_getTile     (u8 x, u8 y);
 void map_drawTile    (u8 x, u8 y);
 void map_changeTile  (u8 x, u8 y);
 void map_setTile     (u8 x, u8 y, u8 value);
-void map_draw        ();
-void map_clear       ();
+void map_draw        (void);
+void map_clear       (void);

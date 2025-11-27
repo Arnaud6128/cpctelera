@@ -24,7 +24,7 @@
 //    Checks user input and updates status of the relevant keys of 
 // the keyboard
 //
-void updateKeyboardStatus() {
+void updateKeyboardStatus(void) {
    TKey *k;    // Pointer to an element of the g_keys array
    u8    i;    // Counter
 

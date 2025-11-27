@@ -49,7 +49,7 @@ u8* const g_animation[6] = {
 //
 // INITIALIZE: Initialize CPC, Draw demo banner and instructions
 //
-void initialize() {
+void initialize(void) {
    u8* pvideomem;               // Pointer to video memory
 
    // Disable firmware to prevent it from interfering with setPalette and setVideoMode

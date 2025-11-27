@@ -81,7 +81,7 @@ const u8 g_palette[16] = { 0x1A, 0x03, 0x01, 0x00, 0x0D, 0x19, 0x14, 0x12,
 // 0x4000 to be used once and then removed when an image is written to 
 // this second video buffer (0x4000-0x7FFF)
 ///
-void initializeCPC() {
+void initializeCPC(void) {
    cpct_disableFirmware();          // Disable the firmware not to interfere with us
    cpct_setVideoMode(0);            // Set mode 0 (160x200, 16 colours)
    cpct_setPalette(g_palette, 16);  // Set colour palette
@@ -104,7 +104,7 @@ CPCT_RELOCATABLE_AREA();
 //////////////////////////////////////////////////////////////////////////////
 // Waits until a new key is pressed, ignoring previous maintained keys
 //
-void wait4KeyPress () {
+void wait4KeyPress (void) {
    // Wait while previous keys are still being pressed
    do { cpct_scanKeyboard(); } while (  cpct_isAnyKeyPressed() );
 

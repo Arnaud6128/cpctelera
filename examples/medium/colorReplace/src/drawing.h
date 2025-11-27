@@ -23,9 +23,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTION DECLARATIONS
 //
-void InitializeDrawing();
-void UpdateBaloons();
-void DrawSceneBaloons();
-void DrawStars();
+void InitializeDrawing(void);
+void UpdateBaloons(void);
+void DrawSceneBaloons(void);
+void DrawStars(void);
 
 #endif

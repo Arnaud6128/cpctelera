@@ -25,7 +25,7 @@
 // selectNextItem
 //    Selects the next item and redraws the user interface
 //
-void selectNextItem() {
+void selectNextItem(void) {
    // Next item is item + 1, except when we run out of items.
    // In that later case, we select again the first item (0)
    if (++g_selectedItem >= G_NITEMS)
@@ -39,7 +39,7 @@ void selectNextItem() {
 // selectNextBlendMode
 //    Selects the next blending mode and redraws the user interface
 //
-void selectNextBlendMode() {
+void selectNextBlendMode(void) {
    // Next blending mode is blendmode + 1, except when we run out of modes.
    // In that later case, we select again the first blending mode (0)
    if (++g_selectedBlendMode >= G_NBLENDMODES) 
@@ -53,7 +53,7 @@ void selectNextBlendMode() {
 // performUserActions
 //    Checks user input and performs selected actions
 //
-void performUserActions() {
+void performUserActions(void) {
    u8 i;
 
    // Checks status of every key in the g_keys array
@@ -70,7 +70,7 @@ void performUserActions() {
 // Initialization routine
 //    Disables firmware, initializes palette and video mode
 //
-void initialize (){ 
+void initialize (void){ 
    // Disable firmware to prevent it from interfering
    cpct_disableFirmware();
    

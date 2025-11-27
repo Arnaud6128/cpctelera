@@ -104,7 +104,7 @@ void getUserInput(i8* vx, i8* vy) {
 // INITIALIZATION
 //    Sets the initial configuration for the CPC
 //
-void initialize() {
+void initialize(void) {
    cpct_disableFirmware();          // Disable firmware to prevent it from restoring mode and palette
    cpct_setVideoMode(0);            // Set video mode to 0 (160x200, 16 colours)
    cpct_setPalette(g_palette, 16);  // Set the palette using hardware values generated at rocket.h

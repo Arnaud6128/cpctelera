@@ -27,7 +27,7 @@
 //    To let us see when do this happen visually, this code changes the color
 // of the border each time it is called.
 //
-void myInterruptHandler() {
+void myInterruptHandler(void) {
    static u8 i;   // Static variable to be preserved from call to call
 
    // Set the color of the border differently for each interrupt
@@ -40,7 +40,7 @@ void myInterruptHandler() {
 //
 // Print some messages on the screen about this example
 //
-void printMessages() {
+void printMessages(void) {
    u8* pvm = CPCT_VMEM_START;
    cpct_setDrawCharM1(0, 3);
    cpct_drawStringM1("Interrupt Handler Example", pvm);

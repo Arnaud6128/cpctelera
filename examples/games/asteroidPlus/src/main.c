@@ -216,7 +216,7 @@ void InterruptFunction(u8 line) __z88dk_fastcall
 ////////////////////////////////////////////////////
 //    Set interrupt handler                                         
 //        
-void SetInterruptHandler()
+void SetInterruptHandler(void)
 {
     // Defines three lines of interruptions
     static const u8 lines[] = {1, 20, 60, 90, 120, STARS_AREA_HEIGHT-2, ASIC_SCREEN_HEIGHT};
@@ -236,7 +236,7 @@ void SetInterruptHandler()
 ////////////////////////////////////////////////////
 //    Initialize for CPC Plus    features
 //        
-void InitCpcPlus()
+void InitCpcPlus(void)
 {
     cpct_disableFirmware(); // Disable firmware
     cpct_asicUnlock();         // Unlock asic
@@ -246,7 +246,7 @@ void InitCpcPlus()
 ////////////////////////////////////////////////////
 //    Set video mode and border color                                     
 //        
-void InitVideo()
+void InitVideo(void)
 {
     // Set mode 1
     cpct_setVideoMode(1);
@@ -258,7 +258,7 @@ void InitVideo()
 ////////////////////////////////////////////////////
 //    Set HWSprite Ship position on screen                                     
 //    
-void UpdateShipPosition()
+void UpdateShipPosition(void)
 {
     if (gShip.status == SHIP_OK)
     {
@@ -322,7 +322,7 @@ void SetAsteroidInitPosition(SAsteroid* asteroid)
 ////////////////////////////////////////////////////
 //    Set HWSprite Ship explosions position on screen                                     
 //        
-void SetShipExplosionSprites()
+void SetShipExplosionSprites(void)
 {
     #define NB_SPRITES_EXPLOSIONS    4
     
@@ -348,7 +348,7 @@ void SetShipExplosionSprites()
 ////////////////////////////////////////////////////
 //    Initialize Moon sprite                                 
 //        
-void InitMoon()
+void InitMoon(void)
 {
     cpct_asicCopySpriteData(HW_SPRITE_MOON, moon);
 }
@@ -356,7 +356,7 @@ void InitMoon()
 ////////////////////////////////////////////////////
 //    Initialize player ship position and copy sprites to HWSprites                                         
 //        
-void InitShip()
+void InitShip(void)
 {
     // Set Ship start coordinates
     gShip.pos.x = START_SHIP_X;
@@ -384,7 +384,7 @@ void InitShip()
 ////////////////////////////////////////////////////
 //    Initialize asteroid HWSprite data and position                                     
 //        
-void InitAsteroids()
+void InitAsteroids(void)
 {
     #define ASTEROID_LARGE_SIZE    4
     
@@ -425,7 +425,7 @@ void InitAsteroids()
 ////////////////////////////////////////////////////
 //    Initialize all HWSprites zoom to equivalent Mode 1                                         
 //    
-void SetHWSpriteZoom()
+void SetHWSpriteZoom(void)
 {
     // Set Zoom for Mode 1 for all 16 Hardware Sprites
     for (u8 i = 0; i < HW_SPRITE_NUMBER; i++)
@@ -435,7 +435,7 @@ void SetHWSpriteZoom()
 ////////////////////////////////////////////////////
 //    Initialize HW sprite with palette color and zoom Mode 1                                         
 //        
-void InitHWSprites()
+void InitHWSprites(void)
 {
     // Initialize all game HWSprites
     InitShip();
@@ -453,7 +453,7 @@ void InitHWSprites()
 ////////////////////////////////////////////////////
 //    Draw background with software sprites                                         
 //        
-void DrawBackground()
+void DrawBackground(void)
 {
     #define MODE_1_SCREEN_HEIGHT    200
     #define SCREEN_BYTES_WIDTH        80
@@ -501,7 +501,7 @@ bool TestCollision(SAsteroid* asteroid)
 //    Update Moon position to indicate remaining 
 //  distance before winning game                                     
 //    
-void UpdateMoon()
+void UpdateMoon(void)
 {
     if (gShip.status == SHIP_OK)
         *gMoonPositionX = (gEscapeDistance-= SCROLL_SPEED)/10;
@@ -510,7 +510,7 @@ void UpdateMoon()
 ////////////////////////////////////////////////////
 //    Update asteroid : move and test collisions                                     
 //        
-void UpdateAsteroids()
+void UpdateAsteroids(void)
 {
     SAsteroid* asteroidPtr = gAsteroids;
     u8 i;
@@ -559,7 +559,7 @@ void UpdateAsteroids()
 ////////////////////////////////////////////////////
 //    Display Win Sprites                                     
 //    
-void WinSequence()
+void WinSequence(void)
 {
     // Move Ship out of screen
     if (gShip.pos.x < ASIC_SCREEN_WIDTH)
@@ -592,7 +592,7 @@ void WinSequence()
 ////////////////////////////////////////////////////
 //    Ship in play                                     
 //        
-void InPlay()
+void InPlay(void)
 {
     #define REACTOR_SPEED_ANIMATION        3
 
@@ -620,7 +620,7 @@ void InPlay()
 ////////////////////////////////////////////////////
 //    Ship destroyed                                     
 //    
-void Destroyed()
+void Destroyed(void)
 {
     #define EXPLOSION_SPEED_ANIMATION    10
 
@@ -657,7 +657,7 @@ void Destroyed()
 ////////////////////////////////////////////////////
 //    Update Ship sprite                                     
 //        
-void UpdateShip()
+void UpdateShip(void)
 {
     // If ship flying
     if (gShip.status == SHIP_OK)
@@ -676,7 +676,7 @@ void UpdateShip()
 ////////////////////////////////////////////////////
 //    Read player input                                         
 //                                               
-void ReadInput()
+void ReadInput(void)
 {
     #define LIMITE_UP        10
     #define LIMITE_DOWN        140

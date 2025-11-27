@@ -34,7 +34,7 @@
 //
 // Draw CPCtelera's Squared Banner (Mode 0)
 //
-void drawBanner() {
+void drawBanner(void) {
     // Video memory pointers for the 2 sprites that form the Squared banner
     u8 *pvideo_s1, *pvideo_s2;
 
@@ -62,7 +62,7 @@ void drawBanner() {
 //
 // Draw CPCtelera's Logo (Mode 1)
 //
-void drawLogo() {
+void drawLogo(void) {
     // Pointer to video memory location where the logo will be drawn
     u8* pvideo;
 

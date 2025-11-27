@@ -59,7 +59,7 @@ SRect _moveRect;
 
 ///////////////////////////////////////
 // Init color and boxes positions
-void Init()
+void Init(void)
 {
 	 cpct_disableFirmware();
 	 cpct_setBorder(0x54);
@@ -106,7 +106,7 @@ void DrawBox(SRect* box, u8 color)
 
 ///////////////////////////////////////
 // Draw all boxes
-void DrawBoxes()
+void DrawBoxes(void)
 {
 	// Player box
 	DrawBox(&_moveRect, RED_COLOR);
@@ -120,7 +120,7 @@ void DrawBoxes()
 }
 ///////////////////////////////////////
 // Check collide with all boxes
-BOOL IsCollideBoxes()
+BOOL IsCollideBoxes(void)
 {
 	for (u8 i = 0; i < NB_BOX; i++)
 	{

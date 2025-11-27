@@ -32,7 +32,7 @@ TDrawFunc gDrawFunc; // Pointer to the current drawing function
 //
 //    Initializes global variables and general status for drawing functions
 //
-void InitializeDrawing() {
+void InitializeDrawing(void) {
    gNbTileset = sizeof(g_tileset)/sizeof(u8*);
    gPosScroll = 0;
    SelectDrawFunction(1);
@@ -44,7 +44,7 @@ void InitializeDrawing() {
 //    Draws the scene directly to video memory using simple drawSprite functions
 // with no back buffer.
 //
-void DrawDirectlyToScreen() {
+void DrawDirectlyToScreen(void) {
    u8* screenPtr;
    u8 i;
 
@@ -97,7 +97,7 @@ void DrawDirectlyToScreen() {
 // displayed. This way, nothing happens on the screen while drawing is being
 // performed. After drawing it flips buffers and then the whole image is displayed.
 //
-void DrawUsingHardwareBackBuffer() {
+void DrawUsingHardwareBackBuffer(void) {
    u8* backScreenPtr;
    u8 i;
 
@@ -154,7 +154,7 @@ void DrawUsingHardwareBackBuffer() {
 // is fast enough not to be caught by the raster, and does not produce
 // any flickering.
 //
-void DrawUsingSpriteBackBuffer() {
+void DrawUsingSpriteBackBuffer(void) {
    u8* backBufferPtr;
    u8 i;
 
@@ -220,7 +220,7 @@ void SelectDrawFunction(u8 drawFuncNb) {
 // using the selected Drawing Function. It does so by simply calling the current 
 // drawing function.
 //
-void ScrollAndDrawSpace() { 
+void ScrollAndDrawSpace(void) { 
    // Scroll background, draw title, draw ship
    gPosScroll++;
    gDrawFunc(); 

@@ -25,7 +25,7 @@
 // Initialization of the Amstrad CPC at the start of the application
 //   Sets Palette and Mode, and disables firmware
 //
-void initializeCPC() {
+void initializeCPC(void) {
    // Disable firmware: we dont want it to interfere with our code
    cpct_disableFirmware();
 

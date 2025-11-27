@@ -25,7 +25,7 @@
 // Initialization of the Amstrad CPC at the start of the game
 //   Sets Palette and Mode, and disables firmware
 //
-void initializeCPC() {
+void initializeCPC(void) {
    u8 c0, c1;  // Variables to hold pairs of pixels in video memory colour pixel format
 
    // Disable firmware: we dont want it to interfere with our code

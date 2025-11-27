@@ -67,7 +67,7 @@ void DrawInfoTextToBuffer(u8* bufferPtr) {
 //
 //    Draws user information texts both on Screen Video Memory and Hardware back buffer.
 // 
-void DrawInfoText() {
+void DrawInfoText(void) {
    DrawInfoTextToBuffer((u8*)CPCT_VMEM_START);
    DrawInfoTextToBuffer((u8*)SCREEN_BUFF);
 }

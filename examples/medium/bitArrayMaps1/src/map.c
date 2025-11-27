@@ -103,7 +103,7 @@ void map_setBaseMem(u8* mem_location) {
 //    Returns the pointer to the base location of the map in 
 // video memory. This location corresponds to tile (0,0).
 //
-u8* map_getBaseMem() { return map_base_location; }
+u8* map_getBaseMem(void) { return map_base_location; }
 
 /////////////////////////////////////////////////////////////////
 // setTile
@@ -165,7 +165,7 @@ void map_drawTile(u8 x, u8 y) {
 //    Draws the map completely. It displays a message down the
 // screen while drawing to inform the user.
 //
-void map_draw() {
+void map_draw(void) {
    static u8* const string = "Drawing Map";
    u8 x, y;
    u8* pmem; 
@@ -210,7 +210,7 @@ void map_changeTile(u8 x, u8 y) {
 //    Fills in the map with 0 values, clearing it from walls. 
 // After that, the map is redrawn to screen.
 //
-void map_clear() {
+void map_clear(void) {
    u8 x, y;
 
    // Fill in the map with zeros (background)

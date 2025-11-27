@@ -38,7 +38,7 @@
 /////////////////////////////////////////////////////////////////////////
 // Draws a frame box around the "play zone"
 //
-void drawFrame() {
+void drawFrame(void) {
   u8* pvmem;    // Pointer to video memory for drawing boxes
   u8  pattern;  // Colour pattern to be drawn
 
@@ -67,7 +67,7 @@ void drawFrame() {
 //    It paints all the tiles in the tile_array that defines the 
 // background. That is the same as drawing the complete background.
 //
-void drawBackground() {
+void drawBackground(void) {
    u8   x, y;       // Column and Row in the tile array of the next tile to draw
    u8 *pvideomem;   // Pointer to video memory, where the tile will be drawn
 
@@ -126,7 +126,7 @@ void repaintBackgroundOverSprite(u8 x, u8 y) {
 //    Disables firmware, initializes palette and video mode and
 // draws the background
 //
-void initialization (){ 
+void initialization (void){ 
    cpct_disableFirmware();          // Disable firmware to prevent it from interfering
    cpct_fw2hw     (G_palette, 16);  // Convert firmware colours to hardware colours 
    cpct_setPalette(G_palette, 16);  // Set palette using hardware colour values

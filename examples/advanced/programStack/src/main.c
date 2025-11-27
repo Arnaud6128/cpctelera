@@ -26,7 +26,7 @@
 //
 // Print some messages using firmware
 //
-void printMessages() {
+void printMessages(void) {
    u8 i;
 
    // Print some messages using printf (with firmware)

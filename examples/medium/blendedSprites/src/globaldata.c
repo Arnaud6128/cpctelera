@@ -61,8 +61,8 @@ const u8 g_palette[G_NCOLOURS] = {
 // be able to link them later on. Once compiler knows they exist,
 // they can be added to the g_keys array.
 //
-void selectNextItem();
-void selectNextBlendMode();
+void selectNextItem(void);
+void selectNextBlendMode(void);
 
 // Array containing all user keys with an initial status of Free and
 // an associated action (pointer to a function) to perform when pressed

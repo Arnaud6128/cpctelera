@@ -29,7 +29,7 @@ u8 gVMem;                                          // Current video mem
 // INITITALIZE VIDEO MEMORY BUFFERS
 //    Initializes tracking of video memory buffers
 //
-void InitializeVideoMemoryBuffers() {
+void InitializeVideoMemoryBuffers(void) {
    // Clear the Hardware Back Buffer (Our secondary screen 
    // buffer from 0x8000 to 0xBFFF).
    cpct_memset((u8*)SCREEN_BUFF, 0, 0x4000);   
@@ -46,7 +46,7 @@ void InitializeVideoMemoryBuffers() {
 //    In order to prevent intermediate flickering, this function waits until
 // VSYNC signal is up before flipping both buffers
 //
-void FlipBuffers() {
+void FlipBuffers(void) {
    cpct_waitVSYNC(); // Wait until VSYNC is up
 
    // Depending on present video memory, flip from 
@@ -107,7 +107,7 @@ u8* GetSpriteBackBufferPtr(u8 xPos, u8 yPos) {
 //    Waits for VSYNC and then copies the Sprite Back Buffer to its final location at the
 // screen (actually, it draws it)
 //
-void DrawSpriteBackBufferToScreen() {
+void DrawSpriteBackBufferToScreen(void) {
    // Calculate screen location where Sprite Back Buffer will be drawn
    u8*   pVideoMemLocation = GetScreenPtr(VIEW_X, VIEW_Y);
 

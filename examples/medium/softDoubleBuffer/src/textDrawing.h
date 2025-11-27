@@ -49,7 +49,7 @@ typedef struct {
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTION DECLARATIONS
 //
-void DrawInfoText();
+void DrawInfoText(void);
 void DrawTextSelectionSign(u8 sel);
 
 #endif

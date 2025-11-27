@@ -76,7 +76,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 // INITIALIZE THE CPC
 //
-void initialize() {
+void initialize(void) {
    // Firmware must be disabled to be able to change video mode,
    // setting palette colours and border
    cpct_disableFirmware();          // Disable firmware 

@@ -39,9 +39,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTION DECLARATIONS
 //
-void  InitializeVideoMemoryBuffers  ();
+void  InitializeVideoMemoryBuffers  (void);
 u8*   GetScreenPtr                  (u8 xPos, u8 yPos);
 u8*   GetBackBufferPtr              (u8 xPos, u8 yPos);
-void  FlipBuffers                   ();
+void  FlipBuffers                   (void);
 
 #endif

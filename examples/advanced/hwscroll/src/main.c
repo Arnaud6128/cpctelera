@@ -43,7 +43,7 @@ const u8 sinus_offsets[256]={
 //
 // Draw CPCtelera's Logo (Mode 1)
 //
-void drawLogo() {
+void drawLogo(void) {
     // Pointer to video memory location where the logo will be drawn
     u8* pvideo;
 

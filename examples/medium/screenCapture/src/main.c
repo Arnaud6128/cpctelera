@@ -54,7 +54,7 @@ u8 gScreenCapture[ G_UFO_0_H * G_UFO_0_W ];
 /////////////////////////////////////////////////////////////////////////////////
 // INITIALIZATION
 // 
-void Initialization() {
+void Initialization(void) {
    cpct_disableFirmware();            // Disable firmware to take full control of the CPC
    cpct_setVideoMode(0);              // Set mode 0
    cpct_setPalette (g_palette, 16);   // Set the palette
@@ -67,7 +67,7 @@ void Initialization() {
 /////////////////////////////////////////////////////////////////////////////////
 // GET UFO CURRENT ANIMATION SPRITE
 //
-u8* GetUfoSprite() {
+u8* GetUfoSprite(void) {
    // Private UFO Animation-Status Data
    static u8 anim = 0;     // Currently selected animation sprite
    static u8* const ufoSprite[] = { 
@@ -81,7 +81,7 @@ u8* GetUfoSprite() {
 /////////////////////////////////////////////////////////////////////////////////
 // DRAW UFO
 //
-void DrawUFO() {
+void DrawUFO(void) {
     // Private data to control UFO location and status
    static BOOL moveRight;  // Keep move direction
    static u8 posX;         // Keep position X 
@@ -171,7 +171,7 @@ u8 DrawSkyGradient(u8 cy, u8 posY, u8 colorFront, u8 colorBack) {
 /////////////////////////////////////////////////////////////////////////////////
 // DRAW SKY WITH GRADIENT ZONES FOR BACKGROUND
 //
-void DrawSky() {
+void DrawSky(void) {
    // Define color of gradient sky parts
    static const u8 colors[] = { 2, 15, 2, 7, 10, 13, 8, 4 };
    
@@ -187,7 +187,7 @@ void DrawSky() {
 /////////////////////////////////////////////////////////////////////////////////
 // DRAW CITY WITH ALL BUILDING FOR BACKGROUND
 //
-void DrawCity() {
+void DrawCity(void) {
    u8* pvmem;
 
    // As all locations of buildings are constant, we use cpctm_screenPtr that 
@@ -214,7 +214,7 @@ void DrawCity() {
 /////////////////////////////////////////////////////////////////////////////////
 // INITIALIZE FIRST BACKGROUND CAPTURE    
 // 
-void InitCapture() {
+void InitCapture(void) {
    // Get Screen Video Memory pointer of default UFO location 
    // and make a copy of the background pixel data there to gScreenCapture buffer
    u8* pvmem = cpctm_screenPtr(CPCT_VMEM_START, UFO_INIT_X, UFO_Y);
@@ -224,7 +224,7 @@ void InitCapture() {
 /////////////////////////////////////////////////////////////////////////////////
 // DRAW BACKGROUND WITH GRADIENT SKY AND BUILDING     
 // 
-void DrawBackground() {
+void DrawBackground(void) {
    DrawSky();
    DrawCity();
    

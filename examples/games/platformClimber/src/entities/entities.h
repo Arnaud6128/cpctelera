@@ -120,13 +120,13 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-    void initializeEntities();
+    void initializeEntities(void);
     void performAction(TCharacter *c, TCharacterStatus move, TCharacterSide side);
       u8 updateCharacter(TCharacter *c);
-    void scrollWorld();
-     u16 getScore();
-    void drawAll();
-TCharacter* getCharacter();
+    void scrollWorld(void);
+     u16 getScore(void);
+    void drawAll(void);
+TCharacter* getCharacter(void);
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////

@@ -78,7 +78,7 @@ typedef enum {
 typedef struct {
    cpct_keyID  key;       // CPCtelera Key identifier
    TKeyStatus  status;    // Status of the key
-   void (*action) ();     // Associated action (Pointer to void function)
+   void (*action) (void);     // Associated action (Pointer to void function)
 } TKey;
 
 /////////////////////////////////////////////////////////////////

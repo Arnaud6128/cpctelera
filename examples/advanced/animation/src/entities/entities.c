@@ -99,7 +99,7 @@ const u8 g_SCR_HEIGHT = 200;  // Screen height in bytes
 //
 // Return the Persea Entity
 //
-TEntity* getPersea() {
+TEntity* getPersea(void) {
    return (TEntity*)g_persea;
 }
 

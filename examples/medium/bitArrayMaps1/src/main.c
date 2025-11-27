@@ -25,7 +25,7 @@
 //    Draws some messages with the use instructions in the screen.
 //
 #define NUM_MSGS  6 
-void drawMessages() {
+void drawMessages(void) {
    u8 i;
    
    // Define the strings for the messages as an array to 
@@ -70,7 +70,7 @@ void drawMessages() {
 //    Initialize this application when it starts. Disable firmware,
 // set the video mode and colours, and initialize map and cursor.
 //
-void initialize() {
+void initialize(void) {
    u8 *pmem;
 
    // Disable firmware to prevent it from restoring video mode or
@@ -107,7 +107,7 @@ void initialize() {
 // any action key or not. When the user presses an action key, 
 // the corresponding action is performed.
 //
-void checkUserInputAndPerformActions() {
+void checkUserInputAndPerformActions(void) {
    // Scan the keyboard for user keypresses
    cpct_scanKeyboard();
 

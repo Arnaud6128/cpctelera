@@ -45,8 +45,8 @@ typedef void (*TDrawFunc)(void);
 ////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTION DECLARATIONS
 //
-void  InitializeDrawing();
+void  InitializeDrawing(void);
 void  SelectDrawFunction(u8 drawFuncNb);
-void  ScrollAndDrawSpace();
+void  ScrollAndDrawSpace(void);
 
 #endif

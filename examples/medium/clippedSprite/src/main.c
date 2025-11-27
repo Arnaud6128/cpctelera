@@ -69,7 +69,7 @@ u8 _level;
 /*	Initialization									 */
 /*												     */
 /*****************************************************/
-void Init()
+void Init(void)
 {
 	cpct_disableFirmware();
 	cpct_setVideoMode(0);
@@ -140,7 +140,7 @@ void DrawCar(SCar* car)
 /*	Draw HUD        								 */
 /*												     */
 /*****************************************************/
-void DrawHUD()
+void DrawHUD(void)
 {	
 	// Draw first HUD at left part of sprite
 	u8* vmem = cpct_getScreenPtr((u8*)CPCT_VMEM_START, 0, 0);
@@ -158,7 +158,7 @@ void DrawHUD()
 /*	Update HUD        								 */
 /*												     */
 /*****************************************************/
-void UpdateHUD()
+void UpdateHUD(void)
 {	
 	// Draw levels indicator at left
 	u8* vmem = cpct_getScreenPtr((u8*)CPCT_VMEM_START, 2, 4);

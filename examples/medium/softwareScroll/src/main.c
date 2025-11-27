@@ -98,7 +98,7 @@ void drawBuidlingScrolled(u16 offset) {
 // just static decoration. This frame is defined using 2 tilemaps: one for up/down
 // parts of the frame, and the other for left/right parts.
 //
-void drawFrame() {
+void drawFrame(void) {
    u8* vmem;   // Temporal pointer to use for drawing at calculated locations in the current back buffer
    u8* vmem_buffer = video_getBackBufferPtr();  // Get present Hardware Back Buffer were we are going to draw
 
@@ -151,7 +151,7 @@ void drawFrame() {
 //    Set up VideoMode and colours, draw scroll frames on both screen buffers and
 // set up values for g_building tilemap drawing that will be used later on.
 //
-void initialize() {
+void initialize(void) {
    cpct_disableFirmware();          // We use own mode and colours, firmware must be disabled
    cpct_setVideoMode(0);            // Set video mode 0 (160x200 pixels, 20x25 characters, 16 colours)
    cpct_setPalette(g_palette, 16);  // Set our own colours defined en g_palette (automatically generated in maps/tileset.c)
@@ -178,7 +178,7 @@ void initialize() {
 //    It draws the 16x16 character viewport, asks the user for key presses,
 // recalculates new offset for the viewport inside the tilemap, and repeats.
 //
-void game() {
+void game(void) {
    u16 offset=0;  // Offset in tiles of the start of the view window in the g_building tilemap
    u8  x=0, y=0;  // (x, y) coordinates of the start of the view window in the g_building tilemap
 

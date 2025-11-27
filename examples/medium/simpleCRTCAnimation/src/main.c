@@ -40,7 +40,7 @@ u8 const widths[8*16] = {
 // INITIALIZATION
 //    Sets the initial configuration for the CPC
 //
-void initialization() {
+void initialization(void) {
    // Disable the firmware to prevent it from resetting the colour of the border
    cpct_disableFirmware();
    // Set Border colour to black
@@ -54,7 +54,7 @@ void initialization() {
 //    Performs one step of openning or closing the screen visible
 // area. It does so by setting CRTC Register 1 (which controls
 // the visible width of the screen in charaters). 
-void open_close_animation() {
+void open_close_animation(void) {
    static u8 v;
 
    // Change the width of the screen in characters to its next value

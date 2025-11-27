@@ -25,7 +25,7 @@
 // drawBackground
 //    Draws the background from pixel line 72 onwards
 //
-void drawBackground() {
+void drawBackground(void) {
    // Get a pointer to the (x,y) location in the screen where 
    // the background has to be drawn (its upper-left corner)
    u8* p = cpct_getScreenPtr(CPCT_VMEM_START, BG_X, BG_Y);
@@ -61,7 +61,7 @@ void drawSpriteMixed(  CPCT_BlendMode mode, u8* sprite
 //    draws the current selected sprite using the current selected blending
 // mode at a random (x,y) location inside the map
 //
-void drawCurrentSpriteAtRandom() {
+void drawCurrentSpriteAtRandom(void) {
    u8 x, y;
 
    // Select 2 random coordinates to put the sprite inside the background
@@ -81,7 +81,7 @@ void drawCurrentSpriteAtRandom() {
 //    draws the current user interface status values: the selected item
 // and the selected blending mode
 //
-void drawUserInterfaceStatus() {
+void drawUserInterfaceStatus(void) {
    // Get a pointer to the (x,y) location in the screen where
    // the name and sprite of the item will be drawn
    u8 *p = cpct_getScreenPtr(CPCT_VMEM_START, 4, 60);
@@ -103,7 +103,7 @@ void drawUserInterfaceStatus() {
 // drawUserInterfaceMessages
 //    draws the messages that conform the user interface 
 //
-void drawUserInterfaceMessages() {
+void drawUserInterfaceMessages(void) {
    u8 *p;   // Pointer to screen video memory
 
    // Draw first two strings at the top-left corner of the screen

@@ -86,7 +86,7 @@ void wait4Key(cpct_keyID key) {
 // until de user presses a key.
 //
 #define NUMMSGS  15
-void showMessages() {
+void showMessages(void) {
    u8 i;
    
    // Screen Messages
