@@ -161,7 +161,7 @@
 //
 
 #define  cpctm_createInterruptHandlerWrapper(IntWrapperName,IntHandlerName,...) \
-  void dummy_##IntWrapperName()  __naked { \
+  void dummy_##IntWrapperName(void)  __naked { \
      __asm \
      .include "firmware/cpctm_createInterruptHandlerWrapper.asm" \
      cpctm_createInterruptHandlerWrapper_asm IntWrapperName, _ ## IntHandlerName, __VA_ARGS__ \
