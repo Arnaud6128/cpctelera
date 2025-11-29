@@ -996,7 +996,13 @@ function versionGreaterOREqualThan() {
 ##
 function checkMinimumGCCVersion() {
    local VTH="$1"
-   local V=$(gcc -dumpversion)
+   
+   if checkSystem "osx"; then
+      local V=$(gcc -dumpversion)
+   else
+      local V=$(gcc -dumpfullversion)
+   fi
+   
    if (( $? != 0 )); then
       return -1  ## ERROR: GCC Version undetected
    fi
