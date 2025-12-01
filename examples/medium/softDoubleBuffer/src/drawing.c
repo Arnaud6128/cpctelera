@@ -173,14 +173,20 @@ void DrawUsingSpriteBackBuffer(void) {
    // Draw title at fixed coordinates, in the sprite that acts as back buffer. 
    // It is a masked sprite that will be upfront the tiles, in the middle
    //
-   backBufferPtr = GetSpriteBackBufferPtr(POS_TITLE_X, 0);
-   cpct_drawToSpriteBufferMaskedAlignedTable(VIEW_W_BYTES, backBufferPtr, G_TITLE_W, G_TITLE_H, g_title, gMaskTable);
+   backBufferPtr = GetSpriteBackBufferPtr(POS_TITLE_X, 0);   	 
+   cpct_drawSpriteClipToSpriteBuffer(VIEW_W_BYTES, backBufferPtr, G_TITLE_W/2, G_TITLE_W, G_TITLE_H, g_title);
+   cpct_drawSpriteClipToSpriteBufferMaskedAlignedTable(VIEW_W_BYTES, backBufferPtr + G_TITLE_W/2, G_TITLE_W/2, G_TITLE_W, G_TITLE_H, g_title + G_TITLE_W/2, gMaskTable);
    
    // Draw the ship in the sprite that acts as software back buffer
    // It is also a masked sprite that will be upfront the tiles, in the middle
    //
    backBufferPtr = GetSpriteBackBufferPtr(POS_SHIP_X, POS_SHIP_Y);
    cpct_drawToSpriteBufferMasked(VIEW_W_BYTES, backBufferPtr, G_SHIP_W, G_SHIP_H, g_ship);
+   
+   backBufferPtr = GetSpriteBackBufferPtr(POS_SHIP_X, POS_SHIP_Y + 10);
+   cpct_drawSpriteClipToSpriteBufferMasked(VIEW_W_BYTES, backBufferPtr, 2, G_SHIP_W, G_SHIP_H, g_ship);
+   cpct_drawSpriteClipToSpriteBufferMasked(VIEW_W_BYTES, backBufferPtr + 2, 3, G_SHIP_W, G_SHIP_H, g_ship + 2*2);
+   
 
    // Draw the fire produced by ship's engine to the sprite that acts
    // as back buffer. Fire is an animation that has 2 different sprites. 
@@ -193,6 +199,9 @@ void DrawUsingSpriteBackBuffer(void) {
       backBufferPtr = GetSpriteBackBufferPtr(x, y);
       
       cpct_drawToSpriteBufferMaskedAlignedTable(VIEW_W_BYTES, backBufferPtr, G_FIRE_0_W, G_FIRE_0_H, fireSp, gMaskTable);
+	  
+	  backBufferPtr = GetSpriteBackBufferPtr(x, y + 10);
+	  cpct_drawToSpriteBufferMaskedAlignedTable(VIEW_W_BYTES, backBufferPtr, G_FIRE_0_W, G_FIRE_0_H, fireSp, gMaskTable);
    }
 
    // Copy Sprite Back Buffer to screen memory
