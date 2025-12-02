@@ -25,5 +25,5 @@ cpct_getKeypressedAsASCII_asm::
    .include  /cpct_getKeypressedAsASCII.asm/
    
    ;; Return value for Assembly 
-   ld     a, (hl)       ;; [2] A = ASCII of the key pressed (to be returned)
+   ld     l, (hl)       ;; [2] A = ASCII of the key pressed (to be returned)
    ret                  ;; [3]
