@@ -33,6 +33,7 @@
 #include <easytilemaps/easytilemaps.h>
 #include <compression/compression.h>
 #include <loaders/loaders.h>
+#include <files/files.h>
 #include <cpcplus_asic/cpcplus.h>
 
 #endif
