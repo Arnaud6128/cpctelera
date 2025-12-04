@@ -134,21 +134,15 @@ FDCON:
     ld bc,#0xFA7E
     ld a,#1
     out (c),a
-	;;ei ;Wait 1s for motor to get full speed = 25 * 50000 >= 1s
-    ld bc,#50000
+    ei ;Wait for motor to get full speed
+    ld bc,#300
 WAIT: 
-    ;halt
-	;; Waste time dummy code
-	add a,(ix) ;; 5µs
-	add a,(ix) ;; 5µs
-	add a,(ix) ;; 5µs
-	add a,(ix) ;; 5µs
-	add a,(ix) ;; 5µs
+    halt
     dec bc
     ld a,b
     or c
     jr nz,WAIT
-	;;di
+	di
     ret
 ;Turn FDC off.	
 _cpct_fdcOff::
@@ -159,19 +153,6 @@ FDCOFF:
     xor a
     out (c),a
     ret 
-	
-;Recalibrate current drive uncomment if needed
-;;asm_Recalibrate::
-;RECALIBR:
-;    call RECALIB2
-;    call RECALIB2
-;    ret 
-;RECALIB2: 
-;    ld a,#0b00000111
-;    call PUTFDC
-;    ld a,(FDCIDDR)
-;    call PUTFDC
-;    jr WAITEND
 
 ;Load a file
 ;HL=Filename
