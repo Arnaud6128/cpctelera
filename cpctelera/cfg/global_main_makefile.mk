@@ -77,6 +77,8 @@ $(BINADDRLOG): $(BINFILE)
 	@echo "Generated Binary File $(BINFILE):" > $(BINADDRLOG)
 	@echo "Load Address = $(LOADADDR)"       >> $(BINADDRLOG)
 	@echo "Run  Address = $(RUNADDR)"        >> $(BINADDRLOG)
+	@echo "Run Address       = $(RUNADDR)"
+	@echo ""
 
 # GENERATE A DISK FILE (.DSK) AND INCLUDE BINARY FILE (.BIN) INTO IT
 $(DSK): $(BINFILE) $(BINADDRLOG)
