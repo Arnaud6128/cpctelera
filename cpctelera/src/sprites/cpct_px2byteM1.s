@@ -122,7 +122,7 @@ px1_repeat:
    djnz px1_repeat       ;; [3/4] Repeat until B=0 (until 4 pixels have been converted)
 
    ld    a, c            ;; [1] A = B, put return value into A
-
+   ld    l, a            ;; [1] L = A (Return value: byte with pixels 0 to 3 in screen pixel format)
    ret                   ;; [3] return
 
 ;;

@@ -107,5 +107,5 @@
 
    ;; Mix both pixels in a single byte and return
    or   b                ;; [1] A = A or B (Mix Pixel 0 and Pixel 1 screen pixel format into A)
-   ld   l, a             ;; [1] L = A (Return value: byte with pixels 0 and 1 in screen pixel format)
+   
    ret                   ;; [3] Return
