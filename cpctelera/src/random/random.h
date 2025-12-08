@@ -84,10 +84,10 @@ extern void cpct_setSeed_xsp40_u8(u16 seed8, u32 seed32) __z88dk_callee;
 #define cpct_rand32 cpct_getRandom_mxor_u32
 #define cpct_srand8(SEED)      \
     cpct_setSeed_mxor((SEED)); \
-    cpct_restoreState_mxor_u8(void);
+    cpct_restoreState_mxor_u8();
 #define cpct_srand16(SEED)     \
     cpct_setSeed_mxor((SEED)); \
-    cpct_restoreState_mxor_u16(void);
+    cpct_restoreState_mxor_u16();
 #define cpct_rand cpct_rand8
 #define cpct_srand cpct_srand8
 
