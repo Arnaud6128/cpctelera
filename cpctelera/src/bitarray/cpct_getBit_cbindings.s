@@ -26,17 +26,13 @@ _cpct_getBit::
    ;; Get parameters from HL and DE registers (16 + 16 bits), with __sdcccall(1) convention
    ;; HL = Pointer to the array in memory
    ;; DE = Index of the bit we want to get
-   ld b, h
-   ld c, l
-   ld h, d
-   ld l, e
-   ld d, b
-   ld e, c
-   ;;pop hl           ;; [3] HL = Return Address
-   ;;pop de           ;; [3] DE = Pointer to the array in memory
-   ;;ex (sp), hl      ;; [6] HL = Index of the bit we want to get
-                    ;; ... also putting again Return Address where SP is located now
-                    ;; ... as this function is using __z88dk_callee convention
-
+   ex de, hl      ;;[1] DE<->HL =>
+   ;; DE = Pointer to the array in memory
+   ;; HL = Index of the bit we want to get
 
 .include /cpct_getBit.asm/
+
+   ;; After testing the target bit, return true or false
+   ret   nz       ;; [2/4] Return !0 only if bit test was Non-Zero
+   xor   a        ;; [1] A = 0
+   ret            ;; [3] Return 0 otherwise
