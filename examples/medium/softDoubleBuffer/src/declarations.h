@@ -31,9 +31,9 @@
 #include <sprites/fire.h>
 
 // Other modules
-#include <manageVideoMem.h>
-#include <textDrawing.h>
-#include <drawing.h>
+#include "manageVideoMem.h"
+#include "textDrawing.h"
+#include "drawing.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 // USEFUL MACROS AND CONSTANTS

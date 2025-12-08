@@ -33,7 +33,7 @@
 // Structure defining a tilemap located on the screen
 typedef struct {
    u8* pVideo;   // Pointer to the upper-left corner of the tilemap in video memory
-   u8* pTilemap; // Pointer to the start of the drawable window of the tilemap
+   const u8* pTilemap; // Pointer to the start of the drawable window of the tilemap
    u8  scroll;   // Scrolling offset from the original video memory location
 } TScreenTilemap;
 

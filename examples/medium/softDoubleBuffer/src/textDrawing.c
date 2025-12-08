@@ -17,7 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
-#include <declarations.h>
+#include "declarations.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // DRAW INFO TEXT TO BUFFER
@@ -107,7 +107,8 @@ void DrawTextSelectionSign(u8 sel) {
       ,  POS_TEXT + 40
       ,  POS_TEXT + 75
    };
-   u8 pos = locations[sel-1];   // Position of the User selection
+   // Next line still in strange warning but asm generated much better with --sel than sel-1 !
+   const u8 pos = locations[--sel]; // Position of the User selection
    
    // Draw text in both video buffer 
    DrawSelectionToBuffer((u8*)CPCT_VMEM_START, pos);

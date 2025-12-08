@@ -23,7 +23,6 @@
 void main(void) {
    u8* pvmem;  // Pointer to video memory
    u8* firstByteInPage = (u8*) 0x4000;
-   u8 i;
 
    cpct_pageMemory(RAMCFG_0 | BANK_0);				// Not needed, sets the memory with the first 64kb accesible, in consecutive banks.
    // firstByteInPage point to address 0x4000. With this memory 

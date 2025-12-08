@@ -37,7 +37,6 @@
 #define LARGE_HUD_W			10
 
 // Declare mask table
-cpctm_declareMaskTable(gMaskTable);
 cpctm_createTransparentMaskTable(gMaskTable, MASK_TABLE_LOC, M0, 0);
 
 // Define structure for drawing car
