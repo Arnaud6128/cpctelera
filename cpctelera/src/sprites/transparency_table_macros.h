@@ -118,7 +118,7 @@
 //
 #define cpctm_createTransparentMaskTable(TABLENAME,ADDRESS,MODE,PEN) \
 cpctm_declareMaskTable(TABLENAME); \
-void dummy_cpct_transparentMaskTable ## PEN ## MODE ## _container() __naked { \
+void dummy_cpct_transparentMaskTable ## PEN ## MODE ## _container(void) __naked { \
    __asm \
       .area _ ## TABLENAME ## _ (ABS) \
       .org ADDRESS \
@@ -127,7 +127,7 @@ void dummy_cpct_transparentMaskTable ## PEN ## MODE ## _container() __naked { \
       .area _CSEG (REL, CON) \
    __endasm; \
 } \
-void dummy_cpct_transparentMaskTable ## PEN ## MODE ## _container() __naked
+void dummy_cpct_transparentMaskTable ## PEN ## MODE ## _container(void) __naked
 
 //
 // Macro: cpctm_declareMaskTable
