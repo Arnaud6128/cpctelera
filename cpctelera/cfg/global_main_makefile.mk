@@ -29,6 +29,7 @@
 # Logfile where load and run addresses for the generated binary will be logged
 BINADDRLOG   := $(OBJDIR)/binaryAddresses.log
 PREBUILD_OBJ := $(OBJDIR)/prebuildstep.objectfile
+CPCTELERA_VERSION = "CPCteleraNext_1.0Beta"
 
 .PHONY: all clean cleanall cleancode recode
 
@@ -57,6 +58,7 @@ $(PREBUILD_OBJ): $(OBJSUBDIRS_FOLDER_FILES) $(IMGCFILES) $(IMGASMFILES) $(IMGBIN
 	$(info preobjs: '$(OBJSUBDIRS_FOLDER_FILES)')
 	@$(call PRINT,$(PROJNAME),"")
 	@$(call PRINT,$(PROJNAME),"=== PREBUILD PROCCESSING DONE!")
+	@$(call PRINT,$(PROJNAME),"=== $(CPCTELERA_VERSION)")
 	@$(call PRINT,$(PROJNAME),"============================================================")
 	@$(call PRINT,$(PROJNAME),"")
 	@touch $(PREBUILD_OBJ)
