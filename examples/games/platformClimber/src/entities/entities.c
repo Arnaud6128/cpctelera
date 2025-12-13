@@ -117,7 +117,6 @@ const TCharacter g_Character = {
 //   Sets up entities at their initial values
 //
 void initializeEntities(void) {
-   TPhysics *p = ((TPhysics*)&g_Character.entity.phys); 
    G_platfColour = cpct_px2byteM0(8, 8);
    G_scrollVel = 3 * SCALE / FPS;  // Scroll down velocity, 3 px/sec
    g_movingBlocks = 0;
@@ -319,9 +318,11 @@ u8 moveBlock(u8 b_idx) {
 // scrolls the world (all the blocks) at the given velocity
 //
 void scrollWorld(void) {
-   TEntity *ce = &g_Character.entity;
-   TPhysics *p = &ce->phys;
+   TEntity *ce;
+   TPhysics *p;
    u8 i;
+   ce = (TEntity *)&g_Character.entity;
+   p = &ce->phys;
 
    // Scroll all the given block entities
    for(i=0; i < g_lastBlock; ++i) {
@@ -485,7 +486,7 @@ void applyCharacterBlockCollisions(TCharacter *c) {
             p->vx = 0;
 
          // Upside Collision
-         } else if (e->y < col->y - e->ph / 2) { 
+         } else if (e->y < col->y - e->ph / (u8)2) { 
             p->floor   = ebl; // Make this entity the floor
             e->nAnim   = g_anim[es_walk][c->side]; // Next animation changes
             e->nStatus = as_pause;     // Make character cycle animation

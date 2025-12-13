@@ -185,7 +185,8 @@ void InterruptFunction(u8 line) __z88dk_fastcall
     else
     {                
         // Get pointer of palette to modify it
-        u16* colour = paletteTop;
+        u16* colour;
+        colour = (u16*)paletteTop;
         
         // Star gradient color
         u16 col = GetGradientColor(line);
@@ -219,7 +220,7 @@ void InterruptFunction(u8 line) __z88dk_fastcall
 void SetInterruptHandler(void)
 {
     // Defines three lines of interruptions
-    static const u8 lines[] = {1, 20, 60, 90, 120, STARS_AREA_HEIGHT-2, ASIC_SCREEN_HEIGHT};
+    static const u8 lines[] = {1, 20, 60, 90, 120, (u8)(STARS_AREA_HEIGHT-2), ASIC_SCREEN_HEIGHT};
 
     // Wait screen refresh is starting to top
     cpct_waitVSYNC();
@@ -388,7 +389,8 @@ void InitAsteroids(void)
 {
     #define ASTEROID_LARGE_SIZE    4
     
-    SAsteroid* asteroidPtr = gAsteroids;
+    SAsteroid* asteroidPtr;
+    asteroidPtr = (SAsteroid*)gAsteroids;
     
     u8 i, j;
     for (i = 0; i < ASTEROID_NB; i++)
@@ -512,8 +514,9 @@ void UpdateMoon(void)
 //        
 void UpdateAsteroids(void)
 {
-    SAsteroid* asteroidPtr = gAsteroids;
+    SAsteroid* asteroidPtr;
     u8 i;
+    asteroidPtr = (SAsteroid *)gAsteroids;
     
     // Check if all asteroids exited
     gAllAsteroidsExit = true;

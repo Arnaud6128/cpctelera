@@ -43,7 +43,7 @@ typedef struct {
    u8  x,  y;          // Pixel Location
    u8 nx, ny;          // Next pixel location
    u8  w,  h;          // Width and height of the entity (in bytes!)
-   u8* sprite;         // Sprite
+   const u8* sprite;         // Sprite
    TShiftStatus shift; // Sprite shifting status (EVEN, ODD)
 } TEntity;
 
@@ -95,13 +95,15 @@ void shiftSpritePixelsLeft(u8* sprite, u8 size) {
 void shiftSprite(TEntity *e) {
    // Depending on its present status, shifting will be to the left or to the right
    // We always assume that the original sprite had its rightmost pixel column free (zeroed)
+   u8* entitySprite;
+   entitySprite=(u8*)e->sprite;
    if (e->shift == ON_EVEN_PIXEL) {     
       // Shift sprite right & update shifting status
-      shiftSpritePixelsRight(e->sprite, e->w * e->h);
+      shiftSpritePixelsRight(entitySprite, e->w * e->h);
       e->shift = ON_ODD_PIXEL;
    } else {
       // Shift sprite left & update shifting status
-      shiftSpritePixelsLeft(e->sprite, e->w * e->h);
+      shiftSpritePixelsLeft(entitySprite, e->w * e->h);
       e->shift = ON_EVEN_PIXEL;
    }
 }
@@ -167,7 +169,7 @@ void main(void) {
       32, 88,              // Next pixel location
       SPRITE_WIDTH_BYTES,  // | Sprite Size in bytes
       SPRITE_HEIGHT_BYTES, // |
-      (u8*)&g_character,   // Pointer to sprite definition
+      g_character,         // Pointer to sprite definition
       ON_EVEN_PIXEL        // Pixel location is Even (32)
    };
 

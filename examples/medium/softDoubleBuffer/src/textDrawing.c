@@ -103,9 +103,9 @@ void DrawTextSelectionSign(u8 sel) {
    // On-screen Y locations of the 3 selections the
    // user can pick up
    static const u8 locations[3] = { 
-         POS_TEXT + 15
-      ,  POS_TEXT + 40
-      ,  POS_TEXT + 75
+         (u8)(POS_TEXT + 15)
+      ,  (u8)(POS_TEXT + 40)
+      ,  (u8)(POS_TEXT + 75)
    };
    // Next line still in strange warning but asm generated much better with --sel than sel-1 !
    const u8 pos = locations[--sel]; // Position of the User selection
