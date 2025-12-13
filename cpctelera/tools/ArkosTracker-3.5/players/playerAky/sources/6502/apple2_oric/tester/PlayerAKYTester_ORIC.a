@@ -1,0 +1,72 @@
+; ACME 0.96.4
+; Tests the AKY player, for ORIC 1/ATMOS
+; AC / 07/2019
+
+!cpu 6502
+!sl "labels.txt"
+
+    *= $1000 ; ORG = $1000
+
+START
+            ; init Player AKY
+            JSR PLY_AKY_INIT            
+                   
+            ; SET INTERRUPT 
+            SEI                                                 ; inib INT
+            
+            ; set interrupt routine
+            LDA #<INT_ROUT
+            STA $245	
+            LDA #>INT_ROUT
+            STA $246
+         
+            ; TIMER 1 6522 
+            LDA #%01000000		                                ; continuous interrupt / PB7 disabled
+            STA $30B    		                                ; Auxiliary Control Register
+
+            LDA #%11000000		
+            STA $30D    		                                ; interrupt flag register	(Time Out of Timer 1/Int)
+            STA $30E    		                                ; interrupt Enable register (Timer 1 + Set)
+         
+            ; delay (50Hz)
+            LDA #$36
+            STA $304                                            ; T1C-Lower
+            LDA #$4F
+            STA $305                                            ; T1C-High
+            ; ---------------
+
+            CLI                                                 ; INT on!
+            
+            ; MAIN LOOP
+LOOP        JMP LOOP
+
+            ; END...
+            LDA #%01000000
+            STA $30E                                            ; disable INT
+
+            RTS                                                 ; return to DOS
+
+; =============================================================================
+INT_ROUT    ; minimal interrupt routine
+            JSR PLY_AKY_PLAY                                    ; play one frame
+            BIT $304                                            ; Clears interrupt (T1CL)
+		    RTI					                                ; Return of Interrupt
+; =============================================================================
+PLAYER
+; Selects the hardware: 
+PLY_AKY_HARDWARE_ORIC = 1
+
+; Player Config (source file):
+; comment/uncomment if player config file is provided or not.
+!src "..\resources\MusicAHarmlessGrenade_APPLE2_ORIC_playerconfig.a"
+;!src "..\resources\MusicYMType_APPLE2_ORIC_playerconfig.a"         
+
+; ARKOS AKY 6502 PLAYER:
+!src "..\PlayerAKY_6502.a" 
+
+; TRACK to play:
+!src "..\resources\MusicAHarmlessGrenade_APPLE2_ORIC.a"
+;!src "..\resources\MusicHocusPocus_APPLE2_ORIC.a" 
+;!src "..\resources\MusicBoulesEtBits_APPLE2_ORIC.a"
+;!src "..\resources\MusicSarkboteur_APPLE2_ORIC.a"
+;!src "..\resources\MusicYMType_APPLE2_ORIC.a"

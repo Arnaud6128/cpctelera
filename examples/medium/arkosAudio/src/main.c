@@ -1,6 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2025 CPCteleraNext (@Arnaud6128)
+//  Copyright (C) 2025 CPCtelera - ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -17,15 +18,44 @@
 //------------------------------------------------------------------------------
 
 #include <cpctelera.h>
-#include "molusk.h" // This file is geneated on compilation from music/molusk.aks
+#include <stdio.h>
 
-//
+// This file is generated on compilation from music/molusk.aks
+// In this example the AKG Player is used but it can be changed to AKM
+// See arkosTracker3 documentation about different players.
+#include "arkosPlayer3.h"
+
 // Defined type to know the status of a Key 
 //    Key is either Pressed / Released, and K_NOEVENT is used to
 //    report that a key is in the same status as in previous checks
 //    (Continues pressed or continues released)
 //
 typedef enum { K_NOEVENT, K_RELEASED, K_PRESSED } TKeyStatus;
+
+// Playing sound
+u8 gPlaying;
+
+////////////////////////////////////////////////////////////////////////
+// Play Music on interruption 
+//
+void MusicInterruptHandler(void)
+{
+    static u8 sInterrupt = 0;
+    
+    // Play next music 1/50 step.
+    if (sInterrupt == 1)
+    {
+        if (gPlaying)
+            cpct_PLY_AKG_Play();  
+    }
+    else if (sInterrupt == 6)
+    {        
+        cpct_scanKeyboard_if();
+        sInterrupt = 0;
+    }
+
+    sInterrupt++;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // Checks if a Key has changed from pressed to released or viceversa
@@ -59,86 +89,56 @@ TKeyStatus checkKeyEvent(cpct_keyID key, TKeyStatus *keystatus) {
 //       *   1   - Play a sound effect on Channel A
 //       *   2   - Play a sound effect on Channel C
 //
-void main(void) {
-   TKeyStatus k_space, k_0, k_1;    // Status of the 3 Keys for this example (Space, 1, 2)
-   u8  playing   = 1;               // Flag to know if music is playing or not
-   u8  color     = 1;               // Color to draw charactes (normal / inverse)
+void main(void) 
+{
+   TKeyStatus k_space, k_1, k_2;    // Status of the 3 Keys for this example (Space, 1, 2)
    u8* pvideomem = CPCT_VMEM_START; // Pointer to video memory where next character will be drawn
 
    // All 3 keys are considered to be released at the start of the program
-   k_space = k_0 = k_1 = K_RELEASED;
+   k_space = k_1 = k_2 = K_RELEASED;
+   gPlaying = 1;
 
    // Initialize CPC
    cpct_disableFirmware();    // Disable firmware to prevent interaction
    cpct_setVideoMode(2);      // Set Mode 2 (640x200, 2 colours)
    cpct_setDrawCharM2(1, 0);  // Set Initial colours for drawCharM2 (Foreground/Background)
 
+   printf("ArkosTracker 3 demo.\r\n\r\nPress 'Space bar' to stop/play sound.\r\nPress '1' or '2' to play sound effect.");
+   
    // Initialize the song to be played
-   cpct_akp_musicInit(molusk_song);    // Initialize the music
-   cpct_akp_SFXInit(molusk_song);      // Initialize instruments to be used for SFX (Same as music song)
+   cpct_PLY_AKG_Init(MUSICSTART, 0);    // Initialize the music
+   cpct_PLY_AKG_InitSoundEffects(EFFECTSSOUNDEFFECTS); // Initialize the sound effects
 
-   while (1) {
-      // We have to call the play function 50 times per second (because the song is 
-      // designed at 50Hz). We only have to wait for VSYNC and call the play function
-      // when the song is not stopped (still playing)
-      cpct_waitVSYNC();
+    // Music is played on interrupt.
+   cpct_setInterruptHandler(MusicInterruptHandler);
 
-      // Check if the music is playing. When it is, do all the things the music
-      // requires to be done every 1/50 secs.
-      if (playing) {
-         cpct_akp_musicPlay();   // Play next music 1/50 step.
+   while (1) 
+   {
+       // When Space is released, stop / continue music
+       if ( checkKeyEvent(Key_Space, &k_space) == K_RELEASED ) 
+       {                       
+           // Change it from playing to not playing and viceversa (0 to 1, 1 to 0)
+           gPlaying ^= 1;
+           
+           // Stop sound
+           if (!gPlaying){
+               cpct_PLY_AKG_Stop(); // Cut down sound output
+           }
+           else{
+               cpct_PLY_AKG_PlaySoundEffect(1, CHANNEL_B, 0); // Play sound
+           }
+       } 
 
-         // Write a new number to the screen to see something while playing. 
-         // The number will be 0 when music is playing, and 1 when it finishes.
-         //  -> If some SFX is playing write the channel where it is playing
-         
-         // Check if there is an instrument plaing on channel A
-         if (cpct_akp_SFXGetInstrument(AY_CHANNEL_A))
-            cpct_drawCharM2(pvideomem, 'A'); // Write an 'A' because channel A is playing
-         
-         // Check if there is an instrument plaing on channel C
-         else if (cpct_akp_SFXGetInstrument(AY_CHANNEL_C))
-            cpct_drawCharM2(pvideomem, 'C'); // Write an 'C' because channel A is playing 
-         
-         // No SFX is playing on Channels A or C, write the number of times
-         // this song has looped.
-         else
-            cpct_drawCharM2(pvideomem, '0' + cpct_akp_songLoopTimes);
+       // Play sound effect when press key 1, or 2
+       // !! Warning sound effect start at index 1 !!
+       if ( checkKeyEvent(Key_1, &k_1) == K_RELEASED ) 
+       {
+           cpct_PLY_AKG_PlaySoundEffect(2, CHANNEL_A, 0);
+       } 
 
-         // Point to the start of the next character in video memory
-         if (++pvideomem >= (u8*)0xC7D0) {
-            pvideomem = CPCT_VMEM_START; // When we reach the end of the screen, we return..
-            color ^= 1;                  // .. to the start, and change the colour
-            cpct_setDrawCharM2(color, color^1); // Set new colour pair for drawCharM2 (inverted from previous one)
-         }
-
-         // Check if music has already ended (when looptimes is > 0)
-         if (cpct_akp_songLoopTimes > 0)
-            cpct_akp_musicInit(molusk_song); // Song has ended, start it again and set loop to 0
-      }
-
-      // Check keyboard to let the user play/stop the song with de Space Bar
-      // and reproduce some sound effects with keys 1 and 0
-      cpct_scanKeyboard_f();
-
-      // When Space is released, stop / continue music
-      if ( checkKeyEvent(Key_Space, &k_space) == K_RELEASED ) {
-         // Only stop it when it was playing previously
-         // No need to call "play" again when continuing, as the
-         // change in "playing" status will make the program call "play"
-         // again from the next cycle on
-         if (playing)
-            cpct_akp_stop();
-         
-         // Change it from playing to not playing and viceversa (0 to 1, 1 to 0)
-         playing ^= 1;
-
-      // Check if Key 0 has been released to reproduce a Sound effect on channel A
-      } else if ( checkKeyEvent(Key_0, &k_0) == K_RELEASED ) {
-         cpct_akp_SFXPlay(13, 15, 36, 20, 0, AY_CHANNEL_A);
-
-      // Check if Key 1 has been released to reproduce a Sound effect on channel C
-      } else if ( checkKeyEvent(Key_1, &k_1) == K_RELEASED ) 
-         cpct_akp_SFXPlay(3, 15, 60, 0, 40, AY_CHANNEL_C);
+       if ( checkKeyEvent(Key_2, &k_2) == K_RELEASED ) 
+       {
+           cpct_PLY_AKG_PlaySoundEffect(3, CHANNEL_C, 0);
+       } 
    }
 }

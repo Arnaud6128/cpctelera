@@ -1,0 +1,45 @@
+= Format description
+
+This describes the format when PSG registers are sent from AT2 to a client via serial communication.
+
+All 16/32 bits numbers are little-endian encoded.
+
+== Initialization
+
+This can be called at any time to specify the hardware. It should be sent at least once before a first frame is played.
+
+ db #ff
+ dw replay frequency in hz (50, 25, etc.).
+ db psgCount (>=1)
+
+For each PSG:
+
+ dd <32 bits little-endian PSG clock> (1000000 for an Amstrad CPC).
+ 
+== Frame
+
+One frame may contain several PSGs data.
+PSGs that are not encoded, though unlikely, are considered the same values are before.
+
+The frame management _could_ be diff-based. However, this would be problematic in case of frame-skip. Nowadays serial connections are fast, this shouldn't be a bother.
+
+The hardware envelope is always sent. It is up to the client to dismiss it if the R13 didn't change, unless Retrig is set.
+
+ db #fe
+
+Loop as long as `PsgIndex != 255`:
+
+ db psg Index (>=0) or 255 = end
+ db r0, r2, r4              ;LSB of software periods.
+ db r11, r12                ;Hardware periods.
+ db r1 | r3 << 4            ;MSB of software period for channel 1 and 2.
+ db r8_4b | r5 << 4         ;Volume channel 1 (4b only) + MSB of software period for channel 3.
+ db r9_4b | r10_4b << 4     ;Volume channel 2 + 3 (4b only).
+ db r6 | r8_5 << 5 | r9_5 << 6 | r10_5 << 7  ;Noise + bit 5 of each volume.
+ db r7_6b + retrig? << 5    ;Mixer (6 bits) + Retrig? (1 if yes).
+ db r13                     ;Hardware envelope (0-15).
+
+== Stop sound
+
+ db #fd
+ 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<aks:instrument xmlns:aks="http://www.julien-nevo.com/ArkosTrackerInstrument"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.julien-nevo.com/ArkosTrackerInstrument.xsd">
+  <aks:fmInstrument version="1.0">
+    <aks:number>1</aks:number>
+    <aks:title>Hard R4 Triangle</aks:title>
+    <aks:speed>0</aks:speed>
+    <aks:isLooping>true</aks:isLooping>
+    <aks:loopStartIndex>0</aks:loopStartIndex>
+    <aks:endIndex>0</aks:endIndex>
+    <aks:isRetrig>false</aks:isRetrig>
+    <aks:colorArgb>4292927712</aks:colorArgb>
+    <aks:fmInstrumentCell>
+      <aks:link>softToHard</aks:link>
+      <aks:volume>15</aks:volume>
+      <aks:noise>0</aks:noise>
+      <aks:softwarePeriod>0</aks:softwarePeriod>
+      <aks:softwareArpeggio>0</aks:softwareArpeggio>
+      <aks:softwarePitch>0</aks:softwarePitch>
+      <aks:ratio>4</aks:ratio>
+      <aks:hardwareCurve>8</aks:hardwareCurve>
+      <aks:hardwarePeriod>0</aks:hardwarePeriod>
+      <aks:hardwareArpeggio>0</aks:hardwareArpeggio>
+      <aks:hardwarePitch>0</aks:hardwarePitch>
+      <aks:isRetrig>false</aks:isRetrig>
+    </aks:fmInstrumentCell>
+  </aks:fmInstrument>
+</aks:instrument>

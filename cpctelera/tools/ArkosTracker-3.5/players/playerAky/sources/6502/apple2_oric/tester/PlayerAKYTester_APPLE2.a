@@ -1,0 +1,105 @@
+; ACME 0.96.4
+; Tests the AKY player, for APPLE II / Mockingboard (SLOT #4)
+; AC / 07/2019
+
+!cpu 6502
+!sl "labels.txt"
+
+    *= $1000 ; ORG = $1000
+
+START
+
+            ; Init MockingBoard SLOT#4
+            LDA #$FF
+            STA $C403       ; DDRA1
+            LDA #$07
+            STA $C402       ; DDRB1
+
+            ; clean REGISTERS AY1
+            LDA #$00
+            STA $C400
+            LDA #$04
+            STA $C400
+
+            ; init Player AKY
+            JSR PLY_AKY_INIT            
+                   
+            ; SET INTERRUPT 
+            SEI                                                 ; inib INT
+            ; INTERRUPT VECTOR 
+            LDA #<INT_ROUT
+            STA $3FE   
+            LDA #>INT_ROUT
+            STA $3FF
+         
+            ; TIMER 1 6522 
+            LDA #%01000000                                      ; continuous interrupt / PB7 disabled
+            STA $C40B                                           ; Auxiliary Control Register
+
+            LDA #%11000000      
+            STA $C40E                                           ; interrupt Enable register (Timer 1 + Set)
+        
+            ; delay (50Hz)
+            LDA #$36
+            STA $C404                                           ; T1C-Lower
+            LDA #$4F
+            STA $C405                                           ; T1C-High
+            ; ---------------
+
+            CLI                                                 ; INT on!
+            
+            ; MAIN LOOP
+LOOP        LDA $C000                                           ; test keyboard
+            BPL LOOP                                            ; loop if no key pressed
+
+            ; END...
+            LDA #%01000000
+            STA $C40E                                           ; disable INT
+
+            ; MUTE CHAN 1/2/3
+            LDY #10
+
+-           STY $C401    
+            LDA #$07                        
+            STA $C400
+            LDA #$04                       
+            STA $C400
+
+            LDA #$00
+            STA $C401
+            LDA #$06                      
+            STA $C400
+            LDA #$04                      
+            STA $C400
+            DEY
+            CPY #07
+            BNE -
+            ; ---------------
+            STA $C010                                           ; keyboard strobe
+
+            RTS                                                 ; return to DOS
+
+; =============================================================================
+INT_ROUT    ; minimal interrupt routine
+            JSR PLY_AKY_PLAY                                    ; play one frame
+            BIT $C404                                           ; Clears interrupt (T1CL)
+		    RTI					                                ; Return of Interrupt
+; =============================================================================
+PLAYER
+; Selects the hardware: 
+PLY_AKY_HARDWARE_APP2 = 1
+
+; Player Config (source file):
+; comment/uncomment if player config file is provided or not.
+!src "..\resources\MusicAHarmlessGrenade_APPLE2_ORIC_playerconfig.a"
+;!src "..\resources\MusicYMType_APPLE2_ORIC_playerconfig.a"         
+
+; ARKOS AKY 6502 PLAYER (source file):
+!src "..\PlayerAKY_6502.a"
+
+; AKY Track to play (source file):
+!src "..\resources\MusicAHarmlessGrenade_APPLE2_ORIC.a"
+;!src "..\resources\MusicHocusPocus_APPLE2_ORIC.a" 
+;!src "..\resources\MusicBoulesEtBits_APPLE2_ORIC.a"
+;!src "..\resources\MusicSarkboteur_APPLE2_ORIC.a"
+;!src "..\resources\MusicYMType_APPLE2_ORIC.a"

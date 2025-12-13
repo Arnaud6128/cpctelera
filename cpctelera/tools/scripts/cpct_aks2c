@@ -48,47 +48,40 @@
 ## Command line options:
 ##    -bl  | --bytes-per-line [bytes] - Set the number of bytes that every generated line will contain in the .s file
 ##    -gb  | --generate-bin           - Generates a binary file with song's data (Default: no). Using this switch overrides generation defaults.
-##    -gh  | --generate-header        - Generates a header file (.h) with C declarations (Default: yes). Using this switch overrides generation defaults.
-##    -ghs | --generate-asm-header    - Generates a header file (.h.s) with asm declarations (Default: no). Using this switch overrides generation defaults.
 ##    -gs  | --generate-asm           - Generates an assembly file with song's data (Default: yes). Using this switch overrides generation defaults.
 ##    -h   | --help                   - Shows help information on the terminal.
 ##    -id  | --c-identifier [ident]   - Sets the identifier that will be used to access the array from C programs.
 ##    -m   | --memory-address         - Set the memory base address where song binary data will be located.
 ##    -o   | --output-filename        - Set the basename for output filenames (name without extension)
 ##    -od  | --output-directory [dir] - Sets directory where .s/.h files will be written to.
-##    -sfx | --only-sfx               - Converts songs' instrument data only for sound effects
 ##
 
 ## Bash Include files
 source $(dirname $0)/lib/bash_library.sh
 
 ## AKS2BIN utility location
-AKS2BIN=${CPCT_PATH}/tools/arkosTracker-1.0/tools/AKSToBIN.exe
-STK2AKS=${CPCT_PATH}/tools/arkosTracker-1.0/tools/STKToAKS.exe
+ARKOS_VERSION=3.5
+AKSPATH=${CPCT_PATH}/tools/arkosTracker-${ARKOS_VERSION}
+AKS2BIN=${AKSPATH}/tools
+RASM=${AKSPATH}/cpctelera/tools/rasm_w32.exe
+DISARK=${AKSPATH}/cpctelera/tools/Disark.exe
+PLAYER_AKG=${AKSPATH}/cpctelera/playerAkg
+PLAYER_AKM=${AKSPATH}/cpctelera/playerAkm
 
 ## Configuration Variables
-AKSBINSTART3="1f8b08"
-STKBINSTART3="53544b"
 FILETYPE=aks
 MEMADDR=0x100
 C_IDENTIFIER="g_music"
 BINTMP=$(createTempFile)
-STKTMP=$(createTempFile)
-EXPORTMP=$(createTempFile)
-TXTBINTMP=$(createTempFile)
 BYTESPERLINE=16
 OUTPUT_FILENAME=
 OUTPUTDIR=.
-SFXONLY=0
-SFXFLAG=
 GENERATE_S=0
-GENERATE_H=0
-GENERATE_H_S=0
 GENERATE_BIN=0
 SFILE=music.s
-HFILE=music.h
-HSFILE=music.h.s
 BINFILE=music.bin
+COMPILE=
+PLAYER=
 
 ## Show how this script is to be used and exit
 ##
@@ -125,17 +118,8 @@ OPTIONS
    -gb  | --generate-bin ${COLOR_CYAN}
          Generates a binary file with song's data (Default: no). Using this switch overrides generation defaults \
    ${COLOR_LIGHT_BLUE}
-   -gh  | --generate-header ${COLOR_CYAN}
-         Generates a header file (.h) with C declarations (Default: yes). Using this switch overrides generation defaults. \
-   ${COLOR_LIGHT_BLUE}
-   -ghs | --generate-asm-header ${COLOR_CYAN}
-         Generates a header file (.h.s) with asm declarations (Default: no). Using this switch overrides generation defaults. \
-   ${COLOR_LIGHT_BLUE}
    -gs  | --generate-asm ${COLOR_CYAN}
          Generates an assembly file with song's data (Default: yes). Using this switch overrides generation defaults. \
-   ${COLOR_LIGHT_BLUE}
-   -id  | --c-identifier [ident] ${COLOR_CYAN}
-         Sets the identifier that will be used to access the array from C programs \
    ${COLOR_LIGHT_BLUE}
    -m   | --memory-address ${COLOR_CYAN}
          Set the memory base address where song binary data will be located \
@@ -145,9 +129,6 @@ OPTIONS
    ${COLOR_LIGHT_BLUE}
    -od  | --output-directory [dir] ${COLOR_CYAN}
          Sets directory where .s/.h files will be written to \
-   ${COLOR_LIGHT_BLUE}
-   -sfx | --only-sfx ${COLOR_CYAN}
-         Converts songs' instrument data only for sound effects \
    ${COLOR_NORMAL}
 
 UsageHereDoc
@@ -187,14 +168,6 @@ while (( $# >= 1 )); do
       ## Select generation of binary file
       "-gb" | "--generate-bin")
          GENERATE_BIN=1
-      ;;
-      ## Select generation of C-header file
-      "-gh" | "--generate-header")
-         GENERATE_H=1
-      ;;
-      ## Select generation of C-header file
-      "-ghs" | "--generate-asm-header")
-         GENERATE_H_S=1
       ;;
       ## Select generation of assembly file
       "-gs" | "--generate-asm")
@@ -258,10 +231,14 @@ while (( $# >= 1 )); do
          OUTPUTDIR="$2"
          shift
       ;;
-      ## Generate only Sound effects
-      "-sfx" | "--only-sfx")
-         SFXONLY=1
-         SFXFLAG=-s
+      ## Compile
+      "-compile" | "--compile")
+	     COMPILE=1
+      ;;
+	   ## ArkosPlayer
+      "-player" | "--player")
+	     PLAYER="$2"
+		 shift
       ;;
       ## Get main parameter (filename)
       *)
@@ -290,17 +267,6 @@ if isEmpty "$FILE"; then
    paramError "A <filename> parameter is required." 12
 fi
 
-## Check that the file is either an AKS or a STK file (reading its binary prefix)
-BINARYSTART=$(getFileInitialBytes "$FILE" 3)
-if   [ "$BINARYSTART" = "$AKSBINSTART3" ]; then
-   FILETYPE=aks
-elif [ "$BINARYSTART" = "$STKBINSTART3" ]; then
-   FILETYPE=stk
-else
-   Error "FILE '$FILE' is not a valid AKS/STK file. Please check it with Arkos/Starkos traker." 13
-fi
-echo "Detected Music Filetype: $FILETYPE" 
-
 
 ## Calculate output filenames and routes
 if isEmpty "$OUTPUT_FILENAME"; then
@@ -316,16 +282,17 @@ else
 fi
 
 ## Check AKSToBin and Wine if Required
-checkExecutableExists "$AKS2BIN"
-if [ "FILETYPE" = "stk" ]; then
-   checkExecutableExists "$STK2AKS"
-fi
+checkExecutableExists "$AKS2BIN/SongToAkm.exe"
+checkExecutableExists "$AKS2BIN/SongToAkg.exe"
+checkExecutableExists "$AKS2BIN/SongToSoundEffects.exe"
+checkExecutableExists "$RASM"
+checkExecutableExists "$DISARK"
+
 echo
 if checkSystem cygwin; then
    ## Calculate windows valid paths for input files
    FILE_CP=`cygpath -w $FILE`
    BINTMP_CP=`cygpath -w $BINTMP`
-   STKTMP_CP=`cygpath -w $STKTMP`
 else
    EnsureCommandAvailable mono "mono has not been found on the system, \
 and it's required for this script to work. Please, install mono or \
@@ -336,12 +303,11 @@ check the installation and run this script again."
    ## Paths for input files are already valid under *nix
    FILE_CP=$FILE
    BINTMP_CP=$BINTMP
-   STKTMP_CP=$STKTMP
 fi
 
 ###############################################################
 ###############################################################
-## Convert music to data array
+## Convert music
 ##
 
 ## STEP 0: When converting from Starkos to Arkos, create an intermediate AKS file
@@ -354,128 +320,112 @@ else
    THEAKSFILE=$FILE_CP
 fi
 
-## STEP 1: Convert AKS file to Binary
-printf "Converting '$FILE' to binary..."
-$AKS2BIN ${SFXFLAG} -a "$MEMADDR" "$THEAKSFILE" "$BINTMP_CP" >> "$EXPORTMP" 2>&1
+## STEP 1: Convert AKS file to AKG ASM
+printf "Converting '$FILE' to Asm..."
 
-# Check if song has been correctly exported
-if ! grep "Song exported" < "$EXPORTMP" > /dev/null; then
-   COLF="'${COLOR_WHITE}$FILE${COLOR_LIGHT_YELLOW}'"
-   Error "There was an error exporting song $COLF. Please check that $COLF is \
-a valid AKS song file and run this script again."
-fi
-echo "${COLOR_LIGHT_GREEN}SUCCESS!${COLOR_NORMAL}"
+if [ ! -d temp ]; then
+	mkdir temp
 
-# If Binary was to be generated, copy BINTMP to BINFILE
-if (( GENERATE_BIN )); then
-   printf "Generating '$BINFILE' with song data in binary form..."
-   cp "$BINTMP" "$BINFILE" > /dev/null
-   echo "${COLOR_LIGHT_GREEN}SUCCESS!${COLOR_NORMAL}"
+	printf "// Header generated by cpctelera for ArkosTracker 3\nenum\n{\n\tCHANNEL_A,\n\tCHANNEL_B,\n\tCHANNEL_C\n};\n" > "${OUTPUTDIR}/arkosPlayer3.h";
+	printf "; Asm generated by cpctelera for ArkosTracker 3\nPLY_AKG_HARDWARE_CPC = 1\n" > "temp/compileAt3.asm";
 fi
 
-# Calculate size in bytes
-SIZE_BYTES=$(wc -c < "$BINTMP")
+if [ "$PLAYER" == "akm" ]; then
+	if [ ! -d temp//PlayerAkm.asm ]; then
+		cp "${PLAYER_AKM}/PlayerAkm.asm" temp
+		cp "${PLAYER_AKM}/PlayerAkm_SoundEffects.asm" temp
+		
+ARKOSPLAYER_HEADER="
+// Arkos player functions
+void PLY_AKM_INIT(void* songdata, u16 subSong) __z88dk_callee;
+void PLY_AKM_PLAY(void);
+void PLY_AKM_STOP(void);
+void PLY_AKM_INITSOUNDEFFECTS(void* sfx_song_data) __z88dk_fastcall;
+void PLY_AKM_PLAYSOUNDEFFECT(u8 sfx_num, u8 channel, u16 volume) __z88dk_callee;
+void PLY_AKM_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 
-## STEP 2: Generate S-File if required
-if (( GENERATE_S )); then
-   ## Convert Binary file to Text-Hexadecimal-Binary for later parsing
-   od -An -t x1 -v "$BINTMP" > "$TXTBINTMP"
+// Defines for cpctelera
+#define cpct_PLY_AKM_Init(SONG, SSONG) PLY_AKM_INIT(SONG, SSONG)
+#define cpct_PLY_AKM_Play() PLY_AKM_PLAY()
+#define cpct_PLY_AKM_Stop() PLY_AKM_STOP()
+#define cpct_PLY_AKM_InitSoundEffects(SFX) PLY_AKM_INITSOUNDEFFECTS(SFX)
+#define cpct_PLY_AKM_PlaySoundEffect(SFX, CHAN, VOL) PLY_AKM_PLAYSOUNDEFFECT(SFX, CHAN, VOL)
+#define cpct_PLY_AKM_StopSoundEffectFromChannel(CHAN) PLY_AKM_STOPSOUNDEFFECTFROMCHANNEL(CHAN)"
 
-   printf "Generating '$SFILE' with data array..."
-   # Generate header, absolute location code and identifier
-   cat > "$SFILE" <<HereDocument
-;;;
-;;; File generated by cpct_aks2c CPCtelera script
-;;; Souce file of this conversion: ${FILE}
-;;; Generation time: $(date)
-;;;
+		printf "${ARKOSPLAYER_HEADER}" >> "${OUTPUTDIR}/arkosPlayer3.h";		
+	fi
+	
+	$AKS2BIN/SongToAkm.exe "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
+	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
 
-;;; Set absolute memory addressing
-.area __${C_IDENTIFIER} (ABS)
-.org $MEMADDR
+elif [ "$PLAYER" == "akg" ]; then	
+	if [ ! -d temp/PlayerAkg.asm ]; then
+		cp "${PLAYER_AKG}/PlayerAkg.asm" temp
+		cp "${PLAYER_AKG}/PlayerAkg_SoundEffects.asm" temp
+		
+		ARKOSPLAYER_HEADER="
+// Arkos player functions
+void PLY_AKG_INIT(void* songdata, u16 subSong) __z88dk_callee;
+void PLY_AKG_PLAY(void);
+void PLY_AKG_STOP(void);
+void PLY_AKG_INITSOUNDEFFECTS(void* sfx_song_data) __z88dk_fastcall;
+void PLY_AKG_PLAYSOUNDEFFECT(u8 sfx_num, u8 channel, u16 volume) __z88dk_callee;
+void PLY_AKG_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 
-;;; Music data start ($SIZE_BYTES bytes)
-;;;
-_${C_IDENTIFIER}::
-HereDocument
+// Defines for cpctelera
+#define cpct_PLY_AKG_Init(SONG, SSONG) PLY_AKG_INIT(SONG, SSONG)
+#define cpct_PLY_AKG_Play() PLY_AKG_PLAY()
+#define cpct_PLY_AKG_Stop() PLY_AKG_STOP()
+#define cpct_PLY_AKG_InitSoundEffects(SFX) PLY_AKG_INITSOUNDEFFECTS(SFX)
+#define cpct_PLY_AKG_PlaySoundEffect(SFX, CHAN, VOL) PLY_AKG_PLAYSOUNDEFFECT(SFX, CHAN, VOL)
+#define cpct_PLY_AKG_StopSoundEffectFromChannel(CHAN) PLY_AKG_STOPSOUNDEFFECTFROMCHANNEL(CHAN)"
 
-   # Convert binary to an absolutely located data array
-   i=0
-   while read LINE; do
-      BYTES=( $LINE )
-      LNBYTES=${#BYTES[@]}
-      b=0
-      while (( b < LNBYTES )); do
-         ## Line Start
-         if (( i == 0 )); then
-            printf ".db 0x%s" ${BYTES[$b]}
-            b=$((b+1))
-            i=1
-         fi
-   
-         ## Line body
-         while (( i < BYTESPERLINE && b < LNBYTES )); do
-            printf ", 0x%s" ${BYTES[$b]}
-            b=$((b+1))
-            i=$((i+1))
-         done
-   
-         ## Line ending
-         if (( i >= BYTESPERLINE )); then
-            printf "\n"
-            i=0
-         fi
-      done 
-   done < "$TXTBINTMP" >> "$SFILE"
-   echo "${COLOR_LIGHT_GREEN}SUCCESS!${COLOR_NORMAL}"
+		printf "${ARKOSPLAYER_HEADER}" >> "${OUTPUTDIR}/arkosPlayer3.h";
+	fi
+
+	$AKS2BIN/SongToAkg.exe "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
+	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
+
+elif [ "$PLAYER" == "fx" ]; then	
+	$AKS2BIN/SongToSoundEffects.exe "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} 
+	
+	if [ -f temp/PlayerAkm.asm ]; then
+		printf "\nPLY_AKM_MANAGE_SOUND_EFFECTS = 1\n" >> "temp/compileAt3.asm";
+	fi
+	
+	if [ -f temp/PlayerAkg.asm ]; then
+		printf "\nPLY_AKG_MANAGE_SOUND_EFFECTS = 1\n" >> "temp/compileAt3.asm";
+	fi
+	
+	printf "include \"${C_IDENTIFIER}.asm\"\n" >> "temp/compileAt3.asm"
 fi
 
-## STEP 3: Generate H-FILE (header data with declarations to let data be accessable from C)
-# Calculate memory address where music ends (in hexadecimal)
-ENDADDR=0x`dec2Hex $((MD + SIZE_BYTES - 1))`
-
-if (( GENERATE_H )); then
-   # Generate output header file
-   printf "Generating '$HFILE' with C declarations..."
-   cat > "$HFILE" <<HereDocument
-///
-/// File generated by cpct_aks2c CPCtelera script
-/// Souce file of this conversion: ${FILE}
-/// Generation time: $(date)
-///
-
-/// Song '${C_IDENTIFIER}' metadata macros
-#define ${C_IDENTIFIER}_address  ${MEMADDR}
-#define ${C_IDENTIFIER}_size     ${SIZE_BYTES}
-#define ${C_IDENTIFIER}_end      ${ENDADDR}
-
-/// Song '${C_IDENTIFIER}' array declaration
-extern void ${C_IDENTIFIER}[${C_IDENTIFIER}_size];
-HereDocument
-
-   echo "${COLOR_LIGHT_GREEN}SUCCESS!${COLOR_NORMAL}"
+if [ "$PLAYER" == "fx" ]; then
+	printf "\n\n// Track\nextern u8 ${C_IDENTIFIER^^}SOUNDEFFECTS[];" >> "${OUTPUTDIR}/arkosPlayer3.h";
+elif [ "$PLAYER" == "akg" ]; then
+	printf "\n\n// Track\nextern u8 ${C_IDENTIFIER^^}START[];" >> "${OUTPUTDIR}/arkosPlayer3.h";
+else
+	printf "\n\n// Track\nextern u8 ${C_IDENTIFIER^^}[];" >> "${OUTPUTDIR}/arkosPlayer3.h";
 fi
 
-## STEP 4: Generate H-S-FILE (assembler header data with declarations to let data be accessable from asm)
+## STEP 3: Generate ArkosTracker 3 Player and Songs to assembly code 
+if (( COMPILE == 1 )); then
+	if [ -f temp/PlayerAkm.asm ]; then
+		printf "\ninclude \"PlayerAkm.asm\"\n" >> "temp/compileAt3.asm"
+		
+		$RASM "temp\compileAt3.asm" -o "temp\UniversalAt3Files" -s -sl -sq > /dev/null 2>&1
+		$DISARK "temp\UniversalAt3Files.bin" "${OUTPUTDIR}\playerAkmCpctelera.s" --symbolFile "temp\UniversalAt3Files.sym" --sourceProfile sdcc > /dev/null 2>&1
+		
+		echo -e "\n\033[32mArkosTracker ${ARKOS_VERSION} Akm Player is ready to use.\033[0m\n"
+	fi
+	if [ -f temp/PlayerAkg.asm ]; then
+		printf "\ninclude \"PlayerAkg.asm\"\n" >> "temp/compileAt3.asm"
+	
+		$RASM "temp\compileAt3.asm" -o "temp\UniversalAt3Files" -s -sl -sq > /dev/null 2>&1
+		$DISARK "temp\UniversalAt3Files.bin" "${OUTPUTDIR}\playerAkgCpctelera.s" --symbolFile "temp\UniversalAt3Files.sym" --sourceProfile sdcc > /dev/null 2>&1
+		
+		echo -e "\n\033[32mArkosTracker ${ARKOS_VERSION} Akg Player is ready to use.\033[0m\n"
+	fi
 
-if (( GENERATE_H_S )); then 
-   # Generate output header file
-   printf "Generating '$HSFILE' with assembler declarations..."
-   cat > "$HSFILE" <<HereDocument
-;;;;
-;;;; File generated by cpct_aks2c CPCtelera script
-;;;; Souce file of this conversion: ${FILE}
-;;;; Generation time: $(date)
-;;;;
-
-;;;; Song '${C_IDENTIFIER}' metadata constants
-${C_IDENTIFIER}_address = ${MEMADDR}
-${C_IDENTIFIER}_size    = ${SIZE_BYTES}
-${C_IDENTIFIER}_end     = ${ENDADDR}
-
-;;;; Song '${C_IDENTIFIER}' declaration
-.globl _${C_IDENTIFIER}
-HereDocument
-
-   echo "${COLOR_LIGHT_GREEN}SUCCESS!${COLOR_NORMAL}"
+	rm temp -r	
 fi

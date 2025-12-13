@@ -34,13 +34,26 @@ A2D_OUTFOLD := $(SRCDIR)
 A2D_ERR     := <<ERROR>> [AKS2DATA -
 A2D_GEN     :=-gs -gh
 A2D_GENF    :=.s .h
-A2D_SFX     :=
 A2D_EXTRAPAR:=
+A2D_COMPILE :=
+A2D_PLAYER  :=akm
 
 # Ensure that music_conversion.mk exists for compatibility with older CPCtelera projects
 A2D_DEPEND  := cfg/music_conversion.mk
 TOUCHIFNOTEXIST := $(TOUCHIFNOTEXIST) $(A2D_DEPEND)
 
+#################
+# AKS2DATA_SET_PLAYER: Sets arkos player to use
+# passed to cpct_aks2c when called.
+#
+# $(1): Extra parameters
+#
+define AKS2DATA_SET_PLAYER
+	# Check that the passed value is valid and assign it 
+	$(eval _VALID := akg akm fx)
+	$(call ENSUREVALID,$(1),$(_VALID),is not a valid output format [AKS2DATA - SET_PLAYER])
+	$(eval A2D_PLAYER := $(1))
+endef
 
 #################
 # AKS2DATA_SET_EXTRAPAR: Sets additinal paramters to be 
@@ -64,22 +77,6 @@ define AKS2DATA_SET_FOLDER
 endef
 
 #################
-# AKS2DATA_SET_SFXONLY: Configures the output of the CONVERT command
-# to be for SFX-ONLY songs or not
-#
-# $(1): yes/no
-#
-define AKS2DATA_SET_SFXONLY
-	# Only yes/no are valid 
-	$(if $(call EQUALS,$(1),yes),    $(eval A2D_SFX := -sfx)\
-		,$(if $(call EQUALS,$(1),no),$(eval A2D_SFX :=)\
-			,$(error $(A2D_ERR) SET_SFXONLY]: '$(1)' is not a valid parameter. Valid values are { yes, no })\
-		)\
-	)
-endef
-
-
-#################
 # AKS2DATA_SET_OUTPUTS: Selects the output formats that will be produced.
 # One file will be produced for each selected output format.
 # Valid output formats are: h (c-header) hs (asm-header) s (asm-file) bin (binary)
@@ -88,13 +85,13 @@ endef
 #
 define AKS2DATA_SET_OUTPUTS
 	# Check that the passed value is valid and assign it 
-	$(eval _VALID := h hs s bin)
+	$(eval _VALID := s bin)
 	$(call ENSUREVALID,$(1),$(_VALID),is not a valid output format [AKS2DATA - SET_OUTPUTS])
 	# Convert outputs
-	$(eval _CON := .h .h.s .s .bin)
+	$(eval _CON := .s .bin)
 	$(eval A2D_GENF :=)
 	$(foreach _V,$(1),$(call CONVERTVALUE,$(_V),_VALID,_CON,,_V2) $(call ADD2SET,A2D_GENF,$(_V2)))
-	$(eval _CON := -gh -ghs -gs -gb)
+	$(eval _CON := -gs -gb)
 	$(eval A2D_GEN :=)
 	$(foreach _V,$(1),$(call CONVERTVALUE,$(_V),_VALID,_CON,,_V2) $(call ADD2SET,A2D_GEN,$(_V2)))
 endef
@@ -112,14 +109,12 @@ endef
 #
 define AKS2DATA_CONVERT
 	# Ensure non-empty parameters
-	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS/SKS file is requiered as first parameter for CONVERT command))
-	$(if $(2),,$(error $(A2D_ERR) CONVERT]: A C-identifier is requiered as second parameter for CONVERT command))
-	$(if $(3),,$(error $(A2D_ERR) CONVERT]: A 16-bits memory address is requiered as third parameter for CONVERT command))
+	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS file is required as first parameter for CONVERT command))
+	$(if $(2),,$(error $(A2D_ERR) CONVERT]: A C-identifier is required as second parameter for CONVERT command))
 
 	# Ensure that AKS file exists and C_identifier and Memory address are valid
 	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(1)' does not exist or is not readable)
 	$(call ENSURE_VALID_C_ID,$(2),$(A2D_ERR) CONVERT]: '$(2)' is not a valid C-identifier)
-	$(call ENSURE_ADDRESS_VALID,$(3),$(A2D_ERR) CONVERT]:)
 
 	# Set up files to be produced
 	$(eval _OBJS:=)
@@ -132,17 +127,27 @@ define AKS2DATA_CONVERT
 # Generate target for music converstion
 $(_OBJS): $(1) $(A2D_DEPEND)
 	@$(call PRINT,$(PROJNAME),"Converting music in $(1) into data...")
-	$(CPCTAKS2C) $(A2D_GEN) $(A2D_SFX) $(A2D_EXTRAPAR) -m "$(3)" -od "$(A2D_OUTFOLD)" -id "$(2)" "$(1)"
+	$(if $(3),\
+		$(CPCTAKS2C) $(A2D_GEN) $(A2D_COMPILE) $(A2D_SFX) $(A2D_EXTRAPAR) -m "$(3)" -od "$(A2D_OUTFOLD)" -id "$(2)" -player "$(A2D_PLAYER)"  "$(1)",\
+		$(CPCTAKS2C) $(A2D_GEN) $(A2D_COMPILE) $(A2D_SFX) $(A2D_EXTRAPAR) -od "$(A2D_OUTFOLD)" -id "$(2)" -player "$(A2D_PLAYER)"  "$(1)")
 
 # Variables that need to be updated to keep up with generated files and erase them on clean
-	$(eval _F := $(filter %.s,$(_OBJS)))
-	$(if $(_F),$(eval IMGASMFILES := $(_F) $(IMGASMFILES)))
 	$(eval _F := $(filter %.bin,$(_OBJS)))
 	$(if $(_F),$(eval IMGBINFILES := $(_F) $(IMGBINFILES)))
 	$(eval OBJS2CLEAN  := $(_OBJS) $(OBJS2CLEAN))
 	$(eval PREBUILDOBJS := $(PREBUILDOBJS) $(_OBJS))
 endef
 
+
+#################
+# AKS2DATA_EXECUTE: Sets additional parameters to be 
+# passed to cpct_aks2c when called.
+#
+# $(1): Extra parameters
+#
+define AKS2DATA_EXECUTE
+	$(eval A2D_COMPILE := -compile)
+endef
 
 
 #################
@@ -157,7 +162,7 @@ endef
 #
 define AKS2DATA
 	# Set the list of valid commands
-	$(eval AKS2DATA_F_FUNCTIONS := SET_FOLDER SET_OUTPUTS SET_SFXONLY SET_EXTRAPAR CONVERT)
+	$(eval AKS2DATA_F_FUNCTIONS := SET_FOLDER SET_OUTPUTS SET_EXTRAPAR CONVERT EXECUTE SET_PLAYER)
 
 	# Check that command parameter ($(1)) is exactly one-word after stripping whitespaces
 	$(call ENSURE_SINGLE_VALUE,$(1),<<ERROR>> [AKS2DATA] '$(strip $(1))' is not a valid command. Commands must be exactly one-word in lenght with no whitespaces. Valid commands: {$(AKS2DATA_F_FUNCTIONS)})
