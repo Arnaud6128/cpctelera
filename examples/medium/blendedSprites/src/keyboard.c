@@ -36,7 +36,7 @@ void updateKeyboardStatus(void) {
 
    // Get a pointer to the first element of the keys array
    // That will be incremented in every loop with k++
-   k = g_keys;
+   k = (TKey *) g_keys;
    for(i=0; i < G_NKEYS; i++, k++) {
       // Modifications depend in whether the key is pressed or not
       if (cpct_isKeyPressed(k->key)) {
