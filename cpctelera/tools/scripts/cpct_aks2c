@@ -63,8 +63,8 @@ source $(dirname $0)/lib/bash_library.sh
 ARKOS_VERSION=3.5
 AKSPATH=${CPCT_PATH}/tools/arkosTracker-${ARKOS_VERSION}
 AKS2BIN=${AKSPATH}/tools
-RASM=${AKSPATH}/cpctelera/tools/rasm_w32.exe
-DISARK=${AKSPATH}/cpctelera/tools/Disark.exe
+RASM=${AKSPATH}/cpctelera/tools/rasm_w32
+DISARK=${AKSPATH}/cpctelera/tools/Disark
 PLAYER_AKG=${AKSPATH}/cpctelera/playerAkg
 PLAYER_AKM=${AKSPATH}/cpctelera/playerAkm
 
@@ -282,9 +282,9 @@ else
 fi
 
 ## Check AKSToBin and Wine if Required
-checkExecutableExists "$AKS2BIN/SongToAkm.exe"
-checkExecutableExists "$AKS2BIN/SongToAkg.exe"
-checkExecutableExists "$AKS2BIN/SongToSoundEffects.exe"
+checkExecutableExists "$AKS2BIN/SongToAkm"
+checkExecutableExists "$AKS2BIN/SongToAkg"
+checkExecutableExists "$AKS2BIN/SongToSoundEffects"
 checkExecutableExists "$RASM"
 checkExecutableExists "$DISARK"
 
@@ -355,7 +355,7 @@ void PLY_AKM_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 		printf "${ARKOSPLAYER_HEADER}" >> "${OUTPUTDIR}/arkosPlayer3.h";		
 	fi
 	
-	$AKS2BIN/SongToAkm.exe "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
+	$AKS2BIN/SongToAkm "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
 	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
 
 elif [ "$PLAYER" == "akg" ]; then	
@@ -383,11 +383,11 @@ void PLY_AKG_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 		printf "${ARKOSPLAYER_HEADER}" >> "${OUTPUTDIR}/arkosPlayer3.h";
 	fi
 
-	$AKS2BIN/SongToAkg.exe "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
+	$AKS2BIN/SongToAkg "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
 	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
 
 elif [ "$PLAYER" == "fx" ]; then	
-	$AKS2BIN/SongToSoundEffects.exe "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} 
+	$AKS2BIN/SongToSoundEffects "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} 
 	
 	if [ -f temp/PlayerAkm.asm ]; then
 		printf "\nPLY_AKM_MANAGE_SOUND_EFFECTS = 1\n" >> "temp/compileAt3.asm";
