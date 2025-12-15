@@ -47,12 +47,17 @@
 // the given values is a variable, it will produce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slower.
 //
-
 #define cpctm_asicColor(R,G,B)   (u16)(((u16)((G) & 0x0F) << 8) | (u16)(((R) & 0x0F) << 4) | (u16)((B) & 0x0F)) // 0x0GRB
 
-#define cpctm_asicGetRed(RGB)    (u8)(RGB >> 4)
-#define cpctm_asicGetGreen(RGB)  (u8)(RGB >> 8)
-#define cpctm_asicGetBlue(RGB)   (u8)(RGB & 0x0F)
+#define cpctm_asicGetRed(RGB)    (u8)((u16)RGB >> 4)
+#define cpctm_asicGetGreen(RGB)  (u8)((u16)RGB >> 8)
+#define cpctm_asicGetBlue(RGB)   (u8)((u16)RGB & (u16)0x0F)
+
+// Asic palettes
+#define ASIC_PALETTE_SIZE         16
+#define ASIC_PALETTE_LOC         (u16*)0x6400
+#define ASIC_BORDER_LOC          (u16*)0x6420
+#define ASIC_SPRITE_PALETTE_LOC  (u16*)0x6422
 
 // Asic palette
 extern u16  cpct_asicColor(u8 red, u8 green, u8 blue) __z88dk_callee;

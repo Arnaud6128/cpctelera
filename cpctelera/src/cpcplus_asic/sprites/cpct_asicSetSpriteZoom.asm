@@ -72,7 +72,7 @@
    ld  b, #ASIC_HW_SPRITE_CONFIG ;; [2] | BC = HWSprite configuration address 0x60XX
    ld  c, a                      ;; [1] |
    
-   ld a, l                       ;; [1] A = L (ZoomY) : Zoom X and Y are on 2-Bits 0b0000XXYY
+   ld a, l                       ;; [1] A = L (ZoomX) : Zoom X and Y are on 2-Bits 0b0000XXYY
    sla a                         ;; [1] A << 1 : 0b00000XX0
    sla a                         ;; [1] A << 1 : 0b0000XX00
    or  h                         ;; [1] A |= H : 0b0000XXYY (H = ZoomY) 

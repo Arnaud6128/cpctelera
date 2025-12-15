@@ -91,6 +91,49 @@
 //
 #define cpctm_getSpriteCoordPtrY(SPR) (i16*)(0x6000 + SPR*0x08 + 2)
 
+
+//
+// Macro: cpctm_getSpriteZoomPtrX
+//
+//    Get pointer to sprite hardware zoom X
+//
+// C Definition:
+//    #define <cpctm_getSpriteZoomPtrX> (*SPR*) 
+//
+// ASM Call:
+//    For asm programs, please refer to <cpct_asicSetSpriteZoom_asm>
+//
+// Parameters:
+//   SPR   - Hardware sprite identifier (0..15)
+// 
+// Known limitations:
+//    * This macro will produce no-code when used with constant values. If any of
+// the given values is a variable, it will procuce calculation code. This code
+// will be translated by C-compiler into ASM, and may be slow.
+//
+#define cpctm_getSpriteZoomPtr(SPR) (u8*)(0x6000 + SPR*0x08 + 4)
+
+//
+// Macro: cpctm_getAsicZoomValue
+//
+//    Get computed zoom value
+//
+// C Definition:
+//    #define <cpctm_getAsicZoomValue> (*X*,*Y*) 
+//
+// ASM Call:
+//    For asm programs, please refer to <cpct_asicSetSpriteZoom_asm>
+//
+// Parameters:
+//   X, Y   - Zoom X and Y
+// 
+// Known limitations:
+//    * This macro will produce no-code when used with constant values. If any of
+// the given values is a variable, it will procuce calculation code. This code
+// will be translated by C-compiler into ASM, and may be slow.
+//
+#define cpctm_getAsicZoomValue(X,Y)	  (u8)((u8)Y | ((u8)X << 2))
+
 // ASIC internal screen resolution
 #define ASIC_SCREEN_WIDTH              640 // Mode 2 resolution
 #define ASIC_SCREEN_HEIGHT             200 
@@ -115,6 +158,14 @@
 #define HW_SPRITE_MODE_1_ZOOM_Y        1
 #define HW_SPRITE_MODE_2_ZOOM_X        1
 #define HW_SPRITE_MODE_2_ZOOM_Y        1
+
+// ASIC Hardware Sprite Zoom pixel size corresponding to CPC Mode
+#define HW_SPRITE_MODE_0_ZOOM_VALUE_X  4
+#define HW_SPRITE_MODE_0_ZOOM_VALUE_Y  1
+#define HW_SPRITE_MODE_1_ZOOM_VALUE_X  2
+#define HW_SPRITE_MODE_1_ZOOM_VALUE_Y  1
+#define HW_SPRITE_MODE_2_ZOOM_VALUE_X  1
+#define HW_SPRITE_MODE_2_ZOOM_VALUE_Y  1
 
 // Sprite Hardware definition
 extern void cpct_asicSetSpriteData(u8 hardware_sprite_id, u8 value) __z88dk_callee;
