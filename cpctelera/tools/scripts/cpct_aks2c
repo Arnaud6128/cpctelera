@@ -62,7 +62,9 @@ source $(dirname $0)/lib/bash_library.sh
 ## AKS2BIN utility location
 ARKOS_VERSION=3.5
 AKSPATH=${CPCT_PATH}/tools/arkosTracker-${ARKOS_VERSION}
-AKS2BIN=${AKSPATH}/tools
+AKS2AKM=${AKSPATH}/tools/SongToAkm
+AKS2AKG=${AKSPATH}/tools/SongToAkg
+AKS2AKX=${AKSPATH}/tools/SongToSoundEffects
 RASM=${AKSPATH}/cpctelera/tools/rasm_w32
 DISARK=${AKSPATH}/cpctelera/tools/Disark
 PLAYER_AKG=${AKSPATH}/cpctelera/playerAkg
@@ -282,9 +284,9 @@ else
 fi
 
 ## Check AKSToBin and Wine if Required
-checkExecutableExists "$AKS2BIN/SongToAkm"
-checkExecutableExists "$AKS2BIN/SongToAkg"
-checkExecutableExists "$AKS2BIN/SongToSoundEffects"
+checkExecutableExists "$AKS2AKM"
+checkExecutableExists "$AKS2AKG"
+checkExecutableExists "$AKS2AKX"
 checkExecutableExists "$RASM"
 checkExecutableExists "$DISARK"
 
@@ -292,17 +294,18 @@ echo
 if checkSystem cygwin; then
    ## Calculate windows valid paths for input files
    FILE_CP=`cygpath -w $FILE`
-   BINTMP_CP=`cygpath -w $BINTMP`
 else
    EnsureCommandAvailable mono "mono has not been found on the system, \
 and it's required for this script to work. Please, install mono or \
 check the installation and run this script again."
-   AKS2BIN="mono $AKS2BIN"
-   STK2AKS="mono $STK2AKS"
+   AKS2AKM="mono $AKS2AKM"
+   AKS2AKG="mono $AKS2AKG"
+   AKS2AKX="mono $AKS2AKX"
+   RASM="mono $RASM"
+   DISARK="mono $DISARK"
 
    ## Paths for input files are already valid under *nix
    FILE_CP=$FILE
-   BINTMP_CP=$BINTMP
 fi
 
 ###############################################################
@@ -310,18 +313,10 @@ fi
 ## Convert music
 ##
 
-## STEP 0: When converting from Starkos to Arkos, create an intermediate AKS file
-if [ "$FILETYPE" = "stk" ]; then
-   printf "Converting '$FILE' from starkos to arkos format first..."
-   $STK2AKS "$FILE_CP" "$STKTMP_CP" > "$EXPORTMP" 2>&1
-   THEAKSFILE=$STKTMP_CP
-   echo "${COLOR_LIGHT_GREEN}SUCCESS!${COLOR_NORMAL}"
-else
-   THEAKSFILE=$FILE_CP
-fi
-
-## STEP 1: Convert AKS file to AKG ASM
+## STEP 1: Convert AKS file to ASM
 printf "Converting '$FILE' to Asm..."
+
+THEAKSFILE=$FILE_CP
 
 if [ ! -d temp ]; then
 	mkdir temp
@@ -355,14 +350,14 @@ void PLY_AKM_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 		printf "${ARKOSPLAYER_HEADER}" >> "${OUTPUTDIR}/arkosPlayer3.h";		
 	fi
 	
-	$AKS2BIN/SongToAkm "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
+	$AKS2AKM "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
 	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
 
 elif [ "$PLAYER" == "akg" ]; then	
 	if [ ! -d temp/PlayerAkg.asm ]; then
 		cp "${PLAYER_AKG}/PlayerAkg.asm" temp
 		cp "${PLAYER_AKG}/PlayerAkg_SoundEffects.asm" temp
-		
+
 		ARKOSPLAYER_HEADER="
 // Arkos player functions
 void PLY_AKG_INIT(void* songdata, u16 subSong) __z88dk_callee;
@@ -383,11 +378,11 @@ void PLY_AKG_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 		printf "${ARKOSPLAYER_HEADER}" >> "${OUTPUTDIR}/arkosPlayer3.h";
 	fi
 
-	$AKS2BIN/SongToAkg "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
+	$AKS2AKG "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
 	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
 
 elif [ "$PLAYER" == "fx" ]; then	
-	$AKS2BIN/SongToSoundEffects "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} 
+	$AKS2AKX "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} 
 	
 	if [ -f temp/PlayerAkm.asm ]; then
 		printf "\nPLY_AKM_MANAGE_SOUND_EFFECTS = 1\n" >> "temp/compileAt3.asm";
