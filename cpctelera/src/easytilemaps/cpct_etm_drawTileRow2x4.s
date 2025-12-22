@@ -112,20 +112,18 @@
 ;; C bindings for <cpct_etm_drawTileRow2x4>
 ;;   --> Included here not to duplicate dtr_restore_ptileset
 ;;
-;;    19 microSecs, 7 bytes
+;;    18 microSecs, 7 bytes
 ;;
 _cpct_etm_drawTileRow2x4::   
-   ;; Recover parameters from the stack
+   ;; Get parameters from A and DE registers and stack ((8) + (16 + 16) bits), with __sdcccall(1) convention
+   ld b, a          ;; [1] B = A = Number of tiles in this row
+                    ;; DE = video_memory
    pop hl           ;; [3] HL = Return Address
-   dec sp           ;; [2] As B is 1-byte value, we move SP to get B and something irrelevant in C
-   pop bc           ;; [3] B = Number of tiles in this row
+   ex (sp),hl       ;; [6] HL = Pointer to the start of the tilemap row
+   push de          ;; [3] Put DE in alternate register set
    exx              ;; [1] Change to alternate Register Set
    pop de           ;; [3] DE' = Pointer to video memory where to draw the tiles
-
    exx              ;; [1] Return to normal register set
-   ex (sp), hl      ;; [6] HL = Pointer to the start of the tilemap row
-                    ;; ... also putting again Return Address where SP is located now
-                    ;; ... as this function is using __z88dk_callee convention
 
 cpct_etm_drawTileRow2x4_asm:: ;; Assembly entry point
 drawtiles_width:
