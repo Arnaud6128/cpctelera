@@ -22,6 +22,10 @@
 
 #include <types.h>
 
+// Asic unlock and connect/disconnect page macro useful to set at specific code location
+#define cpctm_asicPageConnect()    __asm__("push bc\nld bc, #0x7FB8\nout (c), c\npop bc")
+#define cpctm_asicPageDisconnect() __asm__("push bc\nld bc, #0x7FA0\nout (c), c\npop bc")
+
 // Asic unlock and connect/disconnect page
 extern void cpct_asicUnlock(void);
 extern void cpct_asicPageConnect(void);
