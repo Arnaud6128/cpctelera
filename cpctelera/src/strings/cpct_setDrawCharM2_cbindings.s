@@ -26,7 +26,8 @@
 ;;
 _cpct_setDrawCharM2::
    ;; Get parameters from A and L registers (8 + 8 bits), with __sdcccall(1) convention
-   ;; L = Background Pen
-   ld  h, a        ;; [1] H = A = Foreground Pen
+   ;; A = Foreground pen - L = Background Pen
+   ld  h, l        ;; [1] H = L = Background Pen
+   ld  l, a        ;; [1] L = A = Foreground Pen
 
 .include /cpct_setDrawCharM2.asm/
