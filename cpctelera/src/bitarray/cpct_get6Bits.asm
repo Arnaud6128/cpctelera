@@ -44,7 +44,7 @@
 ;; be unpredictable and meaningless.
 ;;
 ;; Return value:
-;;    u8 - Value of the selected group of 6 bits: [0-63]
+;;    u8 (1B L also 1B A) - Value of the selected group of 6 bits: [0-63]
 ;;
 ;; Known limitations:
 ;;    * Maximum of 65536 groups of 6-bits, 49152 bytes per *array*.      
@@ -137,14 +137,16 @@ g1:
    rra            ;; [1] ... leaving B:[........] A:[ooxxxx..]
    srl    a       ;; [2] | Shift A to more times to the right, to 
    srl    a       ;; [2] | get the final value A:[..ooxxxx]
+   ld     l, a    ;; [1] Move return value to L for returning it
    ret            ;; [3] Return
 
 ;; Desired 6-bits value is group 0: (byte 0, 6 first bits)  
 ;;    Desired bits = x => [xxxxxx..][........][........]
 g0:
-   ld     a, (hl) ;; [2] L = byte containing desired 6 bits
-   srl    a       ;; [2] | Desired 6 bits are the first 6 bits of L...
-   srl    a       ;; [2] | ... shift them left to make L=desired value
+   ld     l, (hl) ;; [2] L = byte containing desired 6 bits
+   srl    l       ;; [2] | Desired 6 bits are the first 6 bits of L...
+   srl    l       ;; [2] | ... shift them left to make L=desired value
+   ld     a,l     ;; [1] | making sure that all paths set A also
    ret            ;; [3] Return
 
 gs23:
@@ -155,23 +157,25 @@ gs23:
 ;; Desired 6-bits value is group 2: (byte 2, bit 3, located 12 bits from the start)
 ;;    Desired bits = x => [........][....xxxx][xx......]
 g2:
-   inc   hl       ;; [2] Point HL to byte 1, which contains first 4 bits of desired value
+   inc    hl      ;; [2] Point HL to byte 1, which contains first 4 bits of desired value
    ld     a, (hl) ;; [2] A=byte 1
    and    #0x0F   ;; [2] Remove first 4 bits of the byte: they're not from the desired value
    ld     b, a    ;; [1] Save these 4 bits into B
-   inc    hl      ;; [2] Point HL to byte 2, which has last 2 bits
+   inc    hl       ;; [2] Point HL to byte 2, which has last 2 bits
    ld     a, (hl) ;; [2] A=byte 2
    and    #0xC0   ;; [2] Remove last 6 bits, as we only want the first 2
    or     b       ;; [1] Add up the 4 bits and the other 2. They will be like this [oo..xxxx]
    rlca           ;; [1] / The 2 oo bits should be the last, so we have to rotate them 2 times
    rlca           ;; [1] \ to leave it as [..xxxxoo]
+   ld     l, a    ;; [1] Move value to L for returning it
    ret            ;; [3] Return
 
 ;; Desired 6-bits value is group 3: (byte 3, bit 5, located 18 bits from the start)
 ;;    Desired bits = x => [........][........][..xxxxxx]
 g3:
-   inc   hl       ;; [2] | HL += 2, to make HL point to byte 2
-   inc   hl       ;; [2] \
+   inc    hl      ;; [2] | HL += 2, to make HL point to byte 2
+   inc    hl      ;; [2] \
    ld     a, (hl) ;; [2] A = byte 2, which contains the desired value
    and    #0x3F   ;; [2] Remove 2 leftmost bits that are not part of the desired value
+   ld     l, a    ;; [1] Move return value to L for returning it
    ret            ;; [3] ret
