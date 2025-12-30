@@ -1,6 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2014-2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -40,11 +41,5 @@ _cpct_fw2hw::
    
    ld b, h   ;; [1] BC = HL = Number of colors to convert
    ld c, l   ;; [1] |
-   
-  ; pop  af  ;; [3] AF = Return Address
-  ; pop  de  ;; [3] DE = Pointer to the array of firmware colour values to be converted (1st parameter)
-  ; pop  bc  ;; [3] BC = Number of colors to convert (2nd parameter)
-  ; push af  ;; [4] Put returning address in the stack again
-            ;;     as this function uses __z88dk_callee convention
 
 .include /cpct_fw2hw.asm/

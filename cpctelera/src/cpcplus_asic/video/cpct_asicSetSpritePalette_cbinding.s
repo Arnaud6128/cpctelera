@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128
 ;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -30,11 +30,5 @@ _cpct_asicSetSpritePalette::
    ;; Get parameters from HL and DE registers (16 + 16 bits) with __sdcccall(1) convention
    ;; HL = Pointer to the start of the array with asic colour values to be set as palette
    ;; DE = D (useless) / E (Size of the colour array)
-
-   ;; Getting parameters from stack
- ;  pop  af                         ;; [3] AF = Return address
- ;  pop  hl                         ;; [3] HL = Pointer to the start of the array with asic colour values to be set as palette
- ;  pop  de                         ;; [3] DE = E = Size of the colour array
- ;  push af                         ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention   
 
 .include /cpct_asicSetSpritePalette.asm/   

@@ -1,5 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128) 
 ;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -32,15 +33,5 @@ _cpct_etm_drawTilemap2x4_f::
    pop hl           ;; [3] HL = Return Address
    pop de           ;; [3] DE = Pointer to video memory where to draw the tilemap
    ex (sp), hl      ;; [6] HL = Pointer to the start of the tilemap
-   
-  ; pop hl           ;; [3] HL = Return Address
-  ; pop bc           ;; [3]  B = map_height, C = map_width
- ;  pop de           ;; [3] DE = Pointer to video memory where to draw the tilemap
-
-  ; ex (sp), hl      ;; [6] HL = Pointer to the start of the tilemap
-                    ;; ... also putting again Return Address where SP is located now
-                    ;; ... as this function is using __z88dk_callee convention
-  ; ld   a, c        ;; [1] A = map_width
-  ; ld   c, b        ;; [1] C = map_height
 
 .include /cpct_etm_drawTilemap2x4_f.asm/

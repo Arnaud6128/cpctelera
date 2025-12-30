@@ -1,6 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -25,22 +26,11 @@
 ;;
 ;; C bindings for <cpct_drawCharM2>
 ;;
-;;   13 us, 4 bytes
+;;   0 us, 0 bytes
 ;;
 _cpct_drawCharM2::
    ;; Get parameters from HL and DE registers (16 + 16 bits), with __sdcccall(1) convention
-   ;; HL = (L) ASCII Value of the character to be drawn
-   ;; DE = Pointer to Video Memory
-   ;;ex de, hl ;; [1]
    ;; HL = Pointer to Video Memory
    ;; DE = (E) ASCII Value of the character to be drawn
-   
-   
- ;  pop   hl          ;; [3] HL = Return Address
-  ; pop   de          ;; [3] DE = Pointer to Video Memory
- ;  ex    (sp), hl    ;; [6] L = ASCII Value of the character to be drawn, and
-                     ;; ...leaving Return Address on top of the stack at the same time
-                     ;; ...as this function uses __z88dk_callee convention
-;   ex    de, hl      ;; [1] E = ASCII Value, HL = Pointer to video memory
 
 .include /cpct_drawCharM2.asm/

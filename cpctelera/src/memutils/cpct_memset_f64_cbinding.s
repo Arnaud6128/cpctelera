@@ -1,5 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128
 ;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -31,6 +32,5 @@ _cpct_memset_f64::
    pop  af   ;; [3] AF = Return address
    pop  bc   ;; [3] BC = Size of the array
    push af   ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
-
 
 .include /cpct_memset_f64.asm/   ;; Include function code

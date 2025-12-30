@@ -1,6 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -32,8 +33,6 @@ _cpct_drawSpriteMasked::
 
    ;; GET next Parameters from the stack 
    pop  af   ;; [3] AF = Return Address
-  ; pop  hl   ;; [3] HL = Source Address (Sprite data array)
-  ; pop  de   ;; [3] DE = Destination address (Video memory location)
    pop  bc   ;; [3] BC = Height/Width (B = Height, C = Width)
    push af   ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
 

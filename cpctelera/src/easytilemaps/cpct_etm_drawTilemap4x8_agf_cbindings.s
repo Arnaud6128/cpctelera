@@ -1,5 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128) 
 ;;  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -32,11 +33,6 @@ _cpct_etm_drawTilemap4x8_agf::
    ;; HL = Tilemap Pointer
    ;; DE = Video Memory Pointer
 
-   ;; Parameters
-  ; pop   hl          ;; [3] HL = Return address
-  ; pop   de          ;; [3] DE = Video Memory Pointer
-  ; ex  (sp), hl      ;; [6] HL = Tilemap Pointer, leaving previous HL value (return address)
-                     ;; ... at the top of the stack (following __z88dk_callee convention)
    push  ix          ;; [5] Save IX and IY to let this function...
    push  iy          ;; [5] ...use and restore them before returning
 

@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2019 Arnaud Bouche (@Arnaud)
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128
 ;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -42,15 +42,6 @@ _cpct_asicDrawToSpriteData::
    pop  hl            ;; [3] HL = Pointer to source Sprite data
    pop  bc            ;; [3] BC = (B = Height, C = Width)
    push ix            ;; [5] Return Address from IX in stack because __z88dk_callee convention
-
-   ;; Getting parameters from stack
-  ; pop  ix            ;; [4] IX = Return address
- ;  dec  sp            ;; [2] Move SP to get 1-Byte parameter
- ;  pop  af            ;; [3] AF = (A = HWSprite_Id)
- ;  pop  de            ;; [3] DE = (D = Pos_y, E = Pos_x)
- ;  pop  hl            ;; [3] HL = Pointer to source Sprite data
- ;  pop  bc            ;; [3] BC = (B = Height, C = Width)
- ;  push ix            ;; [5] Return Address from IX in stack because __z88dk_callee convention
    
 .include /cpct_asicDrawToSpriteData.asm/   
 
