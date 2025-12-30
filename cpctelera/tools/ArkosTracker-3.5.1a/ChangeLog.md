@@ -1,3 +1,16 @@
+# 3.5.1 - XX/XX/25
+
+## Tweaking
+- Added more effect optimizations when exporting to AKG/AKM. You might save a few bytes and CPU cycles!
+- AKM: The first Disark label has been added "Start" to match the first label, just like in the AKG player, and helps CPCTelera refers to it in the same way for both players.
+- YM export: Vastly improved the speed of the interleaved YM export.
+
+## Bugfixes
+- Volume in/out was stopped when a legato note was used. This has been corrected, the legato does not stop the effect anymore. The AKG player already did the right behavior!
+- AKM export: unknown effects were not correctly handled, possibly leading to crash on hardware. They are now well ignored (thanks Krusty!).
+- UI only: on export to binary, the "generate a player configuration for players (as source)" option was disabled, which was not logical. It is now always enabled.
+- Undo of Delete Subsong was broken.
+
 # 3.5 - 11/12/25
 
 ## Features

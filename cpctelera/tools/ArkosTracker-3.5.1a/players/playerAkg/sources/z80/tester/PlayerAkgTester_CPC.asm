@@ -101,11 +101,9 @@ Music_Start:
         ;If you don't have any, the player will use a default Configuration (full code used), which may not be optimal.
         ;If you have several songs, include all their configuration here, their flags will stack up!
         ;Warning, this must be included BEFORE the player is compiled.
-        ;include "../resources/Music_AHarmlessGrenade_playerconfig.asm"
+        include "../resources/Music_AHarmlessGrenade_playerconfig.asm"
         
-        ;include "../resources/Music_AHarmlessGrenade.asm"
-        include "../resources/SecretRoomShort_playerconfig.asm"
-        include "../resources/SecretRoomShort.asm"
+        include "../resources/Music_AHarmlessGrenade.asm"
 Music_End:
 
 Main_Player_Start:

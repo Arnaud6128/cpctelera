@@ -60,7 +60,7 @@
 source $(dirname $0)/lib/bash_library.sh
 
 ## AKS2BIN utility location
-ARKOS_VERSION=3.5
+ARKOS_VERSION=3.5.1a
 AKSPATH=${CPCT_PATH}/tools/arkosTracker-${ARKOS_VERSION}
 AKS2AKM=${AKSPATH}/tools/SongToAkm
 AKS2AKG=${AKSPATH}/tools/SongToAkg
@@ -326,6 +326,7 @@ if [ ! -d temp ]; then
 fi
 
 if [ "$PLAYER" == "akm" ]; then
+	
 	if [ ! -d temp//PlayerAkm.asm ]; then
 		cp "${PLAYER_AKM}/PlayerAkm.asm" temp
 		cp "${PLAYER_AKM}/PlayerAkm_SoundEffects.asm" temp
@@ -354,6 +355,7 @@ void PLY_AKM_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
 
 elif [ "$PLAYER" == "akg" ]; then	
+
 	if [ ! -d temp/PlayerAkg.asm ]; then
 		cp "${PLAYER_AKG}/PlayerAkg.asm" temp
 		cp "${PLAYER_AKG}/PlayerAkg_SoundEffects.asm" temp
@@ -379,8 +381,8 @@ void PLY_AKG_STOPSOUNDEFFECTFROMCHANNEL(u8 channel) __z88dk_fastcall;
 	fi
 
 	$AKS2AKG "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} --exportPlayerConfig 
-	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"
-
+	printf "include \"${C_IDENTIFIER}.asm\"\ninclude \"${C_IDENTIFIER}_playerconfig.asm\"\n" >> "temp/compileAt3.asm"	
+	
 elif [ "$PLAYER" == "fx" ]; then	
 	$AKS2AKX "$THEAKSFILE" "temp/${C_IDENTIFIER}.asm" --labelPrefix ${C_IDENTIFIER} 
 	
