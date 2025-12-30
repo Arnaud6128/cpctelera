@@ -22,21 +22,24 @@
 ;;
 ;; C bindings for <cpct_drawSpriteVFlipMasked_at>
 ;;
-;;   32 us, 15 bytes
+;;   28 us, 9 bytes
 ;;
 _cpct_drawSpriteVFlipMasked_at::
-   ;; GET Parameters from the stack 
-   ld (restoreIX), ix   ;; [6] Save IX to restore it before returning
-   pop   hl             ;; [3] HL = Return Address
-   pop   bc             ;; [3] BC = Source Address (Sprite data array)
-   pop   de             ;; [3] DE = Destination address (Video memory location)
+   ld   (restoreIX), ix ;; [6] Save IX to restore it before returning
+
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Source Address (Sprite data array)
+   ;; DE = Destination address (Video memory location)
+   ld    b, h           ;; [1] BC = HL
+   ld    c, l           ;; [1] |
+   
+   ;; GET nextParameters from the stack 
+   pop   hl             ;; [3] HL = Return Addres
    pop   ix             ;; [4] IX = Height/Width (IXH = Height, IXL = Width)
-   ex  (sp), hl         ;; [6] HL = Pointer to mask table
-                        ;; ... at the same time, put return address at the top of the stack
-                        ;; ... as this function uses __z88dk_callee convention
+   ex   (sp), hl        ;; [6] HL = Pointer to mask table <-> Return address to stack
 
 .include /cpct_drawSpriteVFlipMasked_at.asm/
 
 restoreIX = .+2
-   ld ix, #0000   ;; [4] Restore IX before returning (0000 is a placeholder)
-   ret            ;; [3] Return to the caller
+   ld ix, #0000         ;; [4] Restore IX before returning (0000 is a placeholder)
+   ret                  ;; [3] Return to the caller
