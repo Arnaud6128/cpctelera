@@ -23,9 +23,9 @@
 #include <types.h>
 
 //
-// Title: Macros (C)
+// Title: Asic video Macros (C)
 //
-//    Useful Asic related macros designed to be used in your C programs
+//    Useful Asic video related macros designed to be used in your C programs
 //
 
 //

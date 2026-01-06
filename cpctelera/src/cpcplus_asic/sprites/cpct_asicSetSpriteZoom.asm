@@ -20,11 +20,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicSetSpriteZoom
+;;
 ;;   Set hardware sprite zoom for width and height
 ;;
 ;; C Definition:
-;;    <void> cpct_asicSetSpriteZoom(<u8> *hardware_sprite_id*, <u8> *zoom_x*, <u8> *zoom_y*) __z88dk_callee;  
+;;    void cpct_asicSetSpriteZoom(<u8> *hardware_sprite_id*, <u8> *zoom_x*, <u8> *zoom_y*) __z88dk_callee;  
 ;;
 ;; Assembly call:
 ;;   > call cpct_asicSetSpriteZoom_asm

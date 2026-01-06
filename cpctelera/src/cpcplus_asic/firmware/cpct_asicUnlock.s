@@ -20,11 +20,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicUnlock
+;;
 ;;   Unlock ASIC by sending code sequence to CRTC
 ;;    
 ;; C Definition:
-;;    <void> cpct_asicUnlock();
+;;    void cpct_asicUnlock();
 ;;
 ;; Assembly call:
 ;;    > call cpct_asicUnlock_asm

@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicCopySpriteData
+;;
 ;;   Copy array of sprite data to location of hardware sprite data
 ;;    
 ;;
 ;; C Definition:
-;;    <void> cpct_asicCopySpriteData(<u8> *hardware_sprite_id*, <const u8*> *sprite_array*) __z88dk_callee;
+;;    void cpct_asicCopySpriteData(<u8> *hardware_sprite_id*, <const u8*> *sprite_array*) __z88dk_callee;
 ;;
 ;; Assembly call:
 ;;    > call cpct_asicCopySpriteData_asm

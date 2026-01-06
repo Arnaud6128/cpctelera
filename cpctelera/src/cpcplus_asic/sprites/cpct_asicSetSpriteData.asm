@@ -20,7 +20,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function:
+;; Function: cpct_asicSetSpriteData
+;;
 ;;    Fills up a complete sprite hardware with a given 1-Byte value
 ;;
 ;;

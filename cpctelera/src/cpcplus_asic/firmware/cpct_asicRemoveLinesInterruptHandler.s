@@ -23,7 +23,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicRemoveLinesInterruptHandler
+;;
 ;;   Restore default CRTC interrupt at 300hz and remove raster line interrupt
 ;;    
 ;; C Definition:

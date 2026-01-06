@@ -23,9 +23,9 @@
 #include <types.h>
 
 //
-// Title: Macros (C)
+// Title: Asic sprites macros (C)
 //
-//    Useful Asic related macros designed to be used in your C programs
+//    Useful Asic sprites related macros designed to be used in your C programs
 //
 
 //
@@ -90,7 +90,6 @@
 // will be translated by C-compiler into ASM, and may be slow.
 //
 #define cpctm_getSpriteCoordPtrY(SPR) (i16*)(0x6000 + SPR*0x08 + 2)
-
 
 //
 // Macro: cpctm_getSpriteZoomPtrX

@@ -20,11 +20,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicPageDisconnect
+;;
 ;;   Disconnect Asic Page and restore memory access from 0x4000 to 0x7FFF
 ;;    
 ;; C Definition:
-;;    <void> cpct_asicPageDisconnect();
+;;    void cpct_asicPageDisconnect();
 ;;
 ;; Assembly call:
 ;;    cpct_asicPageDisconnect_asm

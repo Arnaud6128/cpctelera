@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicSetSpritePalColour
+;;
 ;;   Change one colour in the Hardware sprites palette
 ;;    
 ;;
 ;; C Definition:
-;;    <void> cpct_asicSetSpritePalColour(<u8> *colour_index*, <u16> *rgb*) __z88dk_callee
+;;    void cpct_asicSetSpritePalColour(<u8> *colour_index*, <u16> *rgb*) __z88dk_callee
 ;;
 ;; Assembly call:
 ;;    > call cpct_asicSetSpritePalColour_asm

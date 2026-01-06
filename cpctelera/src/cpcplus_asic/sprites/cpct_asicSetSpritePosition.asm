@@ -20,7 +20,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicSetSpritePosition
+;;
 ;;   Set Hardware Sprite at screen coordinates
 ;;
 ;; C Definition:

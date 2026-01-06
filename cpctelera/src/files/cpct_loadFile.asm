@@ -26,7 +26,7 @@
 ;;    This routine bypasses CPC firmware for maximum compatibility with custom disk formats.
 ;;
 ;; C Definition:
-;;    void <cpct_loadFile> (u8* *fileName*, u8* *destBuffer*, u8* *sectorTable*) __z88dk_callee;
+;;    void cpct_loadFile (<u8>* *fileName*, <u8>* *destBuffer*, <u8>* *sectorTable*) __z88dk_callee;
 ;;
 ;; Input Parameters (6 Bytes):
 ;;    (2B HL) fileName      - Pointer to 11-byte AMSDOS filename (uppercase, format "AAAAAAAA.BBB")

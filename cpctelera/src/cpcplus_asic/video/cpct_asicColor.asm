@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicColor
+;;
 ;;   Convert RGB to asic colour
 ;;    
 ;;
 ;; C Definition:
-;;    <void> cpct_asicColor(<u8> *red*, <u8> *green*, <u8> *blue*) __z88dk_callee
+;;    void cpct_asicColor(<u8> *red*, <u8> *green*, <u8> *blue*) __z88dk_callee
 ;;
 ;; Assembly call:
 ;;    > cpct_asicColor_asm

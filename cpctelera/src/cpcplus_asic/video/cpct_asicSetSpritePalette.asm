@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
-;;   Set the Asic hardware sprites palette colour values
+;; Function: cpct_asicSetSpritePalette
+;;
+;;   Set the Asic hardware sprites palette colours
 ;;    
 ;;
 ;; C Definition:
-;;   <void> cpct_asicSetSpritePalette(<u16*> *rgb_array*, <u16> *size*) __z88dk_callee;
+;;   void cpct_asicSetSpritePalette(<u16*> *rgb_array*, <u16> *size*) __z88dk_callee;
 ;;
 ;; Assembly call:
 ;;   > call cpct_asicSetSpritePalette_asm

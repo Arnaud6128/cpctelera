@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicSetPalColour
+;;
 ;;   Change one colour in the Asic palette
 ;;    
 ;;
 ;; C Definition:
-;;    <void> cpct_asicSetPalColour(<u8> *colour_index*, <u16> *rgb*) __z88dk_callee
+;;    void cpct_asicSetPalColour(<u8> *colour_index*, <u16> *rgb*) __z88dk_callee
 ;;
 ;; Assembly call:
 ;;    > cpct_asicSetPalColour_asm

@@ -20,11 +20,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicPageConnect
+;;
 ;;   Connect Asic Page to get access to Asic registers and memory
 ;;    
 ;; C Definition:
-;;    <void> cpct_asicPageConnect();
+;;    void cpct_asicPageConnect();
 ;;
 ;; Assembly call:
 ;;   > call cpct_asicPageConnect_asm

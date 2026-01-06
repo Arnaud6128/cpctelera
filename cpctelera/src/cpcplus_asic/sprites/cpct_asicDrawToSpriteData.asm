@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicDrawToSpriteData
+;;
 ;;  Draws an sprite inside hardware sprite's buffer.
 ;;    
 ;;
 ;; C Definition:
-;;    <void> cpct_asicDrawToSpriteData(<u8> *hardware_sprite_id*, <u8> *pos_x*, <u8> *pos_y*, <const u8*> *sprite_array*, <u8> *width*, <u8> *height*) __z88dk_callee;
+;;    void cpct_asicDrawToSpriteData(<u8> *hardware_sprite_id*, <u8> *pos_x*, <u8> *pos_y*, <const u8*> *sprite_array*, <u8> *width*, <u8> *height*) __z88dk_callee;
 ;;
 ;; Assembly call:
 ;;    > call cpct_asicDrawToSpriteData_asm

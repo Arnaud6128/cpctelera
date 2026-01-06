@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
-;;   Set the Asic Palette colour values
+;; Function: cpct_asicSetPalette
+;;
+;;   Set the Asic Palette colours
 ;;    
 ;;
 ;; C Definition:
-;;   <void> cpct_asicSetPalette(<u16*> *rgb_array*, <u16> *size*) __z88dk_callee;
+;;   void cpct_asicSetPalette(<u16*> *rgb_array*, <u16> *size*) __z88dk_callee;
 ;;
 ;; Assembly call:
 ;;    > call cpct_asicSetPalette_asm

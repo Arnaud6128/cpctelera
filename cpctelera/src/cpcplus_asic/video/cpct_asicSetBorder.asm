@@ -20,12 +20,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: 
+;; Function: cpct_asicSetBorder
+;;
 ;;   Change screen border colour with RGB value (0x0GRB)
 ;;  
 ;;  
 ;; C Definition:
-;;    <void>cpct_asicSetBorder(<u16> *border_color*) __fast_call;
+;;    void cpct_asicSetBorder(<u16> *border_color*) __fast_call;
 ;;
 ;; Assembly call:
 ;;    > call cpct_asicSetBorder_asm
