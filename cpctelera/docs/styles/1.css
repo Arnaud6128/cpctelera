@@ -91,18 +91,19 @@ blockquote {
 #Menu {
     font-size: 9pt;
     padding: 10px 0 0 0;
+    width: 40ex;
     }
 .ContentPage #Menu,
 .IndexPage #Menu {
     position: absolute;
     top: 0;
     left: 0;
-    width: 31ex;
+    width: 40ex;
     overflow: hidden;
     }
 .ContentPage .Firefox #Menu,
 .IndexPage .Firefox #Menu {
-    width: 27ex;
+    width: 40ex;
     }
 
 
@@ -127,6 +128,7 @@ blockquote {
     .MGroup {
         font-variant: small-caps; font-weight: bold;
         margin: 1em 0 1em 10px;
+        width: 40ex;
         }
 
     .MGroupContent {
@@ -286,7 +288,7 @@ blockquote {
     margin-left: 31ex;
     }
 .ContentPage .Firefox #Content {
-    margin-left: 27ex;
+    margin-left: 40ex;
     }
 
 
