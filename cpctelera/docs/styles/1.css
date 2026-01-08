@@ -91,7 +91,6 @@ blockquote {
 #Menu {
     font-size: 9pt;
     padding: 10px 0 0 0;
-    width: 40ex;
     }
 .ContentPage #Menu,
 .IndexPage #Menu {
@@ -285,7 +284,7 @@ blockquote {
     border-color: #000000;
     background-color: #FFFFFF;
     font-size: 9pt;  /* To make 31ex match the menu's 31ex. */
-    margin-left: 31ex;
+    margin-left: 40ex;
     }
 .ContentPage .Firefox #Content {
     margin-left: 40ex;
