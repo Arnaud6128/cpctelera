@@ -30,7 +30,6 @@
 
 //
 // Macro: cpctm_asicColor
-//
 //    Convert component colors RGB in 12-bits format (0x0GRB)
 //
 // C Definition:
@@ -47,17 +46,95 @@
 // the given values is a variable, it will produce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slower.
 //
+
 #define cpctm_asicColor(R,G,B)   (u16)(((u16)((G) & 0x0F) << 8) | (u16)(((R) & 0x0F) << 4) | (u16)((B) & 0x0F)) // 0x0GRB
 
+//
+// Macro: cpctm_asicGet<RED/Green/Blue>
+//    Extract color (R, G or B) component from 12-bits RGB format (0x0GRB)
+//
+// C Definition:
+//    #define <cpctm_asicGetRed> (*RGB*) 
+//    #define <cpctm_asicGetGreen> (*RGB*) 
+//    #define <cpctm_asicGetBlue> (*RGB*) 
+//
+// Parameters:
+//   RGB 12-bits format (0x0GRB)
+// 
+// Known limitations:
+//    * This macro will produce no-code when used with constant values. If any of
+// the given values is a variable, it will produce calculation code. This code
+// will be translated by C-compiler into ASM, and may be slower.
+//
 #define cpctm_asicGetRed(RGB)    (u8)((u16)RGB >> 4)
 #define cpctm_asicGetGreen(RGB)  (u8)((u16)RGB >> 8)
 #define cpctm_asicGetBlue(RGB)   (u8)((u16)RGB & (u16)0x0F)
 
-// Asic palettes
+// Asic palette adress
 #define ASIC_PALETTE_SIZE         16
+
+// Constant: ASIC_PALETTE_LOC
+//    <u16*> pointer to ASIC Palette
 #define ASIC_PALETTE_LOC         (u16*)0x6400
+
+// Constant: ASIC_BORDER_LOC
+//    <u16*> pointer to ASIC Border color
 #define ASIC_BORDER_LOC          (u16*)0x6420
+
+// Constant: ASIC_SPRITE_PALETTE_LOC
+//    <u16*> pointer to ASIC Sprite Hardware palette
 #define ASIC_SPRITE_PALETTE_LOC  (u16*)0x6422
+
+// Constant: ASIC_SSCR_ADRESS
+//    <u8*> pointer to ASIC SSCR
+#define ASIC_SSCR_ADRESS           (u8*)0x6804
+
+//
+// Macro: cpctm_asicSSCRHoriz
+//    Apply horizontal offset to SSCR
+//
+// C Definition:
+//    #define <cpctm_asicSSCRHoriz> (SSCR_VALUE, HORIZONTAL_VALUE) 
+// 
+#define cpctm_asicSSCRHoriz(S,V)    (u8)((u8)((S) & (u8)0b11110000) | ((u8)V))
+
+//
+// Macro: cpctm_asicSSCRVert
+//    Apply vertical offset to SSCR
+//
+// C Definition:
+//    #define <cpctm_asicSSCRVert> (SSCR_VALUE, VERTICAL_VALUE) 
+// 
+#define cpctm_asicSSCRVert(S,V)     (u8)((u8)((S) & (u8)0b10001111) | ((u8)(V << 4)))
+
+//
+// Macro: cpctm_asicSSCRBorder
+//    Hide or show border during scrolling
+//
+// C Definition:
+//    #define <cpctm_asicSSCRBorder> (SSCR_VALUE, HIDE_BORDER) 
+// 
+#define cpctm_asicSSCRBorder(S,V)   (u8)((u8)((S) & (u8)0b01111111) | ((u8)V))
+
+// Constant: ASIC_SCROLL_MODE0
+//    Pixel offset for pixel scroll horizontal in mode0
+#define ASIC_SCROLL_MODE0           (u8)4
+
+// Constant: ASIC_SCROLL_MODE1
+//    Pixel offset for pixel scroll horizontal in mode1
+#define ASIC_SCROLL_MODE1           (u8)2
+
+// Constant: ASIC_SCROLL_MODE2
+//    Pixel offset for pixel scroll horizontal in mode2
+#define ASIC_SCROLL_MODE2           (u8)1
+
+// Constant: ASIC_SCROLL_HIDE_BORDER
+//    Hide border during scrolling to use with macro cpctm_asicSSCRBorder
+#define ASIC_SCROLL_HIDE_BORDER     (u8)0x80
+
+// Constant: ASIC_SCROLL_RESET_BORDER
+//    Reset border during scrolling to use with macro cpctm_asicSSCRBorder
+#define ASIC_SCROLL_RESET_BORDER    (u8)0x00
 
 // Asic palette
 extern u16  cpct_asicColor(u8 red, u8 green, u8 blue) __z88dk_callee;
@@ -68,5 +145,10 @@ extern void cpct_asicSetPalette(const u16* rgb_array, u16 size) __z88dk_callee;
 // Sprite Hardware palette
 extern void cpct_asicSetSpritePalColour(u16 colour_index, u16 rgb) __z88dk_callee;
 extern void cpct_asicSetSpritePalette(const u16* rgb_array, u16 size) __z88dk_callee;
+
+// Asic Soft Scroll Control Register
+extern void cpct_asicSetScrollBorder(u8 hide_border) __z88dk_fastcall;
+extern void cpct_asicSetScrollHoriz(u8 scroll_horiz) __z88dk_fastcall;
+extern void cpct_asicSetScrollVert(u8 scroll_vert) __z88dk_fastcall;
 
 #endif

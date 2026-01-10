@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -18,12 +18,12 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_asic
 
-.equ ASIC_OFFS_CONFIG_ZOOM, 0x04
+;; Include Asic constants 
+.include "../asic.s" 
 
-.equ ASIC_HW_SPRITE_DATA,   0x40
-.equ ASIC_HW_SPRITE_CONFIG, 0x60
-.equ ASIC_PALETTE_COLOUR,   0x6400
-.equ ASIC_BORDER_COLOUR,    0x6420 ;; Border color is index 0 of Sprite hardware palette
-.equ ASIC_PALETTE_SPRITE,   0x6420
-.equ ASIC_RASTER_INT,       0x6800
-.equ ASIC_SSCR,             0x6804
+;;
+;; ASM binding for <cpct_asicSetScrollVert>
+;;
+_cpct_asicSetScrollVert_asm::    ;; Assembly entry point
+
+.include /cpct_asicSetScrollVert.asm/   

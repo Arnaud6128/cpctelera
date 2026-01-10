@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud)
 ;;  Copyright (C) 2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -18,12 +18,15 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_asic
 
-.equ ASIC_OFFS_CONFIG_ZOOM, 0x04
+;; Include Asic constants 
+.include "../asic.s" 
 
-.equ ASIC_HW_SPRITE_DATA,   0x40
-.equ ASIC_HW_SPRITE_CONFIG, 0x60
-.equ ASIC_PALETTE_COLOUR,   0x6400
-.equ ASIC_BORDER_COLOUR,    0x6420 ;; Border color is index 0 of Sprite hardware palette
-.equ ASIC_PALETTE_SPRITE,   0x6420
-.equ ASIC_RASTER_INT,       0x6800
-.equ ASIC_SSCR,             0x6804
+;;
+;; C call binding for <cpct_asicSetScrollVert>
+;;
+;;   0 us, 0 bytes
+;;
+_cpct_asicSetScrollVert::
+   ;; Parameter *vertical_offset* is directly given in L register, using __z88dk_fastcall convention	
+   
+.include /cpct_asicSetScrollVert.asm/   

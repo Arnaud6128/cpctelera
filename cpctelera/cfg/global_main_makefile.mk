@@ -58,7 +58,6 @@ $(PREBUILD_OBJ): $(OBJSUBDIRS_FOLDER_FILES) $(IMGCFILES) $(IMGASMFILES) $(IMGBIN
 	$(info preobjs: '$(OBJSUBDIRS_FOLDER_FILES)')
 	@$(call PRINT,$(PROJNAME),"")
 	@$(call PRINT,$(PROJNAME),"=== PREBUILD PROCCESSING DONE!")
-	@$(call PRINT,$(PROJNAME),"=== $(CPCTELERA_VERSION)")
 	@$(call PRINT,$(PROJNAME),"============================================================")
 	@$(call PRINT,$(PROJNAME),"")
 	@touch $(PREBUILD_OBJ)
