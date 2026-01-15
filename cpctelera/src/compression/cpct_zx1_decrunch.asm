@@ -66,8 +66,8 @@
 ;;      AF,  BC,  DE,  HL
 ;;
 ;; Required memory:
-;;      C-bindings - 0 bytes 
-;;    ASM-bindings - 0 bytes 
+;;      C-bindings - 120 bytes 
+;;    ASM-bindings - 120 bytes 
 ;;
 ;; Credits:
 ;;    * <Original code at https://github.com/einar-saukas/ZX1> 
@@ -75,94 +75,102 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 dzx1_turbo:
-        ld      bc, #0xffff               ; preserve default offset 1
-        ld      (dzx1t_last_offset+1), bc
-        inc     bc
-        ld      a, #0x80
-        jr      dzx1t_literals
+        ld      bc, #0xffff               ;; [3]  Initialize default offset (-1)
+        ld      (dzx1t_last_offset+1), bc ;; [5]  Store as last offset
+        inc     bc                        ;; [2]  BC = 0
+        ld      a, #0x80                  ;; [2]  Initialize bit mask
+        jr      dzx1t_literals            ;; [3]  Start with literal copy
+
 dzx1t_new_offset:
-        dec     b
-        ld      c, (hl)                 ; obtain offset LSB
-        inc     hl
-        rr      c                       ; single byte offset?
-        jr      nc, dzx1t_msb_skip
-        ld      b, (hl)                 ; obtain offset MSB
-        inc     hl
-        rr      b                       ; replace last LSB bit with last MSB bit
-        inc     b
-        ret     z                       ; check end marker
-        rl      c
+        dec     b                         ;; [1]  Prepare for 1-byte offset
+        ld      c, (hl)                   ;; [2]  Load LSB of offset
+        inc     hl                        ;; [2]  Advance source pointer
+        rr      c                         ;; [2]  Check if 1-byte offset (bit 7)
+        jr      nc, dzx1t_msb_skip        ;; [3]  Skip MSB if not needed
+        ld      b, (hl)                   ;; [2]  Load MSB of offset
+        inc     hl                        ;; [2]  Advance source pointer
+        rr      b                         ;; [2]  Rotate MSB into place
+        inc     b                         ;; [1]  Adjust offset (avoid zero)
+        ret     z                         ;; [3]  End marker found → return
+        rl      c                         ;; [2]  Restore LSB bit from carry
 dzx1t_msb_skip:
-        ld      (dzx1t_last_offset+1), bc ; preserve new offset
-        ld      bc, #1                  ; obtain length
-        add     a, a
-        call    c, dzx1t_elias
-        inc     bc
+        ld      (dzx1t_last_offset+1), bc ;; [5]  Save new offset
+        ld      bc, #1                    ;; [3]  Initialize length = 1
+        add     a, a                      ;; [1]  Shift bit mask left
+        call    c, dzx1t_elias            ;; [5]  Decode Elias gamma length if carry
+        inc     bc                        ;; [2]  Final length = decoded + 1
+        ;; Fall through to copy from offset
+
 dzx1t_copy:
-        push    hl                      ; preserve source
+        push    hl                        ;; [3]  Save source pointer
 dzx1t_last_offset:
-        ld      hl, #0                  ; restore offset
-        add     hl, de                  ; calculate destination - offset
-        ldir                            ; copy from offset
-        pop     hl                      ; restore source
-        add     a, a                    ; copy from literals or new offset?
-        jr      c, dzx1t_new_offset
+        ld      hl, #0                    ;; [3]  Load last offset (self-modified at runtime)
+        add     hl, de                    ;; [3]  Compute source = dest - offset
+        ldir                              ;; [6*N] Copy BC bytes from (HL) to (DE)
+        pop     hl                        ;; [3]  Restore source pointer
+        add     a, a                      ;; [1]  Shift bit mask left
+        jr      c, dzx1t_new_offset       ;; [3]  If carry, read new offset
+
 dzx1t_literals:
-        inc     c                       ; obtain length
-        add     a, a
-        call    c, dzx1t_elias
-        ldir                            ; copy literals
-        add     a, a                    ; copy from last offset or new offset?
-        jr      c, dzx1t_new_offset
-        inc     c                       ; obtain length
-        add     a, a
-        call    c, dzx1t_elias
-        jp      dzx1t_copy
+        inc     c                         ;; [1]  Initialize length = 1
+        add     a, a                      ;; [1]  Shift bit mask left
+        call    c, dzx1t_elias            ;; [5]  Decode Elias gamma length if carry
+        ldir                              ;; [6*N] Copy literals
+        add     a, a                      ;; [1]  Shift bit mask left
+        jr      c, dzx1t_new_offset       ;; [3]  If carry, read new offset
+        inc     c                         ;; [1]  Initialize length = 1
+        add     a, a                      ;; [1]  Shift bit mask left
+        call    c, dzx1t_elias            ;; [5]  Decode Elias gamma length if carry
+        jp      dzx1t_copy                ;; [3]  Jump to copy from last offset
+
+;;----------------------------------------------------------------
+;; dzx1t_elias: Decodes inverted interlaced Elias gamma code
+;;----------------------------------------------------------------
 dzx1t_elias_loop:
-        add     a, a
-        rl      c
-        add     a, a
-        ret     nc
+        add     a, a                      ;; [1]  Shift bit mask left
+        rl      c                         ;; [2]  Insert bit into length (C)
+        add     a, a                      ;; [1]  Shift again
+        ret     nc                        ;; [3]  Return if no carry (end of code)
 dzx1t_elias:
-        jp      nz, dzx1t_elias_loop    ; inverted interlaced Elias gamma coding
-        ld      a, (hl)                 ; load another group of 8 bits
-        inc     hl
-        rla
-        ret     nc
-        add     a, a
-        rl      c
-        add     a, a
-        ret     nc
-        add     a, a
-        rl      c
-        add     a, a
-        ret     nc
-        add     a, a
-        rl      c
-        add     a, a
-        ret     nc
+        jp      nz, dzx1t_elias_loop      ;; [3]  Jump if not end of byte
+        ld      a, (hl)                   ;; [2]  Load next byte from source
+        inc     hl                        ;; [2]  Advance source pointer
+        rla                               ;; [1]  Rotate first bit into carry
+        ret     nc                        ;; [3]  Return if no carry
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        add     a, a                      ;; [1]  Shift again
+        ret     nc                        ;; [3]  Return if no carry
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        add     a, a                      ;; [1]  Shift again
+        ret     nc                        ;; [3]  Return if no carry
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        add     a, a                      ;; [1]  Shift again
+        ret     nc                        ;; [3]  Return if no carry
 dzx1t_elias_reload:
-        add     a, a
-        rl      c
-        rl      b
-        add     a, a
-        ld      a, (hl)                 ; load another group of 8 bits
-        inc     hl
-        rla
-        ret     nc
-        add     a, a
-        rl      c
-        rl      b
-        add     a, a
-        ret     nc
-        add     a, a
-        rl      c
-        rl      b
-        add     a, a
-        ret     nc
-        add     a, a
-        rl      c
-        rl      b
-        add     a, a
-        jr      c, dzx1t_elias_reload
-        ret
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        rl      b                         ;; [2]  Insert bit into B (for multi-byte)
+        add     a, a                      ;; [1]  Shift again
+        ld      a, (hl)                   ;; [2]  Load next byte from source
+        inc     hl                        ;; [2]  Advance source pointer
+        rla                               ;; [1]  Rotate first bit into carry
+        ret     nc                        ;; [3]  Return if no carry
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        rl      b                         ;; [2]  Insert bit into B
+        add     a, a                      ;; [1]  Shift again
+        ret     nc                        ;; [3]  Return if no carry
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        rl      b                         ;; [2]  Insert bit into B
+        add     a, a                      ;; [1]  Shift again
+        ret     nc                        ;; [3]  Return if no carry
+        add     a, a                      ;; [1]  Shift bit mask
+        rl      c                         ;; [2]  Insert bit into C
+        rl      b                         ;; [2]  Insert bit into B
+        add     a, a                      ;; [1]  Shift again
+        jr      c, dzx1t_elias_reload     ;; [3]  Continue if carry set
+        ret                               ;; [3]  Return
