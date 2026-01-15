@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sourceProfile>
+  <name>Z80 SDCC</name>
+  <readOnly>false</readOnly>
+  <littleEndian>true</littleEndian>
+  <generateComments>true</generateComments>
+  <commentDeclaration>; {x}</commentDeclaration>
+  <addressChangeDeclaration>org {x}</addressChangeDeclaration>
+  <addressDeclaration>.dw {x}</addressDeclaration>
+  <byteDeclaration>.db {x}</byteDeclaration>
+  <wordDeclaration>.dw {x}</wordDeclaration>
+  <labelDeclaration>{x}:</labelDeclaration>
+  <stringDeclaration>.str \{x}\</stringDeclaration>
+  <constantDeclaration>= {x}</constantDeclaration>
+  <binaryFileExtension>bin</binaryFileExtension>
+  <sourceFileExtension>s</sourceFileExtension>
+  <tabulationLength>4</tabulationLength>
+</sourceProfile>
