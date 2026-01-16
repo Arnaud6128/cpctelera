@@ -19,14 +19,10 @@
 .module cpct_compression
 
 ;;
-;; ASM bindings for <cpct_zx1_decrunch>
+;; ASM bindings for <cpct_zx1b_decrunch>
 ;;
 ;;   0 microSecs, 0 bytes
 ;;
-_cpct_zx1_decrunch::
-   ;; Get parameters from HL and DE registers (16 + 16 bits) with __sdcccall(1) convention
-   ;; HL = Destination pointer
-   ;; DE = Source pointer
-   ex de, hl ;; [1] HL = Source / DE = Destination
+cpct_zx1b_decrunch_asm::
 
-.include  /cpct_zx1_decrunch.asm/
+.include  /cpct_zx1b_decrunch.asm/

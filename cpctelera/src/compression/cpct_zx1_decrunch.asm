@@ -28,24 +28,24 @@
 ;; successor of widely popular compressor ZX7.
 ;;
 ;; C Definition:
-;;    void <cpct_zx1_decrunch> (const u8* *source*, u8* *destination*) __z88dk_callee;
+;;    void <cpct_zx1_decrunch> (u8* *destination*, const u8* *source*) __z88dk_callee;
 ;;
 ;; Input Parameters (4 bytes):
-;;    (2B  HL) source      - Pointer of the source (compressed) array
 ;;    (2B  DE) destination - Pointer of the destination (decompressed) array
+;;    (2B  HL) source      - Pointer of the source (compressed) array
 ;;
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_ZX1_decrunch_asm
 ;;
 ;; Parameter Restrictions:
 ;;    * *source* should be a 16-bit pointer to the latest byte of the array where compressed
-;; data is held. ZX1 algorithm will read the array from this byte backwards till its start.
+;; data is held. ZX1 algorithm will read the array from this byte.
 ;; No runtime checks are performed: if this value is incorrect, undefined behaviour will follow.
 ;; Typically, garbage data of undefined size will be produced, potentially overwriting undesired
 ;; memory parts.
 ;;    * *destination* should be a 16-bit pointer to the latest byte of the array where decompressed
 ;; data will be written. It could point anywhere in memory. Data will be written from that
-;; byte backwards until all compressed data has been decompressed. No runtime checks
+;; byte until all compressed data has been decompressed. No runtime checks
 ;; are performed. By specially careful to ensure that this pointer is correct; otherwise
 ;; undesired parts of memory could be overwritten, causing undefined behaviour. 
 ;;
@@ -66,7 +66,7 @@
 ;;      AF,  BC,  DE,  HL
 ;;
 ;; Required memory:
-;;      C-bindings - 120 bytes 
+;;      C-bindings - 121 bytes 
 ;;    ASM-bindings - 120 bytes 
 ;;
 ;; Credits:

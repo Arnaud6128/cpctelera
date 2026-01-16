@@ -89,4 +89,30 @@ extern volatile  u8 cpct_akp_songLoopTimes;
 #define AY_CHANNEL_C    0b00000100
 #define AY_CHANNEL_ALL  0b00000111
 
+///////////////////
+// ArkosTracker 3
+
+enum
+{
+	AT3_CHANNEL_A,
+	AT3_CHANNEL_B,
+	AT3_CHANNEL_C
+};
+
+// Arkos AKG player functions
+extern void cpct_PLY_AKG_Init(void* songdata, u16 subSong) __z88dk_callee;
+extern void cpct_PLY_AKG_Play(void);
+extern void cpct_PLY_AKG_Stop(void);
+extern void cpct_PLY_AKG_InitSoundEffects(void* sfx_song_data) __z88dk_fastcall;
+extern void cpct_PLY_AKG_PlaySoundEffect(u8 sfx_num, u8 channel, u16 volume) __z88dk_callee;
+extern void cpct_PLY_AKG_StopSoundEffectFromChannel(u8 channel) __z88dk_fastcall;
+
+// Arkos AKM player functions
+extern void cpct_PLY_AKM_Init(void* songdata, u16 subSong) __z88dk_callee;
+extern void cpct_PLY_AKM_Play(void);
+extern void cpct_PLY_AKM_Stop(void);
+extern void cpct_PLY_AKM_InitSoundEffects(void* sfx_song_data) __z88dk_fastcall;
+extern void cpct_PLY_AKM_PlaySoundEffect(u8 sfx_num, u8 channel, u16 volume) __z88dk_callee;
+extern void cpct_PLY_AKM_StopSoundEffectFromChannel(u8 channel) __z88dk_fastcall;
+
 #endif

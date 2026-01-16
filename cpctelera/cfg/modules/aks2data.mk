@@ -78,6 +78,22 @@ define AKS2DATA_SET_FOLDER
 endef
 
 #################
+# AKS2DATA_SET_SFXONLY: Configures the output of the CONVERT command
+# to be for SFX-ONLY songs or not
+#
+# $(1): yes/no
+#
+define AKS2DATA_SET_SFXONLY
+	# Only yes/no are valid 
+	$(if $(call EQUALS,$(1),yes),    $(eval A2D_SFX := -sfx)\
+		,$(if $(call EQUALS,$(1),no),$(eval A2D_SFX :=)\
+			,$(error $(A2D_ERR) SET_SFXONLY]: '$(1)' is not a valid parameter. Valid values are { yes, no })\
+		)\
+	)
+endef
+
+
+#################
 # AKS2DATA_SET_OUTPUTS: Selects the output formats that will be produced.
 # One file will be produced for each selected output format.
 # Valid output formats are: h (c-header) hs (asm-header) s (asm-file) bin (binary)
@@ -86,13 +102,13 @@ endef
 #
 define AKS2DATA_SET_OUTPUTS
 	# Check that the passed value is valid and assign it 
-	$(eval _VALID := s bin)
+	$(eval _VALID := h hs s bin)
 	$(call ENSUREVALID,$(1),$(_VALID),is not a valid output format [AKS2DATA - SET_OUTPUTS])
 	# Convert outputs
-	$(eval _CON := .s .bin)
+	$(eval _CON := .h .h.s .s .bin)
 	$(eval A2D_GENF :=)
 	$(foreach _V,$(1),$(call CONVERTVALUE,$(_V),_VALID,_CON,,_V2) $(call ADD2SET,A2D_GENF,$(_V2)))
-	$(eval _CON := -gs -gb)
+	$(eval _CON := -gh -ghs -gs -gb)
 	$(eval A2D_GEN :=)
 	$(foreach _V,$(1),$(call CONVERTVALUE,$(_V),_VALID,_CON,,_V2) $(call ADD2SET,A2D_GEN,$(_V2)))
 endef
@@ -110,12 +126,14 @@ endef
 #
 define AKS2DATA_CONVERT
 	# Ensure non-empty parameters
-	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS file is required as first parameter for CONVERT command))
-	$(if $(2),,$(error $(A2D_ERR) CONVERT]: A C-identifier is required as second parameter for CONVERT command))
+	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS/SKS file is requiered as first parameter for CONVERT command))
+	$(if $(2),,$(error $(A2D_ERR) CONVERT]: A C-identifier is requiered as second parameter for CONVERT command))
+	$(if $(3),,$(error $(A2D_ERR) CONVERT]: A 16-bits memory address is requiered as third parameter for CONVERT command))
 
 	# Ensure that AKS file exists and C_identifier and Memory address are valid
 	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(1)' does not exist or is not readable)
 	$(call ENSURE_VALID_C_ID,$(2),$(A2D_ERR) CONVERT]: '$(2)' is not a valid C-identifier)
+	$(call ENSURE_ADDRESS_VALID,$(3),$(A2D_ERR) CONVERT]:)
 
 	# Set up files to be produced
 	$(eval _OBJS:=)
@@ -139,16 +157,6 @@ $(_OBJS): $(1) $(A2D_DEPEND)
 	$(eval PREBUILDOBJS := $(PREBUILDOBJS) $(_OBJS))
 endef
 
-
-#################
-# AKS2DATA_EXECUTE: Sets additional parameters to be 
-# passed to cpct_aks2c when called.
-#
-# $(1): Extra parameters
-#
-define AKS2DATA_EXECUTE
-	$(eval A2D_COMPILE := -compile)
-endef
 
 
 #################
