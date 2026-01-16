@@ -20,10 +20,12 @@
 #include <cpctelera.h>
 #include <stdio.h>
 
+#include "molusk.h"
+#include "sfx.h"
+
 // This file is generated on compilation from music/molusk.aks
 // In this example the AKG Player is used but it can be changed to AKM
 // See arkosTracker3 documentation about different players.
-#include "arkosPlayer3.h"
 
 // Defined type to know the status of a Key 
 //    Key is either Pressed / Released, and K_NOEVENT is used to
@@ -34,6 +36,9 @@ typedef enum { K_NOEVENT, K_RELEASED, K_PRESSED } TKeyStatus;
 
 // Playing sound
 u8 gPlaying;
+
+extern u8 musicStart[];
+extern u8 effectsSoundEffects[];
 
 ////////////////////////////////////////////////////////////////////////
 // Play Music on interruption 
@@ -106,8 +111,8 @@ void main(void)
    printf("ArkosTracker 3 demo.\r\n\r\nPress 'Space bar' to stop/play sound.\r\nPress '1' or '2' to play sound effect.");
    
    // Initialize the song to be played
-   cpct_PLY_AKG_Init(MUSICSTART, 0);    // Initialize the music
-   cpct_PLY_AKG_InitSoundEffects(EFFECTSSOUNDEFFECTS); // Initialize the sound effects
+   cpct_PLY_AKG_Init(musicStart, 0);    // Initialize the music
+   cpct_PLY_AKG_InitSoundEffects(effectsSoundEffects); // Initialize the sound effects
 
     // Music is played on interrupt.
    cpct_setInterruptHandler(MusicInterruptHandler);
@@ -125,7 +130,7 @@ void main(void)
                cpct_PLY_AKG_Stop(); // Cut down sound output
            }
            else{
-               cpct_PLY_AKG_PlaySoundEffect(1, CHANNEL_B, 0); // Play sound
+               cpct_PLY_AKG_PlaySoundEffect(1, AT3_CHANNEL_A, 0); // Play sound
            }
        } 
 
@@ -133,12 +138,12 @@ void main(void)
        // !! Warning sound effect start at index 1 !!
        if ( checkKeyEvent(Key_1, &k_1) == K_RELEASED ) 
        {
-           cpct_PLY_AKG_PlaySoundEffect(2, CHANNEL_A, 0);
+           cpct_PLY_AKG_PlaySoundEffect(2, AT3_CHANNEL_A, 0);
        } 
 
        if ( checkKeyEvent(Key_2, &k_2) == K_RELEASED ) 
        {
-           cpct_PLY_AKG_PlaySoundEffect(3, CHANNEL_C, 0);
+           cpct_PLY_AKG_PlaySoundEffect(3, AT3_CHANNEL_A, 0);
        } 
    }
 }
