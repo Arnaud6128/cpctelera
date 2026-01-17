@@ -36,7 +36,6 @@ A2D_ERR     := <<ERROR>> [AKS2DATA -
 A2D_GEN     :=-gs -gh
 A2D_GENF    :=.s .h
 A2D_EXTRAPAR:=
-A2D_COMPILE :=
 A2D_PLAYER  :=akm
 
 # Ensure that music_conversion.mk exists for compatibility with older CPCtelera projects
@@ -78,22 +77,6 @@ define AKS2DATA_SET_FOLDER
 endef
 
 #################
-# AKS2DATA_SET_SFXONLY: Configures the output of the CONVERT command
-# to be for SFX-ONLY songs or not
-#
-# $(1): yes/no
-#
-define AKS2DATA_SET_SFXONLY
-	# Only yes/no are valid 
-	$(if $(call EQUALS,$(1),yes),    $(eval A2D_SFX := -sfx)\
-		,$(if $(call EQUALS,$(1),no),$(eval A2D_SFX :=)\
-			,$(error $(A2D_ERR) SET_SFXONLY]: '$(1)' is not a valid parameter. Valid values are { yes, no })\
-		)\
-	)
-endef
-
-
-#################
 # AKS2DATA_SET_OUTPUTS: Selects the output formats that will be produced.
 # One file will be produced for each selected output format.
 # Valid output formats are: h (c-header) hs (asm-header) s (asm-file) bin (binary)
@@ -128,13 +111,11 @@ define AKS2DATA_CONVERT
 	# Ensure non-empty parameters
 	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS/SKS file is requiered as first parameter for CONVERT command))
 	$(if $(2),,$(error $(A2D_ERR) CONVERT]: A C-identifier is requiered as second parameter for CONVERT command))
-	$(if $(3),,$(error $(A2D_ERR) CONVERT]: A 16-bits memory address is requiered as third parameter for CONVERT command))
 
 	# Ensure that AKS file exists and C_identifier and Memory address are valid
 	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(1)' does not exist or is not readable)
 	$(call ENSURE_VALID_C_ID,$(2),$(A2D_ERR) CONVERT]: '$(2)' is not a valid C-identifier)
-	$(call ENSURE_ADDRESS_VALID,$(3),$(A2D_ERR) CONVERT]:)
-
+	
 	# Set up files to be produced
 	$(eval _OBJS:=)
 	$(foreach _E,$(A2D_GENF)\
@@ -151,6 +132,8 @@ $(_OBJS): $(1) $(A2D_DEPEND)
 		$(CPCTAKS2C) $(A2D_GEN) $(A2D_COMPILE) $(A2D_SFX) $(A2D_EXTRAPAR) -od "$(A2D_OUTFOLD)" -id "$(2)" -player "$(A2D_PLAYER)"  "$(1)")
 
 # Variables that need to be updated to keep up with generated files and erase them on clean
+	$(eval _F := $(filter %.s,$(_OBJS)))
+	$(if $(_F),$(eval IMGASMFILES := $(_F) $(IMGASMFILES)))
 	$(eval _F := $(filter %.bin,$(_OBJS)))
 	$(if $(_F),$(eval IMGBINFILES := $(_F) $(IMGBINFILES)))
 	$(eval OBJS2CLEAN  := $(_OBJS) $(OBJS2CLEAN))
