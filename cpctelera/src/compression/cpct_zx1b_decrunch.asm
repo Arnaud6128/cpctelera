@@ -35,7 +35,7 @@
 ;;    (2B  HL) source_end - Ending (latest) byte of the source (compressed) array
 ;;
 ;; Assembly call (Input parameters on registers):
-;;    > call cpct_zx1b_decrunch
+;;    > call cpct_zx1b_decrunch_asm
 ;;
 ;; Parameter Restrictions:
 ;;    * *dest_end* should be a 16-bit pointer to the latest byte of the array where decompressed

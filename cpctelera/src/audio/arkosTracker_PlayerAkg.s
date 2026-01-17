@@ -104,24 +104,61 @@ PLY_AKG_BITFORNOISE = .+2
 PLY_AKG_SOUNDEFFECTDATA_OFFSETCURRENTSTEP: jp cpct_PLY_AKG_Play
 PLY_AKG_CHANNEL_SOUNDEFFECTDATASIZE = .+2
     jp PLY_AKG_INITTABLEORA_END
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Function: cpct_PLY_AKG_InitSoundEffects
+;;
+;; Initializes the sound effects. It MUST be called at any times before a first sound effect is triggered.
+;; It doesn't matter whether the song is playing or not, or if it has been initialized or not.
+;;
+;; C Definition:
+;;    void cpct_PLY_AKG_InitSoundEffects(void* sfx_song_data) __z88dk_fastcall
+;;
+;; Input Parameters (2 bytes):
+;;    (2B  HL) sfx_song_data  - Address to the sound effects data.
+;;
+;; Assembly call (Input parameters on registers):
+;;    > call cpct_PLY_AKG_InitSoundEffects_asm
+;;
+;; Destroyed Register values: 
+;;      -
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
-;Initializes the sound effects. It MUST be called at any times before a first sound effect is triggered.
-;It doesn't matter whether the song is playing or not, or if it has been initialized or not.
-;IN:    HL = Address to the sound effects data.
-;MOD:   None.	
 _cpct_PLY_AKG_InitSoundEffects::
+;; CPCtelera according __z88dk_fastcall convention
+;; HL = sfx_song_data 
 cpct_PLY_AKG_InitSoundEffects:
 cpct_PLY_AKG_InitSoundEffects_asm:
-PLY_AKG_OPCODE_ADD_HL_BC_LSB: ld (PLY_AKG_PTSOUNDEFFECTTABLE+1),hl
+PLY_AKG_OPCODE_ADD_HL_BC_LSB: 
+	ld (PLY_AKG_PTSOUNDEFFECTTABLE+1),hl
     ret 
 
-;Plays a sound effect. If a previous one was already playing on the same channel, it is replaced.
-;This does not actually plays the sound effect, but programs its playing.
-;The music player, when called, will call the PLY_AKG_PlaySoundEffectsStream method below.
-;IN:    A = Sound effect number (>0!).
-;       C = The channel where to play the sound effect (0, 1, 2).
-;       B = Inverted volume (0 = full volume, 16 = no sound). Hardware sounds are also lowered.
-;MOD:   AF', AF, BC, DE, HL.	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Function: cpct_PLY_AKG_PlaySoundEffect
+;;
+;; Plays a sound effect. If a previous one was already playing on the same channel, it is replaced.
+;; This does not actually plays the sound effect, but programs its playing.
+;; The music player, when called, will call the PLY_AKG_PlaySoundEffectsStream method below.
+;;
+;; C Definition:
+;;    void cpct_PLY_AKG_PlaySoundEffect(u8 sfx_num, u8 channel, u16 volume) __z88dk_callee;
+;;
+;; Input Parameters (3 bytes):
+;;    (1B A) = Sound effect number (>0!).
+;;    (1B C) = The channel where to play the sound effect (0, 1, 2) 
+;;    (1B B) = Inverted volume (0 = full volume, 16 = no sound). Hardware sounds are also lowered.
+;;
+;; Assembly call (Input parameters on registers):
+;;    > call cpct_PLY_AKG_PlaySoundEffect_asm
+;;
+;; Destroyed Register values: 
+;;      AF', AF, BC, DE, HL
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 _cpct_PLY_AKG_PlaySoundEffect::
 cpct_PLY_AKG_PlaySoundEffect: 
 ;; CPCtelera according __sdcccall(1) and __z88dk_callee convention
@@ -129,9 +166,10 @@ cpct_PLY_AKG_PlaySoundEffect:
 ;; L = The channel where to play the sound effect (0, 1, 2).
     ld c,l
     pop hl
-    ex (sp),hl
-    ld b,l
-cpct_PLY_AKG_PlaySoundEffect_asm: dec a
+    ex (sp),hl ;; HL <-> SP Inverted volume
+    ld b,l     ;; B = L Inverted volume
+cpct_PLY_AKG_PlaySoundEffect_asm: 
+	dec a
 PLY_AKG_PTSOUNDEFFECTTABLE: ld hl,#0
     ld e,a
     ld d,#0
@@ -163,12 +201,33 @@ PLY_AKG_OPCODE_DEC_HL = .+1
     ex af,af'
 PLY_AKG_OPCODE_SCF: ld (hl),a
     ret 
-;Stops a sound effect. Nothing happens if there was no sound effect.
-;IN:    A = The channel where to stop the sound effect (0, 1, 2).
-;MOD:   AF, DE, HL.	
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Function: cpct_PLY_AKG_StopSoundEffectFromChannel
+;;
+;; Stops a sound effect. Nothing happens if there was no sound effect.
+;;
+;; C Definition:
+;;    void cpct_PLY_AKG_StopSoundEffectFromChannel(u8 channel) __z88dk_fastcall;
+;;
+;; Input Parameters (1 bytes):
+;;    (1B A) = Channel number.
+;;
+;; Assembly call (Input parameters on registers):
+;;    > call cpct_PLY_AKG_StopSoundEffectFromChannel_asm
+;;
+;; Destroyed Register values: 
+;;      AF, DE, HL
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 _cpct_PLY_AKG_StopSoundEffectFromChannel::
+;; CPCtelera according __z88dk_fastcall convention
+;; A = Channel
 cpct_PLY_AKG_StopSoundEffectFromChannel:
-cpct_PLY_AKG_StopSoundEffectFromChannel_asm: add a,a
+cpct_PLY_AKG_StopSoundEffectFromChannel_asm:
+    add a,a
     add a,a
     add a,a
     ld e,a
@@ -179,13 +238,15 @@ PLY_AKG_OPCODE_SBC_HL_BC_LSB: add hl,de
     inc hl
     ld (hl),d
     ret 
+		
 ;Plays the sound effects, if any has been triggered by the user.
 ;This does not actually send registers to the PSG, it only overwrite the required values of the registers of the player.
 ;The sound effects initialization method must have been called before!
 ;As R7 is required, this must be called after the music has been played, but BEFORE the registers are sent to the PSG.
 ;IN:    A = R7.
 ;OUT:   A = new R7.	
-PLY_AKG_PLAYSOUNDEFFECTSSTREAM: rla 
+PLY_AKG_PLAYSOUNDEFFECTSSTREAM: 
+	rla 
     rla 
     ld ix,#PLY_AKG_CHANNEL1_SOUNDEFFECTDATA
     ld iy,#PLY_AKG_PSGREG8
@@ -209,6 +270,7 @@ PLY_AKG_PLAYSOUNDEFFECTSSTREAM: rla
     call PLY_AKG_PSES_PLAY
     ld a,c
     ret 
+	
 ;Plays the sound stream from the given pointer to the sound effect. If 0, no sound is played.
 ;The given R7 is given shift twice to the left, so that this code MUST set/reset the bit 2 (sound), and set/reset bit 5 (noise).
 ;This code MUST overwrite these bits because sound effects have priority over the music.
@@ -350,15 +412,34 @@ PLY_AKG_CHANNEL3_SOUNDEFFECTDATA: .db 0
     .db 0
     .db 0
     .db 0
-;Initializes the player.
-;IN:    HL = music address.
-;       A = subsong index (>=0).	
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Function: cpct_PLY_AKG_Init
+;;
+;; Initializes the player.
+;;
+;; C Definition:
+;;    void cpct_PLY_AKM_Init(void* songdata, u16 subSong) __z88dk_callee;
+;;
+;; Input Parameters (3 bytes):
+;;    (2B HL) = Song data
+;;    (1B A)  = Subsong index
+;;    
+;; Assembly call (Input parameters on registers):
+;;    > call cpct_PLY_AKG_Init_asm
+;;
+;; Destroyed Register values: 
+;;     -
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;		
+	
 _cpct_PLY_AKG_Init::
 ;; CPCTelera according __sdcccall(1) and __z88dk_callee convention
 ;; HL = Address of the song
 ;; DE = D useless  / E  = Subsong index (>=0)
 cpct_PLY_AKG_Init:
-    ld a,e
+    ld a,e  ;; A = E (Subsong index (>=0))
 cpct_PLY_AKG_Init_asm: 
     ld de,#4
     add hl,de
@@ -458,7 +539,25 @@ PLY_AKG_INITTABLEORA: .dw PLY_AKG_CHANNEL1_ISVOLUMESLIDE
     .dw PLY_AKG_CHANNEL3_ISPITCH
 PLY_AKG_INITTABLEORA_END:
 
-;Stops the music. This code can be removed if you don't intend to stop it!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Function: cpct_PLY_AKG_Stop
+;;
+;; Stops the music. This code can be removed if you don't intend to stop it!
+;;
+;; C Definition:
+;;    void cpct_PLY_AKG_Stop(void);
+;;
+;; Input Parameters (0 bytes):
+;;    
+;; Assembly call (Input parameters on registers):
+;;    > call cpct_PLY_AKG_Stop_asm
+;;
+;; Destroyed Register values: 
+;;     -
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+
 _cpct_PLY_AKG_Stop::
 cpct_PLY_AKG_Stop:
 cpct_PLY_AKG_Stop_asm: 
@@ -471,7 +570,25 @@ cpct_PLY_AKG_Stop_asm:
     ld a,#63
     jp PLY_AKG_SENDPSGREGISTERS
 
-;Plays one frame of the subsong.	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; Function: cpct_PLY_AKG_Play
+;;
+;; Plays one frame of the subsong
+;;
+;; C Definition:
+;;    void cpct_PLY_AKG_Play(void);
+;;
+;; Input Parameters (0 bytes):
+;;    
+;; Assembly call (Input parameters on registers):
+;;    > call cpct_PLY_AKG_Play_asm
+;;
+;; Destroyed Register values: 
+;;     -
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+
 _cpct_PLY_AKG_Play::
 cpct_PLY_AKG_Play:
 cpct_PLY_AKG_Play_asm: 
