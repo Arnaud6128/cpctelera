@@ -1,5 +1,6 @@
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+##  Copyright (C) 2025 Arnaud BOUCHE (@Arnaud 6128)
 ##  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
@@ -20,7 +21,7 @@
 ##                 Automatic image conversion file                        ##
 ##------------------------------------------------------------------------##
 ## This file is intended for users to automate music conversion from      ##
-## original files (like Arkos Tracker .aks) into data arrays.             ##
+## original files (like Arkos Tracker .aks) into data arrays or assembly. ##
 ############################################################################
 
 # Default values
@@ -28,8 +29,9 @@
 #$(eval $(call AKS2DATA, SET_OUTPUTS  , s    )) # { bin, s }
 #$(eval $(call AKS2DATA, SET_PLAYER   , akg  )) # { akg, akm, fx }
 #$(eval $(call AKS2DATA, SET_EXTRAPAR ,      )) 
+
 # Conversion
 #$(eval $(call AKS2DATA, SET_PLAYER , fx )) 
 #$(eval $(call AKS2DATA, CONVERT , music/sfx.aks , effects ,  ))
 #$(eval $(call AKS2DATA, EXECUTE , )) # must be set before last song
-#$(eval $(call AKS2DATA, CONVERT , music.aks , name , mem_address )) # mem_adress only for bin output
+#$(eval $(call AKS2DATA, CONVERT , music.aks , name , mem_address )) # mem_adress mandatory for bin output

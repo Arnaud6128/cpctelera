@@ -31,25 +31,18 @@
 ##    <cpct_aks2c> [options] [aksfile]
 ##
 ## Requisites:
-##    This scripts uses AKSToBIN.exe utility by Targhan to convert an aks
-## file into a data Array. AKSToBIN.exe is included in Arkos Tracker 1.0, which
-## is included into CPCtelera. AKSToBIN.exe works natively on Windows systems
-## but requires mono to be installed under Linux or Mac OSX Systems.
+##    This scripts uses ArkosTracker utility by Targhan to convert an aks 
+## file into a data Array or assembly files.
 ##
 ## Description:
 ##    This script converts an Arkos Tracker (aks) file containing music and or
 ## sound effects into two source code files (.s/.h) with definition and declaration
-## of am array containing all music data. The data array will be absolutely located
+## of an array containing all music data. The data array will be absolutely located
 ## in memory at the desired memory address.
-##	  By default, generated binary data will be placed at location 0x100 in memory.
-## You can change that location using -m modifier.
-##
+##	  Generated binary data will be placed at specific location in memory.
 ##
 ## Command line options:
-##    -bl  | --bytes-per-line [bytes] - Set the number of bytes that every generated line will contain in the .s file
 ##    -gb  | --generate-bin           - Generates a binary file with song's data (Default: no). Using this switch overrides generation defaults.
-##    -gh  | --generate-header        - Generates a header file (.h) with C declarations (Default: yes). Using this switch overrides generation defaults.
-##    -ghs | --generate-asm-header    - Generates a header file (.h.s) with asm declarations (Default: no). Using this switch overrides generation defaults.
 ##    -gs  | --generate-asm           - Generates an assembly file with song's data (Default: yes). Using this switch overrides generation defaults.
 ##    -h   | --help                   - Shows help information on the terminal.
 ##    -id  | --c-identifier [ident]   - Sets the identifier that will be used to access the array from C programs.
@@ -71,17 +64,13 @@ AKSPROFIL=SDCC_Z80.xml
 AKSPROFILPATH=${AKSPATH}/cpctelera/${AKSPROFIL}
 
 ## Configuration Variables
-MEMADDR=0x100
+MEMADDR=
 C_IDENTIFIER="g_music"
-BINTMP=$(createTempFile)
-BYTESPERLINE=16
 OUTPUT_FILENAME=
 OUTPUTDIR=.
 GENERATE_S=0
 GENERATE_BIN=0
-SFILE=music.s
-BINFILE=music.bin
-PLAYER=
+PLAYER=akg
 
 ## Show how this script is to be used and exit
 ##
@@ -148,21 +137,6 @@ fi
 
 while (( $# >= 1 )); do
    case $1 in
-      ## Set the number of bytes that everty converted line from the .s will have
-      "-bl" | "--bytes-per-line")
-         
-         ## Must be an integer greater or equal than 1
-         if isEmpty "$2"; then
-            paramError "Parameter -bl (--bytes-per-line) must be followed by an integer." 20
-         elif ! isInt "$2"; then
-            paramError "'$2' is not an integer. -bl (--bytes-per-line) requires and integer." 21
-         elif (( $2 < 1 )); then
-            paramError "'$2' is lower than 1. -bl (--bytes-per-line) requires an integer greater or equal than 1." 22
-         fi          
-
-         BYTESPERLINE="$2"
-         shift
-      ;;
       ## Show Help
       "-h" | "--help")
          usage
@@ -255,9 +229,9 @@ while (( $# >= 1 )); do
 done
 
 ## If no file generation has been selected, resort to defaults (.h and .s)
-if (( GENERATE_S == 0 && GENERATE_H == 0 && GENERATE_BIN == 0 && GENERATE_H_S == 0 )); then
+if (( GENERATE_S == 0 && GENERATE_BIN == 0 )); then
    GENERATE_S=1
-   GENERATE_H=1
+   GENERATE_BIN=0
 fi
 
 ## File parameter must have been passed (not empty)
@@ -265,17 +239,24 @@ if isEmpty "$FILE"; then
    paramError "A <filename> parameter is required." 12
 fi
 
+## Memory address parameter is required for binary export
+if (( GENERATE_BIN == 1 )); then
+	if isEmpty "$MEMADDR"; then
+		paramError "Memory address parameter is required for binary export." 12
+	fi
+fi
+
 ## Calculate output filenames and routes
 if isEmpty "$OUTPUT_FILENAME"; then
    SFILE="${OUTPUTDIR}/$(filenameWithNoExt "$(basename $FILE)").s"
    HFILE="${OUTPUTDIR}/$(filenameWithNoExt "$(basename $FILE)").h"
-   HSFILE="${OUTPUTDIR}/$(filenameWithNoExt "$(basename $FILE)").h.s"
    BINFILE="${OUTPUTDIR}/$(filenameWithNoExt "$(basename $FILE)").bin"
+   CFILE="${OUTPUTDIR}/$(filenameWithNoExt "$(basename $FILE)").c"
 else
    SFILE="${OUTPUTDIR}/${OUTPUT_FILENAME}.s"
    HFILE="${OUTPUTDIR}/${OUTPUT_FILENAME}.h"
-   HSFILE="${OUTPUTDIR}/${OUTPUT_FILENAME}.h.s"
    BINFILE="${OUTPUTDIR}/${OUTPUT_FILENAME}.bin"
+   CFILE="${OUTPUTDIR}/${OUTPUT_FILENAME}.c"
 fi
 
 if checkSystem cygwin; then
@@ -288,41 +269,81 @@ fi
 
 ###############################################################
 ###############################################################
-## Convert music
+## Convert music and sounds
 ##
-
-## STEP 1: Convert AKS file to ASM
-printf "Converting '$FILE' to Asm..."
 
 cp $AKSPROFILPATH .
 
-printf "// Generated by CPCTelera for ArkosPlayer3\r\n" > ${HFILE}
+echo ${COLOR_LIGHT_YELLOW}
+printf "// Generated by CPCTelera for ArkosPlayer3\n" > ${HFILE}
 
 if [ "$PLAYER" == "akm" ]; then
 	checkExecutableExists "$AKS2AKM"
-	$AKS2AKM $FILE_CP $SFILE --labelPrefix ${C_IDENTIFIER} --customSourceProfileFile $AKSPROFIL
-	sed -i "s/${C_IDENTIFIER}Start:/_${C_IDENTIFIER}Start::/g" $SFILE
 	
-	#Fix SDCC/ASZ80 format
-	sed -i "s/$ +/. +/g" $SFILE
-	sed -i "s/#/0x/g" $SFILE
+	if (( GENERATE_BIN == 1 )); then
+		printf "AKM Converting '$FILE' music to Bin at ${MEMADDR}...\r\n"	
+		$AKS2AKG $FILE_CP $BINFILE -bin --sourceProfile z80 -adr $MEMADDR		
+		
+		printf "// Generated by CPCTelera for ArkosPlayer3\n#include <cpctelera.h>\nCPCT_ABSOLUTE_LOCATION_AREA($((MEMADDR-1)));\n\n" > $CFILE
+		cpct_bin2c $BINFILE -an g_${C_IDENTIFIER} >> $CFILE
+		printf "CPCT_RELOCATABLE_AREA();" >> $CFILE		
+		rm $BINFILE
+		
+		printf "extern u8 g_${C_IDENTIFIER}[];" >> ${HFILE}
+	else		
+		printf "AKM Converting '$FILE' music to Asm...\r\n"
 	
-	printf "extern u8 ${C_IDENTIFIER}Start[];" >> ${HFILE}
-	
+		$AKS2AKM $FILE_CP $SFILE --labelPrefix ${C_IDENTIFIER} --customSourceProfileFile $AKSPROFIL
+		sed -i "s/${C_IDENTIFIER}Start:/_${C_IDENTIFIER}Start::/g" $SFILE
+		
+		#Fix SDCC/ASZ80 format
+		sed -i "s/$ +/. +/g" $SFILE
+		sed -i "s/#/0x/g" $SFILE		
+		printf "extern u8 ${C_IDENTIFIER}Start[];" >> ${HFILE}
+	fi	
 elif [ "$PLAYER" == "akg" ]; then	
 	checkExecutableExists "$AKS2AKG"
-	$AKS2AKG $FILE_CP $SFILE --labelPrefix ${C_IDENTIFIER} --customSourceProfileFile $AKSPROFIL
-	sed -i "s/${C_IDENTIFIER}Start:/_${C_IDENTIFIER}Start::/g" $SFILE
-	printf "extern u8 ${C_IDENTIFIER}Start[];" >> ${HFILE}
+
+	if (( GENERATE_BIN == 1 )); then
+		printf "AKG Converting '$FILE' music to Bin at ${MEMADDR}...\r\n"
 	
+		$AKS2AKG $FILE_CP $BINFILE -bin --sourceProfile z80 -adr $MEMADDR
+				
+		printf "// Generated by CPCTelera for ArkosPlayer3\n#include <cpctelera.h>\nCPCT_ABSOLUTE_LOCATION_AREA($((MEMADDR-1)));\n\n" > $CFILE
+		cpct_bin2c $BINFILE -an g_${C_IDENTIFIER} >> $CFILE
+		printf "CPCT_RELOCATABLE_AREA();" >> $CFILE		
+		rm $BINFILE
+
+		printf "extern u8 g_${C_IDENTIFIER}[];" >> ${HFILE}
+	else				
+		printf "AKG Converting '$FILE' music to Asm...\r\n"
+	
+		$AKS2AKG $FILE_CP $SFILE --labelPrefix ${C_IDENTIFIER} --customSourceProfileFile $AKSPROFIL
+		sed -i "s/${C_IDENTIFIER}Start:/_${C_IDENTIFIER}Start::/g" $SFILE	
+		printf "extern u8 ${C_IDENTIFIER}Start[];" >> ${HFILE}
+	fi	
 elif [ "$PLAYER" == "fx" ]; then	
 	checkExecutableExists "$AKS2AKX"
-	printf "\r\nFX  $AKS2AKX $FILE $SFILE\r\n"
-	$AKS2AKX $FILE_CP $SFILE --labelPrefix ${C_IDENTIFIER} --customSourceProfileFile $AKSPROFIL
-	sed -i "s/${C_IDENTIFIER}SoundEffects:/_${C_IDENTIFIER}SoundEffects::/g" $SFILE
-	printf "extern u8 ${C_IDENTIFIER}SoundEffects[];" >> ${HFILE}
+
+	if (( GENERATE_BIN == 1 )); then	
+		printf "AKX Converting '$FILE' sounds to Bin at ${MEMADDR}...\r\n"
+	
+		$AKS2AKX $FILE_CP $BINFILE -bin --sourceProfile z80 -adr $MEMADDR
+		printf "// Generated by CPCTelera for ArkosPlayer3\n#include <cpctelera.h>\nCPCT_ABSOLUTE_LOCATION_AREA(${MEMADDR}-1);\n\n" > $CFILE
+		cpct_bin2c $BINFILE -an g_${C_IDENTIFIER} >> $CFILE
+		printf "CPCT_RELOCATABLE_AREA();" >> $CFILE		
+		rm $BINFILE
+
+		printf "extern u8 g_${C_IDENTIFIER}[];" >> ${HFILE}					
+	else	
+		printf "AKX Converting '$FILE' sounds to Asm...\r\n"
+	
+		$AKS2AKX $FILE_CP $SFILE --labelPrefix ${C_IDENTIFIER} --customSourceProfileFile $AKSPROFIL
+		sed -i "s/${C_IDENTIFIER}SoundEffects:/_${C_IDENTIFIER}SoundEffects::/g" $SFILE
+		printf "extern u8 ${C_IDENTIFIER}SoundEffects[];" >> ${HFILE}
+	fi
 	
 fi
+echo ${COLOR_NORMAL}
 
 rm $AKSPROFIL
-

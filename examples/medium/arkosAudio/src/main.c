@@ -25,7 +25,8 @@
 
 // This file is generated on compilation from music/molusk.aks
 // In this example the AKG Player is used but it can be changed to AKM
-// See arkosTracker3 documentation about different players.
+// For example both generations was used, binary for music and assembly for sounds.
+// See arkosTracker3 documentation about different players or for custom generation
 
 // Defined type to know the status of a Key 
 //    Key is either Pressed / Released, and K_NOEVENT is used to
@@ -36,9 +37,6 @@ typedef enum { K_NOEVENT, K_RELEASED, K_PRESSED } TKeyStatus;
 
 // Playing sound
 u8 gPlaying;
-
-extern u8 musicStart[];
-extern u8 effectsSoundEffects[];
 
 ////////////////////////////////////////////////////////////////////////
 // Play Music on interruption 
@@ -111,7 +109,7 @@ void main(void)
    printf("ArkosTracker 3 demo.\r\n\r\nPress 'Space bar' to stop/play sound.\r\nPress '1' or '2' to play sound effect.");
    
    // Initialize the song to be played
-   cpct_PLY_AKG_Init(musicStart, 0);    // Initialize the music
+   cpct_PLY_AKG_Init(g_music, 0);    // Initialize the music
    cpct_PLY_AKG_InitSoundEffects(effectsSoundEffects); // Initialize the sound effects
 
     // Music is played on interrupt.
