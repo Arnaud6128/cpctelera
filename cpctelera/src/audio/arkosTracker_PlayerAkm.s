@@ -110,13 +110,10 @@ PLY_AKM_DATA_OFFSETPTINSTRUMENT = .+1
 ;;    void cpct_PLY_AKM_InitSoundEffects(void* sfx_song_data) __z88dk_fastcall
 ;;
 ;; Input Parameters (2 bytes):
-;;    (2B  HL) sfx_song_data  - Address to the sound effects data.
+;;    (2B  HL) sfx_song_data - Address to the sound effects data
 ;;
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_PLY_AKM_InitSoundEffects_asm
-;;
-;; Destroyed Register values: 
-;;      -
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -142,9 +139,9 @@ PLY_AKM_DATA_OFFSETINSTRUMENTCURRENTSTEP: ret
 ;;    void cpct_PLY_AKM_PlaySoundEffect(u8 sfx_num, u8 channel, u16 volume) __z88dk_callee;
 ;;
 ;; Input Parameters (3 bytes):
-;;    (1B A) = Sound effect number (>0!).
-;;    (1B C) = The channel where to play the sound effect (0, 1, 2) 
-;;    (1B B) = Inverted volume (0 = full volume, 16 = no sound). Hardware sounds are also lowered.
+;;    (1B A) - Sound effect number (>0!)
+;;    (1B C) - The channel where to play the sound effect (0, 1, 2) 
+;;    (1B B)  Inverted volume (0 = full volume, 16 = no sound). Hardware sounds are also lowered
 ;;
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_PLY_AKM_PlaySoundEffect_asm
@@ -166,38 +163,35 @@ cpct_PLY_AKM_PlaySoundEffect_asm:
         ;Gets the address to the sound effect.
         dec a
 PLY_AKM_DATA_OFFSETTRACKPITCHSPEED = .+1
-PLY_AKM_PTSOUNDEFFECTTABLE:
-PLY_AKM_DATA_OFFSETTRACKPITCHDECIMAL: ld hl,#0
-PLY_AKM_DATA_OFFSETISARPEGGIOTABLEUSED: ld e,a
-PLY_AKM_DATA_OFFSETPTARPEGGIOTABLE: ld d,#0
-PLY_AKM_DATA_OFFSETPTARPEGGIOOFFSET: add hl,de
-PLY_AKM_DATA_OFFSETARPEGGIOCURRENTSTEP: add hl,de
-PLY_AKM_DATA_OFFSETARPEGGIOCURRENTSPEED: ld e,(hl)
-PLY_AKM_DATA_OFFSETARPEGGIOORIGINALSPEED: inc hl
-PLY_AKM_DATA_OFFSETCURRENTARPEGGIOVALUE: ld d,(hl)
-PLY_AKM_DATA_OFFSETISPITCHTABLEUSED: ld a,(de)
-PLY_AKM_DATA_OFFSETPTPITCHTABLE: inc de
-    ex af,af'
-PLY_AKM_DATA_OFFSETPTPITCHOFFSET: ld a,b
-PLY_AKM_DATA_OFFSETPITCHCURRENTSPEED = .+1
-PLY_AKM_DATA_OFFSETPITCHORIGINALSPEED = .+2
-PLY_AKM_DATA_OFFSETPITCHCURRENTSTEP: ld hl,#PLY_AKM_CHANNEL1_SOUNDEFFECTDATA
-PLY_AKM_DATA_OFFSETCURRENTPITCHTABLEVALUE: ld b,#0
-PLY_AKM_TRACK1_DATA_SIZE: sla c
-    sla c
-    sla c
-    add hl,bc
-    ld (hl),e
-    inc hl
-    ld (hl),d
-    inc hl
-    ld (hl),a
-    inc hl
-    ld (hl),#0
-    inc hl
-    ex af,af'
-    ld (hl),a
-    ret 
+	ld hl,#0
+	ld e,a
+	ld d,#0
+	add hl,de
+	add hl,de
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	ld a,(de)
+	inc de
+	ex af,af'
+	ld a,b
+	ld hl,#PLY_AKM_CHANNEL1_SOUNDEFFECTDATA
+	ld b,#0
+	sla c
+	sla c
+	sla c
+	add hl,bc
+	ld (hl),e
+	inc hl
+	ld (hl),d
+	inc hl
+	ld (hl),a
+	inc hl
+	ld (hl),#0
+	inc hl
+	ex af,af'
+	ld (hl),a
+	ret 
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -209,7 +203,7 @@ PLY_AKM_TRACK1_DATA_SIZE: sla c
 ;;    void cpct_PLY_AKM_StopSoundEffectFromChannel(u8 channel) __z88dk_fastcall;
 ;;
 ;; Input Parameters (1 bytes):
-;;    (1B A) = Channel number.
+;;    (1B A) - Channel number
 ;;
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_PLY_AKM_StopSoundEffectFromChannel_asm
@@ -391,14 +385,11 @@ PLY_AKM_CHANNEL3_SOUNDEFFECTDATA: .db 0
 ;;    void cpct_PLY_AKM_Init(void* songdata, u16 subSong) __z88dk_callee;
 ;;
 ;; Input Parameters (3 bytes):
-;;    (2B HL) = Song data
-;;    (1B A)  = Subsong index
+;;    (2B HL) - Song data
+;;    (1B A)  - Subsong index
 ;;    
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_PLY_AKG_Init_asm
-;;
-;; Destroyed Register values: 
-;;     -
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 
@@ -486,14 +477,9 @@ PLY_AKM_INITVARS_END:
 ;;
 ;; C Definition:
 ;;    void cpct_PLY_AKG_Stop(void);
-;;
-;; Input Parameters (0 bytes):
 ;;    
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_PLY_AKG_Stop_asm
-;;
-;; Destroyed Register values: 
-;;     -
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -519,13 +505,8 @@ cpct_PLY_AKM_Stop_asm:
 ;; C Definition:
 ;;    void cpct_PLY_AKM_Play(void);
 ;;
-;; Input Parameters (0 bytes):
-;;    
 ;; Assembly call (Input parameters on registers):
 ;;    > call Pcpct_PLY_AKM_Play_asm
-;;
-;; Destroyed Register values: 
-;;     -
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 	

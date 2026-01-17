@@ -48,18 +48,8 @@ File: Aliases for builtin types  (types.h)
 
 Group: Audio  {
 
-   File: Arkos Player Functions  (audio\arkostracker.s)
-   File: Arkos Player Manual  (audio\arkosplayer.txt)
-   File: Audio Constants&amp;Variables  (audio\audio.h)
-   Link: cpct_akp_musicPlay  (arkostracker-s.html&amp;#x23;cpct_akp_musicPlay)
-   Link: cpct_akp_musicInit  (arkostracker-s.html&amp;#x23;cpct_akp_musicInit)
-   Link: cpct_akp_stop  (arkostracker-s.html&amp;#x23;cpct_akp_stop)
-   Link: cpct_akp_SFXGetInstrument  (arkostracker-s.html&amp;#x23;cpct_akp_SFXGetInstrument)
-   Link: cpct_akp_SFXInit  (arkostracker-s.html&amp;#x23;cpct_akp_SFXInit)
-   Link: cpct_akp_SFXStopAll  (arkostracker-s.html&amp;#x23;cpct_akp_SFXStopAll)
-   Link: cpct_akp_SFXPlay  (arkostracker-s.html&amp;#x23;cpct_akp_SFXPlay)
-   Link: cpct_akp_SFXStop  (arkostracker-s.html&amp;#x23;cpct_akp_stop)
-   Link: cpct_akp_setFadeVolume  (arkostracker-s.html&amp;#x23;cpct_akp_setFadeVolume)
+   File: arkosTracker_PlayerAkg.s  (audio\arkosTracker_PlayerAkg.s)
+   File: arkosTracker_PlayerAkm.s  (audio\arkosTracker_PlayerAkm.s)
    }  # Group: Audio
 
 Group: Bitarray  {
@@ -104,6 +94,9 @@ Group: Cpcplus_asic  {
       File: cpct_asicSetBorder  (cpcplus_asic\video\cpct_asicSetBorder.asm)
       File: cpct_asicSetPalColour  (cpcplus_asic\video\cpct_asicSetPalColour.asm)
       File: cpct_asicSetPalette  (cpcplus_asic\video\cpct_asicSetPalette.asm)
+      File: cpct_asicSetScrollBorder  (cpcplus_asic\video\cpct_asicSetScrollBorder.asm)
+      File: cpct_asicSetScrollHoriz  (cpcplus_asic\video\cpct_asicSetScrollHoriz.asm)
+      File: cpct_asicSetScrollVert  (cpcplus_asic\video\cpct_asicSetScrollVert.asm)
       File: cpct_asicSetSpritePalColour  (cpcplus_asic\video\cpct_asicSetSpritePalColour.asm)
       File: cpct_asicSetSpritePalette  (cpcplus_asic\video\cpct_asicSetSpritePalette.asm)
       }  # Group: Video
@@ -112,6 +105,8 @@ Group: Cpcplus_asic  {
 
 Group: Compression  {
 
+   File: cpct_zx1_decrunch  (compression\cpct_zx1_decrunch.asm)
+   File: cpct_zx1b_decrunch  (compression\cpct_zx1b_decrunch.asm)
    File: cpct_zx7b_decrunch_s  (compression\cpct_zx7b_decrunch_s.asm)
    }  # Group: Compression
 
