@@ -10,7 +10,7 @@ _**CPCteleraNext**_ is a fork of cpctelera with new features, in order to instal
    - Download ZIP from https://www.boost.org/releases/latest/ and extract only boost subdirectory from archive
  * Run setup.sh as usual
 
-_**What new ?**_
+_**What's new ?**_
  * Full support of SDCC 4.5.0 with all functions migrated to new call convention _sdcccall(1)
  * ArkosTracker3 integrated (AKG and AKM)
  * ZX1/ZXB compressors integrated
