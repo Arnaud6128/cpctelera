@@ -56,7 +56,7 @@ source $(dirname $0)/lib/bash_library.sh
 
 ## AKS2BIN utility location
 ARKOS_VERSION=3
-AKSPATH=${CPCT_PATH}/tools/arkosTracker-${ARKOS_VERSION}
+AKSPATH=${CPCT_PATH}/tools/ArkosTracker-${ARKOS_VERSION}
 AKS2AKM=${AKSPATH}/tools/SongToAkm
 AKS2AKG=${AKSPATH}/tools/SongToAkg
 AKS2AKX=${AKSPATH}/tools/SongToSoundEffects
