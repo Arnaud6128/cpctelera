@@ -4,6 +4,22 @@ _**Astonishingly fast Amstrad CPC game engine for C and Assembler developers**_
 
 ---------------------------------------------------------------
 
+_**CPCteleraNext**_ is a fork of cpctelera with new features, in order to install :
+ * Update your Cygwin environmment with latest package version you have alread used for CPCtelera
+ * Manually update the directory <cygwin_path>\usr\include\boost with the latest boost include (cygwin boost package is not updated anymore)
+   - Download ZIP from https://www.boost.org/releases/latest/ and extract only boost subdirectory from archive
+ * Run setup.sh as usual
+
+_**What new ?**_
+ * Full support of SDCC 4.5.0 with all functions migrated to new call convention _sdcccall(1)
+ * ArkosTracker3 integrated (AKG and AKM)
+ * ZX1/ZXB compressors integrated
+ * New functions and examples :
+   - CPC+ (Asic) functions
+   - Clipping functions
+   - Collision functions
+   - SpriteBuffer new functions
+
 _**CPCtelera**_ is an integrated development framework for creating _**Amstrad CPC**_ games and content which includes:
  * A low-level library with support for: graphics, audio, keyboard, firmware, strings, video hardware manipulation and memory management.
  * A complete set of programming examples to learn from.
@@ -37,7 +53,7 @@ If you test it in any platform (listed here or not) and have problems, please fe
 
 ### Authors and License
 
- * (C) Copyright 2014-2017 [CPCtelera's _awesome_ authors](http://lronaldo.github.io/cpctelera/files/authors-txt.html)
+ * (C) Copyright 2014-2026 [CPCtelera's _awesome_ authors](http://lronaldo.github.io/cpctelera/files/authors-txt.html)
  * _**CPCtelera**_ low-level library, examples and scripts are distributed under [GNU Lesser General Public License v3](http://lronaldo.github.io/cpctelera/files/license-txt.html)
  * Content authoring tools included within _**CPCtelera**_ (under _cpctelera/tools_ folder) have their own licenses. Check each of them in their respective folders for more details.
 
