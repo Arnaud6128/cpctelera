@@ -12,13 +12,14 @@ _**CPCteleraNext**_ is a fork of cpctelera with new features, in order to instal
 
 _**What's new ?**_
  * Full support of SDCC 4.5.0 with all functions migrated to new call convention _sdcccall(1)
- * ArkosTracker3 integrated (AKG and AKM)
+ * ArkosTracker3 integrated (AKG and AKM) (https://www.julien-nevo.com/arkostracker/)
  * ZX1/ZXB compressors integrated
  * New functions and examples :
    - CPC+ (Asic) functions
    - Clipping functions
    - Collision functions
    - SpriteBuffer new functions
+   - Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
 
 _**CPCtelera**_ is an integrated development framework for creating _**Amstrad CPC**_ games and content which includes:
  * A low-level library with support for: graphics, audio, keyboard, firmware, strings, video hardware manipulation and memory management.
