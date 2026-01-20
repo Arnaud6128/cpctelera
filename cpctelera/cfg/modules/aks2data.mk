@@ -33,10 +33,11 @@
 #
 A2D_OUTFOLD := $(SRCDIR)
 A2D_ERR     := <<ERROR>> [AKS2DATA -
-A2D_GEN     :=-gs -gh
+A2D_GEN     :=-gs -gb -gf
 A2D_GENF    :=.s .h
 A2D_EXTRAPAR:=
 A2D_PLAYER  :=akm
+A2D_C_ID	:=
 
 # Ensure that music_conversion.mk exists for compatibility with older CPCtelera projects
 A2D_DEPEND  := cfg/music_conversion.mk
@@ -85,13 +86,13 @@ endef
 #
 define AKS2DATA_SET_OUTPUTS
 	# Check that the passed value is valid and assign it 
-	$(eval _VALID := h hs s bin)
+	$(eval _VALID := s bin bin_file)
 	$(call ENSUREVALID,$(1),$(_VALID),is not a valid output format [AKS2DATA - SET_OUTPUTS])
 	# Convert outputs
-	$(eval _CON := .h .h.s .s .bin)
+	$(eval _CON := .s .c .bin)
 	$(eval A2D_GENF :=)
 	$(foreach _V,$(1),$(call CONVERTVALUE,$(_V),_VALID,_CON,,_V2) $(call ADD2SET,A2D_GENF,$(_V2)))
-	$(eval _CON := -gh -ghs -gs -gb)
+	$(eval _CON := -gs -gb -gf)
 	$(eval A2D_GEN :=)
 	$(foreach _V,$(1),$(call CONVERTVALUE,$(_V),_VALID,_CON,,_V2) $(call ADD2SET,A2D_GEN,$(_V2)))
 endef
@@ -109,13 +110,12 @@ endef
 #
 define AKS2DATA_CONVERT
 	# Ensure non-empty parameters
-	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS/SKS file is requiered as first parameter for CONVERT command))
-	$(if $(2),,$(error $(A2D_ERR) CONVERT]: A C-identifier is requiered as second parameter for CONVERT command))
+	$(if $(1),,$(error $(A2D_ERR) CONVERT]: An AKS file is required as first parameter for CONVERT command))
+	$(if $(2), $(eval A2D_C_ID :=$(2)),$(eval A2D_C_ID :=))
 
 	# Ensure that AKS file exists and C_identifier and Memory address are valid
 	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(1)' does not exist or is not readable)
-	$(call ENSURE_VALID_C_ID,$(2),$(A2D_ERR) CONVERT]: '$(2)' is not a valid C-identifier)
-	
+		
 	# Set up files to be produced
 	$(eval _OBJS:=)
 	$(foreach _E,$(A2D_GENF)\
@@ -140,8 +140,6 @@ $(_OBJS): $(1) $(A2D_DEPEND)
 	$(eval PREBUILDOBJS := $(PREBUILDOBJS) $(_OBJS))
 endef
 
-
-
 #################
 # AKS2DATA: Front-end to access all functionalities of AKS2DATA macros about Arkos 
 # music conversion into data for programs.
@@ -149,12 +147,12 @@ endef
 # $(1): Command to be performed
 # $(2-8): Valid arguments to be passed to the selected command
 #
-# Valid Commands: SET_FOLDER SET_OUTPUTS SET_SFXONLY SET_EXTRAPAR CONVERT 
+# Valid Commands: SET_FOLDER SET_OUTPUTS SET_EXTRAPAR CONVERT SET_PLAYER 
 # Info about each command can be found looking into its correspondent makefile macro AKS2DATA_<COMMAND>
 #
 define AKS2DATA
 	# Set the list of valid commands
-	$(eval AKS2DATA_F_FUNCTIONS := SET_FOLDER SET_OUTPUTS SET_EXTRAPAR CONVERT EXECUTE SET_PLAYER)
+	$(eval AKS2DATA_F_FUNCTIONS := SET_FOLDER SET_OUTPUTS SET_PLAYER SET_EXTRAPAR CONVERT)
 
 	# Check that command parameter ($(1)) is exactly one-word after stripping whitespaces
 	$(call ENSURE_SINGLE_VALUE,$(1),<<ERROR>> [AKS2DATA] '$(strip $(1))' is not a valid command. Commands must be exactly one-word in lenght with no whitespaces. Valid commands: {$(AKS2DATA_F_FUNCTIONS)})
@@ -166,41 +164,4 @@ define AKS2DATA
 	$(if $(AKS2DATA_F_SF)\
 		,$(eval $(call AKS2DATA_$(AKS2DATA_F_SF),$(strip $(2)),$(strip $(3)),$(strip $(4)),$(strip $(5)),$(strip $(6)),$(strip $(7)),$(strip $(8))))\
 		,$(error <<ERROR>> [AKS2DATA] '$(strip $(1))' is not a valid command. Valid commands: {$(AKS2DATA_F_FUNCTIONS)}))
-endef
-
-#################################################################################################################################################
-### OLD MACROS (Deprecated)
-### Maintained here for compatibility
-#################################################################################################################################################
-
-#################
-# AKS2C: General rule to convert AKS music files into data arrays usable from C and ASM.
-# Updates IMGASMFILES and OBJS2CLEAN adding new .s/.h files that result from AKS conversions
-#
-# $(1): AKS file to be converted to data array
-# $(2): C identifier for the generated data array (will have underscore in front on ASM)
-# $(3): Output folder for .s and .h files generated (Default same folder)
-# $(4): Memory address where music data will be loaded
-# $(5): Aditional options (you can use this to pass aditional modifiers to cpct_aks2c)
-#
-define AKS2C
-	# Set up C and H files for output
-	$(eval A2C_S := $(basename $(1)).s)
-	$(eval A2C_H := $(basename $(1)).h)
-	$(eval $(call JOINFOLDER2BASENAME, A2C_S2, $(3), $(A2C_S)))
-	$(eval $(call JOINFOLDER2BASENAME, A2C_H2, $(3), $(A2C_H)))
-	$(eval A2C_SH := $(A2C_S2) $(A2C_H2))
-
-	# Configure options for output folder $(3)
-	$(eval A2C_OF := $(shell if [ ! "$(3)" = "" ]; then echo "-od $(3)"; else echo ""; fi))
-
-# Generate target for music converstion
-.SECONDARY: $(A2C_SH)
-$(A2C_SH): $(1)
-	@$(call PRINT,$(PROJNAME),"Converting music in $(1) into data arrays...")
-	$(CPCTAKS2C) -m "$(4)" $(A2C_OF) -id $(2) $(5) $(1)
-
-# Variables that need to be updated to keep up with generated files and erase them on clean
-IMGASMFILES := $(A2C_S2) $(IMGASMFILES)
-OBJS2CLEAN  := $(A2C_SH) $(OBJS2CLEAN)
 endef
