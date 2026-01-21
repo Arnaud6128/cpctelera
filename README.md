@@ -12,11 +12,11 @@ _**CPCteleraNext**_ is a fork of cpctelera with new features, in order to instal
 
 _**What's new ?**_
  * Full support of SDCC 4.5.0 with all functions migrated to new call convention _sdcccall(1)
- * ArkosTracker3 integrated (AKG and AKM) (https://www.julien-nevo.com/arkostracker/)
- * ZX1/ZXB compressors integrated
+ * ArkosTracker3 integrated (AKG and AKM players) (https://www.julien-nevo.com/arkostracker/)
+ * ZX0/ZX0B and ZX1/ZX1B compressors integrated (Néstor Gracia)
  * New functions and examples :
    - CPC+ (Asic) functions
-   - Clipping functions
+   - Sprite clipping functions
    - Collision functions
    - SpriteBuffer new functions
    - Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
