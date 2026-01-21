@@ -1,5 +1,6 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
+//  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
 //  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 //
 //  This program is free software: you can redistribute it and/or modify
@@ -26,8 +27,12 @@ extern void cpct_zx7b_decrunch_f0 (void* dest_end, const void* source_end) __z88
 extern void cpct_zx7b_decrunch_f1 (void* dest_end, const void* source_end) __z88dk_callee;
 extern void cpct_zx7b_decrunch_f2 (void* dest_end, const void* source_end) __z88dk_callee;
 
-// ZX1 Decrunching function
-extern void cpct_zx1_decrunch     (u8* destination, const void* source) __z88dk_callee;
+// ZX1 Decrunching functions
+extern void cpct_zx1_decrunch     (u8* destination, const void* source)  __z88dk_callee;
 extern void cpct_zx1b_decrunch    (u8* dest_end, const void* source_end) __z88dk_callee;
+
+// ZX0 Decrunching functions
+extern void cpct_zx0_decrunch     (u8* destination, const void* source)  __z88dk_callee;
+extern void cpct_zx0b_decrunch    (u8* dest_end, const void* source_end) __z88dk_callee;
 
 #endif

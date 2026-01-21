@@ -2,6 +2,8 @@
 
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+##  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
+##  Copyright (C) 2022 Néstor Gracia (https://github.com/nestornillo)
 ##  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
@@ -158,6 +160,7 @@ ASMCNST='=='
 ## COMPRESSORS
 ZX7B=${CPCT_PATH}/tools/zx7b/bin/zx7b
 ZX1=${CPCT_PATH}/tools/zx1/bin/zx1
+ZX0=${CPCT_PATH}/tools/zx0/bin/zx0
 
 if (( $# < 1 )); then
    usage
@@ -300,13 +303,21 @@ case $COMPRESSOR in
       echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}" 
       ${ZX7B} "$TMPFILE" "$TMPPACK" > /dev/null
    ;;
+   'zx0')
+     echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}"
+     ${ZX0} -f "$TMPFILE" "$TMPPACK" > /dev/null
+   ;;
+   'zx0b')
+     echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}"
+     ${ZX0} -f -b "$TMPFILE" "$TMPPACK" > /dev/null
+   ;;
    'zx1')
      echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}"
-     ${ZX1} -f "$TMPFILE" "$TMPPACK"
+     ${ZX1} -f "$TMPFILE" "$TMPPACK" > /dev/null
    ;;
    'zx1b')
      echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}"
-     ${ZX1} -f -b "$TMPFILE" "$TMPPACK"
+     ${ZX1} -f -b "$TMPFILE" "$TMPPACK" > /dev/null
    ;;
    *)
       paramError "Unknown compressor algorithm '$COMPRESSOR'." 8

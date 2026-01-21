@@ -46,6 +46,12 @@
 ##                                                                        ##
 ##	ADD2PACK: Adds files to packed (compressed) groups. Each call to this ##
 ##  		  macro will add a file to a named compressed group.          ##
+##  PACKZX0:  Compresses all files in a group into a single binary and    ##
+##            generates a C-array and a header to comfortably use it from ##
+##            inside your code with ZX0 compressor.                       ##
+##  PACKZX0B:  Compresses all files in a group into a single binary and   ##
+##            generates a C-array and a header to comfortably use it from ##
+##            inside your code with ZX0 Backward compressor.              ##
 ##  PACKZX1:  Compresses all files in a group into a single binary and    ##
 ##            generates a C-array and a header to comfortably use it from ##
 ##            inside your code with ZX1 compressor.                       ##
@@ -70,9 +76,9 @@
 ##                                                                        ##
 ##------------------------------------------------------------------------##
 ##                                                                        ##
-##  $(eval $(call PACKZX7B,<packname>,<dest_path>))                       ##
+##  $(eval $(call PACKZXYY,<packname>,<dest_path>))                       ##
 ##                                                                        ##
-##		Compresses all files in the <packname> group using ZX7B algorithm ##
+##		Compresses all files in the <packname> group using ZXYY algorithm ##
 ## and generates 2 files: <packname>.c and <packname>.h that contain a    ##
 ## C-array with the compressed data and a header file for declarations.   ##
 ## Generated files are moved to the folder <dest_path>.                   ##

@@ -33,22 +33,23 @@
 // 'img/screenformat/'.
 //
 // With the configuration file 'cfg/compression.mk' this binary file is compressed
-// using three different compression methods: ZX1, ZX1B (ZX1 backwards), and
-// ZX7B (ZX7 backwards). This compression generates in 'src/compressed' folder
+// using three different compression methods: ZX0, ZX0B (ZX1 backwards), 
+// ZX1, ZX1B (ZX1 backwards)and ZX7B (ZX7 backwards).
+ // This compression generates in 'src/compressed' folder
 // a '.c' and '.h' file for each compression algorithm. Of course, for each
 // different compression method used we'll need a different decompressor.
 //
-// For ZX1 decompression, we need to provide cpct_zx1_decrunch function the
-// memory adress where compressed data starts and the memory address where
+// For ZX1 and ZX0 decompression, we need to provide to cpct_zx0_decrunch and cpct_zx1_decrunch 
+// functions the memory adress where compressed data starts and the memory address where
 // uncompressed data starts. From there it continues decompressing until the
 // end of compressed data is reached and the end of the uncompressed data
 // is written to memory.
 //
-// On the other hand, ZX7B and ZX1B methods start decompression reading
+// On the other hand, ZX7B, ZX0B ZX1B methods start decompression reading
 // compressed data from its end, and start writing at the end of the
 // uncompressed destination area. Then decompression continues backwards until
 // the start of compressed data is reached and the start of uncompressed data
-// is written. Therefore we'll need to provide cpct_zx7b_decrunch_s and
+// is written. Therefore we'll need to provide cpct_zx7b_decrunch_s, cpct_zx1b_decrunch 
 // cpct_zx0b_decrunch functions the end of uncompressed destination area and
 // the end of compressed data.
 //
@@ -61,6 +62,8 @@
 #include <cpctelera.h>
 
 // include files generated with cfg/compression.mk
+#include "compressed/data_zx0.h"
+#include "compressed/data_zx0b.h"
 #include "compressed/data_zx1.h"
 #include "compressed/data_zx1b.h"
 #include "compressed/data_zx7b.h"
@@ -71,7 +74,6 @@
 // By default, video memory starts at adcress 0xC000 and ends at address 0xFFFF.
 // CPCT_VMEM_START is already defined in CPCtelera.
 #define VIDEO_MEMORY_END   (void*)(0xFFFF)
-
 
 void main(void) {
   // Pointer to video memory
@@ -87,15 +89,27 @@ void main(void) {
   pvmem = CPCT_VMEM_START;
 
    // Repeat next part forever
-  while (1) {
+  while (1) 
+  {
     // Clear the screen filling it up with 0's
     cpct_clearScreen_f64(0);
-    // Decompress pack data_zx7b using ZX7 backwards algorithm, so we need
-    // to use as parameters for cpct_zx7b_decrunch_s the end of the
-    // destination area and the end of the compressed data
-    cpct_zx7b_decrunch_s(VIDEO_MEMORY_END, data_zx7b_end);
+    // Decompress pack data_zx0 using ZX0 algorithm, so we need to
+    // use as parameters for cpct_zx0_decrunch the start of the
+    // destination area and the start of the compressed data
+    cpct_zx0_decrunch (CPCT_VMEM_START, data_zx0);
     // Draw a string with the name of the decruncher function used
-    cpct_drawStringM0("cpct_zx7b_decrunch_s", pvmem);
+    cpct_drawStringM0("cpct_zx0_decrunch", pvmem);
+    // Wait for a keyboard press
+    do {cpct_scanKeyboard();} while (!cpct_isAnyKeyPressed());
+
+    // Clear the screen filling it up with 0's
+    cpct_clearScreen_f64(0);
+    // Decompress pack data_zx0b using ZX0 backwards algorithm, so we need
+    // to use as parameters for cpct_zx1b_decrunch the end of the
+    // destination area and the end of the compressed data
+    cpct_zx0b_decrunch(VIDEO_MEMORY_END, data_zx0b_end);
+    // Draw a string with the name of the decruncher function used
+    cpct_drawStringM0("cpct_zx0b_decrunch", pvmem);
     // Wait for a keyboard press
     do {cpct_scanKeyboard();} while (!cpct_isAnyKeyPressed());
 
@@ -113,11 +127,22 @@ void main(void) {
     // Clear the screen filling it up with 0's
     cpct_clearScreen_f64(0);
     // Decompress pack data_zx1b using ZX1 backwards algorithm, so we need
-    // to use as parameters for cpct_zx0b_decrunch the end of the
+    // to use as parameters for cpct_zx1b_decrunch the end of the
     // destination area and the end of the compressed data
     cpct_zx1b_decrunch(VIDEO_MEMORY_END, data_zx1b_end);
     // Draw a string with the name of the decruncher function used
     cpct_drawStringM0("cpct_zx1b_decrunch", pvmem);
+    // Wait for a keyboard press
+    do {cpct_scanKeyboard();} while (!cpct_isAnyKeyPressed());
+
+    // Clear the screen filling it up with 0's
+    cpct_clearScreen_f64(0);
+    // Decompress pack data_zx7b using ZX7 backwards algorithm, so we need
+    // to use as parameters for cpct_zx7b_decrunch_s the end of the
+    // destination area and the end of the compressed data
+    cpct_zx7b_decrunch_s(VIDEO_MEMORY_END, data_zx7b_end);
+    // Draw a string with the name of the decruncher function used
+    cpct_drawStringM0("cpct_zx7b_decrunch_s", pvmem);
     // Wait for a keyboard press
     do {cpct_scanKeyboard();} while (!cpct_isAnyKeyPressed());
   }
