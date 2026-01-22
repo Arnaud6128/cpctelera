@@ -42,6 +42,18 @@
 #define CPCT_VMEM_START (u8*)0xC000
 
 //
+// Constant: CPCT_VMEM_END
+//
+//    The address where screen video memory ends by default in the Amstrad CPC.
+//
+//    This address is exactly 0xFFFF, and this macro represents this number but
+// automatically converted to <u8>* (Pointer to unsigned byte). You can use this
+// macro for any function requiring the end of video memory, like 
+// <cpct_getScreenPtr>.
+//
+#define CPCT_VMEM_END (u8*)0xFFFF
+
+//
 // Constants: Video Memory Pages
 //
 // Useful constants defining some typical Video Memory Pages to be used as 
