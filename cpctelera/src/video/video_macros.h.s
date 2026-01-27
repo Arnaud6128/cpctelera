@@ -48,7 +48,7 @@ CPCT_VMEM_START_ASM = 0xC000
 ;; macro for any function requiring the end of video memory, like 
 ;; <cpct_getScreenPtr>.
 ;;
-CPCT_VMEM_END_ASM = 0xF000
+CPCT_VMEM_END_ASM = 0xFFFF
 
 ;;
 ;; Constants: Video Memory Pages

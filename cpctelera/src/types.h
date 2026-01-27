@@ -36,8 +36,6 @@
 ///    f32  - float              (f32 = float    32-bits, 4 bytes)
 ///
 ///    NULL                      ((void *)0)
-///    BOOL - u8                 (u8  = unsigned  8-bits, 1 byte )
-///    TRUE / FALSE              (u8)1 / (u8)0
 ///
 
 typedef unsigned char       u8; 
@@ -52,18 +50,4 @@ typedef float              f32;
 
 #ifndef NULL
     #define NULL    ((void *)0)
-#endif
-
-#ifndef NULL
-    #define BOOL    u8
-#endif
-
-#ifndef NULL
-    #define TRUE    (u8)1
-#endif
-
-#ifndef NULL
-    #define FALSE   (u8)0
-#endif
-
 #endif
