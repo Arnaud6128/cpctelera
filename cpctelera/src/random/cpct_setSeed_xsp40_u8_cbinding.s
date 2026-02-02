@@ -1,5 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -20,13 +21,17 @@
 ;;
 ;; C bindings for <cpct_setSeed_xsp40_u8>
 ;;
-;;   16 us, 5 bytes
+;;   13 us, 4 bytes
 ;;
 _cpct_setSeed_xsp40_u8::
-   pop  hl     ;; [3] HL = Return address
-   pop  bc     ;; [3] BC: B ignored, C = 8-bits seed for Weyl sequence
-   pop  de     ;; [3] DE = First  16bits from the 32bits seed
-   ex (sp), hl ;; [6] HL = Second 16bits from the 32bits seed (and Return address left on top of the stack)
-   ld    a, c  ;; [1] A = 8-bits seed for Weyl sequence
+   ;; Get parameters from HL and DE registers and stack (16 + 32 bits), with __sdcccall(1) convention
+   ;; HL = plusSeed (H = useless / L = plusSeed)
+   ;; From stack
+   ;; DE:HL = seed32
+
+   ld   a, l     ;; [1] A = 8-bits seed for Weyl sequence
+   pop  hl       ;; [3] HL = Return address
+   pop  de       ;; [3] DE = First  16bits from the 32bits seed
+   ex  (sp), hl  ;; [6] HL = Second 16bits from the 32bits seed (and Return address left on top of the stack)
 
 .include /cpct_setSeed_xsp40_u8.asm/

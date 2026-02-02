@@ -69,7 +69,7 @@
 ;;      AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;      C-bindings - 16 bytes
+;;      C-bindings - 14 bytes
 ;;    ASM-bindings - 11 bytes
 ;;
 ;; Time Measures:
@@ -78,7 +78,7 @@
 ;; -----------------------------------------
 ;;    Any      |      34        |    136
 ;; -----------------------------------------
-;;  ASM-Saving |     -16        |    -64
+;;  ASM-Saving |     -15        |    -60
 ;; -----------------------------------------
 ;; (end code)
 ;;
