@@ -26,7 +26,7 @@
 // Constant values
 #define SCR_WIDTH_PIXELS      160
 #define SCR_HEIGHT_PIXELS     200
-#define PIXELS_PER_BYTE         2
+#define PIXELS_PER_BYTE     (u8)2
 #define SPRITE_WIDTH_PIXELS    16
 #define SPRITE_HEIGHT_PIXELS   24
 #define SPRITE_WIDTH_BYTES    SPRITE_WIDTH_PIXELS / PIXELS_PER_BYTE

@@ -95,7 +95,8 @@ void DrawCar(SCar* car)
 	const u8 w = car->w;
 	const u8 h = car->h;
 	const u8 y = car->y;
-	const u8* sprite= car->sprite;
+    u8* sprite;
+    sprite= car->sprite;
 	
 	if (car->x + w > 0 && car->x < SCREEN_WIDTH)
 	{

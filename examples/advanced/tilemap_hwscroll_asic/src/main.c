@@ -139,7 +139,9 @@ void initialize_CPC(void) {
 //
 void main(void) 
 {
-    TScreenTilemap scr = { CPCT_VMEM_START, g_tilemap, 0 }; // Screen tilemap properties
+    u8* tile_unconst;
+    tile_unconst = (u8*)g_tilemap;
+    TScreenTilemap scr = { CPCT_VMEM_START, tile_unconst, 0 }; // Screen tilemap properties
     i8 pixelScroll = 0; // Pixel scroll offset -4 to 4 in mode 0
     i16 scroll_offset;  // Requested scroll offset
 
