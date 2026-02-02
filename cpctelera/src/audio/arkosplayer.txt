@@ -1,0 +1,165 @@
+Title: Arkos Player Manual
+
+
+Topic: About Arkos Player3
+
+See https://www.julien-nevo.com/arkostracker/ for full documentation.
+
+ArkosPlayer3 have several players, AKM and AKG for music and AKX for sound effects code are included in CPCtelera. The code is a modification of the original code was developed by Targhan / Arkos. This modification maintains the original spirit of Arkos Tracker and has just done changes to easily integrate it within the framework and Philosophy of CPCtelera. Also, original code was configurable to run either on CPC or on MSX, but specific MSX code has been removed in this version. The same was done with CPC-BASIC version.
+
+You can play song in interruption or call it manually at the correct framerate to reproduce the song. Original comments from Targhan / Arkos have been kept unmodified, removing those referred to MSX / BASIC players or the original way to use this player (that has changed).
+
+Original documentation from Targhan / Arkos, with some minor modification, follows. Check this if you have special detail interest. For a standard use from C functions, check each function's documentation.
+
+You can always use ArkosPlayer3 native players functions in CPCtelera, see https://www.julien-nevo.com/arkostracker/index.php/using-cpctelera-with-at3/ to generate custom player.
+
+Section: How to use the player
+
+So you've got a great song ready with ArkosTracker3, and you want to use it on CPC. How clever you are.
+
+This player will allow you to,
+   - Play any exported song on CPC
+   - Play Sound Effects
+   - Play music and sound effects in C or Assembler
+
+On the Sound Effects side, you'll be able to,
+   - Play any of your Sound Effects on any, or all of the 3 channels.
+   - Play a SFX on the note you want.
+   - Play a SFX with the volume you want.
+   - Up to 255 SFXs available !
+
+Also, the player is the fastest ever (25 scanlines max on a CPC), the music are light, so why wait ?
+
+
+Topic: How to create usable files
+
+First of all, export any AKS song with or AKX sound effects with the Arkos Tracker "Export as binary" option in File->Export as binary. Export it at the address you want (from 0 to 0xFFFF). You can also export in assembly in option in File->Export as assembly.
+
+All export can be done automatically with use of cfg/music_conversion.mk, a full example is provided in <cpctelera>\examples\medium\arkosAudio
+
+
+Topic: Sound effects
+
+So you want to use sound effects in your production. These, of course, are made with AT, and it must be done in one single song dedicated to Sound Effects. The Instruments become your sound effects in your game / demo. So note their number well ! 
+
+So as you've guess, if you want music + sound effects, you'll need two files (one "music" file, and one "SFX" file). Why did I do that ? Because "Music" files are very optimised, sounds are reorganised, so you'd lost track with where you put your sounds. But most importantly, it's very flexible this way. Imagine you're working on a game with 5 levels, each having a different song. Do you want to include also all the SFXs inside these 5 songs ? Of course not !
+
+What if I want to use only Sound effects, and no music?:
+   It is possible ! This shall be explained a bit later when focusing on calling the player.
+
+Topic: Using the music file
+
+Once a binary or assembly file has been exported, you can use the player kindly given with this software. Take a look at the examples included in examples/ folder. 
+
+In order to include the binary song in your program you may do these steps:
+   * Convert the binary file to a C Array. You may use <cpct_bin2c> script for this task.
+   * Include the C Array into a file in your project
+   * Use the file in your project calling Arkos Tracker Player's CPCtelera C functions.
+   * Choose the player used AKG or AKM
+   * Imagine your song has been included as the C Array named "mysong":
+   (start code)
+      // Set up the song for playing
+      cpct_PLY_AKG_Init(mysong, 0);
+      // Main loop
+      while(1) {
+         // Synchronize with Vertical VSYNC signal, which happens 50 times per second (frequency = 1/50)
+         cpct_waitVSYNC(); 
+
+         // Call music player 50 times per second, synchronized with VSYNC to have great precision
+         cpct_PLY_AKG_Play();
+      }
+   (end code)
+   * *Important!* Your song data must be at the same location in memory that the one you choose if exporting it to binary (File->Export as binary) in Arkos Tracker3. To accomplish this, you sometimes will have to force SDCC to locate the C Array containing your song at the required place in memory. Imagine that you wanted to locate your song at 0x0100 in memory; you can do it with this code:
+   (start code)
+      __at(0x100) const unsigned char mysong[] = { ...
+   (end code)
+   or
+   (start code)
+      _CPCT_ABSOLUTE_LOCATION_AREA(0x100);
+	  ...
+	  CPCT_RELOCATABLE_AREA();
+   (end code)
+
+Topic: Using the player
+
+Though there is just one player, it can be used in three different mode:
+   - Your production is done in Assembler. You don't mind if the player modifies all the registers. If you need some registers to be saved, you will do it by yourself. This is called the "ASM" mode. 
+   - Your production is in C, but you want to have full control of the player. You will manage to call the player every time, at your song's required frequency. This is the default way of using the player.
+   - Your production is either on C or ASM, but you don't want to have fine-grained control of the player, and you just want the music to play, consuming whatever cycles it requires.
+
+These are the functions available for C modes. All of them may be called on ASM mode just by adding the suffix "_asm" to the name. ASM mode lets you call the functions passing the parameters in registers, instead of using the stack:
+   - <cpct_PLY_AKG_Init>  : Set up a new music file for reproducing
+   - <cpct_PLY_AKG_Play>  : Reproduce a 1/nth of the song. nth depends on the frequency at which the song has been created.
+   - <cpct_PLY_AKG_Stop>  : Stop all musing and sound effects.
+
+NB : Same functions exist for AKM player.
+
+Topic: Sound Effects
+
+Sound Effects are defined in another song (which we will be refered as "SFX Music"), exported as a "SFX Music" in the Arkos Tracker. Sound effects are activated by default in the player, but you may deactivate them by setting <PLY_UseSoundEffects> to 0 (if you wanted to save some memory and CPU for some reason).
+
+Like any song, the SFX must be initialized, but with a specific function :
+
+In Assembler:
+   > ld hl, SFXAddress                    ;; HL = Pointer to SFX Music 
+   > call cpct_PLY_AKG_InitSoundEffects   ;; Initialize instruments for SFX
+
+In C:
+   > cpct_PLY_AKG_InitSoundEffects(my_sfx);
+
+To play a sound effect, you must call the <cpct_PLY_AKG_PlaySoundEffect> function, which has a lot of parameters, 
+   sfx_instrument ( L ) - SFX Number, that refers to the instrument to use for playing the SFX (>0)
+   channel_num ( A )    - Channel Number (1, 2 or 4, but better use <AT3_CHANNEL_A>, <AT3_CHANNEL_B> and <AT3_CHANNEL_C>) constants.
+   volume ( H )         - Inverted volume (0 = full volume, 16 = no sound)
+
+To stop a sound effect playing on all channels,
+   > cpct_PLY_AKG_Stop();
+
+Obviously, SFXs are "added" to the music. So you need to play the song to actually hear them ! Also, as they are adding another layer of sound to the player, they are consuming more CPU, especially if you're playing SFXs on the three channels at once.
+
+Also, note that triggering a sound over another one will cut this last one.
+
+
+Topic: What if I don't want any music, and only SFXs?
+
+This is possible. As you need a "music" to be playing in order to reproduce SFX, just initialize the music player with a empty music track. SFX are independant, so no music will be played anyway. You will then be able to reproduce any FX sound you wanted to,
+   > ld hl, SFXAddress                      ;; HL = SFX
+   > call cpct_PLY_AKG_InitSoundEffects     ;; Initialize player with sound FX
+   > ld hl, musicAddress                    ;; HL = Music
+   > ld a, #0                               ;; A = 0 (track number)
+   > call cpct_PLY_AKG_Init                 ;; Initialize player with the music
+
+Topic: How to test a priority of a sound effect over another?
+
+Arkos Tracker provides a "low level" sound effects player, but it's up to you to manage how to trigger them. If a "bang" explosion shouldn't be cut by a "jump" sound, then you have to manage a priority list of your sound effects. It's quite easy to code in your own SFX management code.
+
+
+Section: Random Questions
+
+
+Topic: How to relocate songs 
+
+Relocating a song is complicated. All data values inside the song point to absolute memory locations, and the format of the Instrument is not that simple. The easiest way to relocate a song is to open it in Arkos Tracker and export it again to the desired new memory location address.
+
+
+Topic: Can I remove parts of the code if I need memory ?
+
+Well, as long as it won't crash it, why not ? :) Arkos Traker Player and CPCtelera are distributed under GNU GPL license, that lets you do any changes that you like, provided that you distribute your modifications if you publicize your results. Don't forget that a lot of code is actually only assembled with conditions. You don't have to remove the SFX code part if <PLY_UseSoundEffects> is set to 0. But,
+   * You can remove the <cpct_PLY_AKG_Stop> function if you don't intend to stop the song!
+   
+If you want a custom player well suited for your music, see tutorial https://www.julien-nevo.com/arkostracker/index.php/using-cpctelera-with-at3/ 
+
+
+Section: Credits and Some technical details
+
+
+Version and credits:
+   * [21/09/2009] Arkos Tracker Player V1.01 - CPC & MSX version (by Targhan/Arkos)
+   * [07/04/2015] CPCtelera's Arkos Player CPC-only version (by ronaldo / Fremos / Cheesetea / ByteRealms).
+   * PSG registers sendings based on Madram/Overlander's optimisation trick. Restoring interruption status snippet by Grim/Arkos.
+   * [30/01/2025] Update for Arkos Tracker Player V3 for cpcteleraNext (by Arnaud6128)
+
+Register modification:
+   * This player modifies all these registers = hl, de, bc, AF, HL', DE', BC', AF', IX, IY. 
+   * The Stack is used in conventional manners (Call, Ret, Push, Pop) so integration with any of your code should be seamless.
+
