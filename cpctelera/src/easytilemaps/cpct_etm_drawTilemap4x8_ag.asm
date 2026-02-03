@@ -1,5 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -307,12 +308,14 @@ widthHeightSet = .+2
    ld iy, #0000         ;; [4] IYL=View Window Width, IYH=View Window Height
 
 nextRow:
+
+nextTile:
    ;; Disable interrupts and save SP before starting
    di                   ;; [1] Disable interrupts before starting (we are using SP to read values)
    ld (restoreSP), sp   ;; [6] Save actual SP to restore it in the end
    ;; Start of the code that draws the next tile of the present row being drawn
    ;;
-nexttile:
+
    ;; Get next tile to be drawn from the tilemap, which is pointed by DE
    ld     a, (de)    ;; [2] A = present tile-ID of the tile to be drawn
    ld     b, a       ;; [1] B = A
@@ -384,19 +387,21 @@ tilesetPtr = .+2
    ;; the case, the Width counter will be 0 (IYL=0). 
    inc   de           ;; [2] ++DE (Make tilemapPtr point to next tile to be drawn)
    dec__iyl           ;; [2] --IYL (--Width, One less tile to be drawn in this row)
-   jp    nz, nexttile ;; [3] if (IYL!=0), then more tiles are left to be drawn in this row,
-                      ;; ... so continue with next tile.
-rowEnd:
-   ;; We have finished drawing present row of tiles. We restore SP original value
+   
+   ;; We have finished drawing present tile. We restore SP original value
    ;; and previous interrupt status. This will enable interrupts to occur in a
    ;; safe way, permitting the use of this function along with split rasters
    ;; and/or music played on interrupts
+   
 restoreSP = .+1
    ld    sp, #0000      ;; [3] Restore SP (#0000 is a placeholder)
 restoreI = .
-   ei                   ;; [1] Restore previous interrupt status (Enabled or disabled)
-                        ;; ... EI gets modified by setDrawTilemap_agf and could by DI instead
-
+   ei      ;; [1] Restore previous interrupt status (Enabled or disabled)
+           ;; ... EI gets modified by setDrawTilemap_agf and could by DI instead
+		   
+   jp    nz, nextTile ;; [3] if (IYL!=0), then more tiles are left to be drawn in this row,
+                      ;; ... so continue with next tile.
+rowEnd:
    ;; Decrement the Height counter (IYH) as we have finished a complete row.
    ;; If the counter is 0, then we have finished drawing the whole tilemap.
    dec__iyh             ;; [3]   --IYH (--Height)

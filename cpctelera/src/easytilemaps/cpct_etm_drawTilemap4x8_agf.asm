@@ -258,6 +258,10 @@ tilesetPtr = .+2
    ;; Modifies BC 
    ;;
 drawTile:
+   ;; Disable interrupts and save SP before starting
+   di                   ;; [1] Disable interrupts before starting (we are using SP to read values)
+   ld (restoreSP), sp   ;; [6] Save actual SP to restore it in the end
+
    ld    sp, ix      ;; [3] Make SP Point to the start of the 32-byte screen pixel data
                      ;; ... definition of the current tile (IX is used to save and restore this pointer)
 
@@ -293,6 +297,16 @@ drawTile:
    inc    l  ;; [1] \ 
    inc   hl  ;; [2] HL++ (HL += 4 in total)
 
+   ;; We have finished drawing present row of tiles. We restore SP original value
+   ;; and previous interrupt status. This will enable interrupts to occur in a
+   ;; safe way, permitting the use of this function along with split rasters
+   ;; and/or music played on interrupts
+restoreSP = .+1
+   ld    sp, #0000      ;; [3] Restore SP (#0000 is a placeholder)
+restoreI = .
+   ei                   ;; [1] Restore previous interrupt status (Enabled or disabled)
+                        ;; ... EI gets modified by setDrawTilemap_agf and could by DI instead
+
    ;; A holds the number of times the present tile has to be drawn. We have drawn 
    ;; the tile once, so we decrement A and, if it is not 0, we draw the tile again.
    dec    a             ;; [1]   A-- (1 less time we have to draw present tile)
@@ -306,16 +320,6 @@ drawTile:
                         ;; ... so continue with next tile
 
 rowEnd:
-   ;; We have finished drawing present row of tiles. We restore SP original value
-   ;; and previous interrupt status. This will enable interrupts to occur in a
-   ;; safe way, permitting the use of this function along with split rasters
-   ;; and/or music played on interrupts
-restoreSP = .+1
-   ld    sp, #0000      ;; [3] Restore SP (#0000 is a placeholder)
-restoreI = .
-   ei                   ;; [1] Restore previous interrupt status (Enabled or disabled)
-                        ;; ... EI gets modified by setDrawTilemap_agf and could by DI instead
-
    ;; Decrement the Height counter (IYH) as we have finished a complete row.
    ;; If the counter is 0, then we have finished drawing the whole tilemap.
    dec__iyh             ;; [3]   --IYH (--Height)
@@ -356,7 +360,6 @@ saveSPfirst:
    ;; Disable interrupts and save SP before starting
    di                   ;; [1] Disable interrupts before starting (we are using SP to read values)
    ld (restoreSP), sp   ;; [6] Save actual SP to restore it in the end
-
    jp    nextRow        ;; [3] Next Row
 
    ;; When everything is finished, we safely return
