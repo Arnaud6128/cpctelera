@@ -39,6 +39,7 @@
 #include "colorReplace/colorReplace.h"
 #include "clip/clip.h"
 #include "collision/collision.h"
+#include "zoomSprite/zoomSprite.h"
 
 // Functions to transform PEN colours into 4-pixel screen format values
 #define cpct_pens2pixelPatternPairM1(OldPen, NewPen) cpct_pens2pixelPatternPairM1_real((NewPen), (OldPen))
