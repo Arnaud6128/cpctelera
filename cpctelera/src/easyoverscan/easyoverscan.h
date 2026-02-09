@@ -1,6 +1,6 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2014-2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -16,25 +16,27 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //-------------------------------------------------------------------------------
 
-#ifndef CPCTELERA_ALL_H
-#define CPCTELERA_ALL_H
+//
+// Title: EasyOverscan
+//
+
+#ifndef CPCT_EASYOVERSCAN_H
+#define CPCT_EASYOVERSCAN_H
 
 #include <types.h>
-#include <firmware/firmware.h>
-#include <memutils/memutils.h>
-#include <keyboard/keyboard.h>
-#include <bitarray/bitarray.h>
-#include <sprites/sprites.h>
-#include <strings/strings.h>
-#include <video/videomode.h>
-#include <audio/audio.h>
-#include <random/random.h>
-#include <macros/allmacros.h>
-#include <easytilemaps/easytilemaps.h>
-#include <easyoverscan/easyoverscan.h>
-#include <compression/compression.h>
-#include <loaders/loaders.h>
-#include <files/files.h>
-#include <cpcplus_asic/cpcplus.h>
+
+// EasyTilemaps defines
+#define CPCT_OVERSCAN_VMEM_START    (u8*)0x8200
+#define SCREEN_OVERSCAN_LOW_LIMIT_Y (u8)128
+#define SCREEN_OVERSCAN_WIDTH       (u8)96
+#define SCREEN_OVERSCAN_HEIGHT      (u16)(34*8) // 272
+
+// EasyTilemaps managing functions
+ void cpct_configureOverscan(void);
+ u8* cpct_getScreenPtrOverscan(u8 x, u16 y) __z88dk_callee;
+  
+ void cpct_drawSpriteMatOverscan(const u8* sprite, u8* videomem, u8 width, u8 height, const u8* pmasktable0) __z88dk_callee;
+ void cpct_drawSpriteOverscan(const u8* sprite, u8* videomem, u8 x, u8 y) __z88dk_callee;
+ void cpct_drawSolidBoxOverscan(u8* memory, u16 colour_pattern, u8 width, u8 height) __z88dk_callee;
 
 #endif
