@@ -29,7 +29,6 @@
 # Logfile where load and run addresses for the generated binary will be logged
 BINADDRLOG   := $(OBJDIR)/binaryAddresses.log
 PREBUILD_OBJ := $(OBJDIR)/prebuildstep.objectfile
-CPCTELERA_VERSION = "CPCteleraNext_1.0Beta"
 
 .PHONY: all clean cleanall cleancode recode
 
