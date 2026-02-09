@@ -27,11 +27,12 @@
 ;; erasing screen rectangles easily.
 ;;
 ;; C Definition:
-;;    void <cpct_drawSolidBox> (void* *memory*, <u8> *colour_pattern*, <u8> *width*, <u8> *height*) __z88dk_callee;
+;;    void <cpct_drawSolidBox> (void* *memory*, <u16> *colour_pattern*, <u8> *width*, <u8> *height*) __z88dk_callee;
 ;;
 ;; Input Parameters (5 bytes):
 ;;  (2B DE) memory         - Video memory pointer to the upper left box corner byte
-;;  (1B A ) colour_pattern - 1-byte colour pattern (in screen pixel format) to fill the box with
+;;  (1B H)  not used       - 0
+;;  (1B L)  colour_pattern - 1-byte colour pattern (in screen pixel format) to fill the box with
 ;;  (1B C ) width          - Box width *in bytes* [1-64] (Beware! *not* in pixels!)
 ;;  (1B B ) height         - Box height in bytes (>0)
 ;;

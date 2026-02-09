@@ -196,70 +196,13 @@ ds_drawSpriteWidth:
                     ;; ... Each LDI performed will decrease this by 1, as we progress through memory copying the present line
    jr__0            ;; [3] Self modifying instruction: the '00' will be substituted by the required jump forward. 
                     ;; ... (Note: Writting JR 0 compiles but later it gives odd linking errors)
-   ldi              ;; [5] <| 63 LDIs, which are able to copy up to 63 bytes each time.
-   ldi              ;; [5]  | That means that each Sprite line should be 63 bytes width at most.
-   ldi              ;; [5]  | The JR instruction at the start makes us ignore the LDIs we don't need 
-   ldi              ;; [5] <| (jumping over them) That ensures we will be doing only as much LDIs 
-   ldi              ;; [5] <| as bytes our sprite is wide.
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
-   ldi              ;; [5] <|
-   ldi              ;; [5] <|
-   ldi              ;; [5]  |
-   ldi              ;; [5]  |
- 
+   
+   .rept 63         ;; [63*5] 63 LDIs, which are able to copy up to 63 bytes each time.
+   ldi              ;;  | That means that each Sprite line should be 63 bytes width at most.
+   .endm            ;;  | The JR instruction at the start makes us ignore the LDIs we don't need 
+                    ;;  | (jumping over them) That ensures we will be doing only as much LDIs 
+                    ;;  | as bytes our sprite is wide.
+
    dec   a          ;; [1] Another line finished: we discount it from A
    ret   z          ;; [2/4] If that was the last line, we safely return
 
@@ -271,8 +214,8 @@ ds_drawSpriteWidth:
                     ;; .... If that happens, bits 13,12 and 11 of destination pointer will be 0
    and   #0x38      ;; [2] leave out only bits 13,12 and 11 from new memory address (00xxx000 00000000)
    ld    a, b       ;; [1] Restore A from B (A = B)
-   jp   nz, ds_drawSpriteWidth_next ;; [3] If any bit from {13,12,11} is not 0, we are still inside 
-                                    ;; .... video memory boundaries, so proceed with next line
+   jp    nz, ds_drawSpriteWidth_next ;; [3] If any bit from {13,12,11} is not 0, we are still inside 
+                                     ;; .... video memory boundaries, so proceed with next line
 
    ;; Every 8 lines, we cross the 16K video memory boundaries and have to
    ;; reposition destination pointer. That means our next line is 16K-0x50 bytes back
