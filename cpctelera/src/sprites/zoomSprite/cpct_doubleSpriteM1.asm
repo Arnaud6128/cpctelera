@@ -22,34 +22,31 @@
 ;;
 ;; Function: cpct_doubleSpriteM1
 ;;
-;;    Doubles a Mode 1 sprite horizontally and vertically, transforming each 
+;;    Apply Mode 1 sprite, scale x2 horizontally and vertically, transforming each 
 ;; source pixel into a 2x2 block of identical pixels. The function processes 
 ;; sprites stored in CPC Mode 1 format (2bpp, 4 pixels per byte) and outputs 
 ;; the enlarged sprite to a destination memory buffer.
 ;;
 ;; C Definition:
-;;    void <cpct_doubleSpriteM1> (const <u8>* src, <u8>* dst, 
+;;    void <cpct_doubleSpriteM1> (const <u8>* spr, <u8>* mem, 
 ;;                                      <u8> width, <u8> height) __z88dk_callee;
 ;;
 ;; Input Parameters (5 bytes):
-;;  (2B  HL) src       - Pointer to source sprite data in Mode 1 format
-;;  (2B  DE) dst       - Pointer to destination memory buffer for enlarged sprite
+;;  (2B  HL) spr       - Pointer to source sprite data in Mode 1 format
+;;  (2B  DE) mem       - Pointer to destination memory buffer for enlarged sprite
 ;;  (1B   C) width     - Sprite width in bytes (>0) (Beware, not in pixels!)
 ;;  (1B   B) height    - Sprite height in bytes (>0)
 ;;
 ;; Assembly call (Input parameters on registers):
-;;    > call cpct_doubleSpriteM1
-;;
-;; Return value:
-;;  (2B  DE) Pointer to the byte following the last written byte in destination buffer
+;;    > call cpct_doubleSpriteM1_asm
 ;;
 ;; Parameter Restrictions:
 ;;  * sprite must be an array containing sprite's pixels in CPC Mode 1 format 
 ;; (2 bits per pixel, 4 pixels per byte). Pixels must be stored consecutively 
 ;; starting from top-left corner, going left-to-right and top-to-bottom. Total 
 ;; amount of bytes in the array must be w × h.
-;;  * memory may point to any RAM location (video memory, backbuffer or 
-;; temporary buffer). The function writes 2×w bytes per scanline and produces 
+;;  * memory may point to any RAM location (sprite buffer or temporary buffer).
+;;  The function writes 2×w bytes per scanline and produces 
 ;; 2×h scanlines of output (total size = 4×w×h bytes).
 ;;  * w must be the sprite width in bytes (not pixels) and must be ≥1. 
 ;; In Mode 1: 1 byte = 4 pixels, therefore a 16-pixel wide sprite has w=4.

@@ -29,7 +29,9 @@
 #define CPCT_ZOOM_SPRITE_H
 
 // Double sprite size Width and Height
-extern void cpct_doubleSpriteM0(const u8* src, u8* u8, u8 width, u8 height) __z88dk_callee;
-extern void cpct_doubleSpriteM1(const u8* src, u8* u8, u8 width, u8 height) __z88dk_callee;
+extern void cpct_doubleSpriteM0(const u8* spr, u8* mem, u8 width, u8 height) __z88dk_callee;
+extern void cpct_doubleSpriteM1(const u8* spr, u8* mem, u8 width, u8 height) __z88dk_callee;
+
+extern void cpct_drawSoubleSpriteM1(const u8* spr, u8* vmem, u8 width, u8 height) __z88dk_callee;
 
 #endif

@@ -22,30 +22,30 @@
 ;;
 ;; Function: cpct_doubleSpriteM0
 ;;
-;;    Doubles a Mode 0 sprite horizontally and vertically, transforming each 
+;;    Apply on Mode 0 sprite, scale x2 horizontally and vertically, transforming each 
 ;; source pixel into a 2x2 block of identical pixels. The function processes 
 ;; sprites stored in CPC Mode 0 format (2bpp, 2 pixels per byte) and outputs 
 ;; the enlarged sprite to a destination memory buffer.
 ;;
 ;; C Definition:
-;;    void <cpct_doubleSpriteM0> (const <u8>* src, <u8>* dst, 
+;;    void <cpct_doubleSpriteM0> (const <u8>* spr, <u8>* mem, 
 ;;                                      <u8> width, <u8> height) __z88dk_callee;
 ;;
 ;; Input Parameters (6 bytes):
-;;  (2B  HL) src     - Pointer to source sprite data in Mode 0 format
-;;  (2B  DE) dst     - Pointer to destination buffer for enlarged sprite
+;;  (2B  HL) spr     - Pointer to source sprite data in Mode 0 format
+;;  (2B  DE) mem     - Pointer to destination buffer for enlarged sprite
 ;;  (1B   C) width   - Sprite width in bytes (>0) (Beware, not in pixels!)
 ;;  (1B   B) height  - Sprite height in pixels (= scanlines, >0)
 ;;
 ;; Assembly call (Input parameters on registers):
-;;    > call cpct_doubleSpriteM0
+;;    > call cpct_doubleSpriteM0_asm
 ;;
 ;; Parameter Restrictions:
-;;  * src must be an array containing sprite's pixels in CPC Mode 0 format 
+;;  * spr must be an array containing sprite's pixels in CPC Mode 0 format 
 ;; (2 bits per pixel, 2 pixels per byte, 4 bits per pixel index). Pixels must 
 ;; be stored consecutively starting from top-left corner, going left-to-right 
 ;; and top-to-bottom. Total amount of bytes in the array must be width × height.
-;;  * dst must point to a RAM buffer with at least 4×width×height free bytes.
+;;  * mem must point to a RAM buffer with at least 4×width×height free bytes.
 ;;  * width must be the sprite width in bytes (not pixels) and must be ≥1. 
 ;; In Mode 0: 1 byte = 2 pixels, therefore a 16-pixel wide sprite has width=8.
 ;; Using width=0 will cause undefined behaviour (DJNZ underflow).

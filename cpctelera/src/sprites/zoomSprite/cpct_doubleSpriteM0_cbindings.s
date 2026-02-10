@@ -29,7 +29,7 @@
 _cpct_doubleSpriteM0::
    ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits), with __sdcccall(1) convention
    ;; HL = Source Address (Sprite data array)
-   ;; DE = Destination address (Video memory location)
+   ;; DE = Destination address (Buffer memory location)
 
    ;; Get next parameters from the stack 
    pop  af                      ;; [3] AF = Return Address
