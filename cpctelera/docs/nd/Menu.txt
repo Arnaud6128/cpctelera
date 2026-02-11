@@ -48,6 +48,7 @@ File: Aliases for builtin types  (types.h)
 
 Group: Audio  {
 
+   File: Arkos Player Manual  (audio\arkosplayer.txt)
    File: arkosTracker_PlayerAkg.s  (audio\arkosTracker_PlayerAkg.s)
    File: arkosTracker_PlayerAkm.s  (audio\arkosTracker_PlayerAkm.s)
    }  # Group: Audio
@@ -105,6 +106,8 @@ Group: Cpcplus_asic  {
 
 Group: Compression  {
 
+   File: cpct_zx0_decrunch  (compression\cpct_zx0_decrunch.asm)
+   File: cpct_zx0b_decrunch  (compression\cpct_zx0b_decrunch.asm)
    File: cpct_zx1_decrunch  (compression\cpct_zx1_decrunch.asm)
    File: cpct_zx1b_decrunch  (compression\cpct_zx1b_decrunch.asm)
    File: cpct_zx7b_decrunch_s  (compression\cpct_zx7b_decrunch_s.asm)
@@ -122,6 +125,17 @@ Group: Easytilemaps  {
    File: cpct_etm_setTileset2x4  (easytilemaps\cpct_etm_setTileset2x4.s)
    File: EasyTilemaps  (easytilemaps\easytilemaps.h)
    }  # Group: Easytilemaps
+
+Group: Easyoverscan  {
+
+   File: cpct_configureOverscan  (easyoverscan\cpct_configureOverscan.s)
+   File: cpct_drawSolidBoxOverscan  (easyoverscan\cpct_drawSolidBoxOverscan.asm)
+   File: cpct_drawSpriteMatOverscan  (easyoverscan\cpct_drawSpriteMatOverscan.asm)
+   File: cpct_drawSpriteOverscan  (easyoverscan\cpct_drawSpriteOverscan.asm)
+   File: cpct_getScreenPtrOvercan  (easyoverscan\cpct_getScreenPtrOvercan.s)
+   File: cpct_restoreCRTC  (easyoverscan\cpct_restoreCRTC.s)
+   File: EasyOverscan  (easyoverscan\easyoverscan.h)
+   }  # Group: Easyoverscan
 
 Group: Files  {
 
@@ -311,24 +325,44 @@ Group: Sprites  {
       File: cpct_checkCollisionBoxes  (sprites\collision\cpct_checkCollisionBoxes.asm)
       }  # Group: Collision
 
-   File: cpct_drawSolidBox  (sprites\cpct_drawSolidBox.asm)
-   File: cpct_drawSprite  (sprites\cpct_drawSprite.asm)
-   File: cpct_drawSpriteMasked  (sprites\cpct_drawSpriteMasked.asm)
-   File: cpct_drawSpriteMaskedAlignedTable  (sprites\cpct_drawSpriteMaskedAlignedTable.asm)
-   File: cpct_getScreenToSprite  (sprites\screenToSprite\cpct_getScreenToSprite.asm)
-   File: cpct_pen2fourPixelM1_table  (sprites\cpct_pen2fourPixelM1_table.s)
-   File: cpct_pen2pixelPatternM0  (sprites\cpct_pen2pixelPatternM0.asm)
-   File: cpct_pen2pixelPatternM1  (sprites\cpct_pen2pixelPatternM1.asm)
-   File: cpct_pen2twoPixelM0_table  (sprites\cpct_pen2twoPixelM0_table.s)
-   File: cpct_pens2pixelPatternPairM0  (sprites\cpct_pens2pixelPatternPairM0.asm)
-   File: cpct_pens2pixelPatternPairM1  (sprites\cpct_pens2pixelPatternPairM1.asm)
-   File: cpct_px2byteM0  (sprites\cpct_px2byteM0.asm)
-   File: cpct_px2byteM1  (sprites\cpct_px2byteM1.s)
-   File: Pixel Macros &lparen;ASM&rparen;  (sprites\pixel_macros.h.s)
-   File: Pixel Macros &lparen;C&rparen;  (sprites\pixel_macros.h)
-   File: Transparency Macros  (sprites\transparency_table_macros.h)
-   File: Transparency Tables for Mode 0  (sprites\transparency_tables_m0.h)
-   File: Transparency Tables for Mode 1  (sprites\transparency_tables_m1.h)
+   Group: GetScreenToSprite  {
+
+      File: cpct_getScreenToSprite  (sprites\screenToSprite\cpct_getScreenToSprite.asm)
+      }  # Group: GetScreenToSprite
+
+   Group: DrawSprite  {
+
+      File: cpct_drawSolidBox  (sprites\drawSprite\cpct_drawSolidBox.asm)
+      File: cpct_drawSprite  (sprites\drawSprite\cpct_drawSprite.asm)
+      File: cpct_drawSpriteMasked  (sprites\drawSprite\cpct_drawSpriteMasked.asm)
+      File: cpct_drawSpriteMaskedAlignedTable  (sprites\drawSprite\cpct_drawSpriteMaskedAlignedTable.asm)
+      File: Transparency Macros  (sprites\drawSprite\transparency_table_macros.h)
+      File: Transparency Tables for Mode 0  (sprites\drawSprite\transparency_tables_m0.h)
+      File: Transparency Tables for Mode 1  (sprites\drawSprite\transparency_tables_m1.h)
+      }  # Group: DrawSprite
+
+   Group: Pixel  {
+
+      File: cpct_pen2fourPixelM1_table  (sprites\pixel\cpct_pen2fourPixelM1_table.s)
+      File: cpct_pen2pixelPatternM0  (sprites\pixel\cpct_pen2pixelPatternM0.asm)
+      File: cpct_pen2pixelPatternM1  (sprites\pixel\cpct_pen2pixelPatternM1.asm)
+      File: cpct_pen2twoPixelM0_table  (sprites\pixel\cpct_pen2twoPixelM0_table.s)
+      File: cpct_pens2pixelPatternPairM0  (sprites\pixel\cpct_pens2pixelPatternPairM0.asm)
+      File: cpct_pens2pixelPatternPairM1  (sprites\pixel\cpct_pens2pixelPatternPairM1.asm)
+      File: cpct_px2byteM0  (sprites\pixel\cpct_px2byteM0.asm)
+      File: cpct_px2byteM1  (sprites\pixel\cpct_px2byteM1.s)
+      File: Pixel Macros &lparen;ASM&rparen;  (sprites\pixel\pixel_macros.h.s)
+      File: Pixel Macros &lparen;C&rparen;  (sprites\pixel\pixel_macros.h)
+      }  # Group: Pixel
+
+   Group: ZoomSprite  {
+
+      File: cpct_doubleSpriteM0  (sprites\zoomSprite\cpct_doubleSpriteM0.asm)
+      File: cpct_doubleSpriteM1  (sprites\zoomSprite\cpct_doubleSpriteM1.asm)
+      File: cpct_drawDoubleSpriteM0  (sprites\zoomSprite\cpct_drawDoubleSpriteM0.asm)
+      File: cpct_drawDoubleSpriteM1  (sprites\zoomSprite\cpct_drawDoubleSpriteM1.asm)
+      }  # Group: ZoomSprite
+
    }  # Group: Sprites
 
 Group: Strings  {
