@@ -178,10 +178,11 @@
 ;;    including the 8-line interleaving and the critical transition between
 ;;    the two 16K banks at 0xBFFF/0xC000. It uses Self-Modifying Code (SMC) 
 ;;    to skip LDIs, ensuring maximum copy speed.
-;;    See *cpct_drawSprite* for more informations.
+;;    See <cpct_drawSprite> for more informations.
 ;;
 ;;  Credits:
-;;    www.chibiakumas.com : Lesson S38 - Bitmap movement with Overscan on the CPC!
+;;    http://www.chibiakumas.com
+;;    Lesson S38 : Bitmap movement with Overscan on the CPC!
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

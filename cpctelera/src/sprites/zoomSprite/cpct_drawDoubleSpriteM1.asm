@@ -20,9 +20,6 @@
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_drawDoubleSpriteM1_asm
 ;;
-;; Return value:
-;;  (2B  DE) Pointer to the byte following the last written byte in destination buffer
-;;
 ;; Parameter Restrictions:
 ;;  * sprite must be an array containing sprite's pixels in CPC Mode 1 format 
 ;; (2 bits per pixel, 4 pixels per byte). Pixels must be stored consecutively 
@@ -69,7 +66,7 @@
 ;;     C-bindings   - 123 bytes 
 ;;     ASM-bindings - 120 bytes
 ;;
-;; Time Measures :
+;; Time Measures:
 ;; (start code)
 ;;  Case      |    microSecs (us)       |    CPU Cycles
 ;; ----------------------------------------------------------------

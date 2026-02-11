@@ -73,7 +73,7 @@
 ;; memory page. <cpct_transparentMaskTable00M0> is an example table you might want to use.
 ;;
 ;; Known limitations:
-;;    * *width*s or *height*s of 0 will be considered as 256 and will potentially 
+;;    * *width* or *height* of 0 will be considered as 256 and will potentially 
 ;; make your program behave erratically or crash.
 ;;    * Transparent drawing will only work if *pmasktable0* uses *palette index 0*
 ;; as transparent colour. 
@@ -148,9 +148,8 @@
 ;;     This function is specifically designed for Overscan screens (typically 
 ;;     96 bytes wide). It manages the complex memory layout of the CPC, 
 ;;     including the 8-line interleaving and the critical transition between
-;;     the two 16K banks at 0xBFFF/0xC000. It uses Self-Modifying Code (SMC) 
-;;     to skip LDIs, ensuring maximum copy speed.
-;;     See *cpct_drawSpriteOverscan* for more informations
+;;     the two 16K banks at 0xBFFF/0xC000. 
+;;     See <cpct_drawSpriteOverscan> for more informations
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

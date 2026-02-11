@@ -40,7 +40,7 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    Code - 43 bytes
+;;    43 bytes
 ;;
 ;; Known limitations:
 ;;    The video memory area is configure from 0x8200 to 0xFFFF
@@ -53,11 +53,12 @@
 ;;    Screen memory starts at 0x8200, causing a bank wrap-around
 ;;    at character line 17.
 ;;
-;;    See *cpct_setStackLocation*, *cpct_setCRTCReg*, *cpct_setVideoMemoryPage*
+;;    See <cpct_setStackLocation>, <cpct_setCRTCReg>, <cpct_setVideoMemoryPage>
 ;;    for informations.
 ;;
 ;;  Credits:
-;;    www.chibiakumas.com : Lesson S38 - Bitmap movement with Overscan on the CPC!
+;;    http://www.chibiakumas.com
+;;    Lesson S38 : Bitmap movement with Overscan on the CPC!
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

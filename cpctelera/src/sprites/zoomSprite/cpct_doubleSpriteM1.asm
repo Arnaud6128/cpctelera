@@ -86,7 +86,7 @@
 ;;     C-bindings   - 131 bytes 
 ;;     ASM-bindings - 128 bytes 
 ;;
-;; Time Measures :
+;; Time Measures:
 ;; (start code)
 ;;  Case      |    microSecs (us)       |    CPU Cycles
 ;; ----------------------------------------------------------------

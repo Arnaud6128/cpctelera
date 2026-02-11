@@ -115,7 +115,7 @@
 ;;    including the 8-line interleaving and the critical transition between
 ;;    the two 16K banks at 0xBFFF/0xC000. It uses Self-Modifying Code (SMC) 
 ;;    to skip copy to DE, ensuring maximum copy speed.
-;;    See *cpct_drawSpriteOverscan* for more informations.
+;;    See <cpct_drawSpriteOverscan> for more informations.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

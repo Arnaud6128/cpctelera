@@ -20,38 +20,47 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: asm_getScreenPtrOverscan
+;; Function: cpct_getScreenPtrOvercan
 ;;
 ;;     Calculates a video memory pointer for Amstrad CPC overscan modes.
 ;;     Uses a threshold check to switch between memory banks and computes
 ;;     the interlaced address based on y-coordinate.
 ;;
 ;; C Definition:
-;;     u8* asm_getScreenPtrOverscan(u8 x, u16 y) __z88dk_callee;
+;;     u8* cpct_getScreenPtrOvercan(u8 x, u16 y) __z88dk_callee;
 ;;
 ;; Input Parameters (3 bytes):
 ;;   (1B A ) x - Byte-aligned column [0-96]
 ;;   (2B DE) y - Row coordinate [0-272]
 ;;
 ;; Assembly call (Input parameters on registers):
-;;     > call _asm_getScreenPtrOverscan
-;;
-;; Parameter Restrictions:
-;;   * x must be byte-aligned.
-;;   * SCREEN_WIDTH_OVERSCAN is assumed to be 96.
+;;     > call cpct_getScreenPtrOvercan_asm
 ;;
 ;; Destroyed Register values: 
 ;;     AF, BC, DE, HL
 ;;
+;; Required memory:
+;;    64 bytes
+;;
+;; Details:
+;;    Calculates screen address for Overscan 96x272.
+;;    Base address: 0x8200 (Bank 1) or 0xC000 (Bank 2 if y >= 128).
+;;    Formula: Base + (96 * (y/8)) + (2048 * (y%8)) + x
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Time Measures:
+;; (start code)
 ;;   Case            | microSecs (us) | CPU Cycles (T-States)
 ;;  ---------------------------------------------------------
 ;;   x=0, y=10 (Min) |       46       |          184
 ;;   x=0, y=130(Max) |       48       |          192
 ;;  ---------------------------------------------------------
+;; (end code)
+;;  W = width in bytes, H = height in lines.
 ;;
 ;;  Credits:
-;;    www.chibiakumas.com : Lesson S38 - Bitmap movement with Overscan on the CPC!
+;;    http://www.chibiakumas.com
+;;    Lesson S38 : Bitmap movement with Overscan on the CPC!
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -60,8 +69,6 @@ LOW_VMEM_LOC  = 0x82
 
 _cpct_getScreenPtrOverscan:: 
 cpct_getScreenPtrOverscan_asm:: 
-    ;; A  = X
-    ;; DE = Y
     ld   c, a               ;; [1] Save A (x) in C
     
     ;; --- Check if y >= 128 ---

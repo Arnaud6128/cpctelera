@@ -40,9 +40,10 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    Code - 43 bytes
+;;    43 bytes
 ;;
-;;    See *cpct_setStackLocation*, *cpct_setCRTCReg*, *cpct_setVideoMemoryPage*
+;; Details:
+;;    See <cpct_setStackLocation>, <cpct_setCRTCReg>, <cpct_setVideoMemoryPage>
 ;;    for informations.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
