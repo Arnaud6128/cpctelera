@@ -22,11 +22,11 @@
 .include "macros/cpct_undocumentedOpcodes.h.s"
  
 ;;
-;; C bindings for <cpct_drawDoubleSpriteM1>
+;; C bindings for <cpct_drawDoubleSpriteM0>
 ;;
 ;;   10 microSecs, 3 bytes
 ;;
-_cpct_drawDoubleSpriteM1::
+_cpct_drawDoubleSpriteM0::
    ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits), with __sdcccall(1) convention
    ;; HL = Source Address (Sprite data array)
    ;; DE = Destination address (Video memory location)
@@ -36,4 +36,4 @@ _cpct_drawDoubleSpriteM1::
    pop  bc                      ;; [3] BC = Height / Width (B = Height, C = Width)
    push af                      ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
    
-.include /cpct_drawDoubleSpriteM1.asm/
+.include /cpct_drawDoubleSpriteM0.asm/

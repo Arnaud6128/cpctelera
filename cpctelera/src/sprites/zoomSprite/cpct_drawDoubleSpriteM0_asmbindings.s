@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -22,18 +22,10 @@
 .include "macros/cpct_undocumentedOpcodes.h.s"
  
 ;;
-;; C bindings for <cpct_drawDoubleSpriteM1>
+;; ASM bindings for <cpct_drawDoubleSpriteM0>
 ;;
-;;   10 microSecs, 3 bytes
+;;   0 microSecs, 0 bytes
 ;;
-_cpct_drawDoubleSpriteM1::
-   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits), with __sdcccall(1) convention
-   ;; HL = Source Address (Sprite data array)
-   ;; DE = Destination address (Video memory location)
-
-   ;; Get next parameters from the stack 
-   pop  af                      ;; [3] AF = Return Address
-   pop  bc                      ;; [3] BC = Height / Width (B = Height, C = Width)
-   push af                      ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
+_cpct_drawDoubleSpriteM0_asm::
    
-.include /cpct_drawDoubleSpriteM1.asm/
+.include /cpct_drawDoubleSpriteM0.asm/
