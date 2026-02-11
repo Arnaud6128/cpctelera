@@ -32,11 +32,12 @@
 #define SCREEN_OVERSCAN_HEIGHT      (u16)(34*8) // 272
 
 // EasyTilemaps managing functions
- void cpct_configureOverscan(void);
- u8* cpct_getScreenPtrOverscan(u8 x, u16 y) __z88dk_callee;
-  
- void cpct_drawSpriteMatOverscan(const u8* sprite, u8* videomem, u8 width, u8 height, const u8* pmasktable0) __z88dk_callee;
- void cpct_drawSpriteOverscan(const u8* sprite, u8* videomem, u8 x, u8 y) __z88dk_callee;
- void cpct_drawSolidBoxOverscan(u8* memory, u16 colour_pattern, u8 width, u8 height) __z88dk_callee;
+void cpct_configureOverscan(void);
+void cpct_restoreCRTC(void);
+u8* cpct_getScreenPtrOverscan(u8 x, u16 y) __z88dk_callee;
+
+void cpct_drawSpriteMatOverscan(const u8* sprite, u8* videomem, u8 width, u8 height, const u8* pmasktable0) __z88dk_callee;
+void cpct_drawSpriteOverscan(const u8* sprite, u8* videomem, u8 x, u8 y) __z88dk_callee;
+void cpct_drawSolidBoxOverscan(u8* memory, u16 colour_pattern, u8 width, u8 height) __z88dk_callee;
 
 #endif
