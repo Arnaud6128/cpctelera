@@ -24,4 +24,4 @@
 ;;#####################################################################
 
 .include "sprites/flipping/flipping_macros.h.s"
-.include "sprites/pixel_macros.h.s"
+.include "sprites/pixel/pixel_macros.h.s"

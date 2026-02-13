@@ -29,8 +29,9 @@
 
 #include <types.h>
 #include "sprite_types.h"
-#include "pixel_macros.h"
-#include "transparency_table_macros.h"
+#include "drawSprite/transparency_table_macros.h"
+#include "pixel/pixel_macros.h"
+#include "pixel/pixel.h"
 #include "drawToSpriteBuffer/drawToSpriteBuffer.h"
 #include "screenToSprite/screenToSprite.h"
 #include "drawTile/drawTile.h"
@@ -40,7 +41,6 @@
 #include "clip/clip.h"
 #include "collision/collision.h"
 #include "zoomSprite/zoomSprite.h"
-#include "pixel/pixel.h"
 #include "drawSprite/drawSprite.h"
 
 #endif
