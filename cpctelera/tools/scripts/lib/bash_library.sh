@@ -147,13 +147,13 @@ function welcomeMessage {
    machineEcho $DLY_T1 "Welcome to..."$'\n'
    sleep 0.4
    echo -n "${COLOR_LIGHT_YELLOW}"
-   machineEcho $DLY_3D " ____     ____     ____     __            ___"$'\n'
-   machineEcho $DLY_3D "/\\  _\`\\  /\\  _\`\\  /\\  _\`\\  /\\ \\__        /\\_ \\"$'\n'
-   machineEcho $DLY_3D "\\ \\ \\/\\_\\\\ \\ \\L\\ \\\\ \\ \\/\\_\\\\ \\ ,_\\     __\\//\\ \\       __   _ __    __"$'\n'
-   machineEcho $DLY_3D " \\ \\ \\/_/_\\ \\ ,__/ \\ \\ \\/_/_\\ \\ \\/   /'__\`\\\\ \\ \\    /'__\`\\/\\\`'__\\/'__\`\\"$'\n'
-   machineEcho $DLY_3D "  \\ \\ \\L\\ \\\\ \\ \\/   \\ \\ \\L\\ \\\\ \\ \\_ /\\  __/ \\_\\ \\_ /\\  __/\\ \\ \\//\\ \\L\\.\\_"$'\n'
-   machineEcho $DLY_3D "   \\ \\____/ \\ \\_\\    \\ \\____/ \\ \\__\\\\ \\____\\/\\____\\\\ \\____\\\\ \\_\\\\ \\__/.\\_\\"$'\n'
-   machineEcho $DLY_3D "    \\/___/   \\/_/     \\/___/   \\/__/ \\/____/\\/____/ \\/____/ \\/_/ \\/__/\\/_/"$'\n'
+   
+   machineEcho $DLY_3D "   __________  ________       __                _   __          __"$'\n'
+   machineEcho $DLY_3D "  / ____/ __ \\/ ____/ /____  / /__  _________ _/ | / /__  _  __/ /_"$'\n'
+   machineEcho $DLY_3D " / /   / /_/ / /   / __/ _ \\/ / _ \\/ ___/ __ \`/  |/ / _ \\| |/_/ __/"$'\n'
+   machineEcho $DLY_3D "/ /___/ ____/ /___/ /_/  __/ /  __/ /  / /_/ / /|  /  __/>  </ /_  "$'\n'
+   machineEcho $DLY_3D "\\____/_/    \____/\__/\___/_/\\___/_/   \____/_/ |_/\\___/_/|_|\\__/  "$'\n'
+                                                                   
    echo ${COLOR_LIGHT_BLUE}
    machineEcho $DLY_T2 "This setup script will help you configure CPCtelera in your system."
    echo
