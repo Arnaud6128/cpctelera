@@ -1,0 +1,52 @@
+;;-----------------------------LICENSE NOTICE------------------------------------
+;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2022 Bouche Arnaud
+;;  Copyright (C) 2022 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;
+;;  This program is free software: you can redistribute it and/or modify
+;;  it under the terms of the GNU Lesser General Public License as published by
+;;  the Free Software Foundation, either version 3 of the License, or
+;;  (at your option) any later version.
+;;
+;;  This program is distributed in the hope that it will be useful,
+;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;  GNU Lesser General Public License for more details.
+;;
+;;  You should have received a copy of the GNU Lesser General Public License
+;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;;-------------------------------------------------------------------------------
+.module cpct_sprites
+
+.include "macros/cpct_undocumentedOpcodes.h.s"
+.include "macros/cpct_reverseBits.h.s"
+.include "macros/cpct_maths.h.s"
+
+;;
+;; C bindings for <cpct_drawMaskedAlignedToSpriteBufferHFlipM1>
+;;
+;;   42 us, 15 bytes
+;;
+_cpct_drawMaskedAlignedToSpriteBufferHFlipM1::
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Back_Buffer_Width
+   ;; DE = Pointer to Back Buffer 
+   ld   a, l          ;; [1] A = L = Back_Buffer_Width
+   
+   ld  (restore_ix), ix ;; [6] Save IX to restore it before returning
+
+   ;; GET next parameters from the stack
+   pop  hl            ;; [3] HL = Return Address
+   pop  bc            ;; [3] BC = Height/Width (B = Height, C = Width)
+   pop  ix            ;; [4] IX = Pointer to Sprite
+   ex  (sp), hl       ;; [6] HL = Mask table <-> (SP) = Return address because _z88dk_callee convention Sprite <-> (SP) = Return Address : because z88dk_callee convention
+
+   ld (maskTable), hl ;; [4] Set mask table at placeholder
+   push ix            ;; [5] HL = IX (Sprite)
+   pop  hl            ;; [3] |
+
+.include /cpct_drawMaskedAlignedToSpriteBufferHFlipM1.asm/
+
+restore_ix = .+2
+   ld   ix, #0000     ;; [4] Restore IX before returning
+   ret                ;; [3] Return to caller
