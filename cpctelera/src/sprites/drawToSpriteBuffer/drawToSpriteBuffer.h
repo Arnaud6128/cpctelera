@@ -40,13 +40,20 @@ extern void cpct_drawSpriteClipToSpriteBuffer(u8 buffer_width, void* buffer, u8 
 extern void cpct_drawSpriteClipToSpriteBufferMaskedAlignedTable(u8 buffer_width, void* destination, u8 width_to_draw, u8 width, u16 height, void* sprite, void* mask_table) __z88dk_callee;
 extern void cpct_drawSpriteClipToSpriteBufferMasked(u8 buffer_width, void* destination, u8 width_to_draw, u8 width, u16 height, void* sprite) __z88dk_callee;
 
-// Sprite to Sprite-Buffer Flipping and Drawing Functions
+// Sprite Flipped to Sprite-Buffer Drawing Functions
 extern void cpct_drawToSpriteBufferHFlipM0(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite) __z88dk_callee;
 extern void cpct_drawToSpriteBufferHFlipM1(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite) __z88dk_callee;
 extern void cpct_drawToSpriteBufferHFlipM2(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite) __z88dk_callee;
-extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM0(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, u8* mask_table);
-extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM1(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, u8* mask_table);
-extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM2(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, u8* mask_table);
+
+// Sprite masked Flipped to Sprite-Buffer Drawing Functions
+extern void cpct_drawMaskedToSpriteBufferHFlipM0(u16 buffer_width, void* inbuffer_ptr, u8 width, u8 height, void* sprite) __z88dk_callee;
+extern void cpct_drawMaskedToSpriteBufferHFlipM1(u16 buffer_width, void* inbuffer_ptr, u8 width, u8 height, void* sprite) __z88dk_callee;
+extern void cpct_drawMaskedToSpriteBufferHFlipM2(u16 buffer_width, void* inbuffer_ptr, u8 width, u8 height, void* sprite) __z88dk_callee;
+
+// Sprite masked-Aligned Flipped to Sprite-Buffer Drawing Functions
+extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM0(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, void* mask_table) __z88dk_callee;
+extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM1(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, void* mask_table) __z88dk_callee;
+extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM2(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, void* mask_table) __z88dk_callee;
 
 //
 // Title: Macros (C)
