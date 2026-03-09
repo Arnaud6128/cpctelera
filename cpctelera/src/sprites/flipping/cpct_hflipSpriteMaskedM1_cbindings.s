@@ -30,8 +30,8 @@ _cpct_hflipSpriteMaskedM1::
    ;; Get parameters from HL registers and stack ((8 + 8) + 16 bits), with __sdcccall(1) convention
    ;; A = Width
    ;; L = Height
-   ld   b, a    ;; [1] B = Width
-   ld   c, l    ;; [1] C = Height
+   ld   b, l    ;; [1] B = Height
+   ld   c, a    ;; [1] C = Width
    
    ;; Parameter retrieval from stack
    pop  hl      ;; [3] HL = return address
