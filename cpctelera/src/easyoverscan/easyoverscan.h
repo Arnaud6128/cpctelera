@@ -1,6 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 Arnaud Bouche
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -39,5 +40,8 @@ u8* cpct_getScreenPtrOverscan(u8 x, u16 y) __z88dk_callee;
 void cpct_drawSpriteMatOverscan(const u8* sprite, u8* videomem, u8 width, u8 height, const u8* pmasktable0) __z88dk_callee;
 void cpct_drawSpriteOverscan(const u8* sprite, u8* videomem, u8 x, u8 y) __z88dk_callee;
 void cpct_drawSolidBoxOverscan(u8* memory, u16 colour_pattern, u8 width, u8 height) __z88dk_callee;
+
+// EasyTilemaps zoom functions
+#include "./zoomSprite/zoomSprite.h"
 
 #endif

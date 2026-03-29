@@ -21,20 +21,8 @@
 #include "g_palette.h"
 #include "winner.h"
 
- void cpct_configureOverscan(void);
-  u8* cpct_getScreenPtrOverscan(u8 x, u16 y) __z88dk_callee;
- void cpct_drawSpriteMatOverscan(const u8* sprite, u8* videomem, u8 width, u8 height, const u8* pmasktable0) __z88dk_callee;
- void cpct_drawSpriteOverscan(const u8* sprite, u8* videomem, u8 x, u8 y) __z88dk_callee;
- void cpct_drawSolidBoxOverscan(u8* memory, u16 colour_pattern, u8 width, u8 height) __z88dk_callee;
-
- void cpct_doubleSpriteM0(u8* sprite, u8* memory, u8 w, u8 h) __z88dk_callee;
- void cpct_doubleSpriteM1(u8* sprite, u8* memory, u8 w, u8 h) __z88dk_callee;
-
 // Sets the transparent mask table for color 0, mode 1
 cpctm_createTransparentMaskTable(g_masktable, 0x0100, M1, 0);
-
- // Doubled sprite buffer
- u8 _doubledM1[WINNER_W*2*WINNER_H*2];
 
 // Start program
 void main(void) 
@@ -60,9 +48,6 @@ void main(void)
 	u8* vmem = cpct_getScreenPtrOverscan(SCREEN_OVERSCAN_WIDTH - WINNER_W, SCREEN_OVERSCAN_LOW_LIMIT_Y - WINNER_H/2 );
 	cpct_drawSpriteMatOverscan(winner, vmem, WINNER_W, WINNER_H, g_masktable);
 	
-	// Double size sprite to buffer
-	cpct_doubleSpriteM1(winner, _doubledM1, WINNER_W, WINNER_H);
-	
 	// Draw sprite with masked aligned table in middle of 32-Kbytes screen at left
 	vmem = cpct_getScreenPtrOverscan(0, SCREEN_OVERSCAN_LOW_LIMIT_Y - WINNER_H/2);
 	
@@ -87,7 +72,7 @@ void main(void)
 		vmem = cpct_getScreenPtrOverscan((SCREEN_OVERSCAN_WIDTH - WINNER_W*2) / 2, y);
 		
 		// Draw doubled sprite
-		cpct_drawSpriteOverscan(_doubledM1, vmem, WINNER_W*2, WINNER_H*2);
+		cpct_drawDoubleSpriteM1Overscan(winner, vmem, WINNER_W, WINNER_H);
 		
 		// Clear sprite background and restart to top
 		if (y >= (SCREEN_OVERSCAN_HEIGHT - (u16)(WINNER_H*2)))
