@@ -129,6 +129,8 @@ Group: Easytilemaps  {
 Group: Easyoverscan  {
 
    File: cpct_configureOverscan  (easyoverscan\cpct_configureOverscan.s)
+   File: cpct_drawDoubleSpriteM0Overscan  (easyoverscan\zoomSprite\cpct_drawDoubleSpriteM0Overscan.asm)
+   File: cpct_drawDoubleSpriteM1Overscan  (easyoverscan\zoomSprite\cpct_drawDoubleSpriteM1Overscan.asm)
    File: cpct_drawSolidBoxOverscan  (easyoverscan\cpct_drawSolidBoxOverscan.asm)
    File: cpct_drawSpriteMatOverscan  (easyoverscan\cpct_drawSpriteMatOverscan.asm)
    File: cpct_drawSpriteOverscan  (easyoverscan\cpct_drawSpriteOverscan.asm)
@@ -249,15 +251,33 @@ Group: Sprites  {
 
    Group: DrawToSpriteBuffer  {
 
-      File: cpct_drawSpriteClipToSpriteBuffer  (sprites\drawToSpriteBuffer\cpct_drawSpriteClipToSpriteBufferMaskedAlignedTable.asm)
-      File: cpct_drawSpriteClipToSpriteBuffer  (sprites\drawToSpriteBuffer\cpct_drawSpriteClipToSpriteBuffer.asm)
-      File: cpct_drawSpriteClipToSpriteBufferMasked  (sprites\drawToSpriteBuffer\cpct_drawSpriteClipToSpriteBufferMasked.asm)
-      File: cpct_drawToSpriteBuffer  (sprites\drawToSpriteBuffer\cpct_drawToSpriteBuffer.asm)
-      File: cpct_drawToSpriteBufferHFlipM0  (sprites\drawToSpriteBuffer\cpct_drawToSpriteBufferHFlipM0.asm)
-      File: cpct_drawToSpriteBufferHFlipM1  (sprites\drawToSpriteBuffer\cpct_drawToSpriteBufferHFlipM1.asm)
-      File: cpct_drawToSpriteBufferHFlipM2  (sprites\drawToSpriteBuffer\cpct_drawToSpriteBufferHFlipM2.asm)
-      File: cpct_drawToSpriteBufferMasked  (sprites\drawToSpriteBuffer\cpct_drawToSpriteBufferMasked.asm)
-      File: cpct_drawToSpriteBufferMaskedAlignedTable  (sprites\drawToSpriteBuffer\cpct_drawToSpriteBufferMaskedAlignedTable.asm)
+      Group: Clip  {
+
+         File: cpct_drawSpriteClipToSpriteBuffer  (sprites\drawToSpriteBuffer\clip\cpct_drawSpriteClipToSpriteBufferMaskedAlignedTable.asm)
+         File: cpct_drawSpriteClipToSpriteBuffer  (sprites\drawToSpriteBuffer\clip\cpct_drawSpriteClipToSpriteBuffer.asm)
+         File: cpct_drawSpriteClipToSpriteBufferMasked  (sprites\drawToSpriteBuffer\clip\cpct_drawSpriteClipToSpriteBufferMasked.asm)
+         }  # Group: Clip
+
+      Group: Draw  {
+
+         File: cpct_drawToSpriteBuffer  (sprites\drawToSpriteBuffer\draw\cpct_drawToSpriteBuffer.asm)
+         File: cpct_drawToSpriteBufferMasked  (sprites\drawToSpriteBuffer\draw\cpct_drawToSpriteBufferMasked.asm)
+         File: cpct_drawToSpriteBufferMaskedAlignedTable  (sprites\drawToSpriteBuffer\draw\cpct_drawToSpriteBufferMaskedAlignedTable.asm)
+         }  # Group: Draw
+
+      Group: Flip  {
+
+         File: cpct_drawMaskedAlignedToSpriteBufferHFlipM0  (sprites\drawToSpriteBuffer\flip\cpct_drawMaskedAlignedToSpriteBufferHFlipM0.asm)
+         File: cpct_drawMaskedAlignedToSpriteBufferHFlipM1  (sprites\drawToSpriteBuffer\flip\cpct_drawMaskedAlignedToSpriteBufferHFlipM1.asm)
+         File: cpct_drawMaskedAlignedToSpriteBufferHFlipM2  (sprites\drawToSpriteBuffer\flip\cpct_drawMaskedAlignedToSpriteBufferHFlipM2.asm)
+         File: cpct_drawMaskedToSpriteBufferHFlipM0  (sprites\drawToSpriteBuffer\flip\cpct_drawMaskedToSpriteBufferHFlipM0.asm)
+         File: cpct_drawMaskedToSpriteBufferHFlipM1  (sprites\drawToSpriteBuffer\flip\cpct_drawMaskedToSpriteBufferHFlipM1.asm)
+         File: cpct_drawMaskedToSpriteBufferHFlipM2  (sprites\drawToSpriteBuffer\flip\cpct_drawMaskedToSpriteBufferHFlipM2.asm)
+         File: cpct_drawToSpriteBufferHFlipM0  (sprites\drawToSpriteBuffer\flip\cpct_drawToSpriteBufferHFlipM0.asm)
+         File: cpct_drawToSpriteBufferHFlipM1  (sprites\drawToSpriteBuffer\flip\cpct_drawToSpriteBufferHFlipM1.asm)
+         File: cpct_drawToSpriteBufferHFlipM2  (sprites\drawToSpriteBuffer\flip\cpct_drawToSpriteBufferHFlipM2.asm)
+         }  # Group: Flip
+
       File: Macros &lparen;asm&rparen;  (sprites\drawToSpriteBuffer\drawToSpriteBuffer.h.s)
       File: Macros &lparen;C&rparen;  (sprites\drawToSpriteBuffer\drawToSpriteBuffer.h)
       }  # Group: DrawToSpriteBuffer

@@ -10,9 +10,27 @@ We give *big thanks* to all users, contributors and supporters, and all respects
 
 (see paypaldonations.jpg)
 
-Section: Welcome to CPCtelera!
-   If you want to create games for Amstrad CPC, you are at the right place. Welcome to CPCtelera! 
+Section: Welcome to CPCteleraNext!
+   If you want to create games for Amstrad CPC, you are at the right place.  Welcome to CPCtelera!
+   
+   CPCteleraNext is a fork of cpctelera with new features, in order to install:
+     * Update your Cygwin environmment with latest package version you have alread used for CPCtelera
+     * Manually update the directory <cygwin_path>\usr\include\boost with the latest boost include (cygwin boost package is not updated anymore)
+        Download ZIP from https://www.boost.org/releases/latest/ and extract only boost subdirectory from archive
+	 * Download and unzip latest version of CPCteleraNext https://github.com/Arnaud6128/cpctelera/releases
+     * Run setup.sh as usual
 
+   What's new ?
+     * Full support of SDCC 4.5.0 with all functions migrated to new call convention _sdcccall(1)
+     * ArkosTracker3 integrated (AKG and AKM players) (https://www.julien-nevo.com/arkostracker/)
+     * ZX0/ZX0B and ZX1/ZX1B compressors integrated (Néstor Gracia)
+     * CPC+ (Asic) functions
+	 * EasyOverscan functions
+     * Sprite clipping functions
+     * Collision functions
+     * SpriteBuffer new functions
+     * Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
+		
    CPCtelera is a game development framework including a low-level game library for C and assembler programmers wanting to create games on Amstrad CPC. You have an easy-to-use, optimized library with a lot of ready-to-use basic functionalities:
      * Draw different types of sprites, with and without transparency effects
      * Draw solid colour boxes and speed up sprite trail erasing!
@@ -38,7 +56,7 @@ Section: Welcome to CPCtelera!
      * Generate custom-quality random number sequences
 
    However, CPCtelera is much more than a low-level library. CPCtelera comes with a complete build system for easing your project creation and management. CPCtelera offers you:
-     * Integrated set of compiling and generation tools (SDCC 3.5.5, iDSK 0.13, Hex2Bin 2.0, 2cdt)
+     * Integrated set of compiling and generation tools (SDCC, iDSK, Hex2Bin 2.0, 2cdt)
      * Easy and automated project creation and management
      * Automatic generation of CDT and DSK files
      * Program completely in C, completely in Assembler or mix both languages at will. You won't even have to touch a line of the build system!
@@ -87,15 +105,15 @@ Section: Supporting CPCtelera
    We, as authors of CPCtelera, have started this journey to create a usable, free, convenient and up-to-date game engine. There are lots of things to do and improve in order to achieve our goals. If you want to help us, we are more than happy. Any kind of help is always welcome, but we prefer any of these ways,
       * *Economic support*: make a donation using Bitcoin or Paypal (Links are at the top of this file). Big thanks for your support!
       * *Documentation*: create videos, images, tutorials, better explanations... And send us an email to cpctelera@cheesetea.com. We will be happy to receive your links! :)
-      * *New library features*: develop new functions and features and give us a <Github pull request at https://github.com/lronaldo/cpctelera/pulls>. Please, do read pieces of CPCtelera code previously and try to meet our quality standards.
-      * *Beta Testing and reporting*: report your findings testing CPCtelera at any new platform or in new ways. You may leave us a <Github issue at https://github.com/lronaldo/cpctelera/issues>.
+      * *New library features*: develop new functions and features and give us a <Github pull request at https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next/pulls>. Please, do read pieces of CPCtelera code previously and try to meet our quality standards.
+      * *Beta Testing and reporting*: report your findings testing CPCtelera at any new platform or in new ways. You may leave us a <Github issue at https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next/issues>.
       * *New tools*: creating new tools or adapting your tools to be included with CPCtelera is an awesome idea! 
 
    Any donation to our team will be used either in hardware / software to support this project, or as an aid for other Amstrad CPC related projects we manage (such us, for instance, <#CPCRetroDev anual contest at http://cpcretrodev.byterealms.com>!)
 
 Section: Installing CPCtelera
 
-   CPCtelera works under Windows, Linux and OSX. It has been tested in Windows XP, 7, 8 and 10, and in Ubuntu / Debian, Arch, Manjaro, Elementary OS and Raspbian Linux distributions. It works either on Intel architectures or on ARM's.
+   CPCtelera works under Windows, Linux and OSX. It has been tested in Windows XP, 7, 8, 10 and 11, and in Ubuntu / Debian, Arch, Manjaro, Elementary OS and Raspbian Linux distributions. It works either on Intel architectures or on ARM's.
 
 Topic: Downloading CPCtelera
 
@@ -104,7 +122,7 @@ Topic: Downloading CPCtelera
    * Download <current stable version 1.4.2. at https://github.com/lronaldo/cpctelera/archive/v1.4.2.zip>
 
    * Get Latest version from github:
-   > git clone https://github.com/lronaldo/cpctelera
+   > git clone https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next
 
 Topic: Software Requirements
    
