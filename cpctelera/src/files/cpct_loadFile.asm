@@ -29,14 +29,14 @@
 ;;    void cpct_loadFile (<u8>* *fileName*, <u8>* *destBuffer*, <u8>* *sectorTable*) __z88dk_callee;
 ;;
 ;; Input Parameters (6 Bytes):
-;;    (2B HL) fileName      - Pointer to 11-byte AMSDOS filename (uppercase, format "AAAAAAAA.BBB")
+;;    (2B HL) fileName      - Pointer to 11-byte AMSDOS filename (uppercase, format "AAAAAAAABBB")
 ;;    (2B DE) destBuffer    - Destination address to load file data (min. 512 bytes)
 ;;    (2B BC) sectorTable   - 256-byte buffer for internal sector table construction
 ;;
 ;; Details:
 ;;    - Supports AMSDOS format on tracks 0-41, sectors C1-C9 (9 sectors/track, single-sided).
 ;;    - Automatically skips AMSDOS file header (first 128 bytes).
-;;    - Filename must be 11 characters uppercase, without dot (e.g., "MYFILE   BIN").
+;;    - Filename must be 11 characters uppercase, without dot (e.g., "MYFILE  BIN").
 ;;    - File user number is ignored (except for deleted files, marked with 0xE5).
 ;;    - REQUIRES CODE TO BE IN RAM — NOT EXECUTABLE FROM ROM (uses self-modifying code).
 ;;    - Disables interrupts during sector reading (restored after FDC operations).
