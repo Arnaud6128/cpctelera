@@ -6,9 +6,9 @@ LIBDIR=lib
 MKDIR=mkdir
 
 CC=gcc
-CXX=g++
-CXXFLAGS=-std=c++0x -O3 -Wall -fsigned-char
-LDLIBS=-lfreeimage
+CXX=g++ 
+CXXFLAGS=-std=c++0x -O3 -Wall -fsigned-char 
+LDLIBS=-L$(LIBDIR) -l:libfreeimagegnu.a
 
 vpath %.hpp $(INCDIR)
 vpath %.cpp $(SRCDIR)
