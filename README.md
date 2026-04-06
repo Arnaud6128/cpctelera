@@ -16,7 +16,8 @@ _**What's new ?**_
  * ZX0/ZX0B and ZX1/ZX1B compressors integrated (Néstor Gracia)
  * New functions and examples :
    - CPC+ (Asic) functions
-   - Sprite clipping functions
+   - EasyOverscan functions
+   - Sprite clipping / zoom functions
    - Collision functions
    - SpriteBuffer new functions
    - Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
