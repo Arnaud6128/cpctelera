@@ -44,4 +44,7 @@ void cpct_drawSolidBoxOverscan(u8* memory, u16 colour_pattern, u8 width, u8 heig
 // EasyTilemaps zoom functions
 #include "./zoomSprite/zoomSprite.h"
 
+// Screen to sprites functions
+#include "./screenToSprite/screenToSprite.h"
+
 #endif

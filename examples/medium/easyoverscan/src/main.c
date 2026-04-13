@@ -24,6 +24,8 @@
 // Sets the transparent mask table for color 0, mode 1
 cpctm_createTransparentMaskTable(g_masktable, 0x0100, M1, 0);
 
+u8 winnerCopy[WINNER_H*WINNER_W];
+
 // Start program
 void main(void) 
 {
@@ -50,13 +52,20 @@ void main(void)
 	
 	// Draw sprite with masked aligned table in middle of 32-Kbytes screen at left
 	vmem = cpct_getScreenPtrOverscan(0, SCREEN_OVERSCAN_LOW_LIMIT_Y - WINNER_H/2);
-	
+		
 	// Flip sprite
 	cpct_hflipSpriteM1(WINNER_W, WINNER_H, winner);
 	
 	// Draw sprite with masked aligned table
 	cpct_drawSpriteMatOverscan(winner, vmem, WINNER_W, WINNER_H, g_masktable);
 	
+	// Copy sprite on screen into buffer
+	cpct_getOverscanScreenToSprite(vmem, winnerCopy, WINNER_W, WINNER_H);
+	
+	// Draw sprite from buffer at to/left
+	vmem = cpct_getScreenPtrOverscan(0, 0);
+	cpct_drawSpriteOverscan(winnerCopy, vmem, WINNER_W, WINNER_H);
+		
 	// Move sprite loop
 	u16 y = 0;
 	while (1)
