@@ -164,7 +164,7 @@ cpct_PLY_AKG_PlaySoundEffect:
     pop hl
     ex (sp),hl ;; HL <-> SP Inverted volume
     ld b,l     ;; B = L Inverted volume
-cpct_PLY_AKG_PlaySoundEffect_asm: 
+cpct_PLY_AKG_PlaySoundEffect_asm::
 	dec a
 PLY_AKG_PTSOUNDEFFECTTABLE: ld hl,#0
     ld e,a
@@ -433,7 +433,7 @@ _cpct_PLY_AKG_Init::
 ;; DE = D useless  / E  = Subsong index (>=0)
 cpct_PLY_AKG_Init:
     ld a,e  ;; A = E (Subsong index (>=0))
-cpct_PLY_AKG_Init_asm: 
+cpct_PLY_AKG_Init_asm::
     ld de,#4
     add hl,de
     ld de,#PLY_AKG_ARPEGGIOSTABLE+1
@@ -548,7 +548,7 @@ PLY_AKG_INITTABLEORA_END:
 
 _cpct_PLY_AKG_Stop::
 cpct_PLY_AKG_Stop:
-cpct_PLY_AKG_Stop_asm: 
+cpct_PLY_AKG_Stop_asm::
     ld (PLY_AKG_PSGREG13_END+1),sp
     xor a
     ld l,a
@@ -574,7 +574,7 @@ cpct_PLY_AKG_Stop_asm:
 
 _cpct_PLY_AKG_Play::
 cpct_PLY_AKG_Play:
-cpct_PLY_AKG_Play_asm: 
+cpct_PLY_AKG_Play_asm::
     ld (PLY_AKG_PSGREG13_END+1),sp
     xor a
     ld (PLY_AKG_EVENT),a

@@ -159,7 +159,7 @@ cpct_PLY_AKM_PlaySoundEffect:
         pop hl
         ex (sp),hl ;; HL <-> SP Inverted volume
         ld b,l     ;; B = L Inverted volume
-cpct_PLY_AKM_PlaySoundEffect_asm: 
+cpct_PLY_AKM_PlaySoundEffect_asm::
         ;Gets the address to the sound effect.
         dec a
 PLY_AKM_DATA_OFFSETTRACKPITCHSPEED = .+1
@@ -217,7 +217,7 @@ _PLY_AKM_StopSoundEffectFromChannel::
 ;; CPCtelera according __z88dk_fastcall convention
 ;; A = Channel
 PLY_AKM_StopSoundEffectFromChannel:
-PLY_AKM_StopSoundEffectFromChannel_asm: 
+PLY_AKM_StopSoundEffectFromChannel_asm::
     add a,a
     add a,a
     add a,a
@@ -399,7 +399,7 @@ _cpct_PLY_AKM_Init::
 ;; DE = D useless  / E  = Subsong index (>=0)
 cpct_PLY_AKM_Init: 
     ld   a, e        ;; A = Subsong index
-cpct_PLY_AKM_Init_asm: 
+cpct_PLY_AKM_Init_asm::
     ld de,#PLY_AKM_READLINE+1
     ldi
     ldi
@@ -485,7 +485,7 @@ PLY_AKM_INITVARS_END:
 
 _cpct_PLY_AKM_Stop::
 cpct_PLY_AKM_Stop:
-cpct_PLY_AKM_Stop_asm: 
+cpct_PLY_AKM_Stop_asm::
     ld (PLY_AKM_SENDPSGREGISTEREND+1),sp
     xor a
     ld (PLY_AKM_TRACK1_VOLUME),a
@@ -512,7 +512,7 @@ cpct_PLY_AKM_Stop_asm:
 	
 _cpct_PLY_AKM_Play::
 cpct_PLY_AKM_Play:
-cpct_PLY_AKM_Play_asm: 
+cpct_PLY_AKM_Play_asm::
     ld (PLY_AKM_SENDPSGREGISTEREND+1),sp
 PLY_AKM_TICKCOUNTER: ld a,#0
     inc a
