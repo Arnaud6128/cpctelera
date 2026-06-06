@@ -1,6 +1,7 @@
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-##  Copyright (C) 2016 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+##  Copyright (C) 2025 Arnaud BOUCHE (@Arnaud 6128)
+##  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
 ##  it under the terms of the GNU Lesser General Public License as published by
@@ -15,43 +16,22 @@
 ##  You should have received a copy of the GNU Lesser General Public License
 ##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##------------------------------------------------------------------------------
-
 ############################################################################
 ##                        CPCTELERA ENGINE                                ##
 ##                 Automatic image conversion file                        ##
 ##------------------------------------------------------------------------##
 ## This file is intended for users to automate music conversion from      ##
-## original files (like Arkos Tracker .aks) into data arrays.             ##
-##                                                                        ##
-## Macro used for conversion is AKS2C, which has up to 5 parameters:      ##
-##  (1): AKS file to be converted to data array                           ##
-##  (2): C identifier for the generated data array (will have underscore  ##
-##       in front in ASM)                                                 ##
-##  (3): Output folder for .s and .h files generated (Default same folder)##
-##  (4): Memory address where music data will be loaded                   ##
-##  (5): Aditional options (you can use this to pass aditional modifiers  ##
-##       to cpct_aks2c)                                                   ##
-##                                                                        ##
-## Macro is used in this way (one line for each image to be converted):   ##
-##  $(eval $(call AKS2C,(1),(2),(3),(4),(5))                              ##
-##                                                                        ##
-## Important:                                                             ##
-##  * Do NOT separate macro parameters with spaces, blanks or other chars.##
-##    ANY character you put into a macro parameter will be passed to the  ##
-##    macro. Therefore ...,src/music,... will represent "src/music"       ##
-##    folder, whereas ...,  src/music,... means "  src/sprites" folder.   ##
-##  * You can omit parameters by leaving them empty.                      ##
-##  * Parameter  (5) (Aditional options) is  optional and  generally not  ##
-##    required.                                                           ##
+## original files (like Arkos Tracker .aks) into data arrays or assembly. ##
 ############################################################################
 
-## Convert assets/music.aks to src/music.{s|h}
-##		This file contains a music created with Arkos Tracker (Concretely, 
-## it's one of Arkos Tracker's examples called UltraSyd - The End). 
-## This macro will convert the music into a data array called g_music that 
-## will be placed at the 0x2A41 memory address in an absolue way. As this music
-## takes 5567 bytes of RAM, its last byte will be placed at 0x3FFF, which lets
-## us place the code at 0x4000 easily. This values can be easily checked in
-## src/music.h once generated.
-##
-$(eval $(call AKS2C,assets/music.aks,g_music,src/,0x2A41))
+# Default values
+#$(eval $(call AKS2DATA, SET_FOLDER   , src/ ))
+#$(eval $(call AKS2DATA, SET_OUTPUTS  , s    )) # { bin, s }
+#$(eval $(call AKS2DATA, SET_PLAYER   , akg  )) # { akg, akm, fx }
+#$(eval $(call AKS2DATA, SET_EXTRAPAR ,      )) 
+# Conversion
+#$(eval $(call AKS2DATA, CONVERT      , music.aks , name , mem_address )) #  mem_adress mandatory for bin output
+
+$(eval $(call AKS2DATA, SET_OUTPUTS  , s  )) 
+$(eval $(call AKS2DATA, SET_PLAYER , akg )) 
+$(eval $(call AKS2DATA, CONVERT , assets/music.aks , music ,))

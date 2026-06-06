@@ -50,7 +50,7 @@ str_dav:   .asciz "@octopusjig"
 ;; Sprite, Palette and music (defined in their own generated source files)
 .globl _g_octopusjig
 .globl _g_palette
-.globl _g_music
+.globl _musicStart
 
 ;; Scrolling data structures for both scrolling strings (Happy / BDay)
 tscroll_happy: 
@@ -87,21 +87,21 @@ tscroll_bday:
 .globl cpct_waitVSYNC_asm
 .globl cpct_drawStringM0_asm
 .globl cpct_setDrawCharM0_asm
-.globl cpct_akp_musicInit_asm
-.globl cpct_akp_musicPlay_asm
+.globl cpct_PLY_AKG_Init_asm
+.globl cpct_PLY_AKG_Play_asm
 .globl cpct_setInterruptHandler_asm
 
 interrupt_handler:
    ;; Update interrupt counter variable (iscount)
-   ld   hl, #iscount          ;; HL points to interrupt counter variable (iscount)
-   dec (hl)                   ;; --iscount
-   ret  nz                    ;; Do not play music if iscount != 0 (so, return)
+   ld   hl, #iscount           ;; HL points to interrupt counter variable (iscount)
+   dec (hl)                    ;; --iscount
+   ret  nz                     ;; Do not play music if iscount != 0 (so, return)
 
    ;; Play music
-   ld    (hl), #itmusiccycles    ;; Restore interrupt counter variable intial value
-   call  cpct_akp_musicPlay_asm  ;; Play the music
+   ld   (hl), #itmusiccycles   ;; Restore interrupt counter variable intial value
+   call cpct_PLY_AKG_Play_asm  ;; Play the music
 
-   ret                           ;; Return
+   ret                         ;; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -128,8 +128,9 @@ init:
    call  cpct_setPALColour_asm      ;; Set the border (colour 16)
 
    ;; Initialize music
-   ld    de, #_g_music              ;; DE points to the start of the song to be initialized
-   call  cpct_akp_musicInit_asm     ;; Initalize arkos tracker player with the song pointed by DE
+   ld    hl, #_musicStart           ;; HL points to the start of the song to be initialized
+   ld    a, #00                     ;; A=Subsong index
+   call  cpct_PLY_AKG_Init_asm      ;; Initalize arkos tracker player with the song pointed by DE
 
    ;; 
    ld    hl, #interrupt_handler       ;; HL points to the interrupt handler routine
@@ -153,7 +154,6 @@ drawSpriteClipped:
    push  bc                      ;; save x,y coordinates passed as parameters
    ld    de, #pvideomem          ;; DE points to the start of video memory
    call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in HL
-   ex    de, hl                  ;; DE = pointer to video memory location to draw the sprite
    pop   af                      ;; A = y coordinate
 
    ;; Check if clipping is needed
@@ -217,7 +217,7 @@ redrawString:
    ;; BC Already have screen coordinates for the string to be drawn
    ld    de, #pvideomem          ;; DE points to the start of video memory
    call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in HL
-   push  hl                      ;; Returns HL = Pointer to video memory (Required by drawStringM0)
+   push  de                      ;; Returns DE = Pointer to video memory (Required by drawStringM0)
                                  ;; We save it for later use
 
    ;; Set colours to be used by DrawChar/DrawStringM0 functions
@@ -377,10 +377,12 @@ do_string_movement:
    ;; (B already contains y coordinate)
    ld     c, #0                  ;; C = 0 (x coordinate = 0 to get the start of the y line)
    ld    de, #pvideomem          ;; DE points to the start of video memory
-   call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in HL
+   call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in DE
    ;; HL now points to the start of the first pixel line where the
-   ;; string is located (to be able to scroll it)
-
+   ;; string is located (to be able to scroll it)   
+   ld    h, d
+   ld    l, e
+   
    ;; Scroll the string
    ;; (HL already points to the start of the first pixel line to be scrolled)
    ex    af, af'                 ;; A = VelX (recover value from A')
