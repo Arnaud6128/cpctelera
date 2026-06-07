@@ -143,9 +143,10 @@ include $(CPCT_PATH)/cfg/global_functions.mk
 include cfg/image_conversion.mk
 include cfg/tilemap_conversion.mk
 include cfg/music_conversion.mk
-# Create compressed packs and manage CDT
+# Create compressed packs, manage CDT and sectorial DSK
 include cfg/compression.mk
 include cfg/cdt_manager.mk
+include cfg/disk_sector_manager.mk
 # Exporters to other platforms
 include cfg/export/android.mk
 

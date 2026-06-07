@@ -67,6 +67,7 @@ IMG2CPC_PATH := $(CPCT_PATH)tools/img2cpc/bin/
 SCRIPTS_PATH := $(CPCT_PATH)tools/scripts/
 BINS_PATH    := $(CPCT_PATH)bin/
 ANDROID_PATH := $(CPCT_PATH)tools/android/
+RASM_PATH    := $(CPCT_PATH)tools/rasm/
 
 # PATHs FOR CPCTELERA SOURCES AND LIBRARY FILE
 CPCT_SRC := $(CPCT_PATH)src
@@ -78,20 +79,21 @@ Z80ASM   := $(SDCCBIN_PATH)sdasz80
 Z80LNK   := $(SDCCBIN_PATH)sdar
 
 # BINARY EXECUTABLE FILES FOR TOOLS
-HEX2BIN  := $(HEX2BIN_PATH)hex2bin
-IDSK     := $(IDSK_PATH)iDSK
-2CDT     := $(2CDT_PATH)2cdt
-ZX7B     := $(ZX7B_PATH)zx7b
-CPC2CDT  := $(CPC2CDT_PATH)cpc2cdt
-IMG2CPC  := $(IMG2CPC_PATH)img2cpc
-BIN2C    := $(SCRIPTS_PATH)cpct_bin2c
-BIN2SNA  := $(SCRIPTS_PATH)cpct_bin2sna
-BINPATCH := $(SCRIPTS_PATH)cpct_binpatch
-IMG2TIL  := $(SCRIPTS_PATH)cpct_img2tileset
-CPCTPACK := $(SCRIPTS_PATH)cpct_pack
-TMX2CSV  := $(SCRIPTS_PATH)cpct_tmx2csv
-CPCTMX2DT:= $(SCRIPTS_PATH)cpct_tmx2data
-CPCTAKS2C:= $(SCRIPTS_PATH)cpct_aks2c
+HEX2BIN   := $(HEX2BIN_PATH)hex2bin
+IDSK      := $(IDSK_PATH)iDSK
+2CDT      := $(2CDT_PATH)2cdt
+ZX7B      := $(ZX7B_PATH)zx7b
+RASM      := $(RASM_PATH)rasm
+CPC2CDT   := $(CPC2CDT_PATH)cpc2cdt
+IMG2CPC   := $(IMG2CPC_PATH)img2cpc
+BIN2C     := $(SCRIPTS_PATH)cpct_bin2c
+BIN2SNA   := $(SCRIPTS_PATH)cpct_bin2sna
+BINPATCH  := $(SCRIPTS_PATH)cpct_binpatch
+IMG2TIL   := $(SCRIPTS_PATH)cpct_img2tileset
+CPCTPACK  := $(SCRIPTS_PATH)cpct_pack
+TMX2CSV   := $(SCRIPTS_PATH)cpct_tmx2csv
+CPCTMX2DT := $(SCRIPTS_PATH)cpct_tmx2data
+CPCTAKS2C := $(SCRIPTS_PATH)cpct_aks2c
 
 # Z80 PRECOMPILED USEFUL BINARIES
 ML_LOADER_BIN  := $(BINS_PATH)miniload/loader.bin
