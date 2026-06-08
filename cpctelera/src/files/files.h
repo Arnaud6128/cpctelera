@@ -22,5 +22,14 @@ extern void cpct_fdcOff(void);
 extern void cpct_fdcOn(void);
 
 // Sectorial read and write on disk
+#define CPCT_DISK_FACE_A		0
+#define CPCT_DISK_FACE_B		1
+#define CPCT_DISK_SECTOR_START	0xC1
+#define CPCT_DISK_SECTOR_END	0xC9
+#define CPCT_DISK_NB_OF_SECTORS	9
+#define CPCT_DISK_SECTOR_SIZE	512
+#define CPCT_DISK_NB_TRACK		40
+#define CPCT_DISK_TRACK_SIZE	(CPCT_DISK_SECTOR_SIZE * CPCT_DISK_NB_OF_SECTORS) // 4608
+
 extern void cpct_sectorRead(void* buffer, u8 track, u8 sector, u8 nbSectorsRead, u8 driveNumber) __z88dk_callee;
 extern void cpct_sectorWrite(void* buffer, u8 track, u8 sector, u8 nbSectorsWrite, u8 driveNumber) __z88dk_callee;
