@@ -146,7 +146,6 @@ include cfg/music_conversion.mk
 # Create compressed packs, manage CDT and sectorial DSK
 include cfg/compression.mk
 include cfg/cdt_manager.mk
-include cfg/disk_sector_manager.mk
 # Exporters to other platforms
 include cfg/export/android.mk
 

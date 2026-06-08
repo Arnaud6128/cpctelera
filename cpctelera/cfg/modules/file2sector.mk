@@ -4,22 +4,24 @@
 ##  Copyright (C) 2026 Arnaud BOUCHE (@Arnaud6128)
 ##------------------------------------------------------------------------------
 
+.DEFAULT_GOAL := all
+
 # Constants
-# Time stamp tile
-SECTOR_TIMESTAMP := .disk_sectors.timestamp
-A2D_ERR          := <<ERROR>> [AKS2DATA -
+SECTOR_TIMESTAMP := obj/.disk_sectors.timestamp
+A2D_ERR          := <<ERROR>> [FILE2SECTOR -
 
 # Script variables
 DSK_INPUT := 
 DATA_FILES_ARGS := 
+
+# Target injection
+inject_sectors: $(SECTOR_TIMESTAMP)
 
 #################
 # SET_DSK_FILE: Set destination disk
 # $(1): Disk file
 #################
 define FILE2SECTOR_SET_DSK_FILE
-	# Ensure that DSK file exists
-	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(1)' does not exist or is not readable)
     DSK_INPUT := $(1)
 endef
 
@@ -29,7 +31,7 @@ endef
 # $(2): Track/sector location
 #################
 define FILE2SECTOR_ADD_DATA_FILE
-    # Add pair file / location
+    # Add pair File / Disk location
     DATA_FILES_ARGS += $(1)|$(2)
 endef
 
@@ -55,18 +57,21 @@ endef
 #################
 # Recipe: all
 #################
-all: $(SECTOR_TIMESTAMP)
-$(SECTOR_TIMESTAMP): cfg/disk_sector_manager.mk
+run_disk_manager: $(SECTOR_TIMESTAMP)
+
+.SECONDEXPANSION:
+$(SECTOR_TIMESTAMP): cfg/disk_sector_manager.mk $$(DSK_INPUT)
+	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(DSK_INPUT)' does not exist or is not readable.)
 
 	@$(call PRINT,$(PROJNAME),"Adding data into $(DSK_INPUT) tracks...")	
-	$(eval command:=)	
 	@$(foreach item,$(DATA_FILES_ARGS),\
 		item_str="$(item)"; \
 		file=$$(echo $$item_str | cut -d'|' -f1); \
 		args=$$(echo $$item_str | cut -d'|' -f2); \
-		echo -e "\033[36mWriting file data $$file to $$args\033[0m"; \
+		echo -e "\033[36m Writing file \033[0m$$file \033[36mto\033[0m $$args"; \
 		command="$(RASM) -inline 'incbin \"$$file\": edsk writesect,\"${DSK_INPUT}\",0,$$,\"$$args\"'"; \
 		eval $$command > /dev/null; \
 	)
+	@rm rasmoutput.bin
 	@$(call PRINT,$(PROJNAME),"Done")
 	@touch $(SECTOR_TIMESTAMP)

@@ -36,3 +36,9 @@ include cfg/build_config.mk
 ## USE GLOBAL MAKEFILE (general rules for building CPCtelera projects)
 ##
 include $(CPCT_PATH)/cfg/global_main_makefile.mk
+
+##
+## AFTER GENERATION MAKEFILE (when DSK are generated)
+##
+include cfg/disk_sector_manager.mk
+all: inject_sectors
