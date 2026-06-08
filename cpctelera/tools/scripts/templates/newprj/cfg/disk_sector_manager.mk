@@ -38,7 +38,7 @@
 ##    0:#C1 0:#C3   => sectors #C1 and #C3 on track 0                     ##
 ##    5+            => from track 5 to the end of the disk allowed,       ##
 ##                     in PHYSICAL sector order                           ##
-##    5+:0xC1:0xC9  => from track 5 to the end of the disk allowed,       ##
+##    5+:0xC1-0xC9  => from track 5 to the end of the disk allowed,       ##
 ##                     in logical sector order DATA                       ##
 ##                                                                        ##
 ############################################################################

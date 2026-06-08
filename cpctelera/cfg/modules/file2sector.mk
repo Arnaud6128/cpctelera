@@ -62,16 +62,17 @@ run_disk_manager: $(SECTOR_TIMESTAMP)
 .SECONDEXPANSION:
 $(SECTOR_TIMESTAMP): cfg/disk_sector_manager.mk $$(DSK_INPUT)
 	$(call ENSUREFILEEXISTS,$(1),$(A2D_ERR) CONVERT]: File '$(DSK_INPUT)' does not exist or is not readable.)
-
-	@$(call PRINT,$(PROJNAME),"Adding data into $(DSK_INPUT) tracks...")	
+	
+	@$(call PRINT,$(PROJNAME),"Adding data into $(DSK_INPUT) tracks...")
 	@$(foreach item,$(DATA_FILES_ARGS),\
 		item_str="$(item)"; \
 		file=$$(echo $$item_str | cut -d'|' -f1); \
 		args=$$(echo $$item_str | cut -d'|' -f2); \
-		echo -e "\033[36m Writing file \033[0m$$file \033[36mto\033[0m $$args"; \
+		size=$$(stat -L -c %s dat/wolf.dat); \
+		echo -e "\033[36mWriting file \033[0m$$file ($$size bytes)\033[36m to\033[0m $$args"; \
 		command="$(RASM) -inline 'incbin \"$$file\": edsk writesect,\"${DSK_INPUT}\",0,$$,\"$$args\"'"; \
-		eval $$command > /dev/null; \
+		eval $$command > obj/file2sector.log; \
 	)
-	@rm rasmoutput.bin
-	@$(call PRINT,$(PROJNAME),"Done")
+	@rm rasmoutput.bin -f
+	@$(call PRINT,$(PROJNAME),"Adding data done")
 	@touch $(SECTOR_TIMESTAMP)
