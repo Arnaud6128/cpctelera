@@ -68,7 +68,7 @@ $(SECTOR_TIMESTAMP): cfg/disk_sector_manager.mk $$(DSK_INPUT)
 		item_str="$(item)"; \
 		file=$$(echo $$item_str | cut -d'|' -f1); \
 		args=$$(echo $$item_str | cut -d'|' -f2); \
-		size=$$(stat -L -c %s dat/wolf.dat); \
+		size=$$(stat -L -c %s $$file); \
 		echo -e "\033[36mWriting file \033[0m$$file ($$size bytes)\033[36m to\033[0m $$args"; \
 		command="$(RASM) -inline 'incbin \"$$file\": edsk writesect,\"${DSK_INPUT}\",0,$$,\"$$args\"'"; \
 		eval $$command > obj/file2sector.log; \
