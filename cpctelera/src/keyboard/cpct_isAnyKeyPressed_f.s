@@ -1,6 +1,8 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2014 - 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2026 Néstor Gracia
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -34,7 +36,7 @@
 ;; Return value:
 ;;    <u8> - *false* (0, no single key is pressed) or *true* (>0, at least one key
 ;; is pressed). Take into account that *true* is not 1, but any non-0 number. Return 
-;; value is placed in registers A and L (same value for both)
+;; value is placed in register A.
 ;;
 ;; Details:
 ;;    Checks if at least one key from the keyboard is pressed. It does it looking   
@@ -50,16 +52,16 @@
 ;; routines *must be* used before calling this function.
 ;;
 ;; Destroyed Register values: 
-;;    A, B, HL
+;;    A, HL
 ;;
 ;; Required memory:
-;;       27 bytes
+;;       24 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
 ;;   Case      | microSecs (us) | CPU Cycles 
 ;; -------------------------------------------
-;; Any         |       47       |    188
+;; Any         |       45       |    180
 ;; -------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -70,7 +72,6 @@
 _cpct_isAnyKeyPressed_f::
 cpct_isAnyKeyPressed_f_asm::
    ld  hl, #_cpct_keyboardStatusBuffer ;; [3] HL Points to the start of the keyboard status buffer
-   ld   b, #9           ;; [2] We are going to do 9 AND operations against the first byte of the buffer
    ld   a, (hl)         ;; [2] A = First byte from keyboardStatusBuffer
 
    inc  hl              ;; [2] HL points to the next byte from the KeyboardStatusBuffer
