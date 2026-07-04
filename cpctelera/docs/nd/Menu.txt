@@ -134,6 +134,7 @@ Group: Easyoverscan  {
    File: cpct_drawSolidBoxOverscan  (easyoverscan\cpct_drawSolidBoxOverscan.asm)
    File: cpct_drawSpriteMatOverscan  (easyoverscan\cpct_drawSpriteMatOverscan.asm)
    File: cpct_drawSpriteOverscan  (easyoverscan\cpct_drawSpriteOverscan.asm)
+   File: cpct_getOverscanScreenToSprite  (easyoverscan\screenToSprite\cpct_getOverscanScreenToSprite.asm)
    File: cpct_getScreenPtrOvercan  (easyoverscan\cpct_getScreenPtrOvercan.s)
    File: cpct_restoreCRTC  (easyoverscan\cpct_restoreCRTC.s)
    File: EasyOverscan  (easyoverscan\easyoverscan.h)
@@ -142,6 +143,8 @@ Group: Easyoverscan  {
 Group: Files  {
 
    File: cpct_loadFile  (files\cpct_loadFile.asm)
+   File: cpct_sectorRead  (files\cpct_sectorRead.s)
+   File: cpct_sectorWrite  (files\cpct_sectorWrite.s)
    }  # Group: Files
 
 Group: Firmware  {
