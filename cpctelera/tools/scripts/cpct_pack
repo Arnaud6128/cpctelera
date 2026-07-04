@@ -2,8 +2,8 @@
 
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-##  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
-##  Copyright (C) 2022 Néstor Gracia (https://github.com/nestornillo)
+##  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
+##  Copyright (C) 2026 Néstor Gracia (https://github.com/nestornillo)
 ##  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@
 ## Command line options:
 ##    -alc | --asm-local-constants       - Makes generated assembly constants local instead of global
 ##    -an  | --array-name [name]         - Sets the C identifier that will be used. <OUTFILE> is used by default.
-##    -b   | --bytes-per-line [numbytes] - Establishes the number of bytes to write at each array line in C. 16 by default
+##    -b   | --bytes-per-line [numbytes] - Establishes the number of bytes to write at each array line in C. 16 by default.
 ##    -c   | --compressor [method]       - Sets the compression method. Possible values: zx7b zx1 zx1b zx0 zx0b (Default: zx7b)
 ##    -gb  | --generate-bin              - Generates a binary file with compressed data (Default: no). Using this switch overrides generation defaults.
 ##    -gh  | --generate-header           - Generates a header file (.h) with C declarations (Default: yes). Using this switch overrides generation defaults.
