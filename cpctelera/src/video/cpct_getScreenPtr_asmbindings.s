@@ -22,6 +22,10 @@
 ;;
 ;; ASM bindings for <cpct_getScreenPtr>
 ;;
+;;   3 microSecs, 1 bytes
+;;
 cpct_getScreenPtr_asm::
 
 .include /cpct_getScreenPtr.asm/
+
+   ret  ;; [3] return HL = Pointer to the video buffer at (X,Y) byte coordinates

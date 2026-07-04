@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
-;;  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -21,7 +21,7 @@
 ;;
 ;; C bindings for <cpct_getScreenPtr>
 ;;
-;;   13 microSecs, 4 bytes
+;;   17 microSecs, 7 bytes
 ;;
 _cpct_getScreenPtr::
     ;; Get parameters from HL registers and stack (16 + (8 + 8) bits), with __sdcccall(1) convention   
@@ -34,3 +34,6 @@ _cpct_getScreenPtr::
               ;;      as this function uses __z88dk_callee convention
 
 .include /cpct_getScreenPtr.asm/
+
+    ex   de, hl ;; [1] HL <-> DE -> return in DE with __sdcccall(1)
+	ret         ;; [3] return HL = Pointer to the video buffer at (X,Y) byte coordinates

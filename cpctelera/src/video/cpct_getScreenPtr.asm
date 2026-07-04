@@ -169,6 +169,5 @@
    ;; Add up screen start address we still keep in DE
    add   hl, de   ;; [3] rHL' = rHL + screen_start
 
-   ;; DE now contains the pointer to the byte in the video buffer. Just return it
-   ex    de, hl   ;; [1] HL <-> DE
-   ret            ;; [3] return rHL = Pointer to the video buffer at (X,Y) byte coordinates
+   ;; HL now contains the pointer to the byte in the video buffer. Just return it
+   ;; ret in binding

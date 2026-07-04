@@ -187,7 +187,6 @@ looking_good:
    ;; Calculate the memory location where the sprite will be drawn
    ld    de, #pvideomem          ;; DE points to the start of video memory
    call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x, y) (C, B) in HL
-   ex    de, hl                  ;; DE = pointer to video memory location to draw the sprite
 
    ;; Draw the sprite 
    ;; - DE already points to video memory location where sprite will be drawn

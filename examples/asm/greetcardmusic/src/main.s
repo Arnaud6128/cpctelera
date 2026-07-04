@@ -154,6 +154,7 @@ drawSpriteClipped:
    push  bc                      ;; save x,y coordinates passed as parameters
    ld    de, #pvideomem          ;; DE points to the start of video memory
    call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in HL
+   ex    de, hl                  ;; DE = pointer to video memory location to draw the sprite
    pop   af                      ;; A = y coordinate
 
    ;; Check if clipping is needed
@@ -217,7 +218,7 @@ redrawString:
    ;; BC Already have screen coordinates for the string to be drawn
    ld    de, #pvideomem          ;; DE points to the start of video memory
    call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in HL
-   push  de                      ;; Returns DE = Pointer to video memory (Required by drawStringM0)
+   push  hl                      ;; Returns HL = Pointer to video memory (Required by drawStringM0)
                                  ;; We save it for later use
 
    ;; Set colours to be used by DrawChar/DrawStringM0 functions
@@ -380,8 +381,6 @@ do_string_movement:
    call  cpct_getScreenPtr_asm   ;; Return pointer to byte located at (x,y) (C, B) in DE
    ;; HL now points to the start of the first pixel line where the
    ;; string is located (to be able to scroll it)   
-   ld    h, d
-   ld    l, e
    
    ;; Scroll the string
    ;; (HL already points to the start of the first pixel line to be scrolled)
