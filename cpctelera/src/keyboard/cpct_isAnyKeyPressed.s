@@ -1,6 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2014 - 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +34,7 @@
 ;; Return value:
 ;;    <u8> - *false* (0, no single key is pressed) or *true* (>0, at least one key
 ;; is pressed). Take into account that *true* is not 1, but any non-0 number. Return 
-;; value is placed in registers A and L (same value for both)
+;; value is placed in register A.
 ;;
 ;; Flag Output Status:
 ;;    - *Z* = 1 (NO Key Pressed) / 0 (Some Key Pressed)
@@ -53,7 +54,7 @@
 ;;    A, B, HL
 ;;
 ;; Required memory:
-;;       13 bytes
+;;       12 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
