@@ -6,7 +6,7 @@ _**Astonishingly fast Amstrad CPC game engine for C and Assembler developers**_
 
 _**CPCteleraNext**_ is a fork of cpctelera with new features, in order to install :
  * Update your Cygwin environmment with latest package version you have alread used for CPCtelera
- * Manually update the directory <cygwin_path>\usr\include\boost with the latest boost include (cygwin boost package is not updated anymore)
+ * If needed, manually update the directory <cygwin_path>\usr\include\boost with the latest boost include (cygwin boost package is not updated anymore on x86 setup)
    - Download ZIP from https://www.boost.org/releases/latest/ and extract only boost subdirectory from archive
  * Run setup.sh as usual
 
