@@ -2,8 +2,8 @@
 
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-##  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
-##  Copyright (C) 2022 Néstor Gracia (https://github.com/nestornillo)
+##  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
+##  Copyright (C) 2026 Néstor Gracia (https://github.com/nestornillo)
 ##  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 
 ##
 ## File: cpct_pack
-##    Script for generating packed files by compressing groups of file
+##    Script for generating packed files by compressing a group of files
 ## into a single one.
 ##
 ## Usage:
@@ -39,20 +39,20 @@
 ## they are passed.
 ##
 ##    Default output produces two files: 
-##       - outfile.s file with an array holding all compressed file data 
+##       - outfile.s file with an array holding all compressed file data. 
 ##       - outfile.h file with the exported symbols to be included in other c files. 
 ##
 ## Command line options:
+##    -alc | --asm-local-constants       - Makes generated assembly constants local instead of global.
 ##    -an  | --array-name [name]         - Sets the C identifier that will be used. <OUTFILE> is used by default.
-##    -alc | --asm-local-constants       - Makes generated assembly constants local instead of global
-##    -b   | --bytes-per-line [numbytes] - Establishes the number of bytes to write at each array line in C. 16 by default
-##    -c   | --compressor [method]       - Sets the compression method. Possible values: zx7b zx1 zx1b (Default: zx7b)
+##    -b   | --bytes-per-line [numbytes] - Establishes the number of bytes to write at each array line in C. 16 by default.
+##    -c   | --compressor [method]       - Sets the compression method. Possible values: zx7b zx1 zx1b zx0 zx0b (Default: zx7b)
 ##    -gb  | --generate-bin              - Generates a binary file with compressed data (Default: no). Using this switch overrides generation defaults.
 ##    -gh  | --generate-header           - Generates a header file (.h) with C declarations (Default: yes). Using this switch overrides generation defaults.
 ##    -ghs | --generate-asm-header       - Generates a header file (.h.s) with asm declarations (Default: no). Using this switch overrides generation defaults.
 ##    -gs  | --generate-asm              - Generates an assembly file with compressed data (Default: yes). Using this switch overrides generation defaults.
 ##    -h   | --help                      - Shows help information on the terminal.
-##    -i   | --include-header [file]     - Include a header file at the top of the generated output
+##    -i   | --include-header [file]     - Include a header file at the top of the generated output.
 ##    -org | --origin-asm [address]      - Memory address where generated data should be placed (origin address). Only works when assembly output is to be generated.
 ##
 
@@ -78,17 +78,17 @@ Default output produces two files:
 ${COLOR_LIGHT_YELLOW}
 OPTIONS \
    ${COLOR_LIGHT_BLUE}
-   -an  | --array-name ${COLOR_NORMAL}<identifier> ${COLOR_CYAN}
-      Sets the C identifier that will be used. G_<OUTFILE> is used by default. \
-   ${COLOR_LIGHT_BLUE}
    -alc | --asm-local-constants ${COLOR_CYAN}
       Makes generated assembly constants local instead of global. \
+   ${COLOR_LIGHT_BLUE}
+   -an  | --array-name ${COLOR_NORMAL}<identifier> ${COLOR_CYAN}
+      Sets the C identifier that will be used. G_<OUTFILE> is used by default. \
    ${COLOR_LIGHT_BLUE}
    -b   | --bytes-per-line ${COLOR_NORMAL}<numbytes> ${COLOR_CYAN}
       Establishes the number of bytes to write at each array line in C. 16 by default. \
    ${COLOR_LIGHT_BLUE}
    -c   | --compressor ${COLOR_NORMAL}<method> ${COLOR_CYAN}
-      Sets the compression method. Possible values: zx7b zx1 zx1b (Default: zx7b) \
+      Sets the compression method. Possible values: zx7b zx1 zx1b zx0 zx0b (Default: zx7b) \
    ${COLOR_LIGHT_BLUE}
    -gb  | --generate-bin ${COLOR_CYAN}
       Generates a binary file with compressed data (Default: no). Using this switch overrides generation defaults. \
