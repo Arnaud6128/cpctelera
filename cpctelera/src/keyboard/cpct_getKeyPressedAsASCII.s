@@ -1,6 +1,8 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2023 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2026 Néstor Gracia (@nestornillo)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +22,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_getKeypressedAsASCII
+;; Function: cpct_getKeyPressedAsASCII
 ;;
 ;;    Assuming there is only one Key currently pressed, it returns the ASCII value
 ;; associated to the pressed key. For the keys that do not have a corresponding
@@ -29,10 +31,10 @@
 ;;    Returns 0 if no key is currently pressed.
 ;;
 ;; C Definition:
-;;    <u8> <cpct_getKeypressedAsASCII> ();
+;;    <u8> <cpct_getKeyPressedAsASCII> ();
 ;;
 ;; Assembly call:
-;;    > call cpct_getKeypressedAsASCII_asm
+;;    > call cpct_getKeyPressedAsASCII_asm
 ;;
 ;; Return value:
 ;;    <u8> - ASCII value of the first key found to be pressed in the 
@@ -101,7 +103,7 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;       117 bytes (including 80 bytes from the <cpct_keyID_to_ASCII_table>)
+;;       116 bytes (including 80 bytes from the <cpct_keyID_to_ASCII_table>)
 ;;
 ;; Time Measures:
 ;;    Time measures depend on the key pressed. As the keys are ordered by lines,
@@ -117,13 +119,35 @@
 ;; -------------------------------------------
 ;; Worst       |      173       |    692
 ;; -------------------------------------------
-;; Not-found   |      118       |    472
+;; Not-found   |      117       |    468
 ;; -------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Keyboard Status Buffer defined in an external file
 .globl _cpct_keyboardStatusBuffer
+
+;;
+;; Table for converting <cpct_keyID> to ASCII,
+;;
+_cpct_keyID_to_ASCII_table::
+   .db 244, 246, 245, 57, 54, 51, 165, 46       ;; Keyboard Line 0
+   .db 247, 232, 55, 56, 53, 49, 50, 48         ;; Keyboard Line 1
+   .db 238, 91, 140, 93, 52, 208, 92, 233       ;; Keyboard Line 2
+   .db 94, 45, 64, 80, 59, 58, 47, 46           ;; Keyboard Line 3
+   .db 48, 57, 79, 73, 76, 75, 77, 44           ;; Keyboard Line 4
+   .db 56, 55, 85, 89, 72, 74, 78, 32           ;; Keyboard Line 5
+   .db 54, 53, 82, 84, 71, 70, 66, 86           ;; Keyboard Line 6
+   .db 52, 51, 69, 87, 83, 68, 67, 88           ;; Keyboard Line 7
+   .db 49, 50, 224, 81, 197, 65, 196, 90        ;; Keyboard Line 8
+   .db 240, 241, 242, 243, 203, 206, 207, 199   ;; Keyboard Line 9
+
+
+_cpct_getKeyPressedAsASCII::     ;; C entry point
+_cpct_getKeypressedAsASCII::     ;; Old function C name, for compatibility with older code.  
+
+cpct_getKeyPressedAsASCII_asm::  ;; Assembly entry point
+cpct_getKeypressedAsASCII_asm::  ;; Old function asm name, for compatibility with older code. 
 
    ld  de, #_cpct_keyboardStatusBuffer ;; [3] DE Points to the start of the keyboard status buffer
    ld   b, #10                         ;; [2] B=10 (Counter of Keyboard Lines to be checked)
@@ -136,27 +160,7 @@ keylines_loop:
    djnz  keylines_loop     ;; [3/4] If (--B != 0) Check next Keyboard Line
 
 no_key_is_pressed:
-   ld     l, a             ;; [1] A=0 already, L=0 for C-return value
-   ret                     ;; [3] return 0 (no key is pressed)
-
-;;
-;; Table for converting <cpct_keyID> to ASCII,
-;;
-;;    The table is inserted in the middle of this function because otherwise it
-;; would be treated as code by the CPU, as everything after and before the function
-;; is exectuted due to how the bindings of this function are done.
-;;
-_cpct_keyID_to_ASCII_table::
-   .db 244, 246, 245, 57, 54, 51, 165, 46       ;; Keyboard Line 0
-   .db 247, 232, 55, 56, 53, 49, 50, 48          ;; Keyboard Line 1
-   .db 238, 91, 140, 93, 52, 208, 92, 233       ;; Keyboard Line 2
-   .db 94, 45, 64, 80, 59, 58, 47, 46           ;; Keyboard Line 3
-   .db 48, 57, 79, 73, 76, 75, 77, 44           ;; Keyboard Line 4
-   .db 56, 55, 85, 89, 72, 74, 78, 32           ;; Keyboard Line 5
-   .db 54, 53, 82, 84, 71, 70, 66, 86           ;; Keyboard Line 6
-   .db 52, 51, 69, 87, 83, 68, 67, 88           ;; Keyboard Line 7
-   .db 49, 50, 224, 81, 197, 65, 196, 90        ;; Keyboard Line 8
-   .db 240, 241, 242, 243, 203, 206, 207, 199   ;; Keyboard Line 9
+   ret                     ;; [3] return 0 already in A (no key is pressed)
 
 key_pressed:
    dec    a                      ;; [1] ++A: Some Key is pressed, Add 1 to A, as we previously subtracted 1 to check
@@ -182,7 +186,5 @@ count_keys_in_line:
    add   hl, bc                  ;; [3] HL += BC (HL = key_to_ASCII_value + Offset)
 
 return:
-   ;; Return depending on C-ASM bindings
-
-
-
+   ld     a, (hl)       ;; [2] A = ASCII of the key pressed (to be returned)
+   ret                  ;; [3] sdcccall(1) used for C callings. Parameter is returned directly in A

@@ -44,7 +44,7 @@ void main(void) {
       cpct_scanKeyboard_f();
 
       // Obtain the ASCII value of the currently pressed Key
-      ascii = cpct_getKeypressedAsASCII();
+      ascii = cpct_getKeyPressedAsASCII();
       if (ascii != 0) {                            // ascii == 0 means no key is pressed, so we check first
          cpct_drawCharM0(CPCT_VMEM_START, ascii);  // Some key is pressed, print its ascii value to the screen
       }
