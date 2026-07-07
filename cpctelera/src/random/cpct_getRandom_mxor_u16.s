@@ -98,9 +98,7 @@ next_jump:
    ld   hl, (_cpct_mxor32_seed+0)  ;; [5] HL = second word (Most Significant one)
    ld    a, #opc_JR                ;; [2] | Set initial instruction to be a JR (0x18) for next call
    ld (next_jump), a               ;; [4] | This will jump to "generate", to generate 2 new random words
-   ld   d, h                       ;; [1] DE = HL
-   ld   e, l                       ;; [1] |
-   ret                             ;; [3] Returns next 16-bits random DE value in sdccall(1)
+   ret                             ;; [3] Returns next 16-bits random value
 
 generate:
    ;; Calculate next 32-bits random value using Marsaglia's XOR-shift
