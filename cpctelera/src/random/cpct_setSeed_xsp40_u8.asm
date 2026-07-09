@@ -28,7 +28,7 @@
 ;;    void <cpct_setSeed_xsp40_u8> (<u16> *plusSeed*, <u32> *seed32*) __z88dk_callee;
 ;;
 ;; Input Parameters (5 bytes):
-;;    (4B DE:HL) *seed32*   - Main 32-bits seed for generating pseudo-random numbers
+;;    (4B HL:DE) *seed32*   - Main 32-bits seed for generating pseudo-random numbers
 ;;    (1B     A) *plusSeed* - Value that is used to do a final XOR operation with resulting
 ;; sequence numbers (Default: 255)
 ;;
@@ -66,19 +66,19 @@
 ;; approximately random once a relatively random seed has been set.
 ;;
 ;; Destroyed Register values: 
-;;      AF, BC, DE, HL
+;;      AF, DE, HL
 ;;
 ;; Required memory:
-;;      C-bindings - 14 bytes
+;;      C-bindings - 15 bytes
 ;;    ASM-bindings - 11 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
 ;;    Case     | microSecs (us) | CPU Cycles
 ;; -----------------------------------------
-;;    Any      |      34        |    136
+;;    Any      |      31        |    124
 ;; -----------------------------------------
-;;  ASM-Saving |     -15        |    -60
+;;  ASM-Saving |     -13        |    -42
 ;; -----------------------------------------
 ;; (end code)
 ;;
