@@ -19,6 +19,7 @@
 .module cpct_sprites
 
 .include "macros/cpct_maths.h.s"
+.include "macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
 ;; ASM bindings for <cpct_drawToSpriteBuffer>
