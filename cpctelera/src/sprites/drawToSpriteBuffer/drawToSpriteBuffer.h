@@ -35,6 +35,9 @@ extern void cpct_drawToSpriteBuffer(u16 buffer_width, void* buffer, u8 width, u8
 extern void cpct_drawToSpriteBufferMasked(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite) __z88dk_callee;
 extern void cpct_drawToSpriteBufferMaskedAlignedTable(u16 buffer_width, void* buffer, u8 width, u8 height, void* sprite, u8* mask_table) __z88dk_callee;
 
+// Solid box to Sprite-Buffer Drawing Functions
+extern void cpct_drawSolidBoxToSpriteBuffer(u16 buffer_width, void* inbuffer_ptr, u8 width, u8 height, u16 colour) __z88dk_callee;
+
 // Sprite to Sprite-Buffer Clipping Functions
 extern void cpct_drawSpriteClipToSpriteBuffer(u8 buffer_width, void* buffer, u8 width_to_draw, u8 width, u16 height, void* sprite) __z88dk_callee;
 extern void cpct_drawSpriteClipToSpriteBufferMaskedAlignedTable(u8 buffer_width, void* destination, u8 width_to_draw, u8 width, u16 height, void* sprite, void* mask_table) __z88dk_callee;
