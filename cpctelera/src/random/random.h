@@ -59,7 +59,7 @@ extern void cpct_restoreState_mxor_u16(void);
 
 // -- Based on Marsaglia's XOR-shift+ algorithm
 //
-extern u8 cpct_getRandom_xsp40_u8(void) __z88dk_fastcall;
+extern u8 cpct_getRandom_xsp40_u8(void) __z88dk_callee;
 extern void cpct_setSeed_xsp40_u8(u16 seed8, u32 seed32) __z88dk_callee;
 
 ///

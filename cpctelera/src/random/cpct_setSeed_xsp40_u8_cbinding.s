@@ -27,7 +27,7 @@ _cpct_setSeed_xsp40_u8::
    ;; Get parameters from HL and DE registers and stack (16 + 32 bits), with __sdcccall(1) convention
    ;; HL = plusSeed (H = useless / L = plusSeed)
    ;; From stack
-   ;; DE:HL = seed32
+   ;; HL:DE = seed32
 
    ld   a, l     ;; [1] A = 8-bits seed for Weyl sequence
    pop  hl       ;; [3] HL = Return address

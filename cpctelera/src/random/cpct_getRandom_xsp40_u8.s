@@ -30,7 +30,7 @@
 ;; Assembly call:
 ;;    > call cpct_getRandom_xsp40_u8_asm
 ;;
-;; Return value (Assembly calls, return L=A=random 8-bits):
+;; Return value (Assembly calls, return A=random 8-bits):
 ;;    <u8> - Next 8-bits pseudo-random value.
 ;;
 ;; Important details:
@@ -70,7 +70,7 @@
 ;;      AF, DE, HL
 ;;
 ;; Required memory:
-;;      37 bytes
+;;      36 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
@@ -82,8 +82,8 @@
 ;;
 ;; Random quality measures:
 ;;  * Dieharder tests rank: (113 Pass, 1 Weak, 0 Failed) (340/342 = 99.42%)
-;;  * Pseudo-random bit stream velocity: 5,625 us / bit. (8 bits produced in 45 us)
-;;  * Pseudo-random bits per second: 177.777,77 bps.
+;;  * Pseudo-random bit stream velocity: 5,5 us / bit. (8 bits produced in 44 us)
+;;  * Pseudo-random bits per second: 181.818,18 bps.
 ;;
 ;; Credits:
 ;;   * Original <XORshift+ algorithm published by George Marsaglia at 
