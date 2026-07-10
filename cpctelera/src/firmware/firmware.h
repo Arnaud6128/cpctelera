@@ -36,6 +36,7 @@ extern  u16 cpct_disableFirmware(void);
 extern void cpct_setInterruptHandler( void(*intHandler)(void) ) __z88dk_fastcall;
 extern  u16 cpct_removeInterruptHandler(void);
 extern void cpct_setInterruptHandler_naked( void(*intHandler)(void) ) __z88dk_fastcall;
+extern void cpct_setInterruptHandler_allRegisters( void(*intHandler)(void) ) __z88dk_fastcall;
 
 // Upper and Lower ROM control
 extern void cpct_enableLowerROM(void);
