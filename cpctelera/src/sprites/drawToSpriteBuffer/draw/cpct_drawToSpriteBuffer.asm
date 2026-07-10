@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2017 Bouche Arnaud
+;;  Copyright (C) 2026 Bouche Arnaud
 ;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -142,71 +142,55 @@
 ;;       AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    C-bindings   - 30 bytes
-;;    ASM-bindings - 24 bytes
+;;    C-bindings   - 158 bytes
+;;    ASM-bindings - 152 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
 ;;   Case      |   microSecs (us)   |     CPU Cycles
 ;;  -----------------------------------------------------
-;;   Any       |  24 + (12 + 6W)H   | 96 + (48 + 24W)H
+;;   Any       |   4 + 17H + 4WH    |  16 + 68H + 16WH
 ;;  -----------------------------------------------------
-;;   W=2,H=16  |         408        |        1632
-;;   W=4,H=32  |        1176        |        4704
-;;  -----------------------------------------------------
-;;  Asm saving |         -19        |        -76
+;;   W=2,H=16  |         404        |        1616
+;;   W=4,H=32  |        1060        |        4240
 ;;  -----------------------------------------------------
 ;; (end code)
 ;;  W = Sprite width in bytes
 ;;  H = Sprite height in bytes
-;;
-;; Credits:
-;;    Original routine was discussed and developed in CPCWiki by @Docent, 
-;;    @Xifos, @demoniak and @Arnaud. Thanks to all of them for their help and support,
-;;
-;;    http://www.cpcwiki.eu/forum/programming/help-for-speed-up-to-copy-sprite-array-to-another/
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
    ;; Calculate offset to be added to Destiny pointer (DE, BackBuffer Pointer)
    ;; After copying each sprite line, to point to the start of the next line
    sub c                         ;; [1] A = Back_Buffer_Width - Sprite Width
-   ld (offset_to_next_line), a   ;; [4] Modify the offset size inside the copy loop
-
-   ;; Set the sprite with inside the loop to be restored
-   ;; into BC (counter) previous to starting the copy of every line
-   ld  a, c                        ;; [1] A = Sprite Width
-   ld (sprite_width_restore), a    ;; [4] Set the sprite width inside the copy loop
+   ld (_offset_to_next_line), a  ;; [4] Modify the offset size inside the copy loop
+   
+   ;; Modify code using width to jump in drawSpriteWidth
+   ld    a, #126           ;; [2] We need to jump 126 bytes (63 LDIs*2 bytes) minus the width of the sprite * 2 (2B)
+   sub   c                 ;; [1]    to do as much LDIs as bytes the Sprite is wide
+   sub   c                 ;; [1]
+   ld (_jr_offset), a      ;; [4] Modify JR data to create the jump we need
 
    ;; A Holds the Height of the sprite to be used as counter for the
    ;; copy loop. There will be as many iterations as Height lines
-   ld  a, b       ;; [1] A = Sprite Height
-
-   ;; BC will hold either the offset from the end of one line to the
-   ;; start of the other, or the width of the sprite. None of them
-   ;; will be greater than 256, so B will always be 0.
-   ld  b, #00     ;; [2] Set B to 0 so as BC holds the value of C 
-      
+   ld  a, b                ;; [1] A = Sprite Height
+   
    ;; Perform the copy
-   copy_loop:
-      ;; Make BC = sprite width to use it as counter for LDIR,
-      ;; which will copy next sprite line
-      sprite_width_restore = .+1
-      ld   c, #00    ;; [2] BC = Sprite Width (B is always 0, and 00 is a placeholder that gets modified)
-
-      ;; Copy next sprite line to the sprite buffer
-      ldir           ;; [6*C-1] Copy one whole line of bytes from sprite to backbuffer
+copy_loop:
+_jr_offset = .+1
+   jr__0                   ;; [3] Self modifying instruction: the '00' will be substituted by the required jump forward. 
+                           ;; ... (Note: Writting JR 0 compiles but later it gives odd linking errors)
+.rept 63                   ;; [63*5] 63 LDIs, which are able to copy up to 63 bytes each time.
+   ldi                     ;;  | That means that each Sprite line should be 63 bytes width at most.
+.endm                      ;;  | The JR instruction at the start makes us ignore the LDIs we don't need 
+				           ;;  | (jumping over them) That ensures we will be doing only as much LDIs 
       
-      ;; Update the Destiny Pointer. DE must point to the place where the
-      ;; next sprite line will be copied. So we have to add Backbuffer Width - Sprite Width
-      ex  de, hl     ;; [1] HL holds temporarily the Destiny Pointer (points to backbuffer)
-                     ;;     Only for math purposes
-      offset_to_next_line = .+1
-      ld   c, #00    ;; [2] BC = Offset = Backbuffer Width - Sprite Width (00 is a placeholder that gets modified)
-      add hl, bc     ;; [3] Add the offset to the Destiny Pointer (BackBuffer Pointer)
-      ex  de, hl     ;; [1] Restore the Destiny Pointer to DE (and HL to what it was)
-      
-      dec  a         ;; [1]   One less iteration to complete Sprite Height
-   jr  nz, copy_loop ;; [2/3] Repeat copy_loop if A!=0 (Iterations pending)
-
-   ret               ;; [3] Return to the caller
+   dec  a                  ;; [1]   One less iteration to complete Sprite Height
+   ret  z                  ;; [2/3] Repeat copy_loop if A!=0 (Iterations pending)
+  
+_offset_to_next_line = .+1
+   ld   bc, #0000          ;; [3] BC = Offset = Backbuffer Width - Sprite Width (00 is a placeholder that gets modified)
+   ex   de, hl             ;; [1] HL holds temporarily the destination Pointer (points to backbuffer) only for math purposes
+   add  hl, bc             ;; [3] Add the offset to the Destiny Pointer (BackBuffer Pointer)
+   ex   de, hl             ;; [1] Restore the Destiny Pointer to DE (and HL to what it was)
+   jp   copy_loop          ;; [3] Continue copying
