@@ -25,7 +25,7 @@
 ;; its top-left byte and height.
 ;;
 ;; C Definition:
-;;    void <cpct_getBottomLeftPtr> (void* *memory*, <u16> *height*) __z88dk_callee;
+;;    void* <cpct_getBottomLeftPtr> (void* *memory*, <u16> *height*) __z88dk_callee;
 ;;
 ;; Input Parameters (3 bytes):
 ;;  (2B DE) memory - Video memory pointer to the top-left corner of a sprite
@@ -52,17 +52,18 @@
 ;;    AF', AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;     C-bindings - 40 bytes
+;;     C-bindings - 41 bytes
 ;;   ASM-bindings - 36 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
-;;  Case      |   microSecs (us)       |        CPU Cycles
+;;   Bindings |   Case    |   microSecs (us)  |   CPU Cycles
 ;; ----------------------------------------------------------------
-;;  Best      |          57            |     228
-;;  Worst     |          64            |        256
+;;      C     |   Best    |        47        |        188
+;;            |   Worst   |        56        |        224
 ;; ----------------------------------------------------------------
-;; Asm saving |         -13            |        -52
+;;     ASM    |   Best    |        44        |        176
+;;            |   Worst   |        51        |        204
 ;; ----------------------------------------------------------------
 ;; (end code)
 ;;
@@ -127,20 +128,5 @@ add   hl, de      ;; [3] HL = HL + DE = 0x50 * int(He1 / 8) + 0x800 * (He1 % 8)
 ex    af, af'     ;; [1] A = A'     (Restore saved memory 16K bank)
 xor    h          ;; [1] A ^= H     (XOR will make bits 14-15 = 0, ONLY IF both are equal in A and H)
 and   #0b11000000 ;; [2] A &= 0xC0  (Make 0 all bits except 14-15)
-ex    de, hl      ;; [1] DE = return value
-ret    z          ;; [2/4] If result is Zero, HL is at the same memory bank, then we return.
-   
-;; If Ret Z failed, it means that HL points to a different 16K memory bank than 
-;; the initial pointer we received into DE. Therefore, our calculations have made
-;; our address jump to the next bank. That means we need to correct. Correction 
-;; includes adding 0x50 (to jump one more 8-lines block ahead) and also jump
-;; 3 16K memory banks ahead to perform a full cycle around the 4 16K banks of memory.
-;; That will place our final pointer in the same memory bank as it started, but
-;; correctly advanced 1 more 8-lines character ahead
-ex    de, hl      ;; [1] DE <-> HL
-ld    bc, #0xC050 ;; [3] BC = 0xC000 + 0x50 (Size of 3 16K Banks + 0x50 for the 8-lines block)
-add   hl, bc      ;; [3] HL = HL + BC = HL + 0xC000 + 0x50
-ex    de, hl      ;; [1] DE = return value
-ret               ;; [3] Final address is ready, return.
 
-
+;; End of function in C/ASM bindings
