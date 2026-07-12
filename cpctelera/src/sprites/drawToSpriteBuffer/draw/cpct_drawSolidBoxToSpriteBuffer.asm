@@ -30,12 +30,11 @@
 ;;    void <cpct_drawSolidBoxToSpriteBuffer> (<u16> *buffer_width*, void* *inbuffer_ptr*, 
 ;;                                            <u8> *width*, <u8> *height*, u16* *colour*) __z88dk_callee;
 ;;
-;; Input Parameters (7 bytes):
-;;    (1B B)  buffer_width - Width in bytes of the Sprite used as Buffer (>0, >=width)
+;; Input Parameters (6 bytes):
+;;    (1B A)  buffer_width - Width in bytes of the Sprite used as Buffer (>0, >=width)
 ;;    (2B DE) inbuffer_ptr - Destination pointer (pointing inside sprite buffer)
 ;;    (1B C)  width        - Sprite Width in bytes (>0)
-;;    (1B A)  height       - Sprite Height in bytes (>0)
-;;    (1B H)  not used     - 0
+;;    (1B B)  height       - Sprite Height in bytes (>0)
 ;;    (1B L)  colour       - 1-byte colour pattern (in screen pixel format) to fill the box with
 ;;
 ;; Assembly Call (Input parameters on Registers)
