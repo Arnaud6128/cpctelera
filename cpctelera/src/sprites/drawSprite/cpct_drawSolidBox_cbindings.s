@@ -24,7 +24,7 @@
 ;;
 ;; C bindings for <cpct_drawSolidBox>
 ;;
-;;   16 us, 5 bytes
+;;   11 us, 4 bytes
 ;;
 _cpct_drawSolidBox::
    ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8) bits), with __sdcccall(1) convention
