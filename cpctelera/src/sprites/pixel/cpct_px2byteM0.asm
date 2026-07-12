@@ -30,7 +30,7 @@
 ;;    (1B H) px0 - Firmware colour value for left  pixel (pixel 0) [0-15]
 ;;    (1B L) px1 - Firmware colour value for right pixel (pixel 1) [0-15]
 ;;
-;; Returns:
+;; Return value (Assembly calls, return in A):
 ;;    u8 - byte with *px0* and *px1* colour information in screen pixel format.
 ;;
 ;; Assembly call:
@@ -54,8 +54,8 @@
 ;;  Screen         => [...[pixelX ][ pixelY ]...] (2 pixels, consecutive)
 ;;  ======================================================================
 ;;  Video Memory   => [...[ X Y X Y X Y X Y ]...] (1  byte, 8 bits)
-;;  Pixel X (3210) => [...[ 0 · 2 · 1 · 3 · ]...] (4  bits)
-;;  Pixel Y (dcba) => [...[ · a · c · b · d ]...] (4  bits)
+;;  Pixel X (3210) => [...[ 0 Â· 2 Â· 1 Â· 3 Â· ]...] (4  bits)
+;;  Pixel Y (dcba) => [...[ Â· a Â· c Â· b Â· d ]...] (4  bits)
 ;;  ----------------------------------------------------------------------
 ;;        Scheme 1. Screen pixel format and video memory
 ;; (end)
@@ -68,8 +68,8 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;     C-bindings  - 28 bytes 
-;;   ASM-bindings -  26 bytes 
+;;     C-bindings  - 27 bytes 
+;;   ASM-bindings -  25 bytes 
 ;;    dc_mode0_ct - +16 bytes Color conversion table
 ;;
 ;;   Note - Colour conversion table is shared with <cpct_drawCharM0>. If you use both
@@ -79,9 +79,9 @@
 ;; (start code)
 ;; Case       | microSecs (us) |  CPU Cycles
 ;; ------------------------------------------
-;; Any        |      39        |     156
+;; Any        |      31        |     124
 ;; ------------------------------------------
-;; ASM-saving |      -9        |     -36
+;; ASM-saving |      -2        |     -8
 ;; ------------------------------------------
 ;; (end code)
 ;;    NC=Number of colours to convert
