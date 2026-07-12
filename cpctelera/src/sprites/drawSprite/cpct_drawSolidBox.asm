@@ -31,8 +31,7 @@
 ;;
 ;; Input Parameters (5 bytes):
 ;;  (2B DE) memory         - Video memory pointer to the upper left box corner byte
-;;  (1B H)  not used       - 0
-;;  (1B L)  colour_pattern - 1-byte colour pattern (in screen pixel format) to fill the box with
+;;  (1B A ) colour_pattern - 1-byte colour pattern (in screen pixel format) to fill the box with
 ;;  (1B C ) width          - Box width *in bytes* [1-64] (Beware! *not* in pixels!)
 ;;  (1B B ) height         - Box height in bytes (>0)
 ;;
@@ -91,22 +90,22 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    C-bindings - 167 bytes
+;;    C-bindings - 166 bytes
 ;;  ASM-bindings - 163 bytes
 ;;
 ;; Time Measures:
 ;; (start code)
 ;;  Case      |      microSecs (us)      |      CPU Cycles
 ;; ---------------------------------------------------------------------
-;;  Best      |  18 + (17 + 4W)H + 11HH  | 72 + (68 + 16W)H  + 44HH
+;;  Best      |  14 + (17 + 4W)H + 11HH  | 56 + (68 + 16W)H  + 44HH
 ;;  Worst     |         Best + 11        |      Best + 44
 ;; ---------------------------------------------------------------------
-;;  W=2,H=8   |         218 /  229       |      872 /  916
-;;  W=2,H=16  |         429 /  440       |     1716 / 1760
-;;  W=4,H=16  |         557 /  568       |     2228 / 2272
-;;  W=4,H=32  |        1107 / 1118       |     4428 / 4472
+;;  W=2,H=8   |         214 /  225       |      856 /  900
+;;  W=2,H=16  |         425 /  436       |     1700 / 1744
+;;  W=4,H=16  |         553 /  564       |     2212 / 2256
+;;  W=4,H=32  |        1103 / 1114       |     4412 / 4456
 ;; ---------------------------------------------------------------------
-;; Asm saving |         -15              |        -60
+;; Asm saving |         -10              |        -40
 ;; ---------------------------------------------------------------------
 ;; (end code)
 ;;    W = *width* in bytes, H = *height* in bytes, HH = [(H-1)/8]
