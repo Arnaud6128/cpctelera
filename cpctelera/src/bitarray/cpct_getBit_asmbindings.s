@@ -20,13 +20,9 @@
 ;;
 ;; ASM bindings for <cpct_getBit>
 ;;
-;;  4/6 microSecs, 3 bytes
+;;  0 microSecs, 0 bytes
 ;;
 cpct_getBit_asm::
 
 .include /cpct_getBit.asm/
  
-   ;; After testing the target bit, return true or false
-   ret   nz       ;; [2/4] Return A>0 and Flag Z=0 (NZ) when bit was Non-Zero.
-   xor   a        ;; [1] A = 0
-   ret            ;; [3] Return A=0 and Flag Z=1 (Z) otherwise
