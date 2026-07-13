@@ -21,7 +21,7 @@
 ;;
 ;; C-bindings for calling function <cpct_getBit>
 ;;
-;;  12 microSecs, 3 bytes
+;;  1 microSec, 1 byte
 ;;
 _cpct_getBit::
    ;; Get parameters from HL and DE registers (16 + 16 bits), with __sdcccall(1) convention
@@ -32,8 +32,3 @@ _cpct_getBit::
    ;; HL = Index of the bit we want to get
 
 .include /cpct_getBit.asm/
-
-   ;; After testing the target bit, return true or false
-   ret   nz       ;; [2/4] Return !0 only if bit test was Non-Zero
-   xor   a        ;; [1] A = 0
-   ret            ;; [3] Return 0 otherwise
