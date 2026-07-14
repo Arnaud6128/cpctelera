@@ -17,6 +17,12 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_bitarray
 
+;;
+;; ASM bindings for <cpct_getBit>
+;;
+;;  0 microSecs, 0 bytes
+;;
 cpct_getBit_asm::
 
 .include /cpct_getBit.asm/
+ 

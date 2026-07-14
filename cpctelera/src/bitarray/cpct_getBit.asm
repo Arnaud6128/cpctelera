@@ -47,7 +47,7 @@
 ;;
 ;; Return value:
 ;;    u8 - Status of the selected bit: *false* (0) when the bit value is 0, 
-;; *true* (> 0) when the bit value is 1. Take into account that >0 means any
+;; *true* (>0) when the bit value is 1. Take into account that >0 means any
 ;; value different than 0, and not necessarily 1.
 ;;
 ;; Assembly return values:
@@ -55,7 +55,8 @@
 ;;    Flag Z - Value of bit. (Z) bit=0, (NZ) bit=1
 ;;
 ;; Known limitations:
-;;    * Maximum of 65536 bits, 8192 bytes per *array*.      
+;;    * Maximum of 65536 bits, 8192 bytes per *array*.
+;;    * This function *will not work from ROM*, as it uses self-modifying code.
 ;;
 ;; Details:
 ;;    Returns 0 or >0 depending on the value of the bit at the given 
@@ -68,7 +69,7 @@
 ;;    AF, HL
 ;;
 ;; Required memory:
-;;      C-bindings - 34 bytes
+;;      C-bindings - 30 bytes
 ;;    ASM-bindings - 29 bytes
 ;;
 ;; Time Measures:
@@ -77,13 +78,13 @@
 ;; --------------------------------------
 ;;             C - bindings
 ;; --------------------------------------
-;;  Bit = 1   |      46       |   184
-;;  Bit = 0   |      49       |   196
+;;  Bit = 1   |      34       |   136
+;;  Bit = 0   |      36       |   144
 ;; --------------------------------------
 ;;           ASM - bindings
 ;; --------------------------------------
-;;  Bit = 1   |      33       |   162
-;;  Bit = 0   |      35       |   170
+;;  Bit = 1   |      33       |   132
+;;  Bit = 0   |      35       |   140
 ;; --------------------------------------
 ;; (end)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -125,4 +126,7 @@
 bit_instr=.+1
    bit   0, (hl)  ;; [2] Test the required bit (This instruction is automodified)
    
-   ;; Different returns after bit-testing, depending on C or ASM bindings
+   ;; After testing the target bit, return true or false
+   ret   nz       ;; [2/4] Return !0 and Flag Z=0 (NZ) only if tested bit was Non-Zero
+   xor   a        ;; [1] A = 0
+   ret            ;; [3] Return A=0 and Flag Z=1 (Z) otherwise
