@@ -153,3 +153,6 @@ release:
 clean:
 	rm -f $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ) $(Z80_MASTER_OBJ)
 
+cleanall:
+	rm -f $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ) $(Z80_MASTER_OBJ)
+
