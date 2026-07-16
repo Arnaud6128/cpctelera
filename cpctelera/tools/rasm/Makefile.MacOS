@@ -79,3 +79,6 @@ install:
 
 clean:
 	rm -f $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ) apultra-master/src/apultra.o lzsa-master/src/shrink_streaming.o lzsa-master/src/expand_streaming.o z80-master/z80.o 
+
+cleanall:
+	rm -f $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ) apultra-master/src/apultra.o lzsa-master/src/shrink_streaming.o lzsa-master/src/expand_streaming.o z80-master/z80.o 

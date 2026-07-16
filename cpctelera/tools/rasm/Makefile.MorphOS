@@ -54,6 +54,9 @@ all: $(EXEC)
 clean:
 	@rm $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ) rasm.o
 
+cleanall:
+	@rm $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ) rasm.o
+
 #
 $(EXEC): rasm.o $(APU_OBJ) $(LZSA_OBJ) $(SALVADOR_OBJ)
 	@echo "Linking $@..."
