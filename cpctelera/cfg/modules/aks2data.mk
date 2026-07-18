@@ -132,11 +132,17 @@ $(_OBJS): $(1) $(A2D_DEPEND)
 		$(CPCTAKS2C) $(A2D_GEN) $(A2D_COMPILE) $(A2D_SFX) $(A2D_EXTRAPAR) -od "$(A2D_OUTFOLD)" -id "$(2)" -player "$(A2D_PLAYER)"  "$(1)")
 
 # Variables that need to be updated to keep up with generated files and erase them on clean
+	$(eval _F := $(filter %.c,$(_OBJS)))
+	$(if $(_F),$(eval IMGCFILES := $(_F) $(IMGCFILES)))
 	$(eval _F := $(filter %.s,$(_OBJS)))
 	$(if $(_F),$(eval IMGASMFILES := $(_F) $(IMGASMFILES)))
 	$(eval _F := $(filter %.bin,$(_OBJS)))
 	$(if $(_F),$(eval IMGBINFILES := $(_F) $(IMGBINFILES)))
 	$(eval OBJS2CLEAN  := $(_OBJS) $(OBJS2CLEAN))
+	$(eval _F := $(_OBJS:.c=.h))
+	$(eval _F := $(_F:.s=.h))
+	$(eval _F := $(filter %.h,$(_F)))
+	$(if $(_F),$(eval OBJS2CLEAN := $(_F) $(OBJS2CLEAN)))
 	$(eval PREBUILDOBJS := $(PREBUILDOBJS) $(_OBJS))
 endef
 
