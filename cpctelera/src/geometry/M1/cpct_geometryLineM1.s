@@ -17,46 +17,8 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
-.macro ld__ixh_b
-   .dw #0x60DD  ;; Opcode for ld ixh, b
-.endm
-
-.macro ld__ixl_c
-   .dw #0x69DD  ;; Opcode for ld ixl, c
-.endm
-
-.macro ld__b_ixh
-   .dw #0x44DD  ;; Opcode for ld b, ixh
-.endm
-
-.macro ld__c_ixl
-   .dw #0x4DDD  ;; Opcode for ld c, ixl
-.endm
-
-.macro ld__d_ixh
-   .dw #0x54DD  ;; Opcode for ld d, ixh
-.endm
-
-.macro ld__e_ixl
-   .dw #0x5DDD  ;; Opcode for ld e, ixl
-.endm
-
-.macro ld__b_iyh
-   .dw #0x44FD  ;; Opcode for ld b, iyh
-.endm
-
-.macro ld__c_iyl
-   .dw #0x4DFD  ;; Opcode for ld c, iyl
-.endm
-
-.macro ld__a_ixl
-   .dw #0x7DDD  ;; Opcode for ld a, ixl
-.endm
-
-.macro ld__ixl_a
-   .dw #0x6FDD  ;; Opcode for ld ixl, a
-.endm
-
+;; Macros for easy use of undocumented opcodes
+.include "macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
 ;; ASM / C bindings for <cpct_geometryLineM1>

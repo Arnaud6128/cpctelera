@@ -82,19 +82,19 @@
     
     ;; 1. Parameter retrieval and stack adjustment
     ex    de, hl          ;; [1] HL = X0 coordinate, DE = Screen base
-	ld   (x0), hl         ;; [5] Save X0
-	
+    ld   (x0), hl         ;; [5] Save X0
+    
     pop   de              ;; [3] DE = Y0
-	ld    a, e            ;; [2] A = E = Y0
-	
-	ex    de, hl          ;; [1] DE = X0 / HL = Y0   
+    ld    a, e            ;; [2] A = E = Y0
+    
+    ex    de, hl          ;; [1] DE = X0 / HL = Y0   
     pop   hl              ;; [3] HL = X1
     ld   (x1), hl         ;; [5] Save X1
-	
+    
     sbc   hl, de          ;; [3] HL = DX = X1 - X0 
     ld    e, a            ;; [1] E = A = Y0
-	
-	pop   bc              ;; [3] B = Color / C = Y1
+    
+    pop   bc              ;; [3] B = Color / C = Y1
     ld    a, b            ;; [1] Save Color
     ld   (color_pen), a   ;; [4] |
 
@@ -103,7 +103,7 @@ compute_dx:
     bit   7, h            ;; [2] If DX > 0 then
     jr    z, compute_dy   ;; [2/3] | Jump compute_dy
     
-	ld    iy, #-1         ;; [4] SX = -1
+    ld    iy, #-1         ;; [4] SX = -1
     xor   a               ;; [1] HL = -DX
     sub   l               ;; [1] |
     ld    l, a            ;; [1] |
@@ -118,7 +118,7 @@ compute_dy:
     ld    a, c            ;; [1] A = C = Y1
     ld   (y1), a          ;; [4] Save Y1
     sub   e               ;; [1] A (DY) = A (Y1) - E (Y0) 
-	
+    
 compute_sy:    
     ld    bc, #1          ;; [3] B = SY = 1
     bit   7, a            ;; [2] If DY > 0 then    
@@ -188,18 +188,18 @@ prev_y=.+1
 
 test_x_coord:
 screen_ptr=.+1
-    ld  hl, #0000            ;; [3]  HL = current screen pointer
+    ld    hl, #0000          ;; [3]  HL = current screen pointer
 
 prev_x=.+1    
     ld    a, #0x00           ;; [2]   Test if x coordinates changed
     cp    c                  ;; [1]   |
     jr    z, plot_pixel      ;: [2/3] | If no change plot pixel
-    
-	ld    a, c               ;; [1]   Update previous x value
+	
+    ld    a, c               ;; [1]   Update previous x value
     ld   (prev_x), a         ;; [4]   |
     
-	jr    nc,  move_left     ;; [2/3] IF value inferior THEN go move left
-move_right:  	
+    jr    nc,  move_left     ;; [2/3] IF value inferior THEN go move left
+move_right:      
     inc   hl                 ;; [2]   Increment video memory
     jp    save_screen_ptr    ;; [3]   Go to save screen pointer
     
@@ -217,7 +217,7 @@ screen_start=.+1
     ld    de, #0000          ;; [3]  Load video memory start
 
     ;; 4. Calculate VRAM pointer (DE=Base, B=Y, C=X_byte)
-	;: Copy of cpct_getScreenPtr_asm see cpct_getScreenPtr for more informations
+    ;: Copy of cpct_getScreenPtr_asm see cpct_getScreenPtr for more informations
     ld    a, b               ;; [1] rA = Y-Coordinate
     and   #0x07              ;; [2] /
     ld    h, a               ;; [1] \ rH = Y % 8      
@@ -242,7 +242,7 @@ screen_start=.+1
 
     ;; Add up screen start address we still keep in DE
     add   hl, de             ;; [3] rHL' = rHL + screen_start
-	
+    
 save_screen_ptr:
     ld   (screen_ptr), hl    ;; [5]  Save current screen pointer
 
@@ -253,10 +253,10 @@ plot_pixel:
     ld    a, (hl)            ;; [2]  A = Current screen byte from VRAM
     push  hl                 ;; [4]  Save screen byte pointer
     
-    ld    hl, #cpct_plotMasksTable_M1 ;; [3]
-    ld    e, c               ;; [1]
-    ld    d, #00             ;; [2]
-    add   hl, de             ;; [3]
+    ld    hl, #cpct_plotMasksTable_M1 ;; [3]  HL = Base address of mask table
+    ld    e, c               ;; [1] HL = &mask_table[offset]
+    ld    d, #00             ;; [2] |
+    add   hl, de             ;; [3] |
     and   (hl)               ;; [2] Combine AND mask directly from table!
     ld    e, a               ;; [1] E = Preserved background pixels
     
@@ -281,7 +281,7 @@ err_2_compute:
     ld    h, b              ;; [1] DE = e2 = 2 * err
     ld    l, c              ;; [1] |
     add   hl, hl            ;; [3] |
-	ex    de, hl            ;; [1] | DE = E2
+    ex    de, hl            ;; [1] | DE = E2
 
 x_move:
 dy=.+1
@@ -292,17 +292,17 @@ dy=.+1
     xor   #0x80             ;; [2] |
     ld    h, a              ;; [1] |
     
-	ld    b, d              ;; [1] B = D to keep
+    ld    b, d              ;; [1] B = D to keep
     ld    a, d              ;; [1] Flip sign bit of D to shift range to unsigned        
-    xor   #0x80             ;; [2] |	
+    xor   #0x80             ;; [2] |    
     ld    d, a              ;; [1] |
 
     or    a                 ;; [1] Clear Carry flag
     sbc   hl, de            ;; [3] Subtract DE from HL for comparison
-	add   hl, de            ;; [3] Add DE to HL for restore value
+    add   hl, de            ;; [3] Add DE to HL for restore value
     
     pop   iy                ;; [4] Restore IY = X0
-	jr    c, y_move         ;; [2/3] IF (e2  < -dy) THEN y_move
+    jr    c, y_move         ;; [2/3] IF (e2  < -dy) THEN y_move
     jr    z, y_move         ;; [2/3] IF (e2 == -dy) THEN y_move
         
     ld    d, b              ;; [1] D = B to get
@@ -317,9 +317,9 @@ sx=.+1
 y_move::
 dx=.+1
     ld    de, #0000         ;; [3] BC = DE = DX
-	ld    b, d              ;; [1] |
+    ld    b, d              ;; [1] |
     ld    c, e              ;; [1] |
-	
+    
     ld    a, d              ;; [1] Flip sign bit of H to shift range to unsigned        
     xor   #0x80             ;; [2] |
     ld    d, a              ;; [1] |
@@ -328,7 +328,7 @@ dx=.+1
     sbc   hl, de            ;; [3] IF (E2 (HL) >= DX (DE))
     pop   hl                ;; [3] Restore HL = Y0   
     jp    p, last_pixel     ;; [2/3] IF (e2 >= dx) then test last pixel
-    	
+        
     ;; ERR += DX
     add  ix, bc             ;; [4] IX (ERR) = IX (ERR) + BC (DX)
 
