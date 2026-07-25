@@ -22,6 +22,7 @@ _**What's new ?**_
    - SpriteBuffer new functions
    - Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
    - Disc sector read and write with automatic file data import at specific location
+   - Geometric functions
 
 _**CPCtelera**_ is an integrated development framework for creating _**Amstrad CPC**_ games and content which includes:
  * A low-level library with support for: graphics, audio, keyboard, firmware, strings, video hardware manipulation and memory management.
