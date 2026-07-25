@@ -21,7 +21,7 @@
 ;;
 ;; C bindings for <cpct_getScreenPtr>
 ;;
-;;   17 microSecs, 7 bytes
+;;   16 microSecs, 7 bytes
 ;;
 _cpct_getScreenPtr::
     ;; Get parameters from HL registers and stack (16 + (8 + 8) bits), with __sdcccall(1) convention   
