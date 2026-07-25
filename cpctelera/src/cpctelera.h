@@ -36,5 +36,6 @@
 #include <loaders/loaders.h>
 #include <files/files.h>
 #include <cpcplus_asic/cpcplus.h>
+#include <geometry/geometry.h>
 
 #endif
