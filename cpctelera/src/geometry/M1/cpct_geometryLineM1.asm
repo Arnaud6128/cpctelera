@@ -79,8 +79,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ld   (screen_start), hl  ;; [5] Save screen start address
-    
-    ;; 1. Parameter retrieval and stack adjustment
+
+    ;; Parameter retrieval and stack adjustment
     ex    de, hl          ;; [1] HL = X0 coordinate, DE = Screen base
     ld   (x0), hl         ;; [5] Save X0
     
@@ -148,107 +148,137 @@ compute_err:
     ld__ixh_b            ;; [2] IX = BC = ERR
     ld__ixl_c            ;; [2] |
 
-    ld    a, #0xFF       ;; [2] Init previous position placeholder
-    ld   (prev_x), a     ;; [4] |
-    ld   (prev_y), a     ;; [4] |
-
 x0=.+1
     ld   hl, #0000       ;; [3] HL = X0
+
+compute_start_vmem:
+     push hl              ;; [4] Save HL = X0
+
+    ;; Convert X-pixels to X-bytes (HL = X / 4)
+    srl   h               ;; [2] Shift X coordinate right
+    rr    l               ;; [2] Rotate right through carry
+    srl   h               ;; [2] Shift X coordinate right second time
+    rr    l               ;; [2] L now contains X_byte coordinate (0-79)
+
+    ld    c, l           ;; [1] C = L = X_byte
+    ld    a, c           ;; [1] Save first X_byte position 
+    ld   (prev_x), a     ;; [4] |
+	
+    ld    a, e           ;; [1] Save first Y position
+    ld   (prev_y), a     ;; [4] |
+
+    ;; Calculate VRAM pointer (DE=Base, B=Y, C=X_byte)
+    ;: Copy of cpct_getScreenPtr_asm see cpct_getScreenPtr for more informations
+    ld    a, e           ;; [1] rA = Y-Coordinate
+    and   #0x07          ;; [2] /
+    ld    h, a           ;; [1] \ rH = Y % 8      
+              
+    ;; Now extract Screen Character Row (R) from Y-Coordinate
+    ld    a, e           ;; [1] rA = Y-Coordinate
+    and   #0xF8          ;; [2] /
+    ld    l, a           ;; [1] \ rL = 8*int(Y/8)                                           
+    rrca                 ;; [1] / rA' = rA / 4 = 2*int(Y/8)
+    rrca                 ;; [1] \ 
+    add   a, l           ;; [1] / rL = rL + rA' = 8*int(Y/8) + 2*int(Y/8) = 10*int(Y/8)
+    ld    l, a           ;; [1] \ 
+
+    ;; Now rHL = 256*L + 10*R
+    add   hl, hl         ;; [3] / rHL' = 8*rHL
+    add   hl, hl         ;; [3] | rHL' = 2048*L + 80*R
+    add   hl, hl         ;; [3] \ 
+
+    ;; Add up X coordinate
+    ld    b, #00         ;; [2] / As rC = X-Coordinate, having rB=0 makes rBC = X-Coordinate
+    add   hl, bc         ;; [3] \ rHL' = rHL + X 
     
-loop_line_pixel:   
+     ;; Add up screen start address we still keep in DE
+screen_start=.+1
+    ld    bc, #0000      ;; [3] Load video memory start    
+    add   hl, bc         ;; [3] rHL' = rHL + screen_start
+    
+    ld  (screen_ptr), hl ;; [5] Save start video address
+    pop hl               ;; [4] Restore HL = X0
+
+loop_line_pixel::
     push  de             ;; [4] Save DE = Y0
     push  hl             ;; [4] Save HL = X0
 
 color_pen=.+1    
-    ld    b, #00         ;; [2] B = COLOR    
+    ld    d, #00         ;; [2] D = COLOR    
 
     ;; 1. Extract pixel index (x & 3)
-    ld    a, l            ;; [1]  A = X coordinate low byte
-    and   #3              ;; [2]  Isolate lower 2 bits
-
+    ld    a, l            ;; [1] A = X coordinate low byte 
+    and   #3              ;; [2] Isolate lower 2 bits
+    
     ;; 2. Convert X-pixels to X-bytes (HL = X / 4)
     srl   h               ;; [2]  Shift X coordinate right
     rr    l               ;; [2]  Rotate right through carry
     srl   h               ;; [2]  Shift X coordinate right second time
     rr    l               ;; [2]  L now contains X_byte coordinate (0-79)
 
-    ld    h, e            ;; [1]  H = E = Y coordinate
-    ld    c, a            ;; [1]  C = A = Pixel offset (0-3)
-    push  bc              ;; [4]  Save Color (B) and pixel offset (C) to stack
-
-    ;; 3. Set registers get screen ptr
-    ld    b, h            ;; [1]  B = H = Y coordinate
-    ld    c, l            ;; [1]  C = L = X_byte coordinate
-
-test_y_coord:
-prev_y=.+1
-    ld    a, #0x00           ;; [2]   Test if y coordinates changed
-    cp    b                  ;; [1]   |
-    jr    nz, get_screen_ptr ;; [2/3] | If change compute new ccordinates
-
-test_x_coord:
+    ld    c, l            ;; [1] C = L = X_byte coordinate
+    ld    b, e            ;; [1] B = E = Y coordinate
+    ld    e, a            ;; [1] E = A = Pixel offset (0-3)
+    
 screen_ptr=.+1
     ld    hl, #0000          ;; [3]  HL = current screen pointer
 
+test_x_coord::
 prev_x=.+1    
     ld    a, #0x00           ;; [2]   Test if x coordinates changed
     cp    c                  ;; [1]   |
-    jr    z, plot_pixel      ;: [2/3] | If no change plot pixel
-	
-    ld    a, c               ;; [1]   Update previous x value
-    ld   (prev_x), a         ;; [4]   |
+    jr    z, test_y_coord    ;: [2/3] | IF no change THEN jump to test Y
     
-    jr    nc,  move_left     ;; [2/3] IF value inferior THEN go move left
+    ld    a, c               ;; [1] Update previous x value
+    ld   (prev_x), a         ;; [4] |
+    
+    jr    nc,  move_left     ;; [2/3] IF value inferior THEN jump move left
 move_right:      
-    inc   hl                 ;; [2]   Increment video memory
-    jp    save_screen_ptr    ;; [3]   Go to save screen pointer
+    inc   hl                 ;; [2] Increment video memory
+    jp    test_y_coord       ;; [3] Jump to test Y
     
 move_left:    
     dec   hl                 ;; [2]   Decrement video memory
-    jp    save_screen_ptr    ;; [3]   Go to save screen pointer
 
-get_screen_ptr:
-    ld    a, c               ;; [1]  Save x coordinates
-    ld   (prev_x), a         ;; [4]  |
-    ld    a, b               ;; [1]  Save y coordinates
-    ld   (prev_y), a         ;; [4]  |
+test_y_coord::
+prev_y=.+1
+    ld    a, #0x00           ;; [2]   Test if y coordinates changed
+    cp    b                  ;; [1]   |
+    jr    z, save_screen_ptr ;; [2/3] | If no change save
+    
+    ld    a, b               ;; [1]   Save y coordinates
+    ld   (prev_y), a         ;; [4]   |
+    jr    nc,  move_up       ;; [2/3] IF y inferior THEN go move up
 
-screen_start=.+1
-    ld    de, #0000          ;; [3]  Load video memory start
+move_down:
+   ld     bc, #0x0800         ;; [3] Compute next scanline 
+   add    hl, bc              ;; [3] | HL += 0x0800
+   ld     a, h                ;; [1] Check 8-line boundary crossing          
+   and    #0x38               ;; [2] |
+   jr     nz, save_screen_ptr ;; [2/3] Jump if not inside 8-line block
+   ld     bc, #0xC050         ;; [3] Next character row boundary correction
+   add    hl, bc              ;; [3] | HL += 0xC050
+   jp     save_screen_ptr     ;; [3] Continue
 
-    ;; 4. Calculate VRAM pointer (DE=Base, B=Y, C=X_byte)
-    ;: Copy of cpct_getScreenPtr_asm see cpct_getScreenPtr for more informations
-    ld    a, b               ;; [1] rA = Y-Coordinate
-    and   #0x07              ;; [2] /
-    ld    h, a               ;; [1] \ rH = Y % 8      
-              
-    ;; Now extract Screen Character Row (R) from Y-Coordinate
-    ld    a, b               ;; [1] rA = Y-Coordinate
-    and   #0xF8              ;; [2] /
-    ld    l, a               ;; [1] \ rL = 8*int(Y/8)                                           
-    rrca                     ;; [1] / rA' = rA / 4 = 2*int(Y/8)
-    rrca                     ;; [1] \ 
-    add   a, l               ;; [1] / rL = rL + rA' = 8*int(Y/8) + 2*int(Y/8) = 10*int(Y/8)
-    ld    l, a               ;; [1] \ 
+move_up:
+   ld     a, h                ;; [1] Read current high byte of address           
+   and    #0x38               ;; [2] Check if currently on line 0 of 8-line block
+   jr     z, move_up_row      ;; [2/3] If line 0, cross boundary to previous character row
+   ld     bc, #0xF800         ;; [3] Move to previous scanline 
+   add    hl, bc              ;; [3] | HL += (-0x0800 / 0xF800)
+   jp     save_screen_ptr     ;; [3] Continue
 
-   ;; Now rHL = 256*L + 10*R
-    add   hl, hl             ;; [3] / rHL' = 8*rHL
-    add   hl, hl             ;; [3] | rHL' = 2048*L + 80*R
-    add   hl, hl             ;; [3] \ 
-
-   ;; Add up X coordinate
-    ld    b, #00             ;; [2] / As rC = X-Coordinate, having rB=0 makes rBC = X-Coordinate
-    add   hl, bc             ;; [3] \ rHL' = rHL + X 
-
-    ;; Add up screen start address we still keep in DE
-    add   hl, de             ;; [3] rHL' = rHL + screen_start
+move_up_row: 
+   ld     bc, #0x37B0         ;; [3] Jump to line 7 of previous character row
+   add    hl, bc              ;; [3] | HL += (-0xC050 / #0x37B0)
     
 save_screen_ptr:
-    ld   (screen_ptr), hl    ;; [5]  Save current screen pointer
+    ld   (screen_ptr), hl     ;; [5]  Save current screen pointer
 
 plot_pixel:    
-    ;; 5. Restore pixel context
-    pop   bc                 ;; [3]  B = Color, C = Pixel index (0-3)
+    ;; Restore pixel context
+    ld   b, d                 ;; [1] B = D = Color
+    ld   c, e                 ;; [1] C = E = Pixel index (0-3)
 
     ld    a, (hl)            ;; [2]  A = Current screen byte from VRAM
     push  hl                 ;; [4]  Save screen byte pointer
