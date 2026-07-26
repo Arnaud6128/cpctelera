@@ -62,18 +62,18 @@
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    336 bytes (310 bytes core routine + 26 bytes binding wrapper)
+;;    342 bytes (316 bytes core routine + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Setup Overhead (routine + binding)       | -      | 63             | 252
-;;    Single Point  (50,50) to (50,50)         | 1      | 115            | 460
-;;    Horizontal    (0,0)   to (100,0)         | 101    | 3598           | 14392
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | 4216           | 16862
-;;    Vertical      (0,0)   to (0,100)         | 101    | 5366           | 21462
-;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 5997           | 23986
+;;    Setup Overhead (routine + binding)       | -      | 61             | 244
+;;    Single Point  (50,50) to (50,50)         | 1      | 113            | 452
+;;    Horizontal    (0,0)   to (100,0)         | 101    | 3550           | 14200
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | 4150           | 16600
+;;    Vertical      (0,0)   to (0,100)         | 101    | 5280           | 21120
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 5900           | 23600
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
