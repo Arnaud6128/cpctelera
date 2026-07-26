@@ -89,7 +89,6 @@
     
     ex    de, hl          ;; [1] DE = X0 / HL = Y0   
     pop   hl              ;; [3] HL = X1
-    ld   (x1), hl         ;; [5] Save X1
     
     sbc   hl, de          ;; [3] HL = DX = X1 - X0 
     ld    e, a            ;; [1] E = A = Y0
@@ -109,14 +108,13 @@ compute_dx:
     ld    l, a            ;; [1] |
     sbc   a, a            ;; [1] |
     sub   h               ;; [1] |
-    ld    h, a            ;; [1] |   
+    ld    h, a            ;; [1] |
     
 compute_dy:
     ld   (dx), hl         ;; [4] Save DX
     ld   (sx), iy         ;; [5] Save SX
     
     ld    a, c            ;; [1] A = C = Y1
-    ld   (y1), a          ;; [4] Save Y1
     sub   e               ;; [1] A (DY) = A (Y1) - E (Y0) 
     
 compute_sy:    
@@ -129,8 +127,27 @@ compute_sy:
 compute_err:
     ld   (sy), bc         ;; [4] Save SY
     ld    b, #00          ;; [2] BC = A = DY
-    ld    c, a            ;; [1] | 
-    
+    ld    c, a            ;; [1] |
+
+;; Nb pixels = max(DX, DY) + 1
+
+compute_pixels:    
+    push hl               ;; [4] Save HL (DX) in stack
+    or    a               ;; [1] Clear carry flag
+    sbc   hl, bc          ;; [3] Compare DX and DY (HL = DX - DY)
+	add   hl, bc          ;; [3] Restore HL = DX
+    jr    nc, dx_is_max   ;; [2/3] IF (DX >= DY) THEN DX is max
+
+dy_is_max:
+    ld    h, b            ;; [1] HL = BC = DY
+    ld    l, c            ;; [1] |
+
+dx_is_max:
+    inc   hl              ;; [2] HL = max(DX, DY) + 1 (Total pixels)
+    ld   (pixel_num), hl  ;; [5] Store initial pixel counter
+	pop   hl              ;; [4] Restore HL (DX) from stack
+	
+	;; DY = -DY
     xor   a               ;; [1] BC = -DY
     sub   c               ;; [1] |
     ld    c, a            ;; [1] |
@@ -191,7 +208,7 @@ compute_start_vmem:
     ld    b, #00         ;; [2] / As rC = X-Coordinate, having rB=0 makes rBC = X-Coordinate
     add   hl, bc         ;; [3] \ rHL' = rHL + X 
     
-     ;; Add up screen start address we still keep in DE
+     ;; Add up screen start address
 screen_start=.+1
     ld    bc, #0000      ;; [3] Load video memory start    
     add   hl, bc         ;; [3] rHL' = rHL + screen_start
@@ -207,48 +224,48 @@ color_pen=.+1
     ld    d, #00         ;; [2] D = COLOR    
 
     ;; 1. Extract pixel index (x & 3)
-    ld    a, l            ;; [1] A = X coordinate low byte 
-    and   #3              ;; [2] Isolate lower 2 bits
+    ld    a, l           ;; [1] A = X coordinate low byte 
+    and   #3             ;; [2] Isolate lower 2 bits
     
     ;; 2. Convert X-pixels to X-bytes (HL = X / 4)
-    srl   h               ;; [2]  Shift X coordinate right
-    rr    l               ;; [2]  Rotate right through carry
-    srl   h               ;; [2]  Shift X coordinate right second time
-    rr    l               ;; [2]  L now contains X_byte coordinate (0-79)
+    srl   h              ;; [2]  Shift X coordinate right
+    rr    l              ;; [2]  Rotate right through carry
+    srl   h              ;; [2]  Shift X coordinate right second time
+    rr    l              ;; [2]  L now contains X_byte coordinate (0-79)
 
-    ld    c, l            ;; [1] C = L = X_byte coordinate
-    ld    b, e            ;; [1] B = E = Y coordinate
-    ld    e, a            ;; [1] E = A = Pixel offset (0-3)
+    ld    c, l           ;; [1] C = L = X_byte coordinate
+    ld    b, e           ;; [1] B = E = Y coordinate
+    ld    e, a           ;; [1] E = A = Pixel offset (0-3)
     
 screen_ptr=.+1
-    ld    hl, #0000          ;; [3]  HL = current screen pointer
+    ld    hl, #0000           ;; [3]  HL = current screen pointer
 
 test_x_coord::
 prev_x=.+1    
-    ld    a, #0x00           ;; [2]   Test if x coordinates changed
-    cp    c                  ;; [1]   |
-    jr    z, test_y_coord    ;: [2/3] | IF no change THEN jump to test Y
+    ld    a, #0x00            ;; [2]   Test if x coordinates changed
+    cp    c                   ;; [1]   |
+    jr    z, test_y_coord     ;: [2/3] | IF no change THEN jump to test Y
     
-    ld    a, c               ;; [1] Update previous x value
-    ld   (prev_x), a         ;; [4] |
+    ld    a, c                ;; [1] Update previous x value
+    ld   (prev_x), a          ;; [4] |
     
-    jr    nc,  move_left     ;; [2/3] IF value inferior THEN jump move left
+    jr    nc,  move_left      ;; [2/3] IF value inferior THEN jump move left
 move_right:      
-    inc   hl                 ;; [2] Increment video memory
-    jp    test_y_coord       ;; [3] Jump to test Y
+    inc   hl                  ;; [2] Increment video memory
+    jp    test_y_coord        ;; [3] Jump to test Y
     
 move_left:    
-    dec   hl                 ;; [2]   Decrement video memory
+    dec   hl                  ;; [2]   Decrement video memory
 
 test_y_coord::
 prev_y=.+1
-    ld    a, #0x00           ;; [2]   Test if y coordinates changed
-    cp    b                  ;; [1]   |
-    jr    z, save_screen_ptr ;; [2/3] | If no change save
+    ld    a, #0x00            ;; [2]   Test if y coordinates changed
+    cp    b                   ;; [1]   |
+    jr    z, save_screen_ptr  ;; [2/3] | If no change save
     
-    ld    a, b               ;; [1]   Save y coordinates
-    ld   (prev_y), a         ;; [4]   |
-    jr    nc,  move_up       ;; [2/3] IF y inferior THEN go move up
+    ld    a, b                ;; [1]   Save y coordinates
+    ld   (prev_y), a          ;; [4]   |
+    jr    nc,  move_up        ;; [2/3] IF y inferior THEN go move up
 
 move_down:
    ld     bc, #0x0800         ;; [3] Compute next scanline 
@@ -368,30 +385,23 @@ sy=.+1
     ld   de, #0000          ;; [2] DE = SY
     add  hl, de             ;; [3] HL (Y0) = HL (Y0) + DE (SX)
     
+;; Test if last pixel
 last_pixel:
-y1=.+1    
-    ld   de, #0000          ;; [3] DE = Y1
-    or   a                  ;; [1] Clear carry flag
-    sbc  hl, de             ;; [3] Y0 == Y1 ?
-    add  hl, de             ;; [3] Restore HL value
-    ex   de, hl             ;; [1] DE = Y0
+     ex   de, hl            ;; [1] DE = Y0
+pixel_num = .+1
+    ld    hl, #0000         ;; [3] HL = remaining pixels count
+    dec   hl                ;; [2] Decrement pixel counter
+    ld   (pixel_num), hl    ;; [5] Update pixel counter
+    ld    a, h              ;; [1] Check if HL == 0
+    or    l                 ;; [1] |
     
+    ;; Restore HL = X0
     ld__b_iyh               ;; [2] BC = IY = X0
     ld__c_iyl               ;; [2] |
-
     ld   h, b               ;; [1] HL = BC = X0
     ld   l, c               ;; [1] |
-    
-    jp   nz, loop_line_pixel ;; [2/3] IF (Y0 != Y1) THEN loop_line_pixel
-    
-x1=.+1    
-    ld   hl, #0000          ;; [3] HL = X1
-    or   a                  ;; [1] Clear carry flag
-    sbc  hl, bc             ;; [3] X1 (HL) == X0 (BC) ?
-    ld   h, b               ;; [1] HL = BC = X0
-    ld   l, c               ;; [1] |    
-    
-    jp   nz, loop_line_pixel ;; [2/3] IF (X0 != X1) THEN loop_line_pixel
+
+    jp    nz, loop_line_pixel ;; [3] IF (pixels left > 0) THEN loop_line_pixel
 
 end_draw_line:
     ;; Return in binding
