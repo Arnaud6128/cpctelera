@@ -31,7 +31,7 @@
 ;;    coordinates using lookup tables for masks and pixel color patterns.
 ;;
 ;; C Definition:
-;;    void plot_mode1_asm(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
+;;    void cpct_geometryPlotM1(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;   (2B DE) screen_start - Base VRAM memory address (typically 0xC000)
@@ -40,7 +40,7 @@
 ;;   (1B B)  color        - Pen color index (0-3)
 ;;
 ;; Assembly call:
-;;    > call plot_mode1_asm
+;;    > call cpct_geometryPlotM1_asm
 ;;
 ;; Requirements and limitations:
 ;;   * Coordinates must stay within Mode 1 screen bounds (X: 0-319, Y: 0-199).

@@ -28,13 +28,13 @@
 ;;    in Mode 1 (320x200, 4 colors) using Bresenham's line algorithm.
 ;;
 ;; C Definition:
-;;    void cpct_geometryLineM1(void* screen_base, u16 x0, u8 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
+;;    void cpct_geometryLineM1(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;    (2B DE) screen_base - Base VRAM memory address (typically 0xC000)
 ;;    (2B HL) x0          - Starting X coordinate (0-319)
-;;    (Stack) y0          - Starting Y coordinate (0-199)
-;;    (Stack) x1          - Ending X coordinate (0-319)
+;;    (Stack) y0          - Starting Y coordinate (0-199, 16-bit integer)
+;;    (Stack) x1          - Ending X coordinate (0-319, 16-bit integer)
 ;;    (Stack) color / y1  - Color index (B: 0-3) and Ending Y coordinate (C: 0-199)
 ;;
 ;; Assembly call:
@@ -62,18 +62,18 @@
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    342 bytes (316 bytes core routine + 26 bytes binding wrapper)
+;;    340 bytes (314 bytes core routine + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Setup Overhead (routine + binding)       | -      | 61             | 244
-;;    Single Point  (50,50) to (50,50)         | 1      | 113            | 452
-;;    Horizontal    (0,0)   to (100,0)         | 101    | 3550           | 14200
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | 4150           | 16600
-;;    Vertical      (0,0)   to (0,100)         | 101    | 5280           | 21120
-;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 5900           | 23600
+;;    Setup Overhead (routine + binding)       | -      | 59             | 236
+;;    Single Point  (50,50) to (50,50)         | 1      | 111            | 444
+;;    Horizontal    (0,0)   to (100,0)         | 101    | 3548           | 14192
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | 4148           | 16592
+;;    Vertical      (0,0)   to (0,100)         | 101    | 5278           | 21112
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 5898           | 23592
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,9 +118,8 @@ compute_dy:
     sub   e               ;; [1] A (DY) = A (Y1) - E (Y0) 
     
 compute_sy:    
-    ld    bc, #1          ;; [3] B = SY = 1
-    bit   7, a            ;; [2] If DY > 0 then    
-    jr    z, compute_err  ;; [2/3] | Jump compute_err
+    ld    bc, #1          ;; [3] B = SY = 1 
+    jr    nc, compute_err ;; [2/3] IF Y1 >= Y0 THEN jump compute_err 
     neg                   ;; [1] A = -DY    
     ld    bc, #-1         ;; [3] B = SY = -1
 
@@ -130,7 +129,6 @@ compute_err:
     ld    c, a            ;; [1] |
 
 ;; Nb pixels = max(DX, DY) + 1
-
 compute_pixels:    
     push hl               ;; [4] Save HL (DX) in stack
     or    a               ;; [1] Clear carry flag
