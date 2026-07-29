@@ -98,11 +98,11 @@
     ld   (color_pen), a   ;; [4] |
 
 compute_dx:
-    ld    iy, #1          ;; [4] SX = 1
+    ld    b, #0x23        ;; [2] B = opcode inc IY
     bit   7, h            ;; [2] If DX > 0 then
     jr    z, compute_dy   ;; [2/3] | Jump compute_dy
     
-    ld    iy, #-1         ;; [4] SX = -1
+    ld    b, #0x2B        ;; [2] B = opcode dec IY
     xor   a               ;; [1] HL = -DX
     sub   l               ;; [1] |
     ld    l, a            ;; [1] |
@@ -112,25 +112,27 @@ compute_dx:
     
 compute_dy:
     ld   (dx), hl         ;; [4] Save DX
-    ld   (sx), iy         ;; [5] Save SX
+	ld    a, b            ;; [1] | A = B = Opcode
+    ld   (add_sx), a      ;; [4] | (SX) = Opcode
     
     ld    a, c            ;; [1] A = C = Y1
     sub   e               ;; [1] A (DY) = A (Y1) - E (Y0) 
     
 compute_sy:    
-    ld    bc, #1          ;; [3] B = SY = 1 
-    jr    nc, compute_err ;; [2/3] IF Y1 >= Y0 THEN jump compute_err 
-    neg                   ;; [1] A = -DY    
-    ld    bc, #-1         ;; [3] B = SY = -1
+    ld    b, #0x23         ;; [2] B = opcode inc hl
+    jr    nc, compute_err  ;; [2/3] IF Y1 >= Y0 THEN jump compute_err 
+    neg                    ;; [1] A = -DY    
+    ld    b, #0x2B         ;; [2] B = opcode dec hl
 
 compute_err:
-    ld   (sy), bc         ;; [4] Save SY
+    ld    c, a            ;; [1] C = A = DY
+	ld    a, b            ;; [1] | A = B = Opcode
+    ld   (add_sy), a      ;; [4] | (SY) = Opcode
     ld    b, #00          ;; [2] BC = A = DY
-    ld    c, a            ;; [1] |
 
 ;; Nb pixels = max(DX, DY) + 1
 compute_pixels:    
-    push hl               ;; [4] Save HL (DX) in stack
+    push  hl              ;; [4] Save HL (DX) in stack
     or    a               ;; [1] Clear carry flag
     sbc   hl, bc          ;; [3] Compare DX and DY (HL = DX - DY)
 	add   hl, bc          ;; [3] Restore HL = DX
@@ -167,7 +169,7 @@ x0=.+1
     ld   hl, #0000       ;; [3] HL = X0
 
 compute_start_vmem:
-     push hl              ;; [4] Save HL = X0
+    push  hl              ;; [4] Save HL = X0
 
     ;; Convert X-pixels to X-bytes (HL = X / 4)
     srl   h               ;; [2] Shift X coordinate right
@@ -354,10 +356,9 @@ dy=.+1
     add   ix, de            ;; [4] IX (ERR) = IX (ERR) - DE (DY)
 
 ;; IY = X0 += SX
-add_sx:
-sx=.+1
-    ld    bc, #0000         ;; [3] BC = SX
-    add   iy, bc            ;; [4] IY (X0) = IY (X0) + BC (SX)
+add_sx=.+1
+    .db  #0xFD               ;; [3] Placeholder for INC IY or DEC IY
+    .db  #0x00               ;;     |
 
 y_move::
 dx=.+1
@@ -379,9 +380,7 @@ dx=.+1
 
 ;; HL = Y0 += SY
 add_sy:    
-sy=.+1
-    ld   de, #0000          ;; [2] DE = SY
-    add  hl, de             ;; [3] HL (Y0) = HL (Y0) + DE (SX)
+    .db #0x00               ;; [2] Placeholder for INC HL or DEC HL
     
 ;; Test if last pixel
 last_pixel:
