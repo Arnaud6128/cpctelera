@@ -62,18 +62,18 @@
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    340 bytes (314 bytes core routine + 26 bytes binding wrapper)
+;;    348 bytes (322 bytes core routine + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Setup Overhead (routine + binding)       | -      | 207            | 828
-;;    Single Point  (50,50) to (50,50)         | 1      | 380            | 1520
-;;    Horizontal    (0,0)   to (100,0)         | 101    | 17551          | 70204
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | 18001          | 72004
-;;    Vertical      (0,0)   to (0,100)         | 101    | 18892          | 75568
-;;    Diagonal 45Â°  (0,0)   to (100,100)       | 101    | 20003          | 80012
+;;    Setup Overhead (routine + binding)       | -      | 218            | 872
+;;    Single Point  (50,50) to (50,50)         | 1      | 320            | 1280
+;;    Horizontal    (0,0)   to (100,0)         | 101    | 11250          | 45000
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | 11620          | 46480
+;;    Vertical      (0,0)   to (0,100)         | 101    | 12980          | 51920
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 13210          | 52840
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -85,7 +85,8 @@
     ld   (x0), hl         ;; [5] Save X0
     
     pop   de              ;; [3] DE = Y0
-    ld    a, e            ;; [2] A = E = Y0
+    ld    a, e            ;; [1] A = E = Y0
+    ld   (y0_val), a      ;; [4] Store initial Y0 into SMC
     
     ex    de, hl          ;; [1] DE = X0 / HL = Y0   
     pop   hl              ;; [3] HL = X1
@@ -94,15 +95,21 @@
     ld    e, a            ;; [1] E = A = Y0
     
     pop   bc              ;; [3] B = Color / C = Y1
-    ld    a, b            ;; [1] Save Color
-    ld   (color_pen), a   ;; [4] |
+    ld    a, b            ;; [1] Save Color (0..3)
+    add   a, a            ;; [1] A = Color * 2
+    add   a, a            ;; [1] A = Color * 4 (Pre-multiplied offset)
+    ld   (color_pen), a   ;; [4] Store pre-multiplied color index into SMC
 
 compute_dx:
-    ld    b, #0x23        ;; [2] B = opcode inc IY
+    ld    b, #0x23        ;; [2] B = opcode inc IY (+1)
+    ld    a, #0x0F        ;; [2] A = opcode rrca (Shift mask right for SX = +1)
+    ld   (shift_bg_mask), a ;; [4] Patch mask shift opcode
     bit   7, h            ;; [2] If DX > 0 then
     jr    z, compute_dy   ;; [2/3] | Jump compute_dy
     
-    ld    b, #0x2B        ;; [2] B = opcode dec IY
+    ld    b, #0x2B        ;; [2] B = opcode dec IY (-1)
+    ld    a, #0x07        ;; [2] A = opcode rlca (Shift mask left for SX = -1)
+    ld   (shift_bg_mask), a ;; [4] Patch mask shift opcode
     xor   a               ;; [1] HL = -DX
     sub   l               ;; [1] |
     ld    l, a            ;; [1] |
@@ -112,22 +119,22 @@ compute_dx:
     
 compute_dy:
     ld   (dx), hl         ;; [4] Save DX
-	ld    a, b            ;; [1] | A = B = Opcode
-    ld   (add_sx), a      ;; [4] | (SX) = Opcode
+    ld    a, b            ;; [1] A = B = Opcode
+    ld   (add_sx), a      ;; [4] (SX) = Opcode
     
     ld    a, c            ;; [1] A = C = Y1
     sub   e               ;; [1] A (DY) = A (Y1) - E (Y0) 
     
 compute_sy:    
-    ld    b, #0x23         ;; [2] B = opcode inc hl
-    jr    nc, compute_err  ;; [2/3] IF Y1 >= Y0 THEN jump compute_err 
-    neg                    ;; [1] A = -DY    
-    ld    b, #0x2B         ;; [2] B = opcode dec hl
+    ld    b, #0x3C        ;; [2] B = opcode 'inc a' (Y0 += 1)
+    jr    nc, compute_err ;; [2/3] IF Y1 >= Y0 THEN jump compute_err 
+    neg                   ;; [1] A = -DY    
+    ld    b, #0x3D        ;; [2] B = opcode 'dec a' (Y0 -= 1)
 
 compute_err:
     ld    c, a            ;; [1] C = A = DY
-	ld    a, b            ;; [1] | A = B = Opcode
-    ld   (add_sy), a      ;; [4] | (SY) = Opcode
+    ld    a, b            ;; [1] A = Opcode
+    ld   (add_sy_op), a   ;; [4] Store 'inc a' / 'dec a' opcode in SMC
     ld    b, #00          ;; [2] BC = A = DY
 
 ;; Nb pixels = max(DX, DY) + 1
@@ -135,7 +142,7 @@ compute_pixels:
     push  hl              ;; [4] Save HL (DX) in stack
     or    a               ;; [1] Clear carry flag
     sbc   hl, bc          ;; [3] Compare DX and DY (HL = DX - DY)
-	add   hl, bc          ;; [3] Restore HL = DX
+    add   hl, bc          ;; [3] Restore HL = DX
     jr    nc, dx_is_max   ;; [2/3] IF (DX >= DY) THEN DX is max
 
 dy_is_max:
@@ -145,9 +152,9 @@ dy_is_max:
 dx_is_max:
     inc   hl              ;; [2] HL = max(DX, DY) + 1 (Total pixels)
     ld   (pixel_num), hl  ;; [5] Store initial pixel counter
-	pop   hl              ;; [4] Restore HL (DX) from stack
-	
-	;; DY = -DY
+    pop   hl              ;; [4] Restore HL (DX) from stack
+    
+    ;; DY = -DY
     xor   a               ;; [1] BC = -DY
     sub   c               ;; [1] |
     ld    c, a            ;; [1] |
@@ -157,16 +164,18 @@ dx_is_max:
     ld   (dy), bc         ;; [4] Save -DY
 
     ;; err = DX - DY
-    or    a              ;; [1] Clear carry
-    add   hl, bc         ;; [3] HL (ERR) = HL (DX) - DE (DY)    
-    ld    b, h           ;; [1] ERR = BC = HL
-    ld    c, l           ;; [1] |
+    or    a               ;; [1] Clear carry
+    add   hl, bc          ;; [3] HL (ERR) = HL (DX) - DE (DY)    
+    ld    b, h            ;; [1] ERR = BC = HL
+    ld    c, l            ;; [1] |
     
-    ld__ixh_b            ;; [2] IX = BC = ERR
-    ld__ixl_c            ;; [2] |
+    ld__ixh_b             ;; [2] IX = BC = ERR
+    ld__ixl_c             ;; [2] |
 
 x0=.+1
-    ld   hl, #0000       ;; [3] HL = X0
+    ld   hl, #0000        ;; [3] HL = X0
+    push hl               ;; [4] Load X0 into IY once during setup
+    pop  iy               ;; [4] IY = X0
 
 compute_start_vmem:
     push  hl              ;; [4] Save HL = X0
@@ -177,228 +186,217 @@ compute_start_vmem:
     srl   h               ;; [2] Shift X coordinate right second time
     rr    l               ;; [2] L now contains X_byte coordinate (0-79)
 
-    ld    c, l           ;; [1] C = L = X_byte
-    ld    a, c           ;; [1] Save first X_byte position 
-    ld   (prev_x), a     ;; [4] |
-	
-    ld    a, e           ;; [1] Save first Y position
-    ld   (prev_y), a     ;; [4] |
+    ld    c, l            ;; [1] C = L = X_byte
+    ld    a, c            ;; [1] Save first X_byte position 
+    ld   (prev_x), a      ;; [4] Store initial prev_x
+    
+    ld    a, e            ;; [1] Save first Y position
+    ld   (prev_y), a      ;; [4] Store initial prev_y
 
     ;; Calculate VRAM pointer (DE=Base, B=Y, C=X_byte)
-    ;: Copy of cpct_getScreenPtr_asm see cpct_getScreenPtr for more informations
-    ld    a, e           ;; [1] rA = Y-Coordinate
-    and   #0x07          ;; [2] /
-    ld    h, a           ;; [1] \ rH = Y % 8      
+    ld    a, e            ;; [1] rA = Y-Coordinate
+    and   #0x07           ;; [2] Mask Y % 8
+    ld    h, a            ;; [1] rH = Y % 8      
               
-    ;; Now extract Screen Character Row (R) from Y-Coordinate
-    ld    a, e           ;; [1] rA = Y-Coordinate
-    and   #0xF8          ;; [2] /
-    ld    l, a           ;; [1] \ rL = 8*int(Y/8)                                           
-    rrca                 ;; [1] / rA' = rA / 4 = 2*int(Y/8)
-    rrca                 ;; [1] \ 
-    add   a, l           ;; [1] / rL = rL + rA' = 8*int(Y/8) + 2*int(Y/8) = 10*int(Y/8)
-    ld    l, a           ;; [1] \ 
+    ld    a, e            ;; [1] rA = Y-Coordinate
+    and   #0xF8           ;; [2] Mask 8 * int(Y/8)
+    ld    l, a            ;; [1] rL = 8 * int(Y/8)                                           
+    rrca                  ;; [1] rA' = rA / 4 = 2 * int(Y/8)
+    rrca                  ;; [1] |
+    add   a, l            ;; [1] rL = rL + rA' = 8 * int(Y/8) + 2 * int(Y/8) = 10 * int(Y/8)
+    ld    l, a            ;; [1] |
 
-    ;; Now rHL = 256*L + 10*R
-    add   hl, hl         ;; [3] / rHL' = 8*rHL
-    add   hl, hl         ;; [3] | rHL' = 2048*L + 80*R
-    add   hl, hl         ;; [3] \ 
+    add   hl, hl          ;; [3] rHL' = 8 * rHL
+    add   hl, hl          ;; [3] rHL' = 2048 * L + 80 * R
+    add   hl, hl          ;; [3] |
 
-    ;; Add up X coordinate
-    ld    b, #00         ;; [2] / As rC = X-Coordinate, having rB=0 makes rBC = X-Coordinate
-    add   hl, bc         ;; [3] \ rHL' = rHL + X 
+    ld    b, #00          ;; [2] BC = X_byte
+    add   hl, bc          ;; [3] rHL' = rHL + X_byte 
     
-     ;; Add up screen start address
 screen_start=.+1
-    ld    bc, #0000      ;; [3] Load video memory start    
-    add   hl, bc         ;; [3] rHL' = rHL + screen_start
+    ld    bc, #0000       ;; [3] Load video memory start    
+    add   hl, bc          ;; [3] rHL' = rHL + screen_start
     
-    ld  (screen_ptr), hl ;; [5] Save start video address
-    pop hl               ;; [4] Restore HL = X0
-
-loop_line_pixel::
-    push  de             ;; [4] Save DE = Y0
-    push  hl             ;; [4] Save HL = X0
-
-color_pen=.+1    
-    ld    d, #00         ;; [2] D = COLOR    
-
-    ;; 1. Extract pixel index (x & 3)
-    ld    a, l           ;; [1] A = X coordinate low byte 
-    and   #3             ;; [2] Isolate lower 2 bits
+    ld  (screen_ptr), hl  ;; [5] Save start video address
+    pop hl                ;; [4] Restore HL = X0
     
-    ;; 2. Convert X-pixels to X-bytes (HL = X / 4)
-    srl   h              ;; [2]  Shift X coordinate right
-    rr    l              ;; [2]  Rotate right through carry
-    srl   h              ;; [2]  Shift X coordinate right second time
-    rr    l              ;; [2]  L now contains X_byte coordinate (0-79)
-
-    ld    c, l           ;; [1] C = L = X_byte coordinate
-    ld    b, e           ;; [1] B = E = Y coordinate
-    ld    e, a           ;; [1] E = A = Pixel offset (0-3)
+    ld    a, l            ;; [1] A = X coordinate low byte 
+    and   #3              ;; [2] Isolate lower 2 bits (Pixel offset 0..3)
+    ld    c, a            ;; [1] C = Pixel offset (0-3)
     
+    ld    hl, #cpct_plotMasksTable_M1 ;; [3] HL = Base address of mask table
+    ld    b, #00          ;; [2] B = 0 for 16-bit offset addition
+    add   hl, bc          ;; [3] HL = &mask_table[pixel_offset]
+    ld    a, (hl)         ;; [2] A = Initial background mask from table
+    ld   (saved_bg_mask), a ;; [4] Save initial mask into SMC byte
+
+loop_line_pixel:
+    ld__a_iyl             ;; [2] A = IYL (X0 low byte)
+    ld    l, a            ;; [1] L = X0 low byte
+    and   #3              ;; [2] A = Pixel offset (0..3)
+    ld    e, a            ;; [1] E = Pixel offset (0..3)
+
+    ld__a_iyh             ;; [2] A = IYH (X0 high byte)
+    ld    h, a            ;; [1] H = X0 high byte (Now HL = X0!)
+
+    srl   h               ;; [2] Shift X coordinate right
+    rr    l               ;; [2] Rotate right through carry
+    srl   h               ;; [2] Shift X coordinate right second time
+    rr    l               ;; [2] L now contains X_byte coordinate (0-79)
+    ld    c, l            ;; [1] C = X_byte coordinate
+
+y0_val=.+1
+    ld    b, #00          ;; [2] B = Y0 coordinate
+
 screen_ptr=.+1
-    ld    hl, #0000           ;; [3]  HL = current screen pointer
+    ld    hl, #0000       ;; [3] HL = current screen pointer
 
 test_x_coord::
 prev_x=.+1    
-    ld    a, #0x00            ;; [2]   Test if x coordinates changed
-    cp    c                   ;; [1]   |
-    jr    z, test_y_coord     ;: [2/3] | IF no change THEN jump to test Y
+    ld    a, #0x00        ;; [2] Test if X_byte changed
+    cp    c               ;; [1] |
+    jr    z, test_y_coord ;; [2/3] IF no change THEN jump to test Y
     
-    ld    a, c                ;; [1] Update previous x value
-    ld   (prev_x), a          ;; [4] |
+    ld    a, c            ;; [1] Update previous X_byte value
+    ld   (prev_x), a      ;; [4] |
     
-    jr    nc,  move_left      ;; [2/3] IF value inferior THEN jump move left
+    jr    nc, move_left   ;; [2/3] IF value inferior THEN jump move left
 move_right:      
-    inc   hl                  ;; [2] Increment video memory
-    jp    test_y_coord        ;; [3] Jump to test Y
+    inc   hl              ;; [2] Increment video memory address
+    jp    test_y_coord    ;; [3] Jump to test Y
     
 move_left:    
-    dec   hl                  ;; [2]   Decrement video memory
+    dec   hl              ;; [2] Decrement video memory address
 
 test_y_coord::
 prev_y=.+1
-    ld    a, #0x00            ;; [2]   Test if y coordinates changed
-    cp    b                   ;; [1]   |
-    jr    z, save_screen_ptr  ;; [2/3] | If no change save
+    ld    a, #0x00        ;; [2] Test if Y coordinate changed
+    cp    b               ;; [1] |
+    jr    z, save_screen_ptr ;; [2/3] If no change, skip VRAM update
     
-    ld    a, b                ;; [1]   Save y coordinates
-    ld   (prev_y), a          ;; [4]   |
-    jr    nc,  move_up        ;; [2/3] IF y inferior THEN go move up
+    ld    a, b            ;; [1] Save Y coordinate
+    ld   (prev_y), a      ;; [4] |
+    jr    nc, move_up     ;; [2/3] IF Y inferior THEN go move up
 
 move_down:
-   ld     bc, #0x0800         ;; [3] Compute next scanline 
-   add    hl, bc              ;; [3] | HL += 0x0800
-   ld     a, h                ;; [1] Check 8-line boundary crossing          
-   and    #0x38               ;; [2] |
+   ld     bc, #0x0800     ;; [3] Compute next scanline 
+   add    hl, bc          ;; [3] | HL += 0x0800
+   ld     a, h            ;; [1] Check 8-line boundary crossing          
+   and    #0x38           ;; [2] |
    jr     nz, save_screen_ptr ;; [2/3] Jump if not inside 8-line block
-   ld     bc, #0xC050         ;; [3] Next character row boundary correction
-   add    hl, bc              ;; [3] | HL += 0xC050
-   jp     save_screen_ptr     ;; [3] Continue
+   ld     bc, #0xC050     ;; [3] Next character row boundary correction
+   add    hl, bc          ;; [3] | HL += 0xC050
+   jp     save_screen_ptr ;; [3] Continue
 
 move_up:
-   ld     a, h                ;; [1] Read current high byte of address           
-   and    #0x38               ;; [2] Check if currently on line 0 of 8-line block
-   jr     z, move_up_row      ;; [2/3] If line 0, cross boundary to previous character row
-   ld     bc, #0xF800         ;; [3] Move to previous scanline 
-   add    hl, bc              ;; [3] | HL += (-0x0800 / 0xF800)
-   jp     save_screen_ptr     ;; [3] Continue
+   ld     a, h            ;; [1] Read current high byte of address           
+   and    #0x38           ;; [2] Check if currently on line 0 of 8-line block
+   jr     z, move_up_row  ;; [2/3] If line 0, cross boundary to previous character row
+   ld     bc, #0xF800     ;; [3] Move to previous scanline 
+   add    hl, bc          ;; [3] | HL += (-0x0800 / 0xF800)
+   jp     save_screen_ptr ;; [3] Continue
 
 move_up_row: 
-   ld     bc, #0x37B0         ;; [3] Jump to line 7 of previous character row
-   add    hl, bc              ;; [3] | HL += (-0xC050 / #0x37B0)
+   ld     bc, #0x37B0     ;; [3] Jump to line 7 of previous character row
+   add    hl, bc          ;; [3] | HL += (-0xC050 / #0x37B0)
     
 save_screen_ptr:
-    ld   (screen_ptr), hl     ;; [5]  Save current screen pointer
+    ld   (screen_ptr), hl ;; [5] Save current screen pointer
 
 plot_pixel:    
-    ;; Restore pixel context
-    ld   b, d                 ;; [1] B = D = Color
-    ld   c, e                 ;; [1] C = E = Pixel index (0-3)
-
-    ld    a, (hl)            ;; [2]  A = Current screen byte from VRAM
-    push  hl                 ;; [4]  Save screen byte pointer
+    ld    c, e            ;; [1] C = Pixel index (0-3)
+    ld    a, (hl)         ;; [2] A = Current VRAM byte
+saved_bg_mask = .+1
+    and   #0x00           ;; [2] Apply precalculated background mask from SMC
+    ld    b, a            ;; [1] B = Preserved background
     
-    ld    hl, #cpct_plotMasksTable_M1 ;; [3]  HL = Base address of mask table
-    ld    e, c               ;; [1] HL = &mask_table[offset]
-    ld    d, #00             ;; [2] |
-    add   hl, de             ;; [3] |
-    and   (hl)               ;; [2] Combine AND mask directly from table!
-    ld    e, a               ;; [1] E = Preserved background pixels
-    
-    ;; 8. Inject the new color bits
-    ld    a, b               ;; [1]  A = B = Color value (0-3)
-    ld    b, e               ;; [1]  B = Cleaned background pixels preserved
-    add   a, a               ;; [1]  Color * 2
-    add   a, a               ;; [1]  Color * 4
-    or    c                  ;; [1]  A = (Color * 4) + Pixel index
-    ld    e, a               ;; [1]  E = Final color table offset
-    ld    hl, #cpct_plotColorTable_M1 ;; [3]  HL = Base address of color table
-    add   hl, de             ;; [3]  HL = &color_table[offset]
-    ld    a, (hl)            ;; [2]  A = Mode 1 interlaced color bit
-
-    or    b                  ;; [1]  Merge new color bits into background
-    pop   hl                 ;; [3]  Restore screen byte pointer
-    ld    (hl), a            ;; [2]  Write finalized byte back into VRAM
+color_pen = .+1    
+    ld    a, #00          ;; [2] A = Color * 4 (Pre-multiplied during SMC setup)
+    or    c               ;; [1] A = (Color * 4) | Pixel index
+    ld    de, #cpct_plotColorTable_M1 ;; [3] DE = base address of color table
+    add   a, e            ;; [1] A = E + offset
+    ld    e, a            ;; [1] DE = &color_table[offset]
+    jr    nc, no_table_carry ;; [2/3]
+    inc   d               ;; [1]
+no_table_carry:
+    ld    a, (de)         ;; [2] A = Mode 1 interlaced color byte directly from DE
+    or    b               ;; [1] Merge background + foreground
+    ld    (hl), a         ;; [2] Write back to VRAM
 
 err_2_compute:
-    ld__b_ixh               ;; [2] BC = IX = err
-    ld__c_ixl               ;; [2] |
-    ld    h, b              ;; [1] DE = e2 = 2 * err
-    ld    l, c              ;; [1] |
-    add   hl, hl            ;; [3] |
-    ex    de, hl            ;; [1] | DE = E2
+    ld__b_ixh             ;; [2] BC = IX = err
+    ld__c_ixl             ;; [2] |
+    ld    h, b            ;; [1] DE = e2 = 2 * err
+    ld    l, c            ;; [1] |
+    add   hl, hl          ;; [3] |
+    ex    de, hl          ;; [1] DE = E2
 
 x_move:
 dy=.+1
-    ld    hl, #0000         ;; [3] HL = -DY        
-    ex    de, hl            ;; [1] HL (E2) / DE (-DY)
+    ld    hl, #0000       ;; [3] HL = -DY        
+    ex    de, hl          ;; [1] HL (E2) / DE (-DY)
 
-    ld    a, h              ;; [1] Flip sign bit of H to shift range to unsigned
-    xor   #0x80             ;; [2] |
-    ld    h, a              ;; [1] |
+    ld    a, h            ;; [1] Flip sign bit of H to shift range to unsigned
+    xor   #0x80           ;; [2] |
+    ld    h, a            ;; [1] |
     
-    ld    b, d              ;; [1] B = D to keep
-    ld    a, d              ;; [1] Flip sign bit of D to shift range to unsigned        
-    xor   #0x80             ;; [2] |    
-    ld    d, a              ;; [1] |
+    ld    b, d            ;; [1] B = D to keep
+    ld    a, d            ;; [1] Flip sign bit of D to shift range to unsigned        
+    xor   #0x80           ;; [2] |    
+    ld    d, a            ;; [1] |
 
-    or    a                 ;; [1] Clear Carry flag
-    sbc   hl, de            ;; [3] Subtract DE from HL for comparison
-    add   hl, de            ;; [3] Add DE to HL for restore value
+    or    a               ;; [1] Clear Carry flag
+    sbc   hl, de          ;; [3] Subtract DE from HL for comparison
+    add   hl, de          ;; [3] Add DE to HL for restore value
     
-    pop   iy                ;; [4] Restore IY = X0
-    jr    c, y_move         ;; [2/3] IF (e2  < -dy) THEN y_move
-    jr    z, y_move         ;; [2/3] IF (e2 == -dy) THEN y_move
+    jr    c, y_move       ;; [2/3] IF (e2 < -dy) THEN y_move
+    jr    z, y_move       ;; [2/3] IF (e2 == -dy) THEN y_move
         
-    ld    d, b              ;; [1] D = B to get
-    add   ix, de            ;; [4] IX (ERR) = IX (ERR) - DE (DY)
+    ld    d, b            ;; [1] D = B to get
+    add   ix, de          ;; [4] IX (ERR) = IX (ERR) - DE (DY)
 
 ;; IY = X0 += SX
-add_sx=.+1
-    .db  #0xFD               ;; [3] Placeholder for INC IY or DEC IY
-    .db  #0x00               ;;     |
+add_sx = .+1
+    .db  #0xFD            ;; [3] Placeholder for INC IY or DEC IY
+    .db  #0x00            ;;     |
 
-y_move::
-dx=.+1
-    ld    de, #0000         ;; [3] BC = DE = DX
-    ld    b, d              ;; [1] |
-    ld    c, e              ;; [1] |
+    ;; Rotate background mask bit dynamically according to SX direction
+    ld   a, (saved_bg_mask)  ;; [4] Read current background mask
+shift_bg_mask: 
+    .db  #0x00               ;; [1] Placeholder RRCA (0x0F) for SX=+1 or RLCA (0x07) for SX=-1
+    ld   (saved_bg_mask), a  ;; [4] Save updated rotated mask
+
+y_move:
+dx = .+1
+    ld    de, #0000       ;; [3] BC = DE = DX
+    ld    b, d            ;; [1] |
+    ld    c, e            ;; [1] |
     
-    ld    a, d              ;; [1] Flip sign bit of H to shift range to unsigned        
-    xor   #0x80             ;; [2] |
-    ld    d, a              ;; [1] |
+    ld    a, d            ;; [1] Flip sign bit of H to shift range to unsigned        
+    xor   #0x80           ;; [2] |
+    ld    d, a            ;; [1] |
 
-    or    a                 ;; [1] Clear carry flag
-    sbc   hl, de            ;; [3] IF (E2 (HL) >= DX (DE))
-    pop   hl                ;; [3] Restore HL = Y0   
-    jp    p, last_pixel     ;; [2/3] IF (e2 >= dx) then test last pixel
+    or    a               ;; [1] Clear carry flag
+    sbc   hl, de          ;; [3] IF (E2 (HL) >= DX (DE))
+    jp    p, last_pixel   ;; [2/3] IF (e2 >= dx) then test last pixel
         
     ;; ERR += DX
-    add  ix, bc             ;; [4] IX (ERR) = IX (ERR) + BC (DX)
+    add   ix, bc          ;; [4] IX (ERR) = IX (ERR) + BC (DX)
 
-;; HL = Y0 += SY
-add_sy:    
-    .db #0x00               ;; [2] Placeholder for INC HL or DEC HL
-    
-;; Test if last pixel
+;; Y0 += SY via SMC
+    ld    a, (y0_val)     ;; [4] Read current Y0
+add_sy_op:                ;; [1] Placeholder INC A (0x3C) or DEC A (0x3D) via SMC
+    .db   #0x00
+    ld   (y0_val), a      ;; [4] Save updated Y0
+
 last_pixel:
-     ex   de, hl            ;; [1] DE = Y0
 pixel_num = .+1
-    ld    hl, #0000         ;; [3] HL = remaining pixels count
-    dec   hl                ;; [2] Decrement pixel counter
-    ld   (pixel_num), hl    ;; [5] Update pixel counter
-    ld    a, h              ;; [1] Check if HL == 0
-    or    l                 ;; [1] |
-    
-    ;; Restore HL = X0
-    ld__b_iyh               ;; [2] BC = IY = X0
-    ld__c_iyl               ;; [2] |
-    ld   h, b               ;; [1] HL = BC = X0
-    ld   l, c               ;; [1] |
-
-    jp    nz, loop_line_pixel ;; [3] IF (pixels left > 0) THEN loop_line_pixel
+    ld    hl, #0000       ;; [3] HL = remaining pixels count
+    dec   hl              ;; [2] Decrement pixel counter
+    ld   (pixel_num), hl  ;; [5] Update pixel counter
+    ld    a, h            ;; [1] Check if HL == 0
+    or    l               ;; [1] |
+    jp    nz, loop_line_pixel ;; [2/3] IF (pixels left > 0) THEN loop_line_pixel
 
 end_draw_line:
     ;; Return in binding
