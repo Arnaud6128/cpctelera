@@ -57,12 +57,11 @@
 ;;       - If e2 >= -DY: subtracts DY from err and steps X in direction SX.
 ;;       - If e2 <= DX: adds DX to err and steps Y in direction SY.
 ;;
-;;
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    348 bytes (322 bytes core routine + 26 bytes binding wrapper)
+;;    372 bytes (346 bytes core routine + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
@@ -218,7 +217,7 @@ screen_start=.+1
     add   hl, bc          ;; [3] rHL' = rHL + screen_start
     
     ld  (screen_ptr), hl  ;; [5] Save start video address
-    pop hl                ;; [4] Restore HL = X0
+    pop   hl              ;; [4] Restore HL = X0
     
     ld    a, l            ;; [1] A = X coordinate low byte 
     and   #3              ;; [2] Isolate lower 2 bits (Pixel offset 0..3)
@@ -230,14 +229,15 @@ screen_start=.+1
     ld    a, (hl)         ;; [2] A = Initial background mask from table
     ld   (saved_bg_mask), a ;; [4] Save initial mask into SMC byte
 
+;; MAIN LOOP
 loop_line_pixel:
     ld__a_iyl             ;; [2] A = IYL (X0 low byte)
     ld    l, a            ;; [1] L = X0 low byte
     and   #3              ;; [2] A = Pixel offset (0..3)
-    ld    e, a            ;; [1] E = Pixel offset (0..3)
+    ld    e, a            ;; [1] E = A = Pixel offset
 
     ld__a_iyh             ;; [2] A = IYH (X0 high byte)
-    ld    h, a            ;; [1] H = X0 high byte (Now HL = X0!)
+    ld    h, a            ;; [1] H = X0 high byte (Now HL = X0)
 
     srl   h               ;; [2] Shift X coordinate right
     rr    l               ;; [2] Rotate right through carry
@@ -251,7 +251,7 @@ y0_val=.+1
 screen_ptr=.+1
     ld    hl, #0000       ;; [3] HL = current screen pointer
 
-test_x_coord::
+test_x_coord:
 prev_x=.+1    
     ld    a, #0x00        ;; [2] Test if X_byte changed
     cp    c               ;; [1] |
@@ -268,7 +268,7 @@ move_right:
 move_left:    
     dec   hl              ;; [2] Decrement video memory address
 
-test_y_coord::
+test_y_coord:
 prev_y=.+1
     ld    a, #0x00        ;; [2] Test if Y coordinate changed
     cp    b               ;; [1] |
@@ -316,21 +316,15 @@ color_pen = .+1
     ld    de, #cpct_plotColorTable_M1 ;; [3] DE = base address of color table
     add   a, e            ;; [1] A = E + offset
     ld    e, a            ;; [1] DE = &color_table[offset]
-    jr    nc, no_table_carry ;; [2/3]
-    inc   d               ;; [1]
-no_table_carry:
     ld    a, (de)         ;; [2] A = Mode 1 interlaced color byte directly from DE
     or    b               ;; [1] Merge background + foreground
-    ld    (hl), a         ;; [2] Write back to VRAM
+    ld   (hl), a          ;; [2] Write back to VRAM
 
 err_2_compute:
-    ld__b_ixh             ;; [2] BC = IX = err
-    ld__c_ixl             ;; [2] |
-    ld    h, b            ;; [1] DE = e2 = 2 * err
-    ld    l, c            ;; [1] |
-    add   hl, hl          ;; [3] |
-    ex    de, hl          ;; [1] DE = E2
-
+    ld__d_ixh             ;; [2] DE = IX (err)
+    ld__e_ixl             ;; [2] |
+    sla   e               ;; [2] DE = E2 = 2 * err (Left offset 16 bits)
+    rl    d               ;; [2] |
 x_move:
 dy=.+1
     ld    hl, #0000       ;; [3] HL = -DY        
@@ -352,19 +346,19 @@ dy=.+1
     jr    c, y_move       ;; [2/3] IF (e2 < -dy) THEN y_move
     jr    z, y_move       ;; [2/3] IF (e2 == -dy) THEN y_move
         
-    ld    d, b            ;; [1] D = B to get
+    ld    d, b            ;; [1] D = B restored
     add   ix, de          ;; [4] IX (ERR) = IX (ERR) - DE (DY)
 
 ;; IY = X0 += SX
 add_sx = .+1
-    .db  #0xFD            ;; [3] Placeholder for INC IY or DEC IY
-    .db  #0x00            ;;     |
+    .db   #0xFD               ;; [3] Placeholder for INC IY or DEC IY
+    .db   #0x00               ;;     |
 
     ;; Rotate background mask bit dynamically according to SX direction
-    ld   a, (saved_bg_mask)  ;; [4] Read current background mask
+    ld    a, (saved_bg_mask)  ;; [4] Read current background mask
 shift_bg_mask: 
-    .db  #0x00               ;; [1] Placeholder RRCA (0x0F) for SX=+1 or RLCA (0x07) for SX=-1
-    ld   (saved_bg_mask), a  ;; [4] Save updated rotated mask
+    .db   #0x00               ;; [1] Placeholder RRCA (0x0F) for SX=+1 or RLCA (0x07) for SX=-1
+    ld   (saved_bg_mask), a   ;; [4] Save updated rotated mask
 
 y_move:
 dx = .+1
@@ -383,7 +377,7 @@ dx = .+1
     ;; ERR += DX
     add   ix, bc          ;; [4] IX (ERR) = IX (ERR) + BC (DX)
 
-;; Y0 += SY via SMC
+;; Y0 += SY
     ld    a, (y0_val)     ;; [4] Read current Y0
 add_sy_op:                ;; [1] Placeholder INC A (0x3C) or DEC A (0x3D) via SMC
     .db   #0x00
