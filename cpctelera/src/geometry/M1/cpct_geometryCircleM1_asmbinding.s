@@ -18,18 +18,22 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
-;; =============================================================================
-;; Lookup Tables Geometry (Mode 1 Graphics Configuration)
-;; =============================================================================
-cpct_plotMasksTable_M1::
-    .db 0x77, 0xBB, 0xDD, 0xEE
+;; Macros for easy use of undocumented opcodes
+.include "macros/cpct_undocumentedOpcodes.h.s"
 
-cpct_plotColorTable_M1::
-    ;; Color 0: P0, P1, P2, P3
-    .db 0x00, 0x00, 0x00, 0x00
-    ;; Color 1: LSB bits
-    .db 0x08, 0x04, 0x02, 0x01
-    ;; Color 2: MSB bits
-    .db 0x80, 0x40, 0x20, 0x10
-    ;; Color 3: Both LSB + MSB bits
-    .db 0x88, 0x44, 0x22, 0x11		
+;;
+;; ASM bindings for <cpct_geometryCircleM1>
+;;
+;;  21 microSecs, 9 bytes
+;;
+_cpct_geometryCircleM1_asm::
+
+    push  ix              ;; [5] Save IX to restore it before returning
+    push  iy              ;; [5] Save IY to restore it before returning
+
+.include  /cpct_geometryCircleM1.asm/
+
+ret_draw_circle:
+    pop   ix              ;; [4] Restore IX before returning
+    pop   iy              ;; [4] Restore IY before returning
+    ret                   ;; [3] Return to caller

@@ -136,10 +136,10 @@ void TransformAndProject(const SPoint3D* in, SPoint2D* out, u8 angleX, u8 angleY
 void InitScreen(void)
 {
 	cpct_memset_f64(VRAM_PAGE_40, 0x00, 0x4000);
-	cpct_drawStringM1("Press any key to flip vertice and point", VRAM_PAGE_40);
+	cpct_drawStringM1("Press any key to flip vertices / points", VRAM_PAGE_40);
 
 	cpct_memset_f64(VRAM_PAGE_C0, 0x00, 0x4000);			
-	cpct_drawStringM1("Press any key to flip vertice and point", VRAM_PAGE_C0);
+	cpct_drawStringM1("Press any key to flip vertices / points", VRAM_PAGE_C0);
 }
 
 ///////////////////////
@@ -150,10 +150,68 @@ void InitDisplay(void)
 	cpct_setDrawCharM1(1, 0);
     cpct_setVideoMode(1);
 	
-	cpct_setBorder(0x54); // Black
+	cpct_setBorder(0x54);       // Black
 	cpct_setPALColour(0, 0x54); // Black
 	cpct_setPALColour(1, 0x43); // Pastel Yellow
 	cpct_setPALColour(2, 0x57); // Sky Blue 
+}
+////////////////////////////////////////
+// Speed test
+void SpeedTest(void)
+{
+	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
+    u16 x0, y0, x1, y1;
+
+    // Frame
+    cpct_geometryLineM1(CPCT_VMEM_START,   0,   0, 319,   0, 2);
+    cpct_geometryLineM1(CPCT_VMEM_START, 319,   0, 319, 199, 2);
+    cpct_geometryLineM1(CPCT_VMEM_START, 319, 199,   0, 199, 2);
+    cpct_geometryLineM1(CPCT_VMEM_START,   0, 199,   0,   0, 2);
+	
+	// Circle
+	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
+	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 21, 2);
+	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 22, 3);
+	
+    // Top/Left
+    for (u8 i = 0; i < 40; i++) 
+	{
+        x0 = i * 8;
+        y0 = 0;
+        x1 = 0;
+        y1 = 199 - (i * 5);
+        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 1);
+    }
+
+    // Top/right
+    for (u8 i = 0; i < 40; i++) 
+	{
+        x0 = i * 8;
+        y0 = 0;
+        x1 = 319;
+        y1 = i * 5;
+        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 3);
+    }
+
+    // Bottom/right
+    for (u8 i = 0; i < 40; i++) 
+	{
+        x0 = i * 8;
+        y0 = 199;
+        x1 = 319;
+        y1 = 199 - (i * 5);
+        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 1);
+    }
+	
+    // Bottom/left
+    for (u8 i = 0; i < 40; i++) 
+	{
+        x0 = i * 8;
+        y0 = 199;
+        x1 = 0;
+        y1 = i * 5;
+        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 3);
+    }
 }
 
 ////////////////////////////////////////
@@ -180,6 +238,11 @@ void main(void)
     
 	// Initialisations
 	InitDisplay();
+	
+	// Speed testing
+	SpeedTest();
+	
+	// Init screen for 3d
 	InitScreen();
 
     // Render loop

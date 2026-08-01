@@ -85,7 +85,6 @@
 
     ;; 4. Calculate VRAM pointer (DE=Base, B=Y, C=X_byte)
     ;; call instruction cost [5] + cpct_getScreenPtr_asm execution cost [28]
-   ; call  cpct_getScreenPtr_asm ;; [33] HL now points to the target byte in VRAM
     ld    a, b               ;; [1] rA = Y-Coordinate
     and   #0x07              ;; [2] /
     ld    h, a               ;; [1] \ rH = Y % 8      
@@ -99,12 +98,12 @@
     add   a, l               ;; [1] / rL = rL + rA' = 8*int(Y/8) + 2*int(Y/8) = 10*int(Y/8)
     ld    l, a               ;; [1] \ 
 
-   ;; Now rHL = 256*L + 10*R
+    ;; Now rHL = 256*L + 10*R
     add   hl, hl             ;; [3] / rHL' = 8*rHL
     add   hl, hl             ;; [3] | rHL' = 2048*L + 80*R
     add   hl, hl             ;; [3] \ 
 
-   ;; Add up X coordinate
+    ;; Add up X coordinate
     ld    b, #00             ;; [2] / As rC = X-Coordinate, having rB=0 makes rBC = X-Coordinate
     add   hl, bc             ;; [3] \ rHL' = rHL + X 
 	
