@@ -161,12 +161,6 @@ void SpeedTest(void)
 {
 	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
     u16 x0, y0, x1, y1;
-
-    // Frame
-    cpct_geometryLineM1(CPCT_VMEM_START,   0,   0, 319,   0, 2);
-    cpct_geometryLineM1(CPCT_VMEM_START, 319,   0, 319, 199, 2);
-    cpct_geometryLineM1(CPCT_VMEM_START, 319, 199,   0, 199, 2);
-    cpct_geometryLineM1(CPCT_VMEM_START,   0, 199,   0,   0, 2);
 	
 	// Circle
 	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
@@ -212,6 +206,13 @@ void SpeedTest(void)
         y1 = i * 5;
         cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 3);
     }
+	
+	// Frame
+    cpct_geometryLineM1(CPCT_VMEM_START,   0,   0, 319,   0, 2);
+    cpct_geometryLineM1(CPCT_VMEM_START, 319,   0, 319, 199, 2);
+    cpct_geometryLineM1(CPCT_VMEM_START, 319, 199,   0, 199, 2);
+    cpct_geometryLineM1(CPCT_VMEM_START,   0, 199,   0,   0, 2);
+	
 }
 
 ////////////////////////////////////////
