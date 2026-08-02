@@ -18,7 +18,7 @@
 .module cpct_geometry
 
 ;; Global external symbols
-.globl _cpct_geometryPlotM1_asm
+.globl cpct_geometryPlotM1_asm
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -279,4 +279,4 @@ plot_point:
     ld__b_iyh                  ;; [2] Load color pattern from IYH
 smc_vram =.+1
     ld    de, #0x0000          ;; [3] Inject VRAM base address
-    jp    _cpct_geometryPlotM1_asm ;; [3] Jump to Mode 1 plot routine
+    jp    cpct_geometryPlotM1_asm ;; [3] Jump to Mode 1 plot routine
