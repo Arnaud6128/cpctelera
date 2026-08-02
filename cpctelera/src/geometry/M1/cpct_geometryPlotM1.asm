@@ -16,16 +16,14 @@
 ;;  You should have received a copy of the GNU Lesser General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
+.module cpct_geometry
 
-.module cpct_draw
-
-.globl cpct_getScreenPtr_asm
 .globl cpct_plotColorTable_M1
 .globl cpct_plotMasksTable_M1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: plot_mode1_asm
+;; Function: cpct_geometryPlotM1
 ;;
 ;;    Draws a single pixel on screen in Mode 1 (320x200, 4 colors) at specified
 ;;    coordinates using lookup tables for masks and pixel color patterns.
@@ -44,23 +42,24 @@
 ;;
 ;; Requirements and limitations:
 ;;   * Coordinates must stay within Mode 1 screen bounds (X: 0-319, Y: 0-199).
-;;   * Requires `cpct_getScreenPtr_asm`, `cpct_plotColorTable_M1`, and
-;;     `cpct_plotMasksTable_M1` to be defined globally.
+;;   * Requires `cpct_plotColorTable_M1`, and `cpct_plotMasksTable_M1`
+;;     to be defined globally.
 ;;
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    ASM routine - 63 bytes
-;;      C routine - 67 bytes
+;;    ASM routine - 58 bytes
+;;      C routine - 62 bytes
+;;    (+20 bytes for required tables)
 ;;
 ;; Time Measures:
 ;; (start code)
-;;    Case      | microSecs (us)  | CPU Cycles
+;;    Case      | microSecs (us) | CPU Cycles
 ;; ------------------------------------------
-;;    Execution | 93              | 372
+;;  ASM binding |      88        |   352
 ;; ------------------------------------------
-;;  W C binding | 104             | 416
+;;   C binding  |      99        |   396
 ;; ------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -70,28 +69,24 @@
     and   #3              ;; [2] Isolate lower 2 bits
 
     ;; 2. Convert X-pixels to X-bytes (HL = X / 4)
+
     srl   h               ;; [2] Shift X coordinate right
     rr    l               ;; [2] Rotate right through carry
-    srl   h               ;; [2] Shift X coordinate right second time
-    rr    l               ;; [2] L now contains X_byte coordinate (0-79)
+    srl   l               ;; [2] L now contains X_byte coordinate (0-79)
 
+    ;; 3. Rearrange registers
     ld    h, c            ;; [1] H = C = Y coordinate
     ld    c, a            ;; [1] C = A = Pixel offset (0-3)
-    push  bc              ;; [4] Save Color (B) and pixel offset (C) to stack
+    push  de              ;; [4] Save screen_start to stack
+    ex    de, hl          ;; [1] D = Y coordinate, E = X_byte coordinate
 
-    ;; 3. Set registers for cpct_getScreenPtr_asm API
-    ld    b, h            ;; [1] B = H = Y coordinate
-    ld    c, l            ;; [1] C = L = X_byte coordinate
-
-    ;; 4. Calculate VRAM pointer (DE=Base, B=Y, C=X_byte)
-    ;; call instruction cost [5] + cpct_getScreenPtr_asm execution cost [28]
-    ld    a, b               ;; [1] rA = Y-Coordinate
+    ;; 4. Calculate VRAM pointer (D=Y, E=X_byte)
+    ld    a, d               ;; [1] rA = Y-Coordinate
     and   #0x07              ;; [2] /
     ld    h, a               ;; [1] \ rH = Y % 8      
               
     ;; Now extract Screen Character Row (R) from Y-Coordinate
-    ld    a, b               ;; [1] rA = Y-Coordinate
-    and   #0xF8              ;; [2] /
+    xor   d                  ;; [1] / rA = ( rD and #0x07 ) xor rD  =  rD and #0xF8
     ld    l, a               ;; [1] \ rL = 8*int(Y/8)                                           
     rrca                     ;; [1] / rA' = rA / 4 = 2*int(Y/8)
     rrca                     ;; [1] \ 
@@ -104,16 +99,14 @@
     add   hl, hl             ;; [3] \ 
 
     ;; Add up X coordinate
-    ld    b, #00             ;; [2] / As rC = X-Coordinate, having rB=0 makes rBC = X-Coordinate
-    add   hl, bc             ;; [3] \ rHL' = rHL + X 
-	
-	;; Add up screen start address we still keep in DE
+    ld    d, #00             ;; [2] / As rE = X-Coordinate, having rD=0 makes rDE = X-Coordinate
+    add   hl, de             ;; [3] \ rHL' = rHL + X 
+    
+	;; Add up screen start address to get VRAM pointer
+    pop   de                 ;; [3] DE = Screen start address	
     add   hl, de             ;; [3] rHL' = rHL + screen_start
-	
-    ;; 5. Restore pixel context
-    pop   bc              ;; [3] B = Color, C = Pixel index (0-3)
 
-    ;; 6. Apply background clearing mask
+    ;; 5. Apply background clearing mask
     ld    a, (hl)         ;; [2] A = Current screen byte from VRAM
     push  hl              ;; [4] Save screen byte pointer
     
@@ -125,7 +118,7 @@
     and   e               ;; [1] A = Screen byte with target pixel cleared
     ld    e, a            ;; [1] E = Cleaned background pixels preserved
 	
-    ;; 7. Inject the new color bits
+    ;; 6. Inject the new color bits
     ld    a, b            ;; [1] A = B = Color value (0-3)
     ld    b, e            ;; [1] B = Cleaned background pixels preserved
     add   a, a            ;; [1] Color * 2
@@ -141,3 +134,4 @@
     ld    (hl), a         ;; [2] Write finalized byte back into VRAM
 
     ret                   ;; [3] Return to caller
+
