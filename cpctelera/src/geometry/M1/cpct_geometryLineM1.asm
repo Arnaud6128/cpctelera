@@ -68,18 +68,18 @@
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    448 bytes (422 bytes routine + 26 bytes binding wrapper)
+;;    436 bytes (410 bytes routine + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Setup Overhead (routine + binding)       | -      | 218            | 872
-;;    Single Point  (50,50) to (50,50) [Fast]  | 1      | 196            | 784
+;;    Setup Overhead (routine + binding)       | -      | 249            | 996
+;;    Single Point  (50,50) to (50,50) [Fast]  | 1      | 220            | 880
 ;;    Horizontal    (0,0)   to (100,0) [Fast]  | 101    | 810            | 3240
 ;;    Vertical      (0,0)   to (0,100) [Fast]  | 101    | 1730           | 6920
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | 11200          | 44800
-;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 12800          | 51200
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | 11250          | 45000
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 12840          | 51360
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,34 +105,6 @@
     ld    (color_pen), a          ;; [4] Store pre-multiplied color index into SMC
 .endm
 
-;; FULL_COLOR: Generate solid byte with all 4 pixels set to color in D
-;;   Execution time: [41 NOPs / 164 CPU cycles]
-;;   Preserves: HL                    Destroys: A, B, C, DE
-.macro FULL_COLOR
-    push  hl                      ;; [4] Save VRAM address
-    ld    a, (color_pen)          ;; [4] A = color * 4
-    ld    c, a                    ;; [1] C = color * 4
-    ld    h, #0                   ;; [2] H = 0
-    ld    l, c                    ;; [1] L = color offset
-    ld    de, #cpct_plotColorTable_M1 ;; [3] DE = color table base
-    add   hl, de                  ;; [3] HL = &color[offset]
-    ld    a, (hl)                 ;; [2] A = color byte for pixel 0
-    ld    b, a                    ;; [1] B = pixel 0 color
-    inc   hl                      ;; [2] Move to pixel 1
-    ld    a, (hl)                 ;; [2] A = color byte for pixel 1
-    or    b                       ;; [1] Combine pixel 0 and 1
-    ld    b, a                    ;; [1] B = combined color
-    inc   hl                      ;; [2] Move to pixel 2
-    ld    a, (hl)                 ;; [2] A = color byte for pixel 2
-    or    b                       ;; [1] Combine pixel 0, 1 and 2
-    ld    b, a                    ;; [1] B = combined color
-    inc   hl                      ;; [2] Move to pixel 3
-    ld    a, (hl)                 ;; [2] A = color byte for pixel 3
-    or    b                       ;; [1] Combine all 4 pixels into solid byte
-    ld    d, a                    ;; [1] D = solid color byte
-    pop   hl                      ;; [3] Restore VRAM address
-.endm
-
 ;;-------------------------------------------------------------------------------
 ;; ENTRY POINT
 ;;-------------------------------------------------------------------------------
@@ -152,6 +124,7 @@ rb_mid_count:  .db 0                  ;; Number of full intermediate bytes
 
 ;; -- common workspace --
 screen_start:  .ds 2                  ;; VRAM start address (16-bit)
+color_pen:     .db 0                  ;; Color index * 4
 
 ;; ============================================================================
 ;; SINGLE POINT FAST-PATH (X0 == X1 and Y0 == Y1)
@@ -162,13 +135,15 @@ single_draw:
     ld    hl, (x0)                ;; [5] HL = X0 coordinate
     ld    a, l                    ;; [1] A = X0 low byte
     and   #3                      ;; [2] A = pixel index (0..3)
-    ld    c, a                    ;; [1] C = pixel index for h_plot_one helper
+    push  af                      ;; [4] Save pixel index on stack
     DIV4_HL                       ;; [8] HL = X0 / 4 (byte column)
     ld    c, l                    ;; [1] C = byte_offset
     ld    a, (y0_val)             ;; [4] A = Y0
     ld    b, a                    ;; [1] B = Y0
     ld    de, (screen_start)      ;; [5] DE = base VRAM address
     call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM byte address
+    pop   af                      ;; [3] Restore pixel index into A
+    ld    c, a                    ;; [1] C = pixel index for h_plot_one helper
     call  h_plot_one              ;; [5] Plot pixel using unified helper
     jp    end_draw_line           ;; [3] Jump to binding end
 
@@ -178,10 +153,25 @@ single_draw:
 ;; ============================================================================
 horizontal_draw:
     COLOR_PEN_FROM_B              ;; [7] color_pen = color * 4
-
+    push  hl                      ;; [4] Preserve HL = DX
+    ld    a, (color_pen)          ;; [4] A = color * 4
+    ld    c, a                    ;; [1]
+    ld    h, #0                   ;; [2]
+    ld    l, c                    ;; [1]
+    ld    de, #cpct_plotColorTable_M1 ;; [3]
+    add   hl, de                  ;; [3]
+    ld    a, (hl)                 ;; [2] Pixel 0 color
+    inc   hl                      ;; [2]
+    or    (hl)                    ;; [2] Pixel 1 color
+    inc   hl                      ;; [2]
+    or    (hl)                    ;; [2] Pixel 2 color
+    inc   hl                      ;; [2]
+    or    (hl)                    ;; [2] Pixel 3 color -> A = solid color byte
+    ld    (solid_op + 1), a       ;; [4] Store solid color byte operand into SMC
+    pop   hl                      ;; [3] Restore HL = DX
+    
     ld    de, (x0)                ;; [5] DE = X0 coordinate
     add   hl, de                  ;; [3] HL = X1 = X0 + DX
-
     push  hl                      ;; [4] Save X1 on stack
     push  de                      ;; [4] Save X0 on stack
     or    a                       ;; [1] Clear carry flag
@@ -190,9 +180,11 @@ horizontal_draw:
     pop   hl                      ;; [3] HL = start_x = min(X0, X1)
     pop   de                      ;; [3] DE = end_x = max(X0, X1)
     jr    h_have                  ;; [3] Jump to start processing
+    
 h_swap:
     pop   de                      ;; [3] DE = end_x = max(X0, X1)
     pop   hl                      ;; [3] HL = start_x = min(X0, X1)
+    
 h_have:
     ld    a, l                    ;; [1] A = start_x low byte
     and   #3                      ;; [2] A = start pixel offset (0..3)
@@ -200,38 +192,34 @@ h_have:
     DIV4_HL                       ;; [8] HL = start_byte
     ld    a, l                    ;; [1] A = start_byte
     ld    (rb_byte_start), a      ;; [4] Store start_byte
-
     ld    a, e                    ;; [1] A = end_x low byte
     and   #3                      ;; [2] A = end pixel offset (0..3)
     ld    (rb_off_end), a         ;; [4] Store end offset
-    ex    de, hl                  ;; [1] HL = end_x
+    ex    de, hl                  ;; [1] HL = end_x, E = start_byte
+    ld    d, e                    ;; [1] D = start_byte
     DIV4_HL                       ;; [8] HL = end_byte
     ld    a, l                    ;; [1] A = end_byte
     ld    (rb_byte_end), a        ;; [4] Store end_byte
-
-    ld    a, (rb_byte_start)      ;; [4] A = start_byte
-    ld    c, a                    ;; [1] C = start_byte
-    ld    a, (rb_byte_end)        ;; [4] A = end_byte
-    sub   c                       ;; [1] A = end_byte - start_byte
+    ld    e, a                    ;; [1] E = end_byte
+    ld    a, e                    ;; [1] A = end_byte
+    sub   d                       ;; [1] A = end_byte - start_byte
     dec   a                       ;; [1] A = middle full bytes count
     ld    (rb_mid_count), a       ;; [4] Store middle count
-
-    ld    a, (rb_byte_start)      ;; [4] A = start_byte
-    ld    c, a                    ;; [1] C = start_byte
+    ld    c, d                    ;; [1] C = start_byte
     ld    a, (y0_val)             ;; [4] A = Y0
     ld    b, a                    ;; [1] B = Y0
     ld    de, (screen_start)      ;; [5] DE = base VRAM address
     call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM starting byte address
-
     ld    a, (rb_byte_start)      ;; [4] A = start_byte
     ld    c, a                    ;; [1] C = start_byte
     ld    a, (rb_byte_end)        ;; [4] A = end_byte
     cp    c                       ;; [1] Compare start_byte and end_byte
-    jp    nz, h_multi             ;; [3] IF start_byte != end_byte THEN jump multi-byte
-
+    jp    nz, h_multi             ;; [3] IF start_byte != end_byte THEN multi-byte
+    
     ;; --- MONO-BYTE CASE: pixels [off_start .. off_end] ---
     ld    a, (rb_off_start)       ;; [4] A = start pixel offset
     ld    c, a                    ;; [1] C = current pixel offset
+    
 h_single_loop:
     call  h_plot_one              ;; [5] Plot pixel in single byte
     ld    a, (rb_off_end)         ;; [4] A = end pixel offset
@@ -239,35 +227,38 @@ h_single_loop:
     jp    z, h_done               ;; [3] IF finished THEN jump h_done
     inc   c                       ;; [1] Move to next pixel offset
     jr    h_single_loop           ;; [3] Loop next pixel
-
+    
 h_multi:
     ;; --- START BYTE: pixels [off_start .. 3] ---
     ld    a, (rb_off_start)       ;; [4] A = start pixel offset
     ld    c, a                    ;; [1] C = current pixel offset
+    
 h_start_loop:
     call  h_plot_one              ;; [5] Plot pixel in start byte
     inc   c                       ;; [1] Move to next pixel offset
     ld    a, c                    ;; [1] A = current pixel offset
     cp    #4                      ;; [2] Check byte boundary (4 pixels/byte)
     jr    nz, h_start_loop        ;; [2/3] IF not byte boundary THEN loop
-
     inc   hl                      ;; [2] Move to first middle byte column
-    FULL_COLOR                    ;; [41] D = solid color byte (HL preserved)
 
+solid_op:
+    ld    d, #0x00                ;; [2] SMC patched solid color byte
+    
     ;; --- MIDDLE BYTES: Fast solid fill loop ---
     ld    a, (rb_mid_count)       ;; [4] A = middle bytes count
     or    a                       ;; [1] Check if 0
     jr    z, h_no_mid             ;; [2/3] IF 0 middle bytes THEN skip loop
     ld    b, a                    ;; [1] B = middle bytes counter
+    
 h_mid_loop:
     ld    (hl), d                 ;; [2] Write solid color byte directly to VRAM
     inc   hl                      ;; [2] Move to next byte column
-    dec   b                       ;; [1] Decrement counter
-    jr    nz, h_mid_loop          ;; [2/3] Loop until middle bytes filled
+    djnz  h_mid_loop              ;; [3/4] Loop until middle bytes filled
+    
 h_no_mid:
-
     ;; --- END BYTE: pixels [0 .. off_end] ---
     ld    c, #0                   ;; [2] C = 0 (start offset for final byte)
+
 h_end_loop:
     call  h_plot_one              ;; [5] Plot pixel in end byte
     ld    a, (rb_off_end)         ;; [4] A = end pixel offset
@@ -280,7 +271,7 @@ h_done:
     jp    end_draw_line           ;; [3] Jump to binding end
 
 ;; ============================================================================
-;; VERTICAL LINE FAST-PATH (X0 == X1) -- Fixed SMC & Single Loop
+;; VERTICAL LINE FAST-PATH (X0 == X1)
 ;;      Input: A = Y0, B = color, C = Y1, (x0) = X, (y0_val) = Y0
 ;; ============================================================================
 vertical_draw:
@@ -365,47 +356,24 @@ v_step_ok:
 ;;   Preserves: HL, C                 Destroys: A, B, DE
 ;; ----------------------------------------------------------------------------
 h_plot_one:
-    ld    e, c                    ;; [1] E = pixel index
-    push  hl                      ;; [4] Save VRAM address
-    ld    h, #0                   ;; [2] H = 0
+    push  hl                      ;; [4] Preserve VRAM address
+    ld    h, #0                   ;; [2]
     ld    l, c                    ;; [1] L = pixel index
-    ld    de, #cpct_plotMasksTable_M1 ;; [3] DE = masks table base
-    add   hl, de                  ;; [3] HL = &masks[pixel_index]
-    ld    a, (hl)                 ;; [2] A = mask byte
-    ld    b, a                    ;; [1] B = mask byte
-    pop   hl                      ;; [3] Restore VRAM address
-    ld    a, (hl)                 ;; [2] A = current VRAM byte
-    and   b                       ;; [1] Apply mask to preserve background
-    ld    b, a                    ;; [1] B = preserved background
+    ld    de, #cpct_plotMasksTable_M1 ;; [3]
+    add   hl, de                  ;; [3]
+    ld    b, (hl)                 ;; [2] B = background mask
     ld    a, (color_pen)          ;; [4] A = color * 4
     or    c                       ;; [1] A = color * 4 + pixel_index
-    push  hl                      ;; [4] Save VRAM address
-    ld    h, #0                   ;; [2] H = 0
     ld    l, a                    ;; [1] L = color offset
-    ld    de, #cpct_plotColorTable_M1 ;; [3] DE = color table base
-    add   hl, de                  ;; [3] HL = &color[offset]
-    ld    a, (hl)                 ;; [2] A = pixel color byte
+    ld    h, #0                   ;; [2]
+    ld    de, #cpct_plotColorTable_M1 ;; [3]
+    add   hl, de                  ;; [3]
+    ld    d, (hl)                 ;; [2] D = pixel color byte
     pop   hl                      ;; [3] Restore VRAM address
-    or    b                       ;; [1] Merge background + foreground pixel
-    ld    (hl), a                 ;; [2] Write merged byte back to VRAM
-    ret                           ;; [3] Return
-
-;; ----------------------------------------------------------------------------
-;; v_inner: Plot B vertical pixels downwards starting from HL (step DE = +0x0800)
-;;   Background mask and color byte are constant (SMC patched).
-;;   Input: HL = address, B = count, DE = #0x0800
-;;   Preserves: DE                    Destroys: A, HL, BC
-;; ----------------------------------------------------------------------------
-v_inner:
-    ld    a, (hl)                 ;; [2] A = current VRAM byte
-v_mask=.+1
-    and   #0x00                   ;; [2] Mask out background pixel (SMC patched)
-v_col =.+1
-    or    #0x00                   ;; [2] Insert foreground pixel color (SMC patched)
-    ld    (hl), a                 ;; [2] Write updated byte back to VRAM
-    add   hl, de                  ;; [3] Move HL to next scanline within row (+0x0800)
-    dec   b                       ;; [1] Decrement pixel count
-    jr    nz, v_inner             ;; [2/3] Loop if pixels remaining
+    ld    a, (hl)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Clear target pixel, preserve background
+    or    d                       ;; [1] Inject pixel color
+    ld    (hl), a                 ;; [2] Write byte to VRAM
     ret                           ;; [3] Return
 
 ;; ============================================================================
@@ -437,6 +405,17 @@ normal_draw:
     sub   c                       ;; [1] A = Y0 - Y1
     jp    z, horizontal_draw      ;; [3] DY == 0 and DX != 0 -> Jump horizontal_draw
     COLOR_PEN_FROM_B              ;; [7] color_pen = color * 4
+
+    push  hl                      ;; [4] Preserve HL = signed DX
+    push  de                      ;; [4] Preserve E = Y0
+    ld    hl, #cpct_plotColorTable_M1 ;; [3] HL = color table base
+    ld    a, (color_pen)          ;; [4] A = color * 4
+    ld    e, a                    ;; [1]
+    ld    d, #0                   ;; [2]
+    add   hl, de                  ;; [3] HL = cpct_plotColorTable_M1 + color_pen
+    ld    (plot_de_op + 1), hl    ;; [4] Store color table pointer into SMC
+    pop   de                      ;; [3] Restore E = Y0
+    pop   hl                      ;; [3] Restore HL = signed DX
 
 compute_dx:
     ld    b, #0x23                ;; [2] B = opcode 'inc iy' (+1 step X)
@@ -529,7 +508,7 @@ loop_line_pixel:
     ld__a_iyl                     ;; [2] A = IYL (current X low byte)
     ld    l, a                    ;; [1] L = X low byte
     and   #3                      ;; [2] A = pixel offset (0..3)
-    ld    e, a                    ;; [1] E = pixel offset
+    ld    e, a                    ;; [1] E = pixel offset (0..3)
     ld__a_iyh                     ;; [2] A = IYH (current X high byte)
     ld    h, a                    ;; [1] H = X high byte (HL = current X)
     DIV4_HL                       ;; [8] L = X_byte
@@ -581,20 +560,18 @@ move_up_row:
 save_screen_ptr:
     ld    (screen_ptr), hl        ;; [5] Save updated screen pointer into SMC
 plot_pixel:
-    ld    c, e                    ;; [1] C = pixel offset
-    ld    a, (hl)                 ;; [2] A = current VRAM byte
+    ld    a, (hl)                 ;; [2] Read current VRAM byte
 saved_bg_mask=.+1
     and   #0x00                   ;; [2] Apply background mask (SMC patched)
     ld    b, a                    ;; [1] B = preserved background
-color_pen=.+1
-    ld    a, #00                  ;; [2] A = color * 4 (SMC patched)
-    or    c                       ;; [1] A = color * 4 + pixel offset
-    ld    de, #cpct_plotColorTable_M1 ;; [3] DE = color table base
-    add   a, e                    ;; [1] A = E + offset
+    ld    a, e                    ;; [1] A = pixel offset (E = 0..3)
+plot_de_op:
+    ld    de, #0000               ;; [3] SMC: DE = table_base + color_pen
+    add   a, e                    ;; [1] A = low(base) + offset
     ld    e, a                    ;; [1] DE = &color[offset]
     ld    a, (de)                 ;; [2] A = pixel color byte
     or    b                       ;; [1] Merge background + foreground
-    ld    (hl), a                 ;; [2] Write byte to VRAM
+    ld    (hl), a                 ;; [2] Write byte back to VRAM
 err_2_compute:
     ld__d_ixh                     ;; [2] D = IXH
     ld__e_ixl                     ;; [2] E = IXL (DE = ERR)
