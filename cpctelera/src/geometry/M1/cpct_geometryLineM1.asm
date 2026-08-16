@@ -43,7 +43,7 @@
 ;;    > call cpct_geometryLineM1
 ;;
 ;; Fast-Path Special Cases:
-;;    - Single Point  (DX = 0, DY = 0) : Direct pixel plot bypassing Bresenham setup.
+;;    - Single Point  (DX = 0, DY = 0) : Direct pixel plot using h_plot_one helper.
 ;;    - Horizontal    (DY = 0, DX != 0): Accelerated byte-aligned memory fill.
 ;;    - Vertical      (DX = 0, DY != 0): SMC-optimized 8-line scanline stepping.
 ;;
@@ -68,18 +68,18 @@
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    561 bytes (535 bytes routine + 26 bytes binding wrapper)
+;;    448 bytes (422 bytes routine + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
 ;;    Setup Overhead (routine + binding)       | -      | 218            | 872
-;;    Single Point  (50,50) to (50,50) [Fast]  | 1      | 210            | 840
-;;    Horizontal    (0,0)   to (100,0) [Fast]  | 101    | 812            | 3248
-;;    Vertical      (0,0)   to (0,100) [Fast]  | 101    | 1860           | 7440
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | 11620          | 46480
-;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 13210          | 52840
+;;    Single Point  (50,50) to (50,50) [Fast]  | 1      | 196            | 784
+;;    Horizontal    (0,0)   to (100,0) [Fast]  | 101    | 810            | 3240
+;;    Vertical      (0,0)   to (0,100) [Fast]  | 101    | 1730           | 6920
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | 11200          | 44800
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | 12800          | 51200
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -150,18 +150,6 @@ rb_byte_start: .db 0                  ;; Start byte column (0..79)
 rb_byte_end:   .db 0                  ;; End byte column (0..79)
 rb_mid_count:  .db 0                  ;; Number of full intermediate bytes
 
-;; -- vertical_draw workspace --
-v_ys:          .db 0                  ;; Y start coordinate (ordered)
-v_ye:          .db 0                  ;; Y end coordinate (ordered)
-v_pix:         .db 0                  ;; X & 3 (pixel index within byte)
-v_byte:        .db 0                  ;; X >> 2 (X byte column offset)
-v_ls:          .db 0                  ;; line start = Ys % 8 (0..7)
-v_le:          .db 0                  ;; line end = Ye % 8 (0..7)
-v_rs:          .db 0                  ;; character row start = Ys / 8
-v_re:          .db 0                  ;; character row end = Ye / 8
-v_nbrows:      .db 0                  ;; Total number of character rows spanned
-v_mid:         .db 0                  ;; Middle full character rows (saturates at 0)
-
 ;; -- common workspace --
 screen_start:  .ds 2                  ;; VRAM start address (16-bit)
 
@@ -169,25 +157,19 @@ screen_start:  .ds 2                  ;; VRAM start address (16-bit)
 ;; SINGLE POINT FAST-PATH (X0 == X1 and Y0 == Y1)
 ;; ============================================================================
 single_draw:
-    ld    a, b                    ;; [1] A = color index (0..3)
-    add   a, a                    ;; [1] A = color * 2
-    add   a, a                    ;; [1] A = color * 4
-    ld    (color_pen), a          ;; [4] Store color_pen into SMC
+    COLOR_PEN_FROM_B              ;; [7] color_pen = color * 4
 
     ld    hl, (x0)                ;; [5] HL = X0 coordinate
     ld    a, l                    ;; [1] A = X0 low byte
     and   #3                      ;; [2] A = pixel index (0..3)
-    push  af                      ;; [4] Save pixel index on stack
+    ld    c, a                    ;; [1] C = pixel index for h_plot_one helper
     DIV4_HL                       ;; [8] HL = X0 / 4 (byte column)
     ld    c, l                    ;; [1] C = byte_offset
     ld    a, (y0_val)             ;; [4] A = Y0
     ld    b, a                    ;; [1] B = Y0
     ld    de, (screen_start)      ;; [5] DE = base VRAM address
     call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM byte address
-    
-    pop   af                      ;; [3] Restore pixel index into A
-    ld    c, a                    ;; [1] C = pixel index
-    call  h_plot_one              ;; [5] Draw single pixel
+    call  h_plot_one              ;; [5] Plot pixel using unified helper
     jp    end_draw_line           ;; [3] Jump to binding end
 
 ;; ============================================================================
@@ -298,143 +280,80 @@ h_done:
     jp    end_draw_line           ;; [3] Jump to binding end
 
 ;; ============================================================================
-;; VERTICAL LINE FAST-PATH (X0 == X1) -- 8-line block fill + SMC
+;; VERTICAL LINE FAST-PATH (X0 == X1) -- Fixed SMC & Single Loop
 ;;      Input: A = Y0, B = color, C = Y1, (x0) = X, (y0_val) = Y0
 ;; ============================================================================
 vertical_draw:
-    ld    (v_ys), a               ;; [4] Store Y_start = Y0
-    ld    a, c                    ;; [1] A = Y1
-    ld    (v_ye), a               ;; [4] Store Y_end = Y1
-    COLOR_PEN_FROM_B              ;; [7] color_pen = color * 4
-
-    ;; Order coordinates: v_ys <= v_ye
-    ld    a, (v_ys)               ;; [4] A = Y_start
-    ld    b, a                    ;; [1] B = Y_start
-    ld    a, (v_ye)               ;; [4] A = Y_end
-    cp    b                       ;; [1] Compare Y_end - Y_start
-    jr    nc, v_order_ok          ;; [2/3] IF Y_start <= Y_end THEN jump
-    ld    (v_ys), a               ;; [4] Swap Y_start
-    ld    a, b                    ;; [1] |
-    ld    (v_ye), a               ;; [4] Swap Y_end
+    ;; 1. Order Y coordinates (Y0 <= Y1)
+    cp    c                       ;; [1] Compare Y0 and Y1
+    jr    c, v_order_ok           ;; [2/3] IF Y0 < Y1 THEN ordered
+    jp    z, single_draw          ;; [3] IF Y0 == Y1 THEN single point
+    ld    e, a                    ;; [1] Swap Y0 and Y1
+    ld    a, c                    ;; [1] |
+    ld    c, e                    ;; [1] |
 
 v_order_ok:
+    ;; 2. Calculate line height (pixels count = Y_end - Y_start + 1)
+    ld    (v_ystart_op + 1), a    ;; [4] Store Y_start into SMC
+    sub   c                       ;; [1] A = Y_start - Y_end
+    neg                           ;; [1] A = Y_end - Y_start
+    inc   a                       ;; [1] A = height in pixels
+    ld    (v_count_op + 1), a     ;; [4] Store loop count into SMC
+
+    COLOR_PEN_FROM_B              ;; [7] color_pen = color * 4
+
+    ;; 3. Compute Mask and Color ONCE for X
     ld    hl, (x0)                ;; [5] HL = X coordinate
     ld    a, l                    ;; [1] A = X low byte
-    and   #3                      ;; [2] A = pixel index
-    ld    (v_pix), a              ;; [4] Store pixel index
-    push  hl                      ;; [4] Save HL
-    DIV4_HL                       ;; [8] HL = X / 4 (byte offset)
-    ld    a, l                    ;; [1] A = byte offset
-    ld    (v_byte), a             ;; [4] Store byte offset
-    pop   hl                      ;; [3] Restore HL
-
-    ld    a, (v_pix)              ;; [4] A = pixel index
-    ld    e, a                    ;; [1] E = pixel index
+    and   #3                      ;; [2] A = pixel_index (0..3)
+    ld    e, a                    ;; [1] E = pixel_index
     ld    d, #0                   ;; [2] D = 0
     ld    hl, #cpct_plotMasksTable_M1 ;; [3] HL = masks table base
     add   hl, de                  ;; [3] HL = &masks[pixel_index]
     ld    a, (hl)                 ;; [2] A = mask byte
-    ld    (v_mask), a             ;; [4] Patch SMC mask in v_inner
+    ld    (v_mask_op + 1), a      ;; [4] Patch SMC mask byte
 
     ld    a, (color_pen)          ;; [4] A = color * 4
     or    e                       ;; [1] A = color * 4 + pixel_index
     ld    e, a                    ;; [1] E = combined offset
-    ld    d, #0                   ;; [2] D = 0
     ld    hl, #cpct_plotColorTable_M1 ;; [3] HL = color table base
     add   hl, de                  ;; [3] HL = &color[offset]
     ld    a, (hl)                 ;; [2] A = color byte
-    ld    (v_col), a              ;; [4] Patch SMC color in v_inner
+    ld    (v_col_op + 1), a       ;; [4] Patch SMC color byte
 
-    ld    a, (v_ys)               ;; [4] A = Y_start
-    and   #7                      ;; [2] A = line_start = Y_start % 8
-    ld    (v_ls), a               ;; [4] Store line_start
-    ld    a, (v_ys)               ;; [4] A = Y_start
-    and   #0xF8                   ;; [2] Mask character row
-    rrca                          ;; [1] A / 2
-    rrca                          ;; [1] A / 4
-    rrca                          ;; [1] A / 8 (row_start)
-    ld    (v_rs), a               ;; [4] Store row_start
-
-    ld    a, (v_ye)               ;; [4] A = Y_end
-    and   #7                      ;; [2] A = line_end = Y_end % 8
-    ld    (v_le), a               ;; [4] Store line_end
-    ld    a, (v_ye)               ;; [4] A = Y_end
-    and   #0xF8                   ;; [2] Mask character row
-    rrca                          ;; [1] A / 2
-    rrca                          ;; [1] A / 4
-    rrca                          ;; [1] A / 8 (row_end)
-    ld    (v_re), a               ;; [4] Store row_end
-
-    ld    a, (v_re)               ;; [4] A = row_end
-    ld    b, a                    ;; [1] B = row_end
-    ld    a, (v_rs)               ;; [4] A = row_start
-    sub   b                       ;; [1] A = row_start - row_end
-    neg                           ;; [1] A = row_end - row_start
-    inc   a                       ;; [1] A = total rows spanned
-    ld    (v_nbrows), a           ;; [4] Store nbrows
-
-    sub   #2                      ;; [2] A = nbrows - 2
-    jr    nc, v_mid_ok            ;; [2/3] IF nbrows >= 2 THEN jump
-    xor   a                       ;; [1] Saturate to 0
-v_mid_ok:
-    ld    (v_mid), a              ;; [4] Store mid_rows
-
-    ld    a, (v_ys)               ;; [4] A = Y_start
-    ld    b, a                    ;; [1] B = Y_start
-    ld    a, (v_byte)             ;; [4] A = byte_offset
-    ld    c, a                    ;; [1] C = byte_offset
+    ;; 4. Compute initial VRAM start pointer
+    ld    hl, (x0)                ;; [5] HL = X coordinate
+    DIV4_HL                       ;; [8] HL = X / 4 (byte offset)
+    ld    c, l                    ;; [1] C = X_byte
+v_ystart_op:
+    ld    b, #0x00                ;; [2] B = Y_start (SMC patched)
     ld    de, (screen_start)      ;; [5] DE = base VRAM address
-    call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM starting address
-    ld    de, #0x0800             ;; [3] DE = intra-block step (+0x0800)
+    call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM start address
+    ld    de, #0x0800             ;; [3] DE = intra-block scanline step (+0x0800)
 
-    ;; ===== First character row =====
-    ld    a, (v_nbrows)           ;; [4] A = nbrows
-    cp    #1                      ;; [2] Check if single row
-    jr    nz, v_a_multi           ;; [2/3] IF multiple rows THEN jump
-    ld    a, (v_le)               ;; [4] A = line_end
-    ld    b, a                    ;; [1] B = line_end
-    ld    a, (v_ls)               ;; [4] A = line_start
-    sub   b                       ;; [1] A = line_start - line_end
-    neg                           ;; [1] A = line_end - line_start
-    inc   a                       ;; [1] A = pixel count = line_end - line_start + 1
-    ld    b, a                    ;; [1] B = pixel count
-    call  v_inner                 ;; [5] Draw vertical pixels inside single row
-    jp    v_done                  ;; [3] Finish vertical drawing
+v_count_op:
+    ld    b, #0x00                ;; [2] B = pixel count (SMC patched)
 
-v_a_multi:
-    ld    a, #8                   ;; [2] A = 8 lines per row
-    ld    b, a                    ;; [1] B = 8
-    ld    a, (v_ls)               ;; [4] A = line_start
-    sub   b                       ;; [1] A = line_start - 8
-    neg                           ;; [1] A = 8 - line_start
-    ld    b, a                    ;; [1] B = pixel count for first row
-    call  v_inner                 ;; [5] Draw vertical pixels in first row
-    ld    bc, #0xC050             ;; [3] BC = row boundary correction (+0xC050)
-    add   hl, bc                  ;; [3] Move HL to top scanline of next character row
-
-    ;; ===== Middle full character rows (8-line blocks) =====
-v_phase_b:
-    ld    a, (v_mid)              ;; [4] A = middle full rows count
-    or    a                       ;; [1] Check if 0
-    jr    z, v_phase_c            ;; [2/3] IF 0 middle rows THEN jump to final row
-    ld    b, #8                   ;; [2] B = 8 pixels per full row
-    call  v_inner                 ;; [5] Draw full 8-pixel vertical block
-    ld    bc, #0xC050             ;; [3] Boundary correction
+v_loop:
+    ld    a, (hl)                 ;; [2] Single VRAM Read
+v_mask_op:
+    and   #0x00                   ;; [2] Apply background mask (SMC patched)
+v_col_op:
+    or    #0x00                   ;; [2] Inject foreground color (SMC patched)
+    ld    (hl), a                 ;; [2] Single VRAM Write
+    
+    add   hl, de                  ;; [3] Move HL to next scanline (+0x0800)
+    ld    a, h                    ;; [1] Check 8-line block boundary
+    and   #0x38                   ;; [2] |
+    jr    nz, v_step_ok           ;; [2/3] IF inside block THEN skip correction
+    push  bc                      ;; [4] Preserve B (loop counter)
+    ld    bc, #0xC050             ;; [3] Boundary correction offset (+0xC050)
     add   hl, bc                  ;; [3] Move HL to next character row
-    ld    a, (v_mid)              ;; [4] A = middle rows count
-    dec   a                       ;; [1] Decrement count
-    ld    (v_mid), a              ;; [4] Store updated count
-    jr    v_phase_b               ;; [3] Loop middle rows
+    pop   bc                      ;; [3] Restore B (loop counter)
 
-    ;; ===== Last character row =====
-v_phase_c:
-    ld    a, (v_le)               ;; [4] A = line_end
-    inc   a                       ;; [1] A = line_end + 1 (pixel count for final row)
-    ld    b, a                    ;; [1] B = pixel count
-    call  v_inner                 ;; [5] Draw final vertical block
-
-v_done:
-    jp    end_draw_line           ;; [3] Jump to binding end
+v_step_ok:
+    djnz  v_loop                  ;; [3/4] Loop until all vertical pixels drawn
+    jp    end_draw_line           ;; [3] Finish vertical drawing
 
 ;; ============================================================================
 ;; HELPERS
@@ -498,7 +417,6 @@ normal_draw:
     ex    de, hl                  ;; [1] HL = X0, DE = screen_base
     ld    (x0), hl                ;; [5] Save X0 coordinate into RAM
     pop   de                      ;; [3] DE = Y0 coordinate
-    xor   a                       ;; [1] Clear A and carry flag
     ld    a, e                    ;; [1] A = Y0 coordinate
     ld    (y0_val), a             ;; [4] Store initial Y0 into RAM
     ex    de, hl                  ;; [1] DE = X0, HL = Y0
