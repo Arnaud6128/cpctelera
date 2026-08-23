@@ -29,6 +29,7 @@
 #define CPCT_GEOMETRY_H
 
 // Mode 1
+extern void cpct_geometryLineM1_f(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 extern void cpct_geometryLineM1(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 extern void cpct_geometryPlotM1(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
 extern void cpct_geometryCircleM1(u8* vmem, u16 centerx, u16 centery, u8 radius, u8 color) __z88dk_callee;
