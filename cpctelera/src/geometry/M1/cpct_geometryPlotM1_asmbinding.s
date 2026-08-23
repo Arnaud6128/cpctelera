@@ -23,7 +23,7 @@
 ;;
 ;;  0 microSecs, 0 bytes
 ;;
-cpct_geometryPlotM1_asm::
+_cpct_geometryPlotM1_asm::
 
 .include  /cpct_geometryPlotM1.asm/
 
