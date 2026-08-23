@@ -1,7 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2025 Arnaud Bouche (@Arnaud6128)
-//  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
+//  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,6 +19,11 @@
 
 #ifndef CPCT_COMPRESSION_H
 #define CPCT_COMPRESSION_H
+
+// RLEWB functions
+extern u16  cpct_RLEWB_compress   (u8* src, u8* dest, u16 length) __z88dk_callee;
+extern void cpct_RLEWB_decrunch   (u8* src, u8* dest)             __z88dk_callee;
+extern void cpct_RLEWB_drawSprite (u8* src, u8* dest, u16 width)  __z88dk_callee;
 
 // ZX7B Decrunching functions
 extern void cpct_zx7b_decrunch_s  (void* dest_end, const void* source_end) __z88dk_callee;
