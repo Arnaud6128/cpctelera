@@ -25,8 +25,9 @@
 ;; Function: cpct_geometryLineM1_f
 ;;
 ;;    Draws a straight line between two points (X0, Y0) and (X1, Y1)
-;;    in Mode 1 (320x200, 4 colors) using Bresenham's line algorithm. Includes
-;;    dedicated fast-path handlers for Single Point, Horizontal, and Vertical lines.
+;;    in Mode 1 (320x200, 4 colors) using an optimized dual-path Bresenham algorithm.
+;;    Includes dedicated fast-path handlers for Single Point, Horizontal, and Vertical
+;;    lines, as well as 8 fully-specialized inlined directional rasterizer loops.
 ;;
 ;; C Definition:
 ;;    void cpct_geometryLineM1_f(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
@@ -43,46 +44,43 @@
 ;;
 ;; Fast-Path Special Cases:
 ;;    - Single Point  (DX = 0, DY = 0)  : Direct pixel plot using h_plot_one helper.
-;;    - Horizontal    (DY = 0, DX != 0) : Byte-aligned fast fill.
+;;    - Horizontal    (DY = 0, DX != 0) : Byte-aligned fast solid fill.
 ;;    - Vertical      (DX = 0, DY != 0) : 8-line scanline stepping.
 ;;
-;; Bresenham's Line Algorithm Description:
-;;    Bresenham's algorithm determines which discrete pixels on a 2D raster 
-;;    grid should be selected to form a close approximation of a straight 
-;;    line between two given points (X0, Y0) and (X1, Y1).
-;;
-;;    1. Deltas and Directions:
-;;       Calculates delta distances DX = |X1 - X0| and DY = |Y1 - Y0|, as well
-;;       as directional steps SX = sgn(X1 - X0) and SY = sgn(Y1 - Y0).
-;;
-;;    2. Decision Error Variable:
-;;       Initializes an accumulated decision error term: err = DX - DY.
-;;
-;;    3. At each pixel step:
-;;       - Evaluates e2 = 2 * err.
-;;       - If e2 >= -DY: subtracts DY from err and steps X in direction SX.
-;;       - If e2 <= DX: adds DX to err and steps Y in direction SY.
+;; Optimized Bresenham Architecture:
+;;    1. Dual-Path Split:
+;;       - Gentle Slope (DX >= DY) : X is the driving axis (steps unconditionally),
+;;                                   Y steps only on error accumulator overflow.
+;;       - Steep Slope  (DY > DX)  : Y is the driving axis (steps unconditionally),
+;;                                   X steps only on error accumulator overflow.
+;;    2. 8 Fully-Specialized Directional Loops:
+;;       - Gentle / Steep x Right / Left x Down / Up (100% hardcoded opcodes).
+;;       - Inlined CRTC Scanline Stepping (+0x0800/+0xC050 down, -0x0800/-0x37B0 up).
+;;       - Zero-overhead byte boundary detection via hardware Carry flag (rrc/rlc).
+;;       - 3-rotation color byte realignment (rlc c * 3 / rrc c * 3).
+;;       - Direct immediate delta additions (no stack push/pop, no RAM reads).
+;;       - 16-bit loop counter in alternate register BC'.
 ;;
 ;; Known limitations:
-;;  * This function *will not work from ROM*, as it uses self-modifying code.
-;;  * This function disable interruptions
+;;  * This function will not work from ROM, as it uses self-modifying immediate deltas.
 ;;
 ;; Destroyed Register values:
-;;    AF, BC, DE, HL, IX, IY, AF', BC', DE', HL'
+;;    AF, BC, DE, HL, AF', BC', DE', HL'
 ;;
 ;; Required memory:
-;;    755 bytes (729 bytes routine + 26 bytes binding wrapper)
+;;    1196 bytes (1150 bytes routine + 20 bytes data + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (Includes +34 us / +136 CPU cycles binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Setup Overhead (routine + binding)       | -      | ~248           | ~990
+;;    Setup Overhead (routine + binding)       | -      | ~68            | ~272
 ;;    Single Point  (50,50) to (50,50) [Fast]  | 1      | 214            | 856
 ;;    Horizontal    (0,0)   to (100,0) [Fast]  | 101    | 790            | 3160
 ;;    Vertical      (0,0)   to (0,100) [Fast]  | 101    | 1730           | 6920
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | ~8800          | ~35200
-;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | ~9625          | ~38500
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | ~3450          | ~13800
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | ~3875          | ~15500
+;;    Steep Slope   (0,0)   to (25,100)        | 101    | ~3550          | ~14200
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -114,14 +112,22 @@
 ;; DATA SECTION
 ;;-------------------------------------------------------------------------------
 .area _DATA
-rb_off_start:  .db 0          ;; Start pixel offset (0..3)
-rb_off_end:    .db 0          ;; End pixel offset (0..3)
-rb_byte_start: .db 0          ;; Start byte column (0..79)
-rb_byte_end:   .db 0          ;; End byte column (0..79)
-rb_mid_count:  .db 0          ;; Number of full intermediate bytes
-screen_start:  .ds 2          ;; Base VRAM address (16-bit)
-color_pen:     .db 0          ;; Pre-multiplied color index (color * 4)
-y0_val:        .db 0          ;; Current Y coordinate (RAM storage)
+rb_off_start:   .db 0          ;; Start pixel offset (0..3)
+rb_off_end:     .db 0          ;; End pixel offset (0..3)
+rb_byte_start:  .db 0          ;; Start byte column (0..79)
+rb_byte_end:    .db 0          ;; End byte column (0..79)
+rb_mid_count:   .db 0          ;; Number of full intermediate bytes
+screen_start:   .ds 2          ;; Base VRAM address (16-bit)
+screen_ptr_val: .dw 0          ;; Initial computed VRAM pointer (16-bit)
+color_pen:      .db 0          ;; Pre-multiplied color index (color * 4)
+y0_val:         .db 0          ;; Current Y coordinate (RAM storage)
+x0_val:         .dw 0          ;; Current X0 coordinate (RAM storage)
+abs_dx:         .dw 0          ;; Absolute DX distance (16-bit)
+abs_dy:         .dw 0          ;; Absolute DY distance (16-bit)
+sx_is_left:     .db 0          ;; SX direction flag (0 = Right, 1 = Left)
+sy_is_up:       .db 0          ;; SY direction flag (0 = Down, 1 = Up)
+cur_mask:       .db 0          ;; Current Mode 1 pixel mask
+cur_col:        .db 0          ;; Current Mode 1 pixel color byte
 
 ;;-------------------------------------------------------------------------------
 ;; CODE SECTION
@@ -134,7 +140,7 @@ jp    normal_draw             ;; [3] Jump to main entry and dispatch
 ;; ============================================================================
 single_draw:
     COLOR_PEN_FROM_B              ;; [7] Calculate pre-multiplied color index
-    ld    hl, (x0)                ;; [5] HL = X0 coordinate
+    ld    hl, (x0_val)            ;; [5] HL = X0 coordinate
     ld    a, l                    ;; [1] A = X0 low byte
     and   #3                      ;; [2] A = pixel offset (0..3)
     push  af                      ;; [4] Save pixel offset on stack
@@ -167,10 +173,10 @@ horizontal_draw:
     inc   hl                      ;; [2] Next pixel byte
     or    (hl)                    ;; [2] Merge pixel 2 byte pattern
     inc   hl                      ;; [2] Next pixel byte
-    or    (hl)                    ;; [2] Merge pixel 3 byte pattern -> A = solid byte pattern
-    ld    (solid_op + 1), a       ;; [4] Store solid byte pattern operand into SMC
+    or    (hl)                    ;; [2] Merge pixel 3 byte pattern -> A = solid pattern
+    ld    (solid_op + 1), a       ;; [4] Store solid byte pattern into SMC
     pop   hl                      ;; [3] Restore HL = signed DX
-    ld    de, (x0)                ;; [5] DE = X0 coordinate
+    ld    de, (x0_val)            ;; [5] DE = X0 coordinate
     add   hl, de                  ;; [3] HL = X1 = X0 + DX
     push  hl                      ;; [4] Save X1 on stack
     push  de                      ;; [4] Save X0 on stack
@@ -221,7 +227,7 @@ h_single_loop:
     call  h_plot_one              ;; [5] Plot pixel in single byte
     ld    a, (rb_off_end)         ;; [4] A = end pixel offset
     cp    c                       ;; [1] Compare with current offset
-    jp    z, h_done               ;; [3] IF finished THEN jump h_done
+    jp    z, end_draw_line        ;; [3] IF finished THEN jump end
     inc   c                       ;; [1] Move to next pixel offset
     jr    h_single_loop           ;; [3] Loop next pixel
 h_multi:
@@ -253,11 +259,9 @@ h_end_loop:
     call  h_plot_one              ;; [5] Plot pixel in end byte
     ld    a, (rb_off_end)         ;; [4] A = end pixel offset
     cp    c                       ;; [1] Compare with current offset
-    jp    z, h_done               ;; [3] IF finished THEN jump h_done
+    jp    z, end_draw_line        ;; [3] IF finished THEN jump end
     inc   c                       ;; [1] Move to next pixel offset
     jr    h_end_loop              ;; [3] Loop next pixel
-h_done:
-    jp    end_draw_line           ;; [3] Jump to binding end
 
 ;; ============================================================================
 ;; VERTICAL LINE FAST-PATH (DX = 0)
@@ -276,7 +280,7 @@ v_order_ok:
     inc   a                       ;; [1] A = height in pixels
     ld    (v_count_op + 1), a     ;; [4] Store loop count into SMC
     COLOR_PEN_FROM_B              ;; [7] Calculate pre-multiplied color index
-    ld    hl, (x0)                ;; [5] HL = X coordinate
+    ld    hl, (x0_val)            ;; [5] HL = X coordinate
     ld    a, l                    ;; [1] A = X low byte
     and   #3                      ;; [2] A = pixel_index (0..3)
     ld    e, a                    ;; [1] E = pixel_index
@@ -292,7 +296,7 @@ v_order_ok:
     add   hl, de                  ;; [3] HL = &color[offset]
     ld    a, (hl)                 ;; [2] A = color byte
     ld    (v_col_op + 1), a       ;; [4] Patch SMC color byte
-    ld    hl, (x0)                ;; [5] HL = X coordinate
+    ld    hl, (x0_val)            ;; [5] HL = X coordinate
     DIV4_HL                       ;; [8] Convert X coordinate to byte column
     ld    c, l                    ;; [1] C = X_byte
 v_ystart_op:
@@ -333,8 +337,8 @@ h_plot_one:
     ld    b, (hl)                 ;; [2] B = background mask
     ld    a, (color_pen)          ;; [4] A = color * 4
     or    c                       ;; [1] A = color * 4 + pixel_index
-    ld    l, a                    ;; [1] L = color offset (color * 4 + pixel_index)
-    ld    h, #0                   ;; [2] Clear H for 16-bit offset calculation
+    ld    l, a                    ;; [1] L = color offset
+    ld    h, #0                   ;; [2] Clear H
     ld    de, #cpct_plotColorTable_M1 ;; [3] DE = color table base
     add   hl, de                  ;; [3] HL = &color[combined_offset]
     ld    d, (hl)                 ;; [2] D = pixel color byte
@@ -346,21 +350,22 @@ h_plot_one:
     ret                           ;; [3] Return
 
 ;; ============================================================================
-;; GENERIC BRESENHAM (v3a, alternate registers)
+;; MAIN ENTRY POINT & DISPATCHER
 ;; ============================================================================
 normal_draw:
-    ld    (screen_start), hl      ;; [5] Store VRAM base address into RAM
+    ld    (screen_start), hl      ;; [5] Store base VRAM address into RAM
     ex    de, hl                  ;; [1] HL = X0 coordinate, DE = base VRAM address
-    ld    (x0), hl                ;; [5] Save X0 coordinate into RAM
+    ld    (x0_val), hl            ;; [5] Save X0 coordinate into RAM
     pop   de                      ;; [3] DE = Y0 coordinate
     ld    a, e                    ;; [1] A = Y0 coordinate
     ld    (y0_val), a             ;; [4] Store initial Y0 into RAM
     ex    de, hl                  ;; [1] DE = X0, HL = Y0
     pop   hl                      ;; [3] HL = X1 coordinate
-    sbc   hl, de                  ;; [3] HL = DX = X1 - X0 (Sets Z flag if DX == 0)
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = signed DX = X1 - X0
     ld    e, a                    ;; [1] E = Y0
-    pop   bc                      ;; [3] B = color, C = Y1 (Z flag from sbc)
-    jr    nz, dx_nonzero          ;; [2/3] IF DX != 0 THEN jump dx_nonzero
+    pop   bc                      ;; [3] B = color, C = Y1
+    jr    nz, check_dy            ;; [2/3] IF DX != 0 THEN jump check_dy
 
     ;; ---- DX == 0 case ----
     sub   c                       ;; [1] A = Y0 - Y1
@@ -368,37 +373,20 @@ normal_draw:
     ld    a, e                    ;; [1] Restore A = Y0
     jp    vertical_draw           ;; [3] DX == 0 and DY != 0 -> vertical_draw
 
-dx_nonzero:
+check_dy:
     ;; ---- DX != 0 case ----
     sub   c                       ;; [1] A = Y0 - Y1
     jp    z, horizontal_draw      ;; [3] DY == 0 and DX != 0 -> horizontal_draw
     COLOR_PEN_FROM_B              ;; [7] Calculate pre-multiplied color index
 
-compute_dx:
-    ld    b, #0x23                ;; [2] B = opcode 'inc iy' (SX = +1)
-    ld    a, #0x08                ;; [2] A = second byte opcode 'rrc b' (SX = +1)
-    ld    (bg_rot), a             ;; [4] Store mask rotation opcode into SMC
-    ld    a, #0x09                ;; [2] A = second byte opcode 'rrc c' (SX = +1)
-    ld    (col_rot), a            ;; [4] Store color rotation opcode into SMC
-    ld    a, #0x00                ;; [2] Byte boundary offset for SX = +1 (0)
-    ld    (sx_bound_val), a       ;; [4] Store boundary offset into SMC
-    ld    a, #0x01                ;; [2] Opcode 'rlc c' for byte wrap color alignment (SX = +1)
-    ld    (col_align_rot1), a     ;; [4] Store alignment rotation 1 opcode into SMC
-    ld    (col_align_rot2), a     ;; [4] Store alignment rotation 2 opcode into SMC
-    ld    (col_align_rot3), a     ;; [4] Store alignment rotation 3 opcode into SMC
+    ;; ---- SX Direction (Right = 0, Left = 1) ----
+    xor   a                       ;; [1] Clear A
+    ld    (sx_is_left), a         ;; [4] Default SX = Right (0)
     bit   7, h                    ;; [2] Check sign of DX
-    jr    z, compute_dy           ;; [2/3] IF DX >= 0 THEN jump compute_dy
-    ld    b, #0x2B                ;; [2] B = opcode 'dec iy' (SX = -1)
-    ld    a, #0x00                ;; [2] A = second byte opcode 'rlc b' (SX = -1)
-    ld    (bg_rot), a             ;; [4] Store mask rotation opcode into SMC
-    ld    a, #0x01                ;; [2] A = second byte opcode 'rlc c' (SX = -1)
-    ld    (col_rot), a            ;; [4] Store color rotation opcode into SMC
-    ld    a, #0x03                ;; [2] Byte boundary offset for SX = -1 (3)
-    ld    (sx_bound_val), a       ;; [4] Store boundary offset into SMC
-    ld    a, #0x09                ;; [2] Opcode 'rrc c' for byte wrap color alignment (SX = -1)
-    ld    (col_align_rot1), a     ;; [4] Store alignment rotation 1 opcode into SMC
-    ld    (col_align_rot2), a     ;; [4] Store alignment rotation 2 opcode into SMC
-    ld    (col_align_rot3), a     ;; [4] Store alignment rotation 3 opcode into SMC
+    jr    z, dx_abs_ready         ;; [2/3] IF DX >= 0 THEN jump dx_abs_ready
+
+    ld    a, #1                   ;; [2] A = 1 (Left)
+    ld    (sx_is_left), a         ;; [4] Store SX = Left (1)
     xor   a                       ;; [1] Clear A
     sub   l                       ;; [1] HL = -DX
     ld    l, a                    ;; [1] |
@@ -406,217 +394,961 @@ compute_dx:
     sub   h                       ;; [1] |
     ld    h, a                    ;; [1] HL = |DX|
 
-compute_dy:
-    ld    (dx), hl                ;; [4] Save absolute DX into SMC
-    ld    a, b                    ;; [1] A = SX step opcode ('inc iy' / 'dec iy')
-    ld    (add_sx), a             ;; [4] Store SX opcode into SMC
-    ld    (sx_ptr_op), a          ;; [4] Store VRAM pointer opcode ('inc hl' / 'dec hl')
+dx_abs_ready:
+    ld    (abs_dx), hl            ;; [5] Store absolute DX into RAM
+
+    ;; ---- SY Direction (Down = 0, Up = 1) ----
     ld    a, c                    ;; [1] A = Y1
-    sub   e                       ;; [1] A = DY = Y1 - Y0
+    sub   e                       ;; [1] A = Y1 - Y0
+    jr    nc, sy_pos              ;; [2/3] IF Y1 >= Y0 THEN jump sy_pos
+    neg                           ;; [2] A = |DY|
+    ld    c, a                    ;; [1] C = |DY|
+    ld    a, #1                   ;; [2] A = 1 (Up)
+    ld    (sy_is_up), a           ;; [4] Store SY = Up (1)
+    jr    dy_abs_ready            ;; [3] Jump dy_abs_ready
 
-compute_sy:
-    ld    b, #0x3C                ;; [2] B = opcode 'inc a' (SY = +1)
-    jr    nc, compute_err         ;; [2/3] IF Y1 >= Y0 THEN jump compute_err
-    neg                           ;; [2] A = -DY
-    ld    b, #0x3D                ;; [2] B = opcode 'dec a' (SY = -1)
+sy_pos:
+    ld    c, a                    ;; [1] C = |DY|
+    xor   a                       ;; [1] A = 0 (Down)
+    ld    (sy_is_up), a           ;; [4] Store SY = Down (0)
 
-compute_err:
-    ld    c, a                    ;; [1] C = absolute DY
-    ld    a, b                    ;; [1] A = SY step opcode
-    ld    (add_sy_op), a          ;; [4] Store SY opcode into SMC
-    ld    b, #00                  ;; [2] BC = absolute DY
+dy_abs_ready:
+    ld    b, #0                   ;; [2] BC = absolute DY (16-bit)
+    ld    (abs_dy), bc            ;; [6] Store absolute DY into RAM
 
-compute_pixels:
-    push  hl                      ;; [4] Save absolute DX on stack
-    or    a                       ;; [1] Clear carry flag
-    sbc   hl, bc                  ;; [3] Compare DX and DY
-    add   hl, bc                  ;; [3] Restore HL = DX
-    jr    nc, dx_is_max           ;; [2/3] IF DX >= DY THEN DX is max
-dy_is_max:
-    ld    h, b                    ;; [1] HL = DY
-    ld    l, c                    ;; [1] |
-dx_is_max:
-    inc   hl                      ;; [2] HL = max(DX, DY) + 1 (total pixel count)
-    push  hl                      ;; [4] Put HL on stack for alternate DE'
-    exx                           ;; [1] Switch to alternate register set
-    pop   de                      ;; [3] DE' = total pixel count
-    exx                           ;; [1] Switch back to main register set
-    pop   hl                      ;; [4] Restore HL = DX from stack
-    xor   a                       ;; [1] BC = -DY
-    sub   c                       ;; [1] |
-    ld    c, a                    ;; [1] |
-    sbc   a, a                    ;; [1] |
-    sub   b                       ;; [1] |
-    ld    b, a                    ;; [1] |
-    ld    (dy), bc                ;; [4] Store -DY into SMC
-    or    a                       ;; [1] Clear carry flag
-    add   hl, bc                  ;; [3] HL = ERR = DX + (-DY)
-    ld    b, h                    ;; [1] BC = ERR
-    ld    c, l                    ;; [1] |
-    ld__ixh_b                     ;; [2] IXH = high byte of ERR
-    ld__ixl_c                     ;; [2] IXL = low byte of ERR
-x0=.+1
-    ld    hl, #0000               ;; [3] HL = X0 (SMC loaded)
-    push  hl                      ;; [4] Save X0 on stack
-    pop   iy                      ;; [4] IY = X0 (current X)
-
-compute_start_vmem:
+    ;; -------------------------------------------------------------
+    ;; Compute Initial Screen Pointer & Mode 1 Pixel Mask/Color
+    ;; -------------------------------------------------------------
+    ld    hl, (x0_val)            ;; [5] HL = X0 coordinate
     push  hl                      ;; [4] Save X0 on stack
     DIV4_HL                       ;; [8] Convert X0 to byte column
     ld    c, l                    ;; [1] C = X_byte
-    ld    a, e                    ;; [1] A = Y0
+    ld    a, (y0_val)             ;; [4] A = Y0
     ld    b, a                    ;; [1] B = Y0
     ld    de, (screen_start)      ;; [5] DE = base VRAM address
-    call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM address of (X_byte, Y0)
-    push  hl                      ;; [4] Save VRAM address on stack
-    exx                           ;; [1] Switch to alternate register set
-    pop   hl                      ;; [3] HL' = initial VRAM pointer
-    exx                           ;; [1] Switch back to main register set
-    pop   hl                      ;; [4] Restore X0 from stack
+    call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM address
+    ld    (screen_ptr_val), hl    ;; [5] Store computed initial VRAM pointer
+    pop   hl                      ;; [3] Restore X0
+
     ld    a, l                    ;; [1] A = X0 low byte
     and   #3                      ;; [2] A = pixel offset (0..3)
     ld    c, a                    ;; [1] C = pixel offset
     ld    hl, #cpct_plotMasksTable_M1 ;; [3] HL = masks table base
-    ld    b, #00                  ;; [2] B = 0
+    ld    b, #0                   ;; [2] B = 0
     add   hl, bc                  ;; [3] HL = &masks[pixel_offset]
-    ld    d, (hl)                 ;; [2] D = initial background mask
+    ld    a, (hl)                 ;; [2] A = initial background mask
+    ld    (cur_mask), a           ;; [4] Store initial mask
+
     ld    a, (color_pen)          ;; [4] A = color * 4
     add   a, c                    ;; [1] A = color * 4 + pixel_offset
-    ld    hl, #cpct_plotColorTable_M1 ;; [3] HL = color table base
     ld    c, a                    ;; [1] C = combined offset
-    ld    b, #00                  ;; [2] B = 0
+    ld    hl, #cpct_plotColorTable_M1 ;; [3] HL = color table base
+    ld    b, #0                   ;; [2] B = 0
     add   hl, bc                  ;; [3] HL = &color[combined_offset]
-    ld    e, (hl)                 ;; [2] E = initial foreground color byte
-    push  de                      ;; [4] Save D (mask) and E (color) on stack
+    ld    a, (hl)                 ;; [2] A = initial color byte
+    ld    (cur_col), a            ;; [4] Store initial color byte
+
+    ;; -------------------------------------------------------------
+    ;; 8-Way Clean Dispatcher (Gentle/Steep x Right/Left x Down/Up)
+    ;; -------------------------------------------------------------
+    ld    hl, (abs_dx)            ;; [5] HL = |DX|
+    ld    bc, (abs_dy)            ;; [6] BC = |DY|
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, bc                  ;; [3] Compare |DX| and |DY|
+    jp    c, is_steep_8way        ;; [3] IF |DX| < |DY| THEN Steep path
+
+is_gentle_8way:
+    ld    a, (sx_is_left)         ;; [4] A = SX flag (0=Right, 1=Left)
+    or    a                       ;; [1] Check if Left
+    jr    nz, gentle_left         ;; [2/3] IF Left THEN jump gentle_left
+
+gentle_right:
+    ld    a, (sy_is_up)           ;; [4] A = SY flag (0=Down, 1=Up)
+    or    a                       ;; [1] Check if Up
+    jp    nz, setup_gru           ;; [3] IF Up THEN Gentle Right Up
+    jp    setup_grd               ;; [3] IF Down THEN Gentle Right Down
+
+gentle_left:
+    ld    a, (sy_is_up)           ;; [4] A = SY flag
+    or    a                       ;; [1] Check if Up
+    jp    nz, setup_glu           ;; [3] IF Up THEN Gentle Left Up
+    jp    setup_gld               ;; [3] IF Down THEN Gentle Left Down
+
+is_steep_8way:
+    ld    a, (sx_is_left)         ;; [4] A = SX flag
+    or    a                       ;; [1] Check if Left
+    jr    nz, steep_left          ;; [2/3] IF Left THEN jump steep_left
+
+steep_right:
+    ld    a, (sy_is_up)           ;; [4] A = SY flag
+    or    a                       ;; [1] Check if Up
+    jp    nz, setup_sru           ;; [3] IF Up THEN Steep Right Up
+    jp    setup_srd               ;; [3] IF Down THEN Steep Right Down
+
+steep_left:
+    ld    a, (sy_is_up)           ;; [4] A = SY flag
+    or    a                       ;; [1] Check if Up
+    jp    nz, setup_slu           ;; [3] IF Up THEN Steep Left Up
+    jp    setup_sld               ;; [3] IF Down THEN Steep Left Down
+
+;; ============================================================================
+;; 1. GENTLE RIGHT DOWN (DX >= DY, SX = +1, SY = +1)
+;; ============================================================================
+setup_grd:
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    a, l                    ;; [1] A = low byte of 2*DY
+    ld    (grd_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DY
+    ld    (grd_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    ex    de, hl                  ;; [1] HL = DX, DE = 2*DY
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ex    de, hl                  ;; [1] HL = 2*DY, DE = 2*DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DY - DX) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (grd_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (grd_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DY - DX
+
+    ld    bc, (abs_dx)            ;; [6] BC = DX
+    inc   bc                      ;; [2] BC = DX + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
     exx                           ;; [1] Switch to alternate register set
-    pop   bc                      ;; [3] B' = initial mask, C' = initial color byte
+    pop   bc                      ;; [3] BC' = total pixel count
     exx                           ;; [1] Switch back to main register set
 
-;; --- MAIN LOOP ---
-loop_line_pixel:
-    di                            ;; [1] Disable interrupts during pixel update
-plot_pixel:
-    exx                           ;; [1] Switch to alternate register set
-    ld    a, (hl)                 ;; [2] Read VRAM byte via HL'
-    and   b                       ;; [1] Apply background mask stored in B'
-    or    c                       ;; [1] Inject foreground color byte stored in C'
-    ld    (hl), a                 ;; [2] Write byte back to VRAM via HL'
-    exx                           ;; [1] Switch back to main register set
-err_2_compute:
-    ld__d_ixh                     ;; [2] D = IXH (high byte of ERR)
-    ld__e_ixl                     ;; [2] E = IXL (low byte of ERR)
-    sla   e                       ;; [2] Shift E left
-    rl    d                       ;; [2] Rotate D left through carry (DE = e2 = 2*ERR)
-x_move:
-dy=.+1
-    ld    hl, #0000               ;; [3] HL = -DY (SMC loaded)
-    ex    de, hl                  ;; [1] HL = e2, DE = -DY
-    ld    a, h                    ;; [1] Flip sign bit of H
-    xor   #0x80                   ;; [2] |
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+grd_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Step X (+1) with Fast Fall-Through ---
+    rrc   b                       ;; [2] Rotate mask right (Carry=0 on byte wrap)
+    jr    c, grd_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump grd_nowrap
+    inc   de                      ;; [2] 25% wrap: Move DE to next byte column
+    rlc   c                       ;; [2] Realign color byte: shift left 1
+    rlc   c                       ;; [2] Realign color byte: shift left 2
+    rlc   c                       ;; [2] Realign color byte: shift left 3
+    jr    grd_step_done           ;; [3] Jump to error evaluation
+grd_nowrap:
+    rrc   c                       ;; [2] Rotate color right (75% path falls through)
+grd_step_done:
+
+    ;; --- Bresenham Error Evaluation ---
+    bit   7, h                    ;; [2] Test if Err < 0 (Sign bit of H)
+    jr    z, grd_y_step           ;; [2/3] IF Err >= 0 THEN jump grd_y_step
+
+    ;; --- Fast-Path: No Y Step (Err < 0) ---
+grd_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DY (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DY)
+    ld    l, a                    ;; [1] |
+grd_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DY (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DY) + carry
     ld    h, a                    ;; [1] |
-    ld    b, d                    ;; [1] Save original D
-    ld    a, d                    ;; [1] Flip sign bit of D
-    xor   #0x80                   ;; [2] |
-    ld    d, a                    ;; [1] |
-    or    a                       ;; [1] Clear carry flag
-    sbc   hl, de                  ;; [3] Compare e2 with -DY
-    add   hl, de                  ;; [3] Restore e2
-    jr    c, y_move               ;; [2/3] IF e2 < -DY THEN skip X step
-    jr    z, y_move               ;; [2/3] IF e2 == -DY THEN skip X step
-    ld    d, b                    ;; [1] Restore original D
-    add   ix, de                  ;; [4] ERR -= DY
-add_sx=.+1
-    .db   #0xFD                   ;; [3] SMC: 'inc iy' or 'dec iy'
-    .db   #0x00
-    exx                           ;; [1] Switch to alternate register set
-    .db   #0xCB                   ;; [2] SMC prefix
-bg_rot:
-    .db   #0x08                   ;; [2] SMC opcode: 0x08 = 'rrc b' / 0x00 = 'rlc b'
-    ld__a_iyl                     ;; [2] A = IYL (current X low byte)
-    and   #3                      ;; [2] Check pixel offset
-sx_bound_val=.+1
-    cp    #0x00                   ;; [2] SMC boundary test (0x00 for SX=+1, 0x03 for SX=-1)
-    jr    z, col_wrap             ;; [2/3] IF boundary crossed THEN jump col_wrap
-    .db   #0xCB                   ;; [2] SMC prefix
-col_rot:
-    .db   #0x09                   ;; [2] SMC opcode: 0x09 = 'rrc c' / 0x01 = 'rlc c'
-    jr    x_move_done             ;; [3] Jump to completion of X step
-col_wrap:
-    .db   #0xCB                   ;; [2] SMC prefix
-col_align_rot1:
-    .db   #0x01                   ;; [2] SMC opcode: color alignment shift 1 ('rlc c' / 'rrc c')
-    .db   #0xCB                   ;; [2] SMC prefix
-col_align_rot2:
-    .db   #0x01                   ;; [2] SMC opcode: color alignment shift 2 ('rlc c' / 'rrc c')
-    .db   #0xCB                   ;; [2] SMC prefix
-col_align_rot3:
-    .db   #0x01                   ;; [2] SMC opcode: color alignment shift 3 ('rlc c' / 'rrc c')
-sx_ptr_op:
-    .db   #0x23                   ;; [2] SMC: 'inc hl' / 'dec hl' (updates HL')
-x_move_done:
-    exx                           ;; [1] Switch back to main register set
-y_move:
-dx=.+1
-    ld    de, #0000               ;; [3] DE = DX (SMC loaded)
-    ld    b, d                    ;; [1] BC = DX
-    ld    c, e                    ;; [1] |
-    ld    a, d                    ;; [1] Flip sign bit of D
-    xor   #0x80                   ;; [2] |
-    ld    d, a                    ;; [1] |
-    or    a                       ;; [1] Clear carry flag
-    sbc   hl, de                  ;; [3] Compare e2 with DX
-    jp    p, last_pixel           ;; [2/3] IF e2 >= DX THEN skip Y step
-    add   ix, bc                  ;; [4] ERR += DX
-    ld    a, (y0_val)             ;; [4] A = current Y
-add_sy_op:
-    .db   #0x00                   ;; [1] SMC: 'inc a' or 'dec a'
-    ld    (y0_val), a             ;; [4] Save updated Y
-    ld    a, (add_sy_op)          ;; [4] Reload SY opcode (0x3C / 0x3D)
-    cp    #0x3C                   ;; [2] Check if SY == +1 ('inc a')
-    jr    nz, y_up                ;; [2/3] IF SY != +1 THEN jump y_up
-y_down:
-    exx                           ;; [1] Switch to alternate register set
-    ld    a, h                    ;; [1] A = H' byte
-    add   a, #0x08                ;; [2] Move H' down 1 scanline (+0x0800)
-    ld    h, a                    ;; [1] H' = updated high byte
-    and   #0x38                   ;; [2] Check 8-line character block boundary
-    jr    nz, y_d_ok              ;; [2/3] IF inside block THEN jump y_d_ok
-    ld    a, l                    ;; [1] A = L' byte
-    add   a, #0x50                ;; [2] L' += 0x50 (with carry)
-    ld    l, a                    ;; [1] L' = updated low byte
-    ld    a, h                    ;; [1] A = H' byte
-    adc   a, #0xC0                ;; [2] H' += 0xC0 + carry
-    ld    h, a                    ;; [1] H' = updated high byte
-y_d_ok:
-    exx                           ;; [1] Switch back to main register set
-    jr    last_pixel              ;; [3] Jump to last_pixel
-y_up:
-    exx                           ;; [1] Switch to alternate register set
-    ld    a, h                    ;; [1] A = H' byte
-    and   #0x38                   ;; [2] Check if line 0 of character row
-    jr    z, y_u_row              ;; [2/3] IF line 0 THEN jump y_u_row
-    ld    a, h                    ;; [1] A = H' byte
-    sub   #0x08                   ;; [2] Move H' up 1 scanline (-0x0800)
-    ld    h, a                    ;; [1] H' = updated high byte
-    jr    y_u_ok                  ;; [3] Jump to y_u_ok
-y_u_row:
-    ld    a, l                    ;; [1] A = L' byte
-    add   a, #0xB0                ;; [2] L' += 0xB0 (with carry)
-    ld    l, a                    ;; [1] L' = updated low byte
-    ld    a, h                    ;; [1] A = H' byte
-    adc   a, #0x37                ;; [2] H' += 0x37 + carry
-    ld    h, a                    ;; [1] H' = updated high byte
-y_u_ok:
-    exx                           ;; [1] Switch back to main register set
-    jr    last_pixel              ;; [3] Jump to last_pixel
-last_pixel:
-    exx                           ;; [1] Switch to alternate register set
-    dec   de                      ;; [2] Decrement total pixel count DE'
-    ld    a, d                    ;; [1] Check if pixel count DE' == 0
-    or    e                       ;; [1] |
-    exx                           ;; [1] Switch back to main register set
-    ei                            ;; [1] Re-enable interrupts to service pending IRQs
-    jp    nz, loop_line_pixel     ;; [3] IF pixels remaining THEN loop
+    jr    grd_dec_count           ;; [3] Jump to loop decrement
 
+grd_y_step:
+    ;; --- Inlined Scanline Step Down ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    add   a, #0x08                ;; [2] Advance 1 scanline (+0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    and   #0x38                   ;; [2] Check 8-line character block boundary
+    jr    nz, grd_y_ok            ;; [2/3] IF inside block THEN skip correction
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0x50                ;; [2] E += 0x50 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0xC0                ;; [2] D += 0xC0 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+grd_y_ok:
+
+grd_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DY - DX) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+grd_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DY - DX) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+
+grd_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, grd_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 2. GENTLE LEFT DOWN (DX >= DY, SX = -1, SY = +1)
+;; ============================================================================
+setup_gld:
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    a, l                    ;; [1] A = low byte of 2*DY
+    ld    (gld_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DY
+    ld    (gld_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    ex    de, hl                  ;; [1] HL = DX, DE = 2*DY
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ex    de, hl                  ;; [1] HL = 2*DY, DE = 2*DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DY - DX) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (gld_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (gld_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DY - DX
+
+    ld    bc, (abs_dx)            ;; [6] BC = DX
+    inc   bc                      ;; [2] BC = DX + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+gld_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Step X (-1) with Fast Fall-Through ---
+    rlc   b                       ;; [2] Rotate mask left (Carry=0 on byte wrap)
+    jr    c, gld_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump gld_nowrap
+    dec   de                      ;; [2] 25% wrap: Move DE to previous byte column
+    rrc   c                       ;; [2] Realign color byte: shift right 1
+    rrc   c                       ;; [2] Realign color byte: shift right 2
+    rrc   c                       ;; [2] Realign color byte: shift right 3
+    jr    gld_step_done           ;; [3] Jump to error evaluation
+gld_nowrap:
+    rlc   c                       ;; [2] Rotate color left (75% path falls through)
+gld_step_done:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    z, gld_y_step           ;; [2/3] IF Err >= 0 THEN jump gld_y_step
+
+    ;; --- Fast-Path: No Y Step (Err < 0) ---
+gld_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DY (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DY)
+    ld    l, a                    ;; [1] |
+gld_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DY (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DY) + carry
+    ld    h, a                    ;; [1] |
+    jr    gld_dec_count           ;; [3] Jump to loop decrement
+
+gld_y_step:
+    ;; --- Inlined Scanline Step Down ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    add   a, #0x08                ;; [2] Advance 1 scanline (+0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    and   #0x38                   ;; [2] Check 8-line character block boundary
+    jr    nz, gld_y_ok            ;; [2/3] IF inside block THEN skip correction
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0x50                ;; [2] E += 0x50 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0xC0                ;; [2] D += 0xC0 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+gld_y_ok:
+
+gld_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DY - DX) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+gld_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DY - DX) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+
+gld_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, gld_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 3. GENTLE RIGHT UP (DX >= DY, SX = +1, SY = -1)
+;; ============================================================================
+setup_gru:
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    a, l                    ;; [1] A = low byte of 2*DY
+    ld    (gru_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DY
+    ld    (gru_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    ex    de, hl                  ;; [1] HL = DX, DE = 2*DY
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ex    de, hl                  ;; [1] HL = 2*DY, DE = 2*DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DY - DX) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (gru_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (gru_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DY - DX
+
+    ld    bc, (abs_dx)            ;; [6] BC = DX
+    inc   bc                      ;; [2] BC = DX + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+gru_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Step X (+1) with Fast Fall-Through ---
+    rrc   b                       ;; [2] Rotate mask right (Carry=0 on byte wrap)
+    jr    c, gru_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump gru_nowrap
+    inc   de                      ;; [2] 25% wrap: Move DE to next byte column
+    rlc   c                       ;; [2] Realign color byte: shift left 1
+    rlc   c                       ;; [2] Realign color byte: shift left 2
+    rlc   c                       ;; [2] Realign color byte: shift left 3
+    jr    gru_step_done           ;; [3] Jump to error evaluation
+gru_nowrap:
+    rrc   c                       ;; [2] Rotate color right (75% path falls through)
+gru_step_done:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    z, gru_y_step           ;; [2/3] IF Err >= 0 THEN jump gru_y_step
+
+    ;; --- Fast-Path: No Y Step (Err < 0) ---
+gru_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DY (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DY)
+    ld    l, a                    ;; [1] |
+gru_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DY (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DY) + carry
+    ld    h, a                    ;; [1] |
+    jr    gru_dec_count           ;; [3] Jump to loop decrement
+
+gru_y_step:
+    ;; --- Inlined Scanline Step Up ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    and   #0x38                   ;; [2] Check if line 0 of character row
+    jr    z, gru_y_row            ;; [2/3] IF line 0 THEN jump gru_y_row
+    ld    a, d                    ;; [1] A = high byte
+    sub   #0x08                   ;; [2] Move 1 scanline up (-0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    jr    gru_y_ok                ;; [3] Skip row correction
+gru_y_row:
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0xB0                ;; [2] E += 0xB0 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0x37                ;; [2] D += 0x37 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+gru_y_ok:
+
+gru_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DY - DX) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+gru_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DY - DX) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+
+gru_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, gru_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 4. GENTLE LEFT UP (DX >= DY, SX = -1, SY = -1)
+;; ============================================================================
+setup_glu:
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    a, l                    ;; [1] A = low byte of 2*DY
+    ld    (glu_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DY
+    ld    (glu_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    ex    de, hl                  ;; [1] HL = DX, DE = 2*DY
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ex    de, hl                  ;; [1] HL = 2*DY, DE = 2*DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DY - DX) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (glu_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (glu_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dy)            ;; [5] HL = DY
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ld    de, (abs_dx)            ;; [5] DE = DX
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DY - DX
+
+    ld    bc, (abs_dx)            ;; [6] BC = DX
+    inc   bc                      ;; [2] BC = DX + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+glu_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Step X (-1) with Fast Fall-Through ---
+    rlc   b                       ;; [2] Rotate mask left (Carry=0 on byte wrap)
+    jr    c, glu_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump glu_nowrap
+    dec   de                      ;; [2] 25% wrap: Move DE to previous byte column
+    rrc   c                       ;; [2] Realign color byte: shift right 1
+    rrc   c                       ;; [2] Realign color byte: shift right 2
+    rrc   c                       ;; [2] Realign color byte: shift right 3
+    jr    glu_step_done           ;; [3] Jump to error evaluation
+glu_nowrap:
+    rlc   c                       ;; [2] Rotate color left (75% path falls through)
+glu_step_done:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    z, glu_y_step           ;; [2/3] IF Err >= 0 THEN jump glu_y_step
+
+    ;; --- Fast-Path: No Y Step (Err < 0) ---
+glu_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DY (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DY)
+    ld    l, a                    ;; [1] |
+glu_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DY (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DY) + carry
+    ld    h, a                    ;; [1] |
+    jr    glu_dec_count           ;; [3] Jump to loop decrement
+
+glu_y_step:
+    ;; --- Inlined Scanline Step Up ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    and   #0x38                   ;; [2] Check if line 0 of character row
+    jr    z, glu_y_row            ;; [2/3] IF line 0 THEN jump glu_y_row
+    ld    a, d                    ;; [1] A = high byte
+    sub   #0x08                   ;; [2] Move 1 scanline up (-0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    jr    glu_y_ok                ;; [3] Skip row correction
+glu_y_row:
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0xB0                ;; [2] E += 0xB0 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0x37                ;; [2] D += 0x37 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+glu_y_ok:
+
+glu_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DY - DX) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+glu_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DY - DX) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+
+glu_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, glu_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 5. STEEP RIGHT DOWN (DY > DX, SX = +1, SY = +1)
+;; ============================================================================
+setup_srd:
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    a, l                    ;; [1] A = low byte of 2*DX
+    ld    (srd_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DX
+    ld    (srd_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    ex    de, hl                  ;; [1] HL = DY, DE = 2*DX
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ex    de, hl                  ;; [1] HL = 2*DX, DE = 2*DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DX - DY) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (srd_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (srd_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DX - DY
+
+    ld    bc, (abs_dy)            ;; [6] BC = DY
+    inc   bc                      ;; [2] BC = DY + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+srd_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Inlined Scanline Step Down (Always) ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    add   a, #0x08                ;; [2] Move down 1 scanline (+0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    and   #0x38                   ;; [2] Check 8-line character block boundary
+    jr    nz, srd_y_ok            ;; [2/3] IF inside block THEN skip correction
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0x50                ;; [2] E += 0x50 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0xC0                ;; [2] D += 0xC0 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+srd_y_ok:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    nz, srd_no_x            ;; [2/3] IF Err < 0 THEN skip X step
+
+    ;; --- Step X (+1) with Fast Fall-Through ---
+    rrc   b                       ;; [2] Rotate mask right (Carry=0 on byte wrap)
+    jr    c, srd_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump srd_nowrap
+    inc   de                      ;; [2] 25% wrap: Move DE to next byte column
+    rlc   c                       ;; [2] Realign color byte: shift left 1
+    rlc   c                       ;; [2] Realign color byte: shift left 2
+    rlc   c                       ;; [2] Realign color byte: shift left 3
+    jr    srd_x_done              ;; [3] Jump to delta addition
+srd_nowrap:
+    rrc   c                       ;; [2] Rotate color right (75% path falls through)
+srd_x_done:
+
+srd_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DX - DY) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+srd_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DX - DY) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+    jr    srd_dec_count           ;; [3] Jump to loop decrement
+
+srd_no_x:
+srd_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DX (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DX)
+    ld    l, a                    ;; [1] |
+srd_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DX (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DX) + carry
+    ld    h, a                    ;; [1] |
+
+srd_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, srd_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 6. STEEP LEFT DOWN (DY > DX, SX = -1, SY = +1)
+;; ============================================================================
+setup_sld:
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    a, l                    ;; [1] A = low byte of 2*DX
+    ld    (sld_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DX
+    ld    (sld_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    ex    de, hl                  ;; [1] HL = DY, DE = 2*DX
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ex    de, hl                  ;; [1] HL = 2*DX, DE = 2*DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DX - DY) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (sld_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (sld_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DX - DY
+
+    ld    bc, (abs_dy)            ;; [6] BC = DY
+    inc   bc                      ;; [2] BC = DY + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+sld_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Inlined Scanline Step Down (Always) ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    add   a, #0x08                ;; [2] Move down 1 scanline (+0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    and   #0x38                   ;; [2] Check 8-line character block boundary
+    jr    nz, sld_y_ok            ;; [2/3] IF inside block THEN skip correction
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0x50                ;; [2] E += 0x50 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0xC0                ;; [2] D += 0xC0 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+sld_y_ok:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    nz, sld_no_x            ;; [2/3] IF Err < 0 THEN skip X step
+
+    ;; --- Step X (-1) with Fast Fall-Through ---
+    rlc   b                       ;; [2] Rotate mask left (Carry=0 on byte wrap)
+    jr    c, sld_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump sld_nowrap
+    dec   de                      ;; [2] 25% wrap: Move DE to previous byte column
+    rrc   c                       ;; [2] Realign color byte: shift right 1
+    rrc   c                       ;; [2] Realign color byte: shift right 2
+    rrc   c                       ;; [2] Realign color byte: shift right 3
+    jr    sld_x_done              ;; [3] Jump to delta addition
+sld_nowrap:
+    rlc   c                       ;; [2] Rotate color left (75% path falls through)
+sld_x_done:
+
+sld_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DX - DY) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+sld_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DX - DY) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+    jr    sld_dec_count           ;; [3] Jump to loop decrement
+
+sld_no_x:
+sld_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DX (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DX)
+    ld    l, a                    ;; [1] |
+sld_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DX (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DX) + carry
+    ld    h, a                    ;; [1] |
+
+sld_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, sld_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 7. STEEP RIGHT UP (DY > DX, SX = +1, SY = -1)
+;; ============================================================================
+setup_sru:
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    a, l                    ;; [1] A = low byte of 2*DX
+    ld    (sru_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DX
+    ld    (sru_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    ex    de, hl                  ;; [1] HL = DY, DE = 2*DX
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ex    de, hl                  ;; [1] HL = 2*DX, DE = 2*DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DX - DY) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (sru_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (sru_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DX - DY
+
+    ld    bc, (abs_dy)            ;; [6] BC = DY
+    inc   bc                      ;; [2] BC = DY + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+sru_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Inlined Scanline Step Up (Always) ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    and   #0x38                   ;; [2] Check if line 0 of character row
+    jr    z, sru_y_row            ;; [2/3] IF line 0 THEN jump sru_y_row
+    ld    a, d                    ;; [1] A = high byte
+    sub   #0x08                   ;; [2] Move 1 scanline up (-0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    jr    sru_y_ok                ;; [3] Skip row correction
+sru_y_row:
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0xB0                ;; [2] E += 0xB0 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0x37                ;; [2] D += 0x37 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+sru_y_ok:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    nz, sru_no_x            ;; [2/3] IF Err < 0 THEN skip X step
+
+    ;; --- Step X (+1) with Fast Fall-Through ---
+    rrc   b                       ;; [2] Rotate mask right (Carry=0 on byte wrap)
+    jr    c, sru_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump sru_nowrap
+    inc   de                      ;; [2] 25% wrap: Move DE to next byte column
+    rlc   c                       ;; [2] Realign color byte: shift left 1
+    rlc   c                       ;; [2] Realign color byte: shift left 2
+    rlc   c                       ;; [2] Realign color byte: shift left 3
+    jr    sru_x_done              ;; [3] Jump to delta addition
+sru_nowrap:
+    rrc   c                       ;; [2] Rotate color right (75% path falls through)
+sru_x_done:
+
+sru_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DX - DY) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+sru_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DX - DY) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+    jr    sru_dec_count           ;; [3] Jump to loop decrement
+
+sru_no_x:
+sru_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DX (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DX)
+    ld    l, a                    ;; [1] |
+sru_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DX (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DX) + carry
+    ld    h, a                    ;; [1] |
+
+sru_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, sru_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; 8. STEEP LEFT UP (DY > DX, SX = -1, SY = -1)
+;; ============================================================================
+setup_slu:
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    a, l                    ;; [1] A = low byte of 2*DX
+    ld    (slu_nostep_lo), a      ;; [4] Patch low byte of delta nostep
+    ld    a, h                    ;; [1] A = high byte of 2*DX
+    ld    (slu_nostep_hi), a      ;; [4] Patch high byte of delta nostep
+
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    ex    de, hl                  ;; [1] HL = DY, DE = 2*DX
+    add   hl, hl                  ;; [3] HL = 2 * DY
+    ex    de, hl                  ;; [1] HL = 2*DX, DE = 2*DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = 2*(DX - DY) (Delta Step)
+    ld    a, l                    ;; [1] A = low byte of delta step
+    ld    (slu_step_lo), a        ;; [4] Patch low byte of delta step
+    ld    a, h                    ;; [1] A = high byte of delta step
+    ld    (slu_step_hi), a        ;; [4] Patch high byte of delta step
+
+    ld    hl, (abs_dx)            ;; [5] HL = DX
+    add   hl, hl                  ;; [3] HL = 2 * DX
+    ld    de, (abs_dy)            ;; [5] DE = DY
+    or    a                       ;; [1] Clear carry flag
+    sbc   hl, de                  ;; [3] HL = Err0 = 2*DX - DY
+
+    ld    bc, (abs_dy)            ;; [6] BC = DY
+    inc   bc                      ;; [2] BC = DY + 1 (total pixel count)
+    push  bc                      ;; [4] Put count on stack for alternate BC'
+    exx                           ;; [1] Switch to alternate register set
+    pop   bc                      ;; [3] BC' = total pixel count
+    exx                           ;; [1] Switch back to main register set
+
+    ld    de, (screen_ptr_val)    ;; [5] DE = initial VRAM pointer
+    ld    a, (cur_mask)           ;; [4] A = initial background mask
+    ld    b, a                    ;; [1] B = initial mask
+    ld    a, (cur_col)            ;; [4] A = initial color byte
+    ld    c, a                    ;; [1] C = initial color
+
+slu_loop:
+    ld    a, (de)                 ;; [2] Read current VRAM byte
+    and   b                       ;; [1] Apply background mask
+    or    c                       ;; [1] Inject foreground color
+    ld    (de), a                 ;; [2] Write updated byte back to VRAM
+
+    ;; --- Inlined Scanline Step Up (Always) ---
+    ld    a, d                    ;; [1] A = high byte of VRAM address
+    and   #0x38                   ;; [2] Check if line 0 of character row
+    jr    z, slu_y_row            ;; [2/3] IF line 0 THEN jump slu_y_row
+    ld    a, d                    ;; [1] A = high byte
+    sub   #0x08                   ;; [2] Move 1 scanline up (-0x0800)
+    ld    d, a                    ;; [1] D = updated high byte
+    jr    slu_y_ok                ;; [3] Skip row correction
+slu_y_row:
+    ld    a, e                    ;; [1] A = low byte of VRAM address
+    add   a, #0xB0                ;; [2] E += 0xB0 (with carry)
+    ld    e, a                    ;; [1] E = updated low byte
+    ld    a, d                    ;; [1] A = high byte
+    adc   a, #0x37                ;; [2] D += 0x37 + carry
+    ld    d, a                    ;; [1] D = updated high byte
+slu_y_ok:
+
+    bit   7, h                    ;; [2] Test if Err < 0
+    jr    nz, slu_no_x            ;; [2/3] IF Err < 0 THEN skip X step
+
+    ;; --- Step X (-1) with Fast Fall-Through ---
+    rlc   b                       ;; [2] Rotate mask left (Carry=0 on byte wrap)
+    jr    c, slu_nowrap           ;; [2/3] IF Carry=1 (75% no wrap) THEN jump slu_nowrap
+    dec   de                      ;; [2] 25% wrap: Move DE to previous byte column
+    rrc   c                       ;; [2] Realign color byte: shift right 1
+    rrc   c                       ;; [2] Realign color byte: shift right 2
+    rrc   c                       ;; [2] Realign color byte: shift right 3
+    jr    slu_x_done              ;; [3] Jump to delta addition
+slu_nowrap:
+    rlc   c                       ;; [2] Rotate color left (75% path falls through)
+slu_x_done:
+
+slu_step_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*(DX - DY) (SMC patched)
+    add   a, l                    ;; [1] L += low(delta_step)
+    ld    l, a                    ;; [1] |
+slu_step_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*(DX - DY) (SMC patched)
+    adc   a, h                    ;; [1] H += high(delta_step) + carry
+    ld    h, a                    ;; [1] |
+    jr    slu_dec_count           ;; [3] Jump to loop decrement
+
+slu_no_x:
+slu_nostep_lo = .+1
+    ld    a, #0x00                ;; [2] Low byte of 2*DX (SMC patched)
+    add   a, l                    ;; [1] L += low(2*DX)
+    ld    l, a                    ;; [1] |
+slu_nostep_hi = .+1
+    ld    a, #0x00                ;; [2] High byte of 2*DX (SMC patched)
+    adc   a, h                    ;; [1] H += high(2*DX) + carry
+    ld    h, a                    ;; [1] |
+
+slu_dec_count:
+    exx                           ;; [1] Switch to alternate register set
+    dec   bc                      ;; [2] Decrement 16-bit pixel counter BC'
+    ld    a, b                    ;; [1] Check if BC' == 0
+    or    c                       ;; [1] |
+    exx                           ;; [1] Switch back to main register set
+    jp    nz, slu_loop            ;; [3] IF pixels remaining THEN loop
+    jp    end_draw_line           ;; [3] Line completed
+
+;; ============================================================================
+;; END OF ROUTINE (Falls through to restore_iy in binding wrapper .s)
+;; ============================================================================
 end_draw_line:
-    ;; Return in binding wrapper
