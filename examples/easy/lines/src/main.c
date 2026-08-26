@@ -158,61 +158,48 @@ void InitDisplay(void)
 ////////////////////////////////////////
 // Speed test
 void SpeedTest(void)
-{
-	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
-    u16 x0, y0, x1, y1;
-	
+{	
 	// Circle
 	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
 	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 21, 2);
 	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 22, 3);
 	
-    // Top/Left
-    for (u8 i = 0; i < 40; i++) 
-	{
-        x0 = i * 8;
-        y0 = 0;
-        x1 = 0;
-        y1 = 199 - (i * 5);
-        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 1);
-    }
-
-    // Top/right
-    for (u8 i = 0; i < 40; i++) 
-	{
-        x0 = i * 8;
-        y0 = 0;
-        x1 = 319;
-        y1 = i * 5;
-        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 3);
-    }
-
-    // Bottom/right
-    for (u8 i = 0; i < 40; i++) 
-	{
-        x0 = i * 8;
-        y0 = 199;
-        x1 = 319;
-        y1 = 199 - (i * 5);
-        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 1);
-    }
+	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
+	i16 x,y;
 	
-    // Bottom/left
-    for (u8 i = 0; i < 40; i++) 
+	y = 0;
+	for (x = 0; x < 320; x += 8)
 	{
-        x0 = i * 8;
-        y0 = 199;
-        x1 = 0;
-        y1 = i * 5;
-        cpct_geometryLineM1(CPCT_VMEM_START, x0, y0, x1, y1, 3);
-    }
+		cpct_geometryLineM1(CPCT_VMEM_START, x, 0, 319, y, 1);
+		y += 5;
+	}
+
+	x = 319;
+	for (y = 0; y < 200; y += 5)
+	{
+		cpct_geometryLineM1(CPCT_VMEM_START, 319, y, x, 199, 3);
+		x -= 8;
+	}
+
+	y = 199;
+	for (x = 319; x > 0; x -= 8)
+	{
+		cpct_geometryLineM1(CPCT_VMEM_START, x, 199, 0, y, 1);
+		y -= 5;
+	}
+
+	x = 0;
+	for (y = 199; y > 0; y -= 5)
+	{
+		cpct_geometryLineM1(CPCT_VMEM_START, 0, y, x, 0, 3);
+		x += 8;
+	}
 	
 	// Frame
-    cpct_geometryLineM1(CPCT_VMEM_START,   0,   0, 319,   0, 2);
-    cpct_geometryLineM1(CPCT_VMEM_START, 319,   0, 319, 199, 2);
-    cpct_geometryLineM1(CPCT_VMEM_START, 319, 199,   0, 199, 2);
-    cpct_geometryLineM1(CPCT_VMEM_START,   0, 199,   0,   0, 2);
-	
+    cpct_geometryLineM1_f(CPCT_VMEM_START,   0,   0, 319,   0, 2);
+    cpct_geometryLineM1_f(CPCT_VMEM_START, 319,   0, 319, 199, 2);
+    cpct_geometryLineM1_f(CPCT_VMEM_START, 319, 199,   0, 199, 2);
+    cpct_geometryLineM1_f(CPCT_VMEM_START,   0, 199,   0,   0, 2);
 }
 
 ////////////////////////////////////////

@@ -27,7 +27,7 @@
 ;;    Draws a straight line between two points (X0, Y0) and (X1, Y1)
 ;;    in Mode 1 (320x200, 4 colors) using an optimized dual-path Bresenham algorithm.
 ;;    Includes dedicated fast-path handlers for Single Point, Horizontal, and Vertical
-;;    lines, as well as 8 fully-specialized inlined directional rasterizer loops.
+;;    lines, as well as 4 inlined directional rasterizer loops.
 ;;
 ;; C Definition:
 ;;    void cpct_geometryLineM1_f(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
@@ -49,20 +49,12 @@
 ;;
 ;; Optimized Bresenham Architecture:
 ;;    1. Dual-Path Split:
-;;       - Gentle Slope (DX >= DY) : X is the driving axis (steps unconditionally),
-;;                                   Y steps only on error accumulator overflow.
-;;       - Steep Slope  (DY > DX)  : Y is the driving axis (steps unconditionally),
-;;                                   X steps only on error accumulator overflow.
-;;    2. 8 Fully-Specialized Directional Loops:
-;;       - Gentle / Steep x Right / Left x Down / Up (100% hardcoded opcodes).
-;;       - Inlined CRTC Scanline Stepping (+0x0800/+0xC050 down, -0x0800/-0x37B0 up).
-;;       - Zero-overhead byte boundary detection via hardware Carry flag (rrc/rlc).
-;;       - 3-rotation color byte realignment (rlc c * 3 / rrc c * 3).
-;;       - Direct immediate delta additions (no stack push/pop, no RAM reads).
-;;       - 16-bit loop counter in alternate register BC'.
+;;       - Gentle Slope (DX >= DY) : X is the driving axis (steps unconditionally)
+;;       - Steep Slope  (DY > DX)  : Y is the driving axis (steps unconditionally)
 ;;
 ;; Known limitations:
-;;  * This function will not work from ROM, as it uses self-modifying immediate deltas.
+;;  * This function will not work from ROM, as it uses self-modifying code.
+;;  * This function disable interruptions.
 ;;
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL, AF', BC', DE', HL'
@@ -83,6 +75,10 @@
 ;;    Steep Slope   (0,0)   to (25,100)        | 101    | ~3550          | ~14200
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
+;;
+;; Credits:
+;;    Ervin Pajor for optimized code example https://github.com/lronaldo/cpctelera/issues/21
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;-------------------------------------------------------------------------------
@@ -495,6 +491,7 @@ steep_left:
 ;; 1. GENTLE RIGHT DOWN (DX >= DY, SX = +1, SY = +1)
 ;; ============================================================================
 setup_grd:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dy)            ;; [5] HL = DY
     add   hl, hl                  ;; [3] HL = 2 * DY
     ld    a, l                    ;; [1] A = low byte of 2*DY
@@ -602,6 +599,7 @@ grd_dec_count:
 ;; 2. GENTLE LEFT DOWN (DX >= DY, SX = -1, SY = +1)
 ;; ============================================================================
 setup_gld:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dy)            ;; [5] HL = DY
     add   hl, hl                  ;; [3] HL = 2 * DY
     ld    a, l                    ;; [1] A = low byte of 2*DY
@@ -708,6 +706,7 @@ gld_dec_count:
 ;; 3. GENTLE RIGHT UP (DX >= DY, SX = +1, SY = -1)
 ;; ============================================================================
 setup_gru:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dy)            ;; [5] HL = DY
     add   hl, hl                  ;; [3] HL = 2 * DY
     ld    a, l                    ;; [1] A = low byte of 2*DY
@@ -817,6 +816,7 @@ gru_dec_count:
 ;; 4. GENTLE LEFT UP (DX >= DY, SX = -1, SY = -1)
 ;; ============================================================================
 setup_glu:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dy)            ;; [5] HL = DY
     add   hl, hl                  ;; [3] HL = 2 * DY
     ld    a, l                    ;; [1] A = low byte of 2*DY
@@ -926,6 +926,7 @@ glu_dec_count:
 ;; 5. STEEP RIGHT DOWN (DY > DX, SX = +1, SY = +1)
 ;; ============================================================================
 setup_srd:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dx)            ;; [5] HL = DX
     add   hl, hl                  ;; [3] HL = 2 * DX
     ld    a, l                    ;; [1] A = low byte of 2*DX
@@ -1031,6 +1032,7 @@ srd_dec_count:
 ;; 6. STEEP LEFT DOWN (DY > DX, SX = -1, SY = +1)
 ;; ============================================================================
 setup_sld:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dx)            ;; [5] HL = DX
     add   hl, hl                  ;; [3] HL = 2 * DX
     ld    a, l                    ;; [1] A = low byte of 2*DX
@@ -1136,6 +1138,7 @@ sld_dec_count:
 ;; 7. STEEP RIGHT UP (DY > DX, SX = +1, SY = -1)
 ;; ============================================================================
 setup_sru:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dx)            ;; [5] HL = DX
     add   hl, hl                  ;; [3] HL = 2 * DX
     ld    a, l                    ;; [1] A = low byte of 2*DX
@@ -1244,6 +1247,7 @@ sru_dec_count:
 ;; 8. STEEP LEFT UP (DY > DX, SX = -1, SY = -1)
 ;; ============================================================================
 setup_slu:
+    di                            ;; [1] Disable interruptions
     ld    hl, (abs_dx)            ;; [5] HL = DX
     add   hl, hl                  ;; [3] HL = 2 * DX
     ld    a, l                    ;; [1] A = low byte of 2*DX
@@ -1348,7 +1352,9 @@ slu_dec_count:
     jp    nz, slu_loop            ;; [3] IF pixels remaining THEN loop
     jp    end_draw_line           ;; [3] Line completed
 
-;; ============================================================================
-;; END OF ROUTINE (Falls through to restore_iy in binding wrapper .s)
-;; ============================================================================
+;; ===============
+;; END OF ROUTINE 
+;; ===============
 end_draw_line:
+    ei                            ;; [1] Enable interruptions
+    ;; Return in binding
