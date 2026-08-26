@@ -11,3 +11,6 @@ rle:
 clean: 
 	rm -rf *.o rle unrle
 
+cleanall: 
+	rm -rf *.o rle unrle
+
