@@ -1,6 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -19,48 +20,68 @@
 #include <cpctelera.h>
 #include "g_palette.h"
 
-// Sprite
+// Sprite raw
 #include "winner.h"
 
 // Sprite RLEWB compressed
 #include "winner_rlewb.h"
 
 // Constants
-#define NB_STEPS_TEST    75
-#define VIDEO_W_BYTES    80
+#define ONE_SEC_INTERRUPT   300
+#define VIDEO_W_BYTES        80
 
+// Global variables
+u16 gTick;
+
+// Interrupt Handler every 1/300s
+void interruptHandler(void) 
+{
+    gTick++;
+}
+
+// Bench and test to see how many draw can be done in 1s
 void main(void)
 {
-    // Initialize example
-    cpct_disableFirmware();
+    // Set interrupt to count time
+    cpct_setInterruptHandler(interruptHandler);
+    
+    // Set nice colors
     cpct_setPalette(g_palette, sizeof(g_palette));
 
     // Compress sprite to 0x2000 
     cpct_rlewb_compress(winner, (u8*)0x2000, WINNER_W*WINNER_H);
-        
-    // Show draw speed functions
-    for (u8 i = 0; i < NB_STEPS_TEST; i++)
+       
+    // Show draw speed functions in 1s
+    gTick = 0;
+    
+    // Move sprite on y 
+    u8 y = 0;
+    while(gTick <= ONE_SEC_INTERRUPT)        
     {
         // Get pointer of origin of screen
-        u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 0, i);
+        u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 0, y++);
         
         // Draw sprite
         cpct_drawSprite(winner, pvmem, WINNER_W, WINNER_H);
     }
 
-    for (u8 i = 0; i < NB_STEPS_TEST; i++)
+    gTick = 0;
+    y = 0;
+    while(gTick <= ONE_SEC_INTERRUPT)
     {
         // Get pointer of origin of screen
-        u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, (VIDEO_W_BYTES - WINNER_W) / 2, i);
+        u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, (VIDEO_W_BYTES - WINNER_W) / 2, y++);
         
         // Draw RLEWB sprite without intermediate decompression
-       cpct_rlewb_drawSprite(winner_rlewb, pvmem, WINNER_W);
+        cpct_rlewb_drawSprite(winner_rlewb, pvmem, WINNER_W);
     }    
     
-    for (u8 i = 0; i < NB_STEPS_TEST; i++)
+    gTick = 0;
+    y = 0;
+    while(gTick <= ONE_SEC_INTERRUPT)
     {
         // Get pointer of origin of screen
-        u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, VIDEO_W_BYTES - WINNER_W, i);
+        u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, VIDEO_W_BYTES - WINNER_W, y++);
         
         // Decompress sprite RLEWB to 0x8000 
         cpct_rlewb_decrunch(winner_rlewb, (u8*)0x8000);
