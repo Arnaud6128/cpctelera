@@ -181,7 +181,7 @@ void SpeedTest(void)
 		x -= 8;
 	}
 
-	y = 199;
+    y = 199;
 	for (x = 319; x > 0; x -= 8)
 	{
 		cpct_geometryLineM1(CPCT_VMEM_START, x, 199, 0, y, 1);
@@ -194,12 +194,36 @@ void SpeedTest(void)
 		cpct_geometryLineM1(CPCT_VMEM_START, 0, y, x, 0, 3);
 		x += 8;
 	}
-	
+
 	// Frame
     cpct_geometryLineM1_f(CPCT_VMEM_START,   0,   0, 319,   0, 2);
     cpct_geometryLineM1_f(CPCT_VMEM_START, 319,   0, 319, 199, 2);
     cpct_geometryLineM1_f(CPCT_VMEM_START, 319, 199,   0, 199, 2);
     cpct_geometryLineM1_f(CPCT_VMEM_START,   0, 199,   0,   0, 2);
+
+
+    u8 tcol;
+    tcol = cpct_getColorAtM1 (CPCT_VMEM_START,160+20,100);
+    if ( tcol != 1) return;
+    tcol = cpct_getColorAtM1 (CPCT_VMEM_START,160+21,100);
+    if ( tcol != 2) return;
+    tcol = cpct_getColorAtM1 (CPCT_VMEM_START,160+22,100);
+    if ( tcol != 3) return;
+    tcol = cpct_getColorAtM1 (CPCT_VMEM_START,160+23,100);
+    if ( tcol != 0) return;
+
+    for (u8 col = 0; col<4;col++)
+    {
+        for (y = 0; y<=199; y++)
+            cpct_geometryLineM1_f(CPCT_VMEM_START,   0,   y, 319,   y, col);        
+    }
+
+    for (u8 col = 0; col<4;col++)
+    {
+        for (y = 199; y>=0; y--)
+            cpct_drawHorizontalLineM1(CPCT_VMEM_START,   0,   319,   y, col);        
+    }
+
 }
 
 ////////////////////////////////////////
