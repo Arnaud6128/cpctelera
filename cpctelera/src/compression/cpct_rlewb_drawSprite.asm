@@ -1,5 +1,6 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;-----------------------------LICENSE NOTICE------------------------------------
-;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  This file is part of CPCtelera: An Amstrad CPC Game Engine
 ;;  Copyright (C) 2022 mvac7 for code decrunch RLEWB (@mvac7)
 ;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
@@ -23,166 +24,219 @@
 ;;
 ;; Function: cpct_rlewb_drawSprite
 ;;
-;;   Draw RLEWB compressed sprite directly to CPC video memory.
+;;   Decompresses and draws an RLEWB (Wonder Boy RLE) compressed sprite
+;;   directly to Amstrad CPC video memory (VRAM).
 ;;
 ;; C Definition:
-;;   void cpct_rlewb_drawSprite(const u8* src, u8* dst, u8 width) __z88dk_callee;
+;;   void cpct_rlewb_drawSprite(const u8* src, u8* dst, u16 width) __z88dk_callee;
 ;;
 ;; Input Parameters:
-;;   (2B HL) src   - Pointer to source (compressed data in RLEWB format)
-;;   (2B DE) dst   - Pointer to destination video memory
+;;   (2B HL) src   - Pointer to compressed stream (RLEWB format)
+;;   (2B DE) dst   - Pointer to destination screen address in VRAM
 ;;   (1B  C) width - Sprite width in bytes
 ;;
 ;; Assembly call:
-;;     > call cpct_rlewb_drawSprite_asm
+;;   > call cpct_rlewb_drawSprite_asm (with HL=src, DE=dst, C=width)
 ;;
-;; Format Details (Wonder Boy RLE):
+;; Data Format Details (Wonder Boy RLE / Direct Range Mode):
 ;;   CD = Control Digit  = 0x80
 ;;   ED = End Data Block = 0xFF
 ;;
-;;   - CD + 0x00      --> Literal 0x80 value
-;;   - CD + 0xFF      --> End of data block
-;;   - CD + nn + dd   --> Repeat value dd (nn + 1) times (nn = 0x01..0xFE)
+;;   - CD + 0x00      --> Literal 0x80 byte value
+;;   - CD + 0xFF      --> End of data block marker / sprite termination
+;;   - CD + nn + dd   --> Repeat byte 'dd', 'nn' times (nn = 1..254)
 ;;   - dd (!= CD)     --> Uncompressed raw byte
 ;;
-;; Destroyed Register values: 
+;; Destroyed Register values:
 ;;   AF, BC, DE, HL, IX
 ;;
 ;; Required memory:
-;;   104 bytes (101 bytes routine + 3 bytes binding wrapper)
+;;     C-bindings  - 128 bytes  (routine + 3 bytes binding + 2 bytes workspace RAM)
+;;   ASM-bindings  - 125 bytes  (routine + 2 bytes workspace RAM)
 ;;
-;; Time Measures (Includes +10 us / +40 CPU cycles binding wrapper overhead):
+;; Time Measures (1 NOP = 1 microSec = 4 CPU cycles @ 4 MHz) :
 ;; (start code)
-;;    Case / Decompression Operation            | microSecs (us) | CPU Cycles
-;;   -------------------------------------------------------------------------
-;;    Setup Overhead (routine + C binding)      | ~21            | ~84
-;;    Raw Byte (Uncompressed pixel byte)        | 16             | 64
-;;    RLE Repeated Byte (inner loop speed)      | 11             | 44
-;;    Scanline Step (Intra-block +0x0700)       | ~20            | ~80
-;;    Scanline Step (Row change +0xC050)        | ~25            | ~100
-;;   -------------------------------------------------------------------------
-;;    Average Decompression Speed               | ~12 - 14 /byte | ~48 - 56 /byte
+;;  Case      |    microSecs (us)        |         CPU Cycles
+;; ----------------------------------------------------------------
+;;  Best      | 20 + (28 + 7W)H + 4HH    | 80 + (110 + 26W)H + 16HH
+;;  Worst     |      Best + 7WH          |     Best + 26WH
+;; ----------------------------------------------------------------
+;;  W=2,H=16  |       672 /  880         |   2688 / 3520
+;;  W=4,H=32  |      1744 / 2576         |   6976 / 10304
+;; ----------------------------------------------------------------
+;;  Per byte  |   7 (RLE) / 13 (raw)     |   26 (RLE) / 52 (raw)
+;; ----------------------------------------------------------------
 ;; (end code)
+;;    W = *width* in bytes, H = *height* in bytes, HH = [(H-1)/8]
+;;    Best  = all bytes RLE-encoded (runs aligned to lines)
+;;    Worst = all bytes raw (no runs)
+;;
+;; Optimization:
+;;   Instead of checking for the end of the scanline on every single byte
+;;   inside the inner loop, the routine compares the RLE run length (B)
+;;   with the remaining bytes on the current scanline (C):
+;;     - If B < C  : Fast inner DJNZ loop with no line checks.
+;;     - If B >= C : Fills up to the end of the scanline, steps to the next
+;;                   CPC scanline, and resumes the leftover run on the new line.
 ;;
 ;; Credits:
-;;    * RLEWB encoder is inspired from Wonder Boy RLE <https://www.smspower.org/Development/Compression#WonderBoyRLE>
-;;    * Original code by mvac7 <https://github.com/mvac7/Z80_RLEWB>
-;;    * Optimization support <https://www.cpcwiki.eu/forum/programming/draw-spriterle-optimization/>
+;;    * RLEWB encoder is inspired from Wonder Boy RLE  [https://www.smspower.org/Development/Compression#WonderBoyRLE](https://www.smspower.org/Development/Compression#WonderBoyRLE)
+;;    * Original code by mvac7  [https://github.com/mvac7/Z80_RLEWB](https://github.com/mvac7/Z80_RLEWB)
+;;    * Optimization support  [https://www.cpcwiki.eu/forum/programming/draw-spriterle-optimization/](https://www.cpcwiki.eu/forum/programming/draw-spriterle-optimization/)
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; CD = Control Digit = 0x80
-RLEWB_CD=#0x80
-;; ED = End Data Block = 0xFF
-RLEWB_END=#0xFF
+RLEWB_CD  = #0x80
+;; ED = End Data Block Marker = 0xFF
+RLEWB_END = #0xFF
 
-.macro ld__ixl_a
-   .dw #0x6FDD                  ;; Opcode for ld ixl, a
-.endm
+rlewb_draw_sprite:
+    push ix                     ;; [4] Preserve SDCC frame pointer IX on stack
+    
+    ;; Initialize index registers for fast CPC scanline stepping
+    ld   a, c                   ;; [1] A = Sprite width (bytes per line)
+    ld__ixh_c                   ;; [2] IXH = width (preserved to reset scanline counter C)
+    neg                         ;; [2] A = -width (two's complement)
+    ld__ixl_a                   ;; [2] IXL = -width (used for scanline address arithmetic)
+    ld   b, #0                  ;; [2] B = 0 -> BC = 16-bit counter initialized for LDI
 
-.macro ld__c_ixl
-   .dw #0x4DDD                  ;; Opcode for ld c, ixl
-.endm
-
-.macro ld__ixh_c
-   .dw #0x61DD                  ;; Opcode for ld ixh, c
-.endm
-
-.macro ld__c_ixh
-   .dw #0x4CDD                  ;; Opcode for ld c, ixh
-.endm
-
-.macro ld__a_ixh
-   .dw #0x7CDD                  ;; Opcode for ld a, ixh
-.endm
-
-    push ix                     ;; [5] Preserve IX register on stack
-
-    ld   a, c                   ;; [1] A = sprite width (bytes per line)
-    ld__ixh_c                   ;; [2] IXH = width (stored for scanline reset)
-    neg                         ;; [2] A = -width
-    ld__ixl_a                   ;; [2] IXL = -width (stored for next line offset)
-
+;; ==============================================================================
+;; 1. MAIN LOOP: TOKEN DECODING
+;; ==============================================================================
 unRLEWBRAM:
-    ld   a, (hl)                ;; [2] Read next byte from compressed stream
+    ld   a, (hl)                ;; [2] Fetch next byte from compressed stream
     cp   #RLEWB_CD              ;; [2] Compare with Control Digit (0x80)
     jr   nz, write_Byte2RAM     ;; [2/3] IF not 0x80 THEN treat as raw uncompressed byte
 
-    inc  hl                     ;; [2] Advance source pointer
-    ld   a, (hl)                ;; [2] Read control byte parameter
-    or   a                      ;; [1] Check if parameter == 0x00
-    jr   z, write_DC2RAM        ;; [2/3] IF 0x00 THEN write literal 0x80 control byte
-    cp   #RLEWB_END             ;; [2] Check if End Marker (0xFF)
+    inc  hl                     ;; [2] Advance source pointer to control parameter
+    ld   a, (hl)                ;; [2] A = parameter byte
+    or   a                      ;; [1] Check if parameter == 0x00 (literal 0x80)
+    jr   z, write_DC2RAM        ;; [2/3] IF 0x00 THEN write literal 0x80 byte
+    cp   #RLEWB_END             ;; [2] Check if parameter == 0xFF (end marker)
     jr   z, exit_drawSprite_RLE ;; [2/3] IF 0xFF THEN terminate decompression
 
-    ;; --- RLE BLOCK: Repeat value dd (B times) ---
+;; ------------------------------------------------------------------------------
+;; 2. RLE BLOCK: Extract repeat count and value
+;; ------------------------------------------------------------------------------
     ld   b, a                   ;; [1] B = repeat count (nn)
-    inc  hl                     ;; [2] Advance to value byte
+    inc  hl                     ;; [2] Advance source pointer to value byte (dd)
     ld   a, (hl)                ;; [2] A = value byte to repeat (dd)
+    ld   (rle_value), a         ;; [3] Store value in RAM workspace for chunk reloads
 
-RLEWBram_loop:
-    ld   (de), a                ;; [2] Write repeated byte to VRAM
-    inc  de                     ;; [2] Advance VRAM pointer
+rle_run:
+    ld   a, b                   ;; [1] A = remaining RLE run length
+    cp   c                      ;; [1] Compare run length vs remaining bytes on line (C)
+    jr   c, rle_partial         ;; [2/3] IF B < C THEN run fits entirely on current scanline
 
-    dec  c                      ;; [1] Decrement line width counter
-    jr   z, next_line_loop      ;; [2/3] IF end of scanline THEN jump next_line_loop
-    
-    djnz RLEWBram_loop          ;; [3/4] Loop until all RLE bytes written (B == 0)
-    inc  hl                     ;; [2] Advance compressed data pointer
-    jp   unRLEWBRAM             ;; [3] Continue main decompression loop
+;; ------------------------------------------------------------------------------
+;; 3. FULL CHUNK (B >= C): Fill up to the end of current scanline
+;; ------------------------------------------------------------------------------
+    ld   a, b                   ;; [1] A = total run length
+    sub  c                      ;; [1] A = leftover run to carry over to next scanline
+    ld   (rle_left), a          ;; [3] Store leftover run count in RAM workspace
+    ld   b, c                   ;; [1] B = C -> write exactly up to the end of the line
+    ld   a, (rle_value)         ;; [3] Reload pixel value into A
 
-next_line_loop:
-    ld   a, b                   ;; [1] Preserve remaining B counter in A
-    ex   de, hl                 ;; [1] Swap VRAM pointer to HL
-    ld   b, #0x07               ;; [2] High byte for intra-block step (+0x0700)
+rle_w2:
+    ld   (de), a                ;; [2] Write pixel byte to VRAM
+    inc  de                     ;; [2] Advance destination VRAM pointer
+    djnz rle_w2                 ;; [2/3] Fast loop (no scanline check required)
+
+;; ------------------------------------------------------------------------------
+;; 4. CPC SCANLINE STEP (FOR RLE BLOCKS)
+;;    Formula: Next_Line = Current_Line_End - width + 0x0800
+;;    Math: HL + 0x0700 + (256 - width) = HL + 0x0800 - width (via low-byte carry)
+;; ------------------------------------------------------------------------------
+    ex   de, hl                 ;; [1] Swap: HL = VRAM pointer, DE = source pointer
+    ld   b, #0x07               ;; [2] High byte for intra-character line step (+0x0700)
     ld__c_ixl                   ;; [2] C = -width (IXL)
-    add  hl, bc                 ;; [3] HL = start of current scanline + 0x0800
-    ld   b, a                   ;; [1] Restore B counter from A
-    ld   a, h                   ;; [1] Load high byte of VRAM address
-    and  #0x38                  ;; [2] Check 8-line character block boundary
-    ld   a, b                   ;; [1] Restore A = B
-    jr   nz, restore_loop       ;; [2/3] IF inside 8-line block THEN skip correction
-    ld   bc, #0xC050            ;; [3] Character row correction offset (+0xC050)
-    add  hl, bc                 ;; [3] Move HL to next character row
+    add  hl, bc                 ;; [3] HL = start of next scanline
 
-restore_loop:
-    ex   de, hl                 ;; [1] Swap VRAM pointer back to DE
-    ld   b, a                   ;; [1] Restore B counter
+    ;; Test 8-line character block boundary (bits 3, 4, 5 of H)
+    ld   a, h                   ;; [1] A = high byte of VRAM address
+    and  #0x38                  ;; [2] Mask intra-character scanline bits
+    jr   nz, rle_ls_ok          ;; [2/3] IF non-zero -> still within 8-line block (skip correction)
+
+    ;; 8-line boundary crossed: Apply character row correction (+0xC050 / +80 bytes)
+    ld   bc, #0xC050            ;; [3] Character row correction offset
+    add  hl, bc                 ;; [3] HL points to first scanline of next character row
+
+rle_ls_ok:
+    ex   de, hl                 ;; [1] Restore: DE = VRAM (next line start), HL = source
     ld__c_ixh                   ;; [2] Reset line width counter C = width (IXH)
-    
-    ld   a, (hl)                ;; [2] Reload value byte to repeat (dd)
-    djnz RLEWBram_loop          ;; [3/4] Resume RLE repeat loop
-    
-    inc  hl                     ;; [2] Advance compressed data pointer
-    jp   unRLEWBRAM             ;; [3] Continue main decompression loop
+    ld   a, (rle_left)          ;; [3] A = leftover run count
+    ld   b, a                   ;; [1] B = leftover run (restored after scanline step)
+    or   a                      ;; [1] Are there remaining bytes to write?
+    jr   nz, rle_run            ;; [2/3] IF leftover > 0 THEN continue run on new scanline
 
+    ;; RLE block complete
+    inc  hl                     ;; [2] Advance source pointer past value byte (dd)
+    jp   unRLEWBRAM             ;; [3] Process next token in stream
+
+;; ------------------------------------------------------------------------------
+;; 5. PARTIAL CHUNK (B < C): Run fits entirely within current scanline
+;; ------------------------------------------------------------------------------
+rle_partial:
+    ld   a, c                   ;; [1] A = remaining line width
+    sub  b                      ;; [1] A = line width remaining after this run
+    ld   c, a                   ;; [1] C = updated remaining line width budget
+    ld   a, (rle_value)         ;; [3] Reload pixel value into A
+
+rle_w1:
+    ld   (de), a                ;; [2] Write pixel byte to VRAM
+    inc  de                     ;; [2] Advance destination VRAM pointer
+    djnz rle_w1                 ;; [2/3] Fast write loop (B bytes)
+
+    inc  hl                     ;; [2] Advance source pointer past value byte (dd)
+    jp   unRLEWBRAM             ;; [3] Block finished, return to main decoder loop
+
+;; ==============================================================================
+;; 6. RAW BYTES AND LITERAL 0x80 HANDLING
+;; ==============================================================================
 write_DC2RAM:
-    ld   a, #RLEWB_CD           ;; [2] Load literal Control Digit (0x80)
+    ld   a, #RLEWB_CD           ;; [2] Load literal 0x80 value into A
 
 write_Byte2RAM:
-    ldi                         ;; [5] Copy raw byte (DE)=(HL), inc DE/HL, dec BC (C=width)
-    jp   po, next_video_byte    ;; [2/3] IF C reached 0 (BC parity odd) THEN jump next_video_byte
-	
-    jp   unRLEWBRAM             ;; [3] Continue main decompression loop
+    ;; LDI copies (HL)->(DE), increments HL and DE, and decrements 16-bit counter BC.
+    ;; The Parity/Overflow flag is set to PE (Parity Even / V=1) as long as BC != 0.
+    ldi                         ;; [4] (DE)=(HL), DE++, HL++, BC-- (line byte counter)
+    jp   pe, unRLEWBRAM         ;; [3] IF BC != 0 (scanline not finished) -> next token
 
-next_video_byte:    
-    ex   de, hl                 ;; [1] Swap VRAM pointer to HL
-    ld   b, #0x07               ;; [2] High byte for intra-block step (+0x0700)
+;; ------------------------------------------------------------------------------
+;; 7. CPC SCANLINE STEP (FOR RAW BYTES AT END OF SCANLINE)
+;; ------------------------------------------------------------------------------
+    ex   de, hl                 ;; [1] Swap: HL = VRAM pointer, DE = source pointer
+    ld   b, #0x07               ;; [2] High byte for intra-character step (+0x0700)
     ld__c_ixl                   ;; [2] C = -width (IXL)
-    add  hl, bc                 ;; [3] HL = start of current scanline + 0x0800
-    ld   a, h                   ;; [1] Load high byte of VRAM address
-    and  #0x38                  ;; [2] Check 8-line character block boundary
-    ld   a, b                   ;; [1] Restore A = B
-    jr   nz, restore_Byte2RAM   ;; [2/3] IF inside 8-line block THEN skip correction
-    ld   bc, #0xC050            ;; [3] Character row correction offset (+0xC050)
-    add  hl, bc                 ;; [3] Move HL to next character row
+    add  hl, bc                 ;; [3] HL = start of next scanline (+0x0800 - width)
 
-restore_Byte2RAM:
+    ;; Test 8-line character block boundary
+    ld   a, h                   ;; [1]
+    and  #0x38                  ;; [2]
+    jr   nz, rv_ok              ;; [2/3] IF inside 8-line block THEN skip correction
+
+    ld   bc, #0xC050            ;; [3] Character row correction (+80 bytes)
+    add  hl, bc                 ;; [3]
+
+rv_ok:
+    ex   de, hl                 ;; [1] Restore: DE = VRAM, HL = source
     ld__c_ixh                   ;; [2] Reset line width counter C = width (IXH)
-    ex   de, hl                 ;; [1] Swap VRAM pointer back to DE
-
+    ld   b, #0                  ;; [2] B = 0 -> ensures BC = C for future LDI instructions
     jp   unRLEWBRAM             ;; [3] Continue main decompression loop
 
+;; ==============================================================================
+;; 8. DECOMPRESSION TERMINATION & EXIT
+;; ==============================================================================
 exit_drawSprite_RLE:
-    pop  ix                     ;; [4] Restore IX register
-    ret                         ;; [3] Return to caller
+    pop  ix                     ;; [4] Restore SDCC frame pointer IX
+    ret                         ;; [3] Return cleanly to C caller
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; RAM WORKSPACE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.area _DATA
+rle_value:
+    .db  0                      ;; Current RLE byte value being repeated (dd)
+rle_left:
+    .db  0                      ;; Leftover run count to resume on next scanline

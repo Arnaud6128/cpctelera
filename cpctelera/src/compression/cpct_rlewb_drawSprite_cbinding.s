@@ -18,6 +18,9 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_compression
 
+;; Macros for easy use of undocumented opcodes
+.include "macros/cpct_undocumentedOpcodes.h.s"
+
 ;;
 ;; C bindings for <cpct_rlewb_drawSprite>
 ;;
