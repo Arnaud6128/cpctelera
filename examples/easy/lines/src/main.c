@@ -152,9 +152,10 @@ void InitDisplay(void)
 	
 	cpct_setBorder(0x54);       // Black
 	cpct_setPALColour(0, 0x54); // Black
-	cpct_setPALColour(1, 0x43); // Pastel Yellow
-	cpct_setPALColour(2, 0x57); // Sky Blue 
+	cpct_setPALColour(1, 0x57); // Sky Blue 
+	cpct_setPALColour(2, 0x43); // Pastel Yellow
 }
+
 ////////////////////////////////////////
 // Speed test
 void SpeedTest(void)
@@ -170,7 +171,7 @@ void SpeedTest(void)
 	y = 0;
 	for (x = 0; x < 320; x += 8)
 	{
-		cpct_geometryLineM1(CPCT_VMEM_START, x, 0, 319, y, 1);
+		cpct_geometryLineM1_f(CPCT_VMEM_START, x, 0, 319, y, 1);
 		y += 5;
 	}
 
@@ -184,7 +185,7 @@ void SpeedTest(void)
 	y = 199;
 	for (x = 319; x > 0; x -= 8)
 	{
-		cpct_geometryLineM1(CPCT_VMEM_START, x, 199, 0, y, 1);
+		cpct_geometryLineM1_f(CPCT_VMEM_START, x, 199, 0, y, 1);
 		y -= 5;
 	}
 
@@ -201,7 +202,6 @@ void SpeedTest(void)
     cpct_geometryLineM1_f(CPCT_VMEM_START, 319, 199,   0, 199, 2);
     cpct_geometryLineM1_f(CPCT_VMEM_START,   0, 199,   0,   0, 2);
 }
-
 ////////////////////////////////////////
 // Main demo
 // Use line and plot to display 3d ship
