@@ -33,5 +33,7 @@ extern void cpct_drawLineM1_f(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u
 extern void cpct_drawLineM1(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 extern void cpct_drawPlotM1(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
 extern void cpct_drawCircleM1(u8* vmem, u16 centerx, u16 centery, u8 radius, u8 color) __z88dk_callee;
+extern u8   cpct_getColorAtM1         (u8* vmem, u16 x, u8 y) __z88dk_callee;
+extern void cpct_drawHorizontalLineM1 (u8* vmem, u16 x0, u16 x1, u8 y, u8 color) __z88dk_callee;
 
 #endif
