@@ -19,11 +19,14 @@
 .module cpct_compression
 
 ;;
-;; ASM bindings for <cpct_RLEWB_compress>
+;; C bindings for <cpct_rlewb_compress>
 ;;
-;;  0 microSecs, 0 bytes
+;;  10 microSecs, 3 bytes
 ;;
-cpct_RLEWB_compress_asm::
-
-	.include  /cpct_RLEWB_compress.asm/
+_cpct_rlewb_compress::
+    pop  af                     ;; [3] Retrieve return address
+    pop  bc                     ;; [3] B = useless / C = Sprite Width
+    push af                     ;; [4] Restore return address in stack
+	
+	.include  /cpct_rlewb_compress.asm/
 	

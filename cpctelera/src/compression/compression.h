@@ -21,9 +21,9 @@
 #define CPCT_COMPRESSION_H
 
 // RLEWB functions
-extern u16  cpct_RLEWB_compress   (u8* src, u8* dest, u16 length) __z88dk_callee;
-extern void cpct_RLEWB_decrunch   (u8* src, u8* dest)             __z88dk_callee;
-extern void cpct_RLEWB_drawSprite (u8* src, u8* dest, u16 width)  __z88dk_callee;
+extern u16  cpct_rlewb_compress   (u8* src, u8* dest, u16 length) __z88dk_callee;
+extern void cpct_rlewb_decrunch   (u8* src, u8* dest)             __z88dk_callee;
+extern void cpct_rlewb_drawSprite (u8* src, u8* dest, u16 width)  __z88dk_callee;
 
 // ZX7B Decrunching functions
 extern void cpct_zx7b_decrunch_s  (void* dest_end, const void* source_end) __z88dk_callee;

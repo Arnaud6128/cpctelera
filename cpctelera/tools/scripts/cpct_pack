@@ -161,6 +161,7 @@ ASMCNST='=='
 ZX7B=${CPCT_PATH}/tools/zx7b/bin/zx7b
 ZX1=${CPCT_PATH}/tools/zx1/bin/zx1
 ZX0=${CPCT_PATH}/tools/zx0/bin/zx0
+RLEWB=${CPCT_PATH}/tools/rlewb/bin/rlewb
 
 if (( $# < 1 )); then
    usage
@@ -318,6 +319,10 @@ case $COMPRESSOR in
    'zx1b')
      echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}"
      ${ZX1} -f -b "$TMPFILE" "$TMPPACK" > /dev/null
+   ;;
+   'rlewb')
+     echo "${COLOR_LIGHT_YELLOW}[cpct_pack]${COLOR_YELLOW} Compressing pack file...${COLOR_NORMAL}"
+     ${RLEWB} "$TMPFILE" "$TMPPACK" 0 3 > /dev/null
    ;;
    *)
       paramError "Unknown compressor algorithm '$COMPRESSOR'." 8

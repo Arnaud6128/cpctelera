@@ -61,6 +61,9 @@
 ##  PACKZX7B: Compresses all files in a group into a single binary and    ##
 ##            generates a C-array and a header to comfortably use it from ##
 ##            inside your code with ZX7 Backward compressor.              ##
+##  PACKRLEWB: Compresses all files in a group into a single binary and   ##
+##            generates a C-array and a header to comfortably use it from ##
+##            inside your code with RLE WB compressor.                    ##
 ##                                                                        ##
 ##------------------------------------------------------------------------##
 ##                                                                        ##

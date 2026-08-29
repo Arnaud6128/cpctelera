@@ -19,11 +19,11 @@
 .module cpct_compression
 
 ;;
-;; ASM bindings for <cpct_RLEWB_drawSprite>
+;; ASM bindings for <cpct_rlewb_drawSprite>
 ;;
 ;;  0 microSecs, 0 bytes
 ;;
-cpct_RLEWB_drawSprite_asm::
+cpct_rlewb_drawSprite_asm::
 
-.include  /cpct_RLEWB_drawSprite.asm/
+.include  /cpct_rlewb_drawSprite.asm/
 

@@ -21,12 +21,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_RLEWB_drawSprite
+;; Function: cpct_rlewb_drawSprite
 ;;
 ;;   Draw RLEWB compressed sprite directly to CPC video memory.
 ;;
 ;; C Definition:
-;;   void cpct_RLEWB_drawSprite(const u8* src, u8* dst, u8 width) __z88dk_callee;
+;;   void cpct_rlewb_drawSprite(const u8* src, u8* dst, u8 width) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;   (2B HL) src   - Pointer to source (compressed data in RLEWB format)
@@ -34,7 +34,7 @@
 ;;   (1B  C) width - Sprite width in bytes
 ;;
 ;; Assembly call:
-;;     > call cpct_RLEWB_drawSprite_asm
+;;     > call cpct_rlewb_drawSprite_asm
 ;;
 ;; Format Details (Wonder Boy RLE):
 ;;   CD = Control Digit  = 0x80

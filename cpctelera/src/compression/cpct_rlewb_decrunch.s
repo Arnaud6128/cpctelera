@@ -21,12 +21,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_RLEWB_decrunch
+;; Function: cpct_rlewb_decrunch
 ;;
 ;;   Decompresses RLEWB-compressed data directly to RAM (linear memory array).
 ;;
 ;; C Definition:
-;;   void cpct_RLEWB_decrunch(const u8* src, u8* dst) __z88dk_callee;
+;;   void cpct_rlewb_decrunch(const u8* src, u8* dst) __z88dk_callee;
 ;;
 ;; Input Parameters (4 bytes):
 ;;   (2B HL) src   - Pointer to source (compressed data)
@@ -72,12 +72,12 @@ RLEWB_CD=#0x80
 ;;  ED = End Data Block = 0xFF
 RLEWB_END=#0xFF
 
-;; ASM and C bindings for <cpct_RLE_decrunch>
+;; ASM and C bindings for <cpct_rlewb_decrunch>
 ;;
 ;;  0 microSecs, 0 bytes
 ;;
-_cpct_RLEWB_decrunch::
-_cpct_RLEWB_decrunch_asm::
+_cpct_rlewb_decrunch::
+_cpct_rlewb_decrunch_asm::
 
 unRLEWBRAM:
     ld   a, (hl)                ;; [2] Read next byte from compressed stream

@@ -19,12 +19,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_RLEWB_compress
+;; Function: cpct_rlewb_compress
 ;;
 ;;   Compresses uncompressed input data into RLEWB stream format.
 ;;
 ;; C Definition:
-;;   u16 cpct_RLEWB_compress(const u8* src, u8* dst, u16 length) __z88dk_callee;
+;;   u16 cpct_rlewb_compress(const u8* src, u8* dst, u16 length) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;   (2B HL) src    - Pointer to uncompressed source data
@@ -35,7 +35,7 @@
 ;;   (2B HL) Compressed length in bytes (dst_final - dst_initial)
 ;;
 ;; Assembly call:
-;;     > call cpct_RLEWB_compress_asm
+;;     > call cpct_rlewb_compress_asm
 ;;
 ;; Encoding Rules:
 ;;   - Unrepeated bytes < 0x80 are stored raw (1 byte output).
