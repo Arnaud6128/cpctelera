@@ -1,6 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
+;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -13,7 +14,7 @@
 ;;  GNU Lesser General Public License for more details.
 ;;
 ;;  You should have received a copy of the GNU Lesser General Public License
-;;  along with this program. If not, see <http://www.gnu.org/licenses/>.
+;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
@@ -21,26 +22,18 @@
 .include "macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
-;; ASM / C bindings for <cpct_geometryLineM1_f>
+;; ASM bindings for <cpct_drawCircleM1>
 ;;
-;;  34 microSecs, 26 bytes
+;;  21 microSecs, 9 bytes
 ;;
-_cpct_geometryLineM1_f::
-   ld   (restore_ix), ix       ;; [6] Save IX to restore it before returning
-   ld   (restore_iy), iy       ;; [6] Save IY to restore it before returning
-	
-   pop   ix                    ;; [4] IX = Return address
-   ld   (simulated_return), ix ;; [6] Save return address for simulated return
+_cpct_drawCircleM1_asm::
 
-.include  /cpct_geometryLineM1_f.asm/
+    push  ix              ;; [5] Save IX to restore it before returning
+    push  iy              ;; [5] Save IY to restore it before returning
 
-restore_iy=.+2
-   ld   iy, #0000              ;; [4] Restore IY before returning  
-    
-restore_ix=.+2
-   ld   ix, #0000              ;; [4] Restore IX before returning   
-   
-simulated_return=.+1
-   ld   hl, #0000              ;; [3] HL = return address
-   jp  (hl)                    ;; [1] Do a manual "ret"
-   
+.include  /cpct_drawCircleM1.asm/
+
+ret_draw_circle:
+    pop   ix              ;; [4] Restore IX before returning
+    pop   iy              ;; [4] Restore IY before returning
+    ret                   ;; [3] Return to caller

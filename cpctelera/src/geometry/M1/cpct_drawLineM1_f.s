@@ -14,7 +14,7 @@
 ;;  GNU Lesser General Public License for more details.
 ;;
 ;;  You should have received a copy of the GNU Lesser General Public License
-;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;;  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
@@ -22,29 +22,26 @@
 .include "macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
-;; C bindings for <cpct_geometryCircleM1>
+;; ASM / C bindings for <cpct_drawLineM1_f>
 ;;
-;;  37 microSecs, 18 bytes
+;;  34 microSecs, 26 bytes
 ;;
-_cpct_geometryCircleM1::
-    ;; In registers : 
-    ;; HL = Base VRAM memory address
-    ;; DE = Center X
+_cpct_drawLineM1_f::
+   ld   (restore_ix), ix       ;; [6] Save IX to restore it before returning
+   ld   (restore_iy), iy       ;; [6] Save IY to restore it before returning
+	
+   pop   ix                    ;; [4] IX = Return address
+   ld   (simulated_return), ix ;; [6] Save return address for simulated return
 
-    ld   (restore_ix), ix ;; [6] Save IX to restore it before returning
+.include  /cpct_drawLineM1_f.asm/
 
-    ;; Parameters retrieval from stack 
-    pop   af              ;; [3]  AF = Return address
-    pop   ix              ;; [4]  IX = Center Y
-    pop   bc              ;; [3]  B = Color, C = Radius
-    push  af              ;; [4]  Restore return address to stack because __z88dk_callee
-    push  iy              ;; [5]  Save IY to restore it before returning
-
-.include  /cpct_geometryCircleM1.asm/
-
-ret_draw_circle:
-
-restore_ix = .+2
-   ld     ix, #0000      ;; [4] Restore IX before returning
-   pop    iy             ;; [5] Restore IY before returning
-   ret                   ;; [3] Return to caller
+restore_iy=.+2
+   ld   iy, #0000              ;; [4] Restore IY before returning  
+    
+restore_ix=.+2
+   ld   ix, #0000              ;; [4] Restore IX before returning   
+   
+simulated_return=.+1
+   ld   hl, #0000              ;; [3] HL = return address
+   jp  (hl)                    ;; [1] Do a manual "ret"
+   

@@ -161,9 +161,9 @@ void InitDisplay(void)
 void SpeedTest(void)
 {	
 	// Circle
-	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
-	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 21, 2);
-	cpct_geometryCircleM1(CPCT_VMEM_START, 160, 100, 22, 3);
+	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
+	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 21, 2);
+	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 22, 3);
 	
 	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
 	i16 x,y;
@@ -171,36 +171,36 @@ void SpeedTest(void)
 	y = 0;
 	for (x = 0; x < 320; x += 8)
 	{
-		cpct_geometryLineM1_f(CPCT_VMEM_START, x, 0, 319, y, 1);
+		cpct_drawLineM1_f(CPCT_VMEM_START, x, 0, 319, y, 1);
 		y += 5;
 	}
 
 	x = 319;
 	for (y = 0; y < 200; y += 5)
 	{
-		cpct_geometryLineM1(CPCT_VMEM_START, 319, y, x, 199, 3);
+		cpct_drawLineM1(CPCT_VMEM_START, 319, y, x, 199, 3);
 		x -= 8;
 	}
 
 	y = 199;
 	for (x = 319; x > 0; x -= 8)
 	{
-		cpct_geometryLineM1_f(CPCT_VMEM_START, x, 199, 0, y, 1);
+		cpct_drawLineM1_f(CPCT_VMEM_START, x, 199, 0, y, 1);
 		y -= 5;
 	}
 
 	x = 0;
 	for (y = 199; y > 0; y -= 5)
 	{
-		cpct_geometryLineM1(CPCT_VMEM_START, 0, y, x, 0, 3);
+		cpct_drawLineM1(CPCT_VMEM_START, 0, y, x, 0, 3);
 		x += 8;
 	}
 	
 	// Frame
-    cpct_geometryLineM1_f(CPCT_VMEM_START,   0,   0, 319,   0, 2);
-    cpct_geometryLineM1_f(CPCT_VMEM_START, 319,   0, 319, 199, 2);
-    cpct_geometryLineM1_f(CPCT_VMEM_START, 319, 199,   0, 199, 2);
-    cpct_geometryLineM1_f(CPCT_VMEM_START,   0, 199,   0,   0, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START,   0,   0, 319,   0, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START, 319,   0, 319, 199, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START, 319, 199,   0, 199, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START,   0, 199,   0,   0, 2);
 }
 ////////////////////////////////////////
 // Main demo
@@ -262,7 +262,7 @@ void main(void)
 				u8 v0 = ship_edges[i].v0;
 				u8 v1 = ship_edges[i].v1;
 				
-				cpct_geometryLineM1(draw_buffer, 
+				cpct_drawLineM1(draw_buffer, 
 							        proj[v0].x, proj[v0].y,
 							        proj[v1].x, proj[v1].y, 
 							        ship_edges[i].color);			  
@@ -272,7 +272,7 @@ void main(void)
 		{
 			// Draw plots with Color 1
 			for (u8 i = 0; i < SHIP_VERTICES; i++) 	{
-				cpct_geometryPlotM1(draw_buffer, proj[i].x, proj[i].y, 1);
+				cpct_drawPlotM1(draw_buffer, proj[i].x, proj[i].y, 1);
 			}
 		}
 

@@ -22,18 +22,18 @@
 .include "macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
-;; ASM / C bindings for <cpct_geometryLineM1>
+;; ASM / C bindings for <cpct_drawLineM1>
 ;;
 ;;  34 microSecs, 26 bytes
 ;;
-_cpct_geometryLineM1::
+_cpct_drawLineM1::
    ld   (restore_ix), ix       ;; [6] Save IX to restore it before returning
    ld   (restore_iy), iy       ;; [6] Save IY to restore it before returning
 	
    pop   ix                    ;; [4] IX = Return address
    ld   (simulated_return), ix ;; [6] Save return address for simulated return
 
-.include  /cpct_geometryLineM1.asm/
+.include  /cpct_drawLineM1.asm/
 
 restore_iy=.+2
    ld   iy, #0000              ;; [4] Restore IY before returning  

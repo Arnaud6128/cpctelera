@@ -18,11 +18,11 @@
 .module cpct_geometry
 
 ;; Global external symbols
-.globl cpct_geometryPlotM1_asm
+.globl cpct_drawPlotM1_asm
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_geometryCircleM1
+;; Function: cpct_drawCircleM1
 ;;
 ;;    Draws a circle on screen in Mode 1 (320x200, 4 colors) using the
 ;;    Midpoint Circle Algorithm.
@@ -40,7 +40,7 @@
 ;;        - If d > 0  (South-East step) : y = y - 1, d_new = d + 4 * (x - y) + 10
 ;;
 ;; C Definition:
-;;    void cpct_geometryCircleM1(void* memory, u16 cx, u16 cy, u8 radius, u8 color) __z88dk_callee;
+;;    void cpct_drawCircleM1(void* memory, u16 cx, u16 cy, u8 radius, u8 color) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;    (2B HL)  memory     - Base VRAM memory address (typically 0xC000)
@@ -51,7 +51,7 @@
 ;;    (1B C)   radius     - Radius (R) in pixels
 ;;
 ;; Assembly call:
-;;    > call _cpct_geometryCircleM1_asm
+;;    > call _cpct_drawCircleM1_asm
 ;;
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL, IX, IY
@@ -279,4 +279,4 @@ plot_point:
     ld__b_iyh                  ;; [2] Load color pattern from IYH
 smc_vram =.+1
     ld    de, #0x0000          ;; [3] Inject VRAM base address
-    jp    cpct_geometryPlotM1_asm ;; [3] Jump to Mode 1 plot routine
+    jp    cpct_drawPlotM1_asm ;; [3] Jump to Mode 1 plot routine

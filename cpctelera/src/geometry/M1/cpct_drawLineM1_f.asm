@@ -22,7 +22,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_geometryLineM1_f
+;; Function: cpct_drawLineM1_f
 ;;
 ;;    Draws a straight line between two points (X0, Y0) and (X1, Y1)
 ;;    in Mode 1 (320x200, 4 colors) using an optimized dual-path Bresenham algorithm.
@@ -30,7 +30,7 @@
 ;;    lines, as well as 4 inlined directional rasterizer loops.
 ;;
 ;; C Definition:
-;;    void cpct_geometryLineM1_f(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
+;;    void cpct_drawLineM1_f(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;    (2B DE) screen_base - Base VRAM memory address
@@ -40,7 +40,7 @@
 ;;    (Stack) color / y1  - Color index (B: 0-3) and Ending Y coordinate (C: 0-199)
 ;;
 ;; Assembly call:
-;;     > call cpct_geometryLineM1_f
+;;     > call cpct_drawLineM1_f
 ;;
 ;; Fast-Path Special Cases:
 ;;    - Single Point  (DX = 0, DY = 0)  : Direct pixel plot using h_plot_one helper.

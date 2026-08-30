@@ -23,13 +23,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_geometryPlotM1
+;; Function: cpct_drawPlotM1
 ;;
 ;;    Draws a single pixel on screen in Mode 1 (320x200, 4 colors) at specified
 ;;    coordinates using lookup tables for masks and pixel color patterns.
 ;;
 ;; C Definition:
-;;    void cpct_geometryPlotM1(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
+;;    void cpct_drawPlotM1(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;   (2B DE) screen_start - Base VRAM memory address (typically 0xC000)
@@ -38,7 +38,7 @@
 ;;   (1B B)  color        - Pen color index (0-3)
 ;;
 ;; Assembly call:
-;;    > call cpct_geometryPlotM1_asm
+;;    > call cpct_drawPlotM1_asm
 ;;
 ;; Requirements and limitations:
 ;;   * Coordinates must stay within Mode 1 screen bounds (X: 0-319, Y: 0-199).

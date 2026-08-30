@@ -22,18 +22,29 @@
 .include "macros/cpct_undocumentedOpcodes.h.s"
 
 ;;
-;; ASM bindings for <cpct_geometryCircleM1>
+;; C bindings for <cpct_drawCircleM1>
 ;;
-;;  21 microSecs, 9 bytes
+;;  37 microSecs, 18 bytes
 ;;
-_cpct_geometryCircleM1_asm::
+_cpct_drawCircleM1::
+    ;; In registers : 
+    ;; HL = Base VRAM memory address
+    ;; DE = Center X
 
-    push  ix              ;; [5] Save IX to restore it before returning
-    push  iy              ;; [5] Save IY to restore it before returning
+    ld   (restore_ix), ix ;; [6] Save IX to restore it before returning
 
-.include  /cpct_geometryCircleM1.asm/
+    ;; Parameters retrieval from stack 
+    pop   af              ;; [3]  AF = Return address
+    pop   ix              ;; [4]  IX = Center Y
+    pop   bc              ;; [3]  B = Color, C = Radius
+    push  af              ;; [4]  Restore return address to stack because __z88dk_callee
+    push  iy              ;; [5]  Save IY to restore it before returning
+
+.include  /cpct_drawCircleM1.asm/
 
 ret_draw_circle:
-    pop   ix              ;; [4] Restore IX before returning
-    pop   iy              ;; [4] Restore IY before returning
-    ret                   ;; [3] Return to caller
+
+restore_ix = .+2
+   ld     ix, #0000      ;; [4] Restore IX before returning
+   pop    iy             ;; [5] Restore IY before returning
+   ret                   ;; [3] Return to caller
