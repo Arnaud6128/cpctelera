@@ -16,14 +16,14 @@
 ;;  You should have received a copy of the GNU Lesser General Public License
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
-.module cpct_geometry
+.module cpct_draw
 
 ;;
-;; C bindings for <cpct_geometryPlotM1>
+;; C bindings for <cpct_drawPlotM1>
 ;;
 ;;  11 microSecs, 4 bytes
 ;;
-_cpct_geometryPlotM1::
+_cpct_drawPlotM1::
 
     ;; Parameters retrieval from registers
     ex    de, hl          ;; [1]  DE = Screen base, HL = X coordinate
@@ -33,7 +33,7 @@ _cpct_geometryPlotM1::
     pop   bc              ;; [3]  B = Color, C = Y coordinate
     push  af              ;; [4]  Restore return address to stack because __z88dk_callee
 
-.include  /cpct_geometryPlotM1.asm/
+.include  /cpct_drawPlotM1.asm/
 
  
    

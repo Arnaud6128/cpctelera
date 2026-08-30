@@ -19,12 +19,12 @@
 .module cpct_geometry
 
 ;;
-;; ASM bindings for <cpct_geometryPlotM1>
+;; ASM bindings for <cpct_drawPlotM1>
 ;;
 ;;  0 microSecs, 0 bytes
 ;;
-cpct_geometryPlotM1_asm::
+cpct_drawPlotM1_asm::
 
-.include  /cpct_geometryPlotM1.asm/
+.include  /cpct_drawPlotM1.asm/
 
       
