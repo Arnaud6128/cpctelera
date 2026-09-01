@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2026 Bouche Arnaud (@Arnaud6128)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;  Copyright (C) 2017 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,19 @@
 .include "macros/cpct_maths.h.s"
 
 ;;
-;; ASM bindings for <cpct_drawSolidBoxToSpriteBuffer>
+;; C bindings for <cpct_drawToSpriteBufferSolidBox>
 ;;
-;;   0 us, 0 bytes
+;;   13 us, 4 bytes
 ;;
-cpct_drawSolidBoxToSpriteBuffer_asm::
+_cpct_drawToSpriteBufferSolidBox::
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
+   ;; HL = Back_Buffer_Width
+   ;; DE = Pointer to Back Buffer 
+   ld   a, l      ;; [1] A = L = Back_Buffer_Width
 
-.include /cpct_drawSolidBoxToSpriteBuffer.asm/
+   ;; GET next parameters from the stack
+   pop  hl        ;; [3] HL = Return Address
+   pop  bc        ;; [3] BC = Height/Width (B = Height, C = Width)
+   ex  (sp), hl   ;; [6] HL = Useless/Color <-> (SP) = Return address because _z88dk_callee convention
+
+.include /cpct_drawToSpriteBufferSolidBox.asm/

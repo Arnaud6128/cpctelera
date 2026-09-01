@@ -20,14 +20,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_drawSolidBoxToSpriteBuffer
+;; Function: cpct_drawToSpriteBufferSolidBox
 ;;
 ;;    Fills up a rectangle inside another sprite's buffer with a given 
 ;; colour data byte. Could be used for drawing coloured rectangles as well as
 ;; erasing rectangles easily.
 ;;
 ;; C Definition:
-;;    void <cpct_drawSolidBoxToSpriteBuffer> (<u16> *buffer_width*, void* *inbuffer_ptr*, 
+;;    void <cpct_drawToSpriteBufferSolidBox> (<u16> *buffer_width*, void* *inbuffer_ptr*, 
 ;;                                            <u8> *width*, <u8> *height*, u16* *colour*) __z88dk_callee;
 ;;
 ;; Input Parameters (6 bytes):
@@ -38,7 +38,7 @@
 ;;    (1B L)  colour       - 1-byte colour pattern (in screen pixel format) to fill the box with
 ;;
 ;; Assembly Call (Input parameters on Registers)
-;;    > call cpct_drawSolidBoxToSpriteBuffer_asm
+;;    > call cpct_drawToSpriteBufferSolidBox_asm
 ;;
 ;; Parameter Restrictions:
 ;;  * *buffer_width* must be greater or equal than *width*. Drawing a sprite into  
