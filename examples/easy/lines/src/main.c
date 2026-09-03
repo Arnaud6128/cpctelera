@@ -196,6 +196,7 @@ void SpeedTest(void)
 		x += 8;
 	}
 
+
 	// Frame
     cpct_drawLineM1_f(CPCT_VMEM_START,   0,   0, 319,   0, 2);
     cpct_drawLineM1_f(CPCT_VMEM_START, 319,   0, 319, 199, 2);
