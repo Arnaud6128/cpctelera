@@ -29,5 +29,4 @@ _cpct_getColorAtM1::
    dec sp                      ;; [6] b unused
    push af                     ;; [4] Restore return address to stack because __z88dk_callee
 
-.include  /cpct_getColorAtM1_1.asm/
-.include  /cpct_getColorAtM1_2.asm/
+   jp cpct_getColorAtM1        ;; Goto main entry point using official ret

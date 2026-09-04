@@ -17,6 +17,10 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
 
+;;          HL = Adress of octet to test
+;;          A  = SubPixel to test in octet (0..3)
+;;
+
     ld c,(hl)   ; Get screen octet
 
     sub #3              ; check if last subpixel on right

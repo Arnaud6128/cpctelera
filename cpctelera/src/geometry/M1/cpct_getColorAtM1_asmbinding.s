@@ -56,10 +56,10 @@
 ;;  0 microSecs, 0 bytes
 ;;
 
+;; ASM entry point for fast getColorAt from asm
 cpct_getColorAtM1_asm::
-
 .include  /cpct_getColorAtM1_1.asm/
-;; Entry point for fast getColorAt from asm
 
+;; Entry point for fast getColorAt from asm
 cpct_getColorAtM1_asm_f::
 .include  /cpct_getColorAtM1_2.asm/

@@ -17,8 +17,11 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
 
-.globl cpct_getScreenPtr_asm
+;;          HL = Screen start Adress
+;;          DE = X
+;;          C  = Y
 
+.globl cpct_getScreenPtr_asm
 
     ld a,e      ; a = low X
     and #0x03	; Keep only the 2 least significant bits of X0 : subPixel
