@@ -18,6 +18,8 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
+.globl cpct_getColorAtM1
+
 ;;
 ;; C bindings for <cpct_geometryPlotM1>
 ;;

@@ -19,7 +19,7 @@
 
 .include "macros/cpct_undocumentedOpcodes.h.s"
 
-.globl cpct_drawHorizontAlLineM1_f
+.globl cpct_drawHorizontalLineM1
 
 ;; extern void cpct_drawHorizontalLineM1 (u8* vmem, u16 x0, u16 x1, u8 y, u8 color) __z88dk_callee;
 ;;    vmem        - Base VRAM memory address (typically 0xC000)
