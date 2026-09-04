@@ -17,25 +17,35 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
-;; Macros for easy use of undocumented opcodes
 .include "macros/cpct_undocumentedOpcodes.h.s"
+
+.globl cpct_drawHorizontAlLineM1_f
+
+;; extern void cpct_drawHorizontalLineM1 (u8* vmem, u16 x0, u16 x1, u8 y, u8 color) __z88dk_callee;
+;;    vmem        - Base VRAM memory address (typically 0xC000)
+;;    x0          - Starting X coordinate (0-319)
+;;    x1          - Ending X coordinate (0-319)
+;;    y           - Y coordinate (0-199, 8-bit integer)
+;;    color       - Ink color of line (0..3)
+;;
 
 ;;  34 microSecs, 26 bytes
 _cpct_drawHorizontalLineM1::
    ld   (restore_ix), ix         ;; [6] Save IX to restore it before returning
-   ld   (restore_iy), iy         ;; [6] Save IY to restore it before returning
 	
    pop   ix                      ;; [4] IX = Return address
    ld   (simulated_return), ix   ;; [6] Save return address for simulated return
 
-.include  /cpct_drawHorizontalLineM1_1.asm/
-.include  /cpct_drawHorizontalLineM1_2.asm/
+    ; Get Parameters
+    ;; HL = Screen Adress / DE = X0 Coordinate 
+    pop bc     ;; bc = X1 coordinate 
+    pop ix     ;; ixh = Y0 coordinate / ixl = color
+   
+   call cpct_drawHorizontalLineM1    ;; Call to asm entry point
 
 restore_ix=.+2
-   ld   ix, #0000              ;; [4] Restore IX before returning   
-restore_iy=.+2
-   ld   iy, #0000              ;; [4] Restore IY before returning    
+   ld   ix, #0000                 ;; [4] Restore IX before returning   
 
 simulated_return=.+1
-   ld   hl, #0000              ;; [3] HL = return address
-   jp  (hl)                      ;; [1] Do a manual "ret"
+   ld   hl, #0000                 ;; [3] HL = return address
+   jp  (hl)                         ;; [1] Do a manual "ret"

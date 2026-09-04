@@ -1,29 +1,31 @@
     ;; Ok let's start drawing the line now, we have all the information we need
-    ; Here HL = current adress (leftAdress)
-    ;      DE = Target  adress (rightAdress)
-    ;      B  = current sub pixel (leftSubPixel)
-    ;      C  = target  sub pixel (rightSubPixel)
+    ; Here HL = Left pixel adress (leftAdress)
+    ;      B  = left subpixel
+    ;      C  = right subpixel
+    ;      E  = Nb OCtet difference between X1 (right) and X0 (positif) so from 0 to 79
     ;      A  = INK Color
 
-    ; 
-    ld (#colorIndex),a      ; SMC to chnge indexed access
+    ;  Computing full 4 pixels with INK inside d
+    ld d,#0
+    rra     ; Put bit0 of INK in Carry
+    jr nc,testHightBitColor
+    ld d,#0xF0
+testHightBitColor:    
+    rra     ; put bit 1 of INK in carry
+    jr nc,noHightBitColor
+    ld a,#0x0F
+    or d
+    ld d,a
+noHightBitColor:
+    ; d contains full pixel color to use
 
-    ; set ix to point to the color table
-    ld ix,#cpct_plotFullColor_M1
-colorIndex=.+2
-    ld a,(ix+2)     ; Full pixels chosen color SMC
-    ld__iyl_a       ; Store full pixels in iyl
-draw_loop:
+    ld a,e              ; a = nbOctet
+    or a                ; check if nbOct == 0 ==> B and C on same octet
+    jr nz,notSameOctet  ; Ok, let's do the full process
 
-; have we reached target adress ?
-    ld a,l                  ; Optim: start with most different checks
-    cp e
-    jr nz,notSameAdress
-    ld a,h                  ; Liekly to be egal often
-    cp d
-    jr nz,notSameAdress
-sameAdress: ; Ok, almost there, deal with remaining sub pixel at end of line - We do not need de anymore
-    push hl
+    ; Specific case : Draw from B to C subPixels inside same octet
+    ; d still needed, e nomore
+    push hl     ; Keep adress
 
     ld a,b      ; a = left subpixel
     rlca        ; multiply by 4
@@ -31,68 +33,107 @@ sameAdress: ; Ok, almost there, deal with remaining sub pixel at end of line - W
     add c       ; a = b*4+c : index in mask table
  
     ld hl, #cpct_subPixelHorizontalMask_M1  ; mask table
+    ld b,#0     
+    ld c,a      ; bc = index in table
+    add hl,bc   ; hl = adress of mask to use
+    ld a,(hl)   ; a = mask to use for reset pixels with new color
+
+    pop hl      ; Restore adress
+
+    ld e,a      ; save mask
+    and (hl)    ; a = current screen pixels with clear pixels from mask 
+
+    ld b,a      ; b = current screen octet (cleared)
+    ld a,e      ; retrieve mask
+    cpl         ; invert mask
+    and d       ; set requested color to inverted pixels
+
+    or b        ; merge result with current screen octet
+
+    ld (hl),a   ; Set screen octet with preserved pixels around b and c
+
+    jp endDraw  ; we have finished
+notSameOctet:
+    ; deal with starting subpixel : if 0 we can do full pixels, if not we need to mask and move forward 1
+    ld a,b
+    or a
+    jr z,drawFullOctets     ;   We can draw octets from there, but we will need to check last octet
+
+    ; Deal from b subpixel to 3 on actual adress
+    ld a,b      ; a = left subpixel
+    rlca        ; multiply by 4
+    rlca        ;  "
+ 
+    push hl     ; Save Adress
+    push de     ; Save color
+
+    ld hl, #cpct_subPixelHorizontalMask_M1 + 3  ; mask table with right subPixel = 3
     ld d,#0     
     ld e,a      ; de = index in table
     add hl,de   ; hl = adress of mask to use
     ld a,(hl)   ; a = mask to use for reset pixels with new color
 
-    pop hl      ; restore current adress
-
     ld d,a      ; save mask
     and (hl)    ; a = current screen pixels with clear pixels from mask 
 
-    ld e,a      ; current screen octet (cleared)
+    ld b,a      ; b = current screen octet (cleared)
     ld a,d      ; retrieve mask
     cpl         ; invert mask
-    and__iyl    ; set requested color to inverted pixels
 
-    or e        ; merge result with current screen octet
+    pop de      ; Restore color and nbOctet
+    and d       ; set requested color to inverted pixels
+
+    or b        ; merge result with current screen octet
+
+    pop hl      ; Restore adress
 
     ld (hl),a   ; Set screen octet with preserved pixels around b and c
-    
-    jr endDrawing
-notSameAdress:  ; Still not on last octet, We don't care of c
-    ; Are we on a full octet (b == 0) or on a partial octet?
-    ld a,b
-    or a
-    jr z,drawFullPixel  ; best case, let's accelerate full speed
 
-    ; get full mask from b sub pixel to 3rd subpixel on right
-    push de     ; preserve target adress
-    push hl     ; preserve current adress
 
-    ld hl, #cpct_subPixelHorizontalMask_M1 + 3  ; Hardcoding C=3 here for third sub pixel on right
-    ld a,b    ; a = left subpixel
-    rlca      ; multiply by 4
-    rlca      ;  "
-    ld e,a    
-    ld d,#0    
+    inc hl      ; We have finished this first octet, increase adress
+    dec e       ; and decrease nbOctet
 
-    add hl,de   ; Get adress of mask for b to 3 subpixel
+drawFullOctets:
+    ; We will now draw needed octets with full octets - d can be 0 so it will need to jump over everything
+    ld a,#79                ; a = max jump
+    sub e                   ; a = 79 - nbOctect (so from 0 max lines to 79)
+    ; inc a                  ;  to avoid jr 0
+    rla                     ; a = a * 2 because ld (hl),e inc hl
+    ld (#drawJrOffset),a    ; SMC to use the correct amount of ld (hl),e inc hl
+drawJrOffset=. + 1
+    jr #0    ;   SMC to jump over necessary code - Max code is 79 * 2 so JR is enough
+.rept 79
+    ld (hl),d
+    inc hl
+.endm
 
-    ld a,(hl)   ; get mask
 
-    pop hl      ; restore current adress
+onLeftSubpixel:
+    ; We are on the last octet, deal with C subPixels from left on last adress
+    ld a,c
+    cp #3
+    jr z,drawLastOctet ; Even if we are on last octet we can print it, so go for it
 
-    ld d,a      ; save mask
-    and (hl)    ; Get current screen octet and reset needed pixels
+    push hl
+    ld hl, #cpct_subPixelHorizontalMask_M1 + 3  ; mask table with right subPixel = 3
+    ld b,#0     
+    ld c,a      ; de = index in table
+    add hl,bc   ; hl = adress of mask to use
+    ld a,(hl)   ; a = mask to use for reset pixels with new color
 
-    ld e,a      ; store current octet
-    ld a,d      ; restore mask
+    pop hl      ; Restore adress
+
+    ld e,a      ; save mask
+    and (hl)    ; a = current screen pixels with clear pixels from mask 
+
+    ld b,a      ; b = current screen octet (cleared)
+    ld a,e      ; retrieve mask
     cpl         ; invert mask
-    and__iyl    ; set requested color to pixels
+    and d       ; set requested color to inverted pixels
 
-    or e        ; merge current screen octet with new colored pixels
+    or b        ; merge result with current screen octet
 
-    pop de      ; restore target adress
-
-    ld b,#0     ; we performed sub pixel b, so now it is reset to 0
-
-    jr setOctet ; set value to screen and continue
-drawFullPixel:
-    ld__a_iyl   ; get Full Color value
-setOctet:
-    ld (hl),a       ; Set new screen octet
-    inc hl          ; increase adress
-    jr draw_loop    ; let's loop
-endDrawing:
+    ld d,a      ; use e as new color for next instruction to run 
+drawLastOctet:
+    ld (hl),d
+endDraw:

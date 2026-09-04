@@ -217,7 +217,7 @@ void SpeedTest(void)
     for (u8 col = 0; col<4;col++)
     {
         for (y = 0; y<=199; y++)
-            cpct_geometryLineM1_f(CPCT_VMEM_START,   0,   y, 319,   y, col);        
+            cpct_drawLineM1_f(CPCT_VMEM_START,   0,   y, 319,   y, col);        
     }
 
     for (u8 col = 0; col<4;col++)
@@ -225,7 +225,6 @@ void SpeedTest(void)
         for (y = 199; y>=0; y--)
             cpct_drawHorizontalLineM1(CPCT_VMEM_START,   0,   319,   y, col);        
     }
-
 }
 ////////////////////////////////////////
 // Main demo

@@ -34,10 +34,6 @@ cpct_plotColorTable_M1::
     ;; Color 3: Both LSB + MSB bits
     .db 0x88, 0x44, 0x22, 0x11	
 
-;; Full octet in each color
-cpct_plotFullColor_M1::
-    .db 0x00, 0xF0, 0x0F, 0xFF
-
 ;; Masks from one subpixel (0..3) to another (0..3) 
 cpct_subPixelHorizontalMask_M1::
     .db 0x77, 0x33, 0x11, 0x00
