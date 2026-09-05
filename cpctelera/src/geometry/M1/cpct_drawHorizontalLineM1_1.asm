@@ -91,6 +91,7 @@ decodeAdresses:
     push de         ;; save Left info
 
     ld__b_ixl       ;; b = Y0 in pixels
+    ld  c,e         ;; c = left octet
 
     ex de,hl        ;; de = SCREEN ADRESS / HL = X0 (but no need)
 
