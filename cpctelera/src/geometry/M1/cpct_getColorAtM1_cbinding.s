@@ -18,7 +18,7 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
-.globl cpct_getColorAtM1
+.globl cpct_getColorAtM1_asm
 
 ;;
 ;; C bindings for <cpct_geometryPlotM1>
@@ -31,4 +31,4 @@ _cpct_getColorAtM1::
    dec sp                      ;; [6] b unused
    push af                     ;; [4] Restore return address to stack because __z88dk_callee
 
-   jp cpct_getColorAtM1        ;; Goto main entry point using official ret
+   jp cpct_getColorAtM1_asm        ;; Goto main entry point and use official ret
