@@ -45,72 +45,72 @@
 ;; Destroyed Register values:
 ;;      AF, BC, DE, HL, IX
 ;;
-
-    ; exchange X0 / X1 (if needed) to draw from left to right
-    ld a,b
-    cp d
-    jr c,exchangeX		; d>b   ==> exchange
-    jr nz,decodeAdresses	    ; d!=b  ==> d<b
-    ld a,c				; here d=b   ==> Compare e and c
-    cp e
-    jr nc,decodeAdresses	    ; e<=c	==> de<bc
-exchangeX:   ; exchange de and bc / X0 and X1
-   	ld a,e
-	ld e,c
-	ld c,a
-	ld a,d
-	ld d,b
-	ld b,a
+;;
+;; Timing of draw preparation
+;;     xxx Microseonds   53 Bytes
+;; 
+;; exchange X0 / X1 if needed to draw from left to right
+    ld  a,b                 ;; a = X1 high
+    cp  d                   ;; compare with X0 high
+    jr  c,exchangeX		    ;; d>b   ==> exchange
+    jr  nz,decodeAdresses	;; d!=b  ==> d<b
+    ld  a,c				    ;; here d=b   ==> a = x1 low
+    cp  e                   ;; compare with X0 low
+    jr  nc,decodeAdresses	;; e<=c so de<bc
+;; exchange de and bc / X0 and X1
+exchangeX:   ;; Note: Is push push pop pop better?         
+   	ld  a,e
+	ld  e,c
+	ld  c,a
+	ld  a,d
+	ld  d,b
+	ld  b,a  
 
 decodeAdresses:
-    ;  Computiong left adress in hl
-    ;  left subpixel in d, nbOctet in e
+    ;; Compute subPixels and line octet (left and right)
+    ld  a,e                 ;; a= low X0
+    and #0x03	            ;; Keep only the 2 least significant bits of X0 : subPixel
 
-    ; Compute subPixels and line octet (left and right)
+    sra d                   ;; d can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
+    rr  e                   ;; rotate e once with carry from d
+    srl e                   ;; Now e is the left byte offset in the line (0-39)
 
-    ld a,e                  ; a= low X0
-    and #0x03	            ; Keep only the 2 least significant bits of X0 : subPixel
+    ld  d,a                 ;; Store left sub pixel in d for the moment
 
-    sra d           ;; d can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
-    rr  e           ;; rotate e once with carry from d
-    srl e           ;; Now e is the left byte offset in the line (0-39)
+    ld  a,c                 ;; a= low X1
+    and #0x03	            ;; Keep only the 2 least significant bits of X1 : subPixel
 
-    ld d,a          ;; Store left sub pixel in d for the moment
+    sra b                   ;; b can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
+    rr  c                   ;; rotate c once with carry from b
+    srl c                   ;; Now c is the Right byte offset in the line (0-39)
 
-    ld a,c                  ; a= low X1
-    and #0x03	            ; Keep only the 2 least significant bits of X1 : subPixel
+    ld  b,a                 ;; Store Rigth sub pixel in b for the moment
 
-    sra b           ;; b can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
-    rr  c           ;; rotate c once with carry from b
-    srl c           ;; Now c is the Right byte offset in the line (0-39)
+    ;; Compute left adress in HL
+    push bc                 ;; save Right info
+    push de                 ;; save Left info
 
-    ld b,a          ;; Store Rigth sub pixel in b for the moment
+    ld__b_ixl               ;; b = Y
+    ld  c,e                 ;; c = left octet
 
-    ; Compute left adress in HL
-    push bc         ;; save Right info
-    push de         ;; save Left info
+    ex  de,hl               ;; de = SCREEN ADRESS
 
-    ld__b_ixl       ;; b = Y0 in pixels
-    ld  c,e         ;; c = left octet
+    call cpct_getScreenPtr_asm    ;; HL = Left Adress
 
-    ex de,hl        ;; de = SCREEN ADRESS / HL = X0 (but no need)
-
-    call cpct_getScreenPtr_asm    ; HL = Left Adress = Current adress for loop
-
-    pop de          ;; d = Left subpixel  / e = left octect
-    pop bc          ;; b = right subpixel / c = right octet
-                    ;  HL = Left Adress 
+    pop de                  ;; d = Left subpixel  / e = left octect
+    pop bc                  ;; b = right subpixel / c = right octet
+                            ;; HL = Left Adress 
 
     ;; Compute nbOctet to print
-    ld a,c          ;; a = right octet
-    sub e           ;; a = nbOctet = right octet - left octet
-    ld e,a          ;; e = nbOctet
+    ld  a,c                 ;; a = right octet
+    sub e                   ;; a = right octet - left octet = nbOctet 
+    ld  e,a                 ;; e = nbOctet
 
-    ;; Rearrange registers so B= LeftSubpixel and C = RightSubPixel - E = nbOctet
-    ld a,b          ;; a = right subpixel
-    ld b,d          ;; b = left subPixel
-    ld c,a          ;; c = right subpixel          
+    ;; Rearrange registers so B= LeftSubpixel and C = RightSubPixel
+    ld  a,b                 ;; a = right subpixel
+    ld  b,d                 ;; b = left subPixel
+    ld  c,a                 ;; c = right subpixel
 
-    ld__a_ixh       ;; Put INK Color in a
+    ld__a_ixh               ;; Put INK Color in a
 
     ;; We are ready for fast entry

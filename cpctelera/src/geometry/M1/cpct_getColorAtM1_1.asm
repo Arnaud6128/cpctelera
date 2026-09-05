@@ -23,20 +23,24 @@
 
 .globl cpct_getScreenPtr_asm
 
-    ld a,e      ; a = low X
-    and #0x03	; Keep only the 2 least significant bits of X0 : subPixel
+;; Prepare input of fast entry based on adress and subpixel
 
-    push af     ; save subpixel 
+    ld  a,e     ;; a = low X
+    and #0x03	;; Keep only the 2 least significant bits of X0 : subPixel
 
-    srl d       ; d can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
-    rr  e       ; rotate e once with carry from d
+    push af     ;; save subpixel
+
+    srl d       ;; d can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
+    rr  e       ;; rotate e once with carry from d
     srl e       ;; Now e is the byte offset in the line (0-79)
 
-    ld b, c     ; b = Y
-    ld c, e     ; c = X in bytes
+    ld  b, c     ;; b = Y
+    ld  c, e     ;; c = X in bytes
 
-    ex de,hl    ; de = SCREEN_ADRESS
+    ex  de,hl    ;; de = SCREEN_ADRESS
 
-    call cpct_getScreenPtr_asm    ; HL = Current adress
+    call cpct_getScreenPtr_asm    ;; HL = Current adress
 
-    pop af      ; retrieve subpixel in a
+    pop af      ;; retrieve subpixel in a
+
+;; Ready for fast entry

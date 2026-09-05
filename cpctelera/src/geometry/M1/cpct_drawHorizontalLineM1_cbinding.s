@@ -1,5 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+;;  Copyright (C) 2026 Xavier Jollet (@SagaDS)
 ;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -28,20 +29,24 @@
 ;;    y           - Y coordinate (0-199, 8-bit integer)
 ;;    color       - Ink color of line (0..3)
 ;;
-
-;;  34 microSecs, 26 bytes
+;;  x0 and x& does not need to be sorted from left to right
+;;  function will automatically swap them if needed
+;;
+;;  Timing of cbinding overhead
+;;  36 microSecs, 24 bytes
+;;
 _cpct_drawHorizontalLineM1::
-   ld   (restore_ix), ix         ;; [6] Save IX to restore it before returning
+   ld   (restore_ix), ix            ;; [6] Save IX to restore it before returning
 	
-   pop   ix                      ;; [4] IX = Return address
-   ld   (simulated_return), ix   ;; [6] Save return address for simulated return
+   pop   ix                         ;; [4] IX = Return address
+   ld   (simulated_return), ix      ;; [6] Save return address for simulated return
 
-    ; Get Parameters
-    ;; HL = Screen Adress / DE = X0 Coordinate 
-    pop bc     ;; bc = X1 coordinate 
-    pop ix     ;; ixh = Y0 coordinate / ixl = color
+   ; Get Parameters
+   ;; HL = Screen Adress / DE = X0 Coordinate 
+   pop   bc                         ;; [3] bc = X1 coordinate 
+   pop   ix                         ;; [4] ixh = Y0 coordinate / ixl = color
    
-   call cpct_drawHorizontalLineM1    ;; Call to asm entry point
+   call cpct_drawHorizontalLineM1   ;; [5] Call to asm entry point
 
 restore_ix=.+2
    ld   ix, #0000                 ;; [4] Restore IX before returning   

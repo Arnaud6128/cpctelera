@@ -21,28 +21,29 @@
 ;;          A  = SubPixel to test in octet (0..3)
 ;;
 
-    ld c,(hl)   ; Get screen octet
+    ld  c,(hl)          ;; Get screen octet
 
-    sub #3              ; check if last subpixel on right
-    neg                 ; a = 3 - b
-    jr z,computeColor   ; if last, jump
+    or  a               ;;; Check if subpixel is 0, if so start the check
+    jr  z,computeColor  ;; if last, jump
 
-    ld b,a              ; for loop
+    ld  b,a             ;; for loop
 subpixel_loop:
-    srl c               ; shift screen octet to the right
-    djnz subpixel_loop  ; until last subpixel on right
+    sla c               ;; shift screen octet to the left
+    djnz subpixel_loop  ;; until last subpixel on left
 computeColor:
-    ld a,c        ; let's decode screen value
-    and #0x11     ; and 0b00010001 to mask right subpixel
+    ld  a,c             ;; let's decode screen value
+    and #0x88           ;; and 0b10001000 to mask left subpixel
 
-    ld l,#0     ; Future color
-    rra         ; Get High bit of color from bit 0 in carry (after the AND #11 Carry=0 so bit 7 = 0)
-    rl l        ; Set bit 0 of l with carry (carry = 0 after)
-    rl l        ; Move it to bit 1 because it is high bit
-check_low_bit:
-    or a        ; Here a is either 4 or 0... So check if 0
-    jr z,end_getColorAt ; skip if 0
-    inc l      ; Put low bit of color in l 
-end_getColorAt:     ; l = output color
-    ld a,l          ; stdcall_1 convention so asm also...
+    ld  l,#0            ;; Future color
+    rla                 ;; Get Low bit of color from bit 7 in carry 
+                        ;; (after the AND #88 Carry=0 so bit 0 = 0)
+    rl  l               ;; Set bit 0 of l using carry (carry = 0 after)
+                        ;; l = low bit of color
+;; Check high bit of color
+    or  a               ;; Here a is either 0x10 or 0... So check if 0
+    jr  z,end_getColorAt  
+    inc l               ;; Add 2 to l to set high bit of color
+    inc l               ;;  
+end_getColorAt:         ;; l = output color
+    ld  a,l             ;; stdcall_1 convention uses a, so asm also...
     ret

@@ -22,13 +22,19 @@
 
 ;;
 ;; C bindings for <cpct_geometryPlotM1>
+;; extern u8   cpct_getColorAtM1         (u8* vmem, u16 x, u8 y) __z88dk_callee;
+;;   vmem        - Base VRAM memory address (typically 0xC000)
+;;   x           - X coordinate (0-319)
+;;   y           - Y coordinate (0-199)
 ;;
-;;  16 microSecs, 4 bytes
+;; return value:  Ink color of pixel (0..3)
+;;
+;;  16 microSecs, 7 bytes
 ;;
 _cpct_getColorAtM1::
-   pop af                      ;; [3] af = Return addressc
-   pop bc                      ;; [3] c = y  
-   dec sp                      ;; [6] b unused
+   pop  af                     ;; [3] af = Return addressc
+   pop  bc                     ;; [3] c = y  
+   dec  sp                     ;; [6] b unused
    push af                     ;; [4] Restore return address to stack because __z88dk_callee
 
-   jp cpct_getColorAtM1_asm        ;; Goto main entry point and use official ret
+   jp cpct_getColorAtM1_asm    ;; Goto main entry point and use official ret

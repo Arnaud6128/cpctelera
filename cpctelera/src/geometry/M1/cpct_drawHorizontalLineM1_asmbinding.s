@@ -1,6 +1,6 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2026 Jollet Xavier
+;;  Copyright (C) 2026 Xavier Jollet (@SagaDS)
 ;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
@@ -32,8 +32,6 @@ cpct_drawHorizontalLineM1::
 
 .include  /cpct_drawHorizontalLineM1_1.asm/
 
-
-
 ;; cpct_drawHorizontAlLineM1_f : Fast entry point when you know all you need
 ;;      (2B HL) = Left pixel adress (leftAdress)
 ;;      (1B B ) = left subpixel
@@ -46,6 +44,3 @@ cpct_drawHorizontalLineM1::
 cpct_drawHorizontalLineM1_f::    ; Entry point for fill API
 
 .include  /cpct_drawHorizontalLineM1_2.asm/
-
-   ret
-   
