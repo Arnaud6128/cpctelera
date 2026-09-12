@@ -21,135 +21,145 @@
 ;;
 ;; Function: cpct_rlewb_compress
 ;;
-;;   Compresses uncompressed input data into RLEWB stream format.
-;;
-;; C Definition:
-;;   u16 cpct_rlewb_compress(const u8* src, u8* dst, u16 length) __z88dk_callee;
+;;   Compresses uncompressed input data into Wonder Boy RLE (RLEWB) stream format.
 ;;
 ;; Input Parameters:
 ;;   (2B HL) src    - Pointer to uncompressed source data
 ;;   (2B DE) dst    - Pointer to destination buffer for compressed stream
-;;   (2B BC) length - Length of input data to compress (in bytes)
+;;   (2B BC) length - Length of input data to compress (in bytes, up to 65535)
 ;;
 ;; Return Value:
-;;   (2B HL) Compressed length in bytes (dst_final - dst_initial)
-;;
-;; Assembly call:
-;;     > call cpct_rlewb_compress_asm
-;;
-;; Encoding Rules:
-;;   - Unrepeated bytes < 0x80 are stored raw (1 byte output).
-;;   - Repeated bytes or isolated bytes >= 0x80 are stored as a 2-byte sequence:
-;;       [0x80 | Count] [Value]  (Max count per block = 127).
+;;   (2B DE) Compressed length in bytes (SDCC __sdcccall(1))
+;;   (2B HL) Compressed length in bytes (Standard ASM)
 ;;
 ;; Destroyed Register values: 
-;;   AF, BC, DE, HL, IX
-;;
-;; Required memory:
-;;   80 bytes (77 bytes routine + 3 bytes binding wrapper)
-;;
-;; Time Measures (Includes +10 us / +40 CPU cycles binding wrapper overhead):
-;; (start code)
-;;    Case / Compression Operation              | microSecs (us) | CPU Cycles
-;;   -------------------------------------------------------------------------
-;;    Setup Overhead (routine + C binding)      | ~25            | ~100
-;;    Exit Overhead (HL = length, pop IX)       | ~20            | ~80
-;;    Raw Byte (Uncompressed < 0x80)            | ~29            | ~116
-;;    RLE Inner Count Loop (per repeated byte)  | ~18            | ~72
-;;   -------------------------------------------------------------------------
-;;    Average Compression Speed                 | ~18 - 30 /byte | ~72 - 120 /byte
-;; (end code)
-;;
-;; Credits:
-;;    * RLEWB encoder is inspired by Wonder Boy RLE <https://www.smspower.org/Development/Compression#WonderBoyRLE>
-;;    * Original code by mvac7 <https://github.com/mvac7/Z80_RLEWB>
-;;    * Optimization support <https://www.cpcwiki.eu/forum/programming/draw-spriterle-optimization/>
+;;   AF, BC, DE, HL
+;;   (IX is preserved)
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-.macro ld__a_ixl
-   .dw #0x7DDD                  ;; [2] Opcode for ld a, ixl
-.endm
-
-.macro ld__ixl_a
-   .dw #0x6FDD                  ;; [2] Opcode for ld ixl, a
-.endm
-
-    push ix                     ;; [4] Preserve IX register
-	
-    ld   a, e                   ;; [1] A = initial dst low byte (E)
-    push af                     ;; [3] Save initial E on stack
-    ld   a, d                   ;; [1] A = initial dst high byte (D)
-    push af                     ;; [3] Save initial D on stack
-
-    ld   b, c                   ;; [1] B = remaining length counter
-    ld   c, #0                  ;; [2] C = local repetition counter
+    push ix                     ;; [4] Préserver IX (requis par les conventions SDCC)
+    push de                     ;; [3] Sauvegarder le pointeur dst initial
 
 main_loop$:
-    ld   a, b                   ;; [1] A = remaining bytes count
-    or   a                      ;; [1] Check if remaining bytes == 0
-    jr   z, end_encode          ;; [2/3] IF remaining bytes == 0 THEN finish compression
+    ;; Vérifier si le compteur 16 bits est épuisé (BC == 0 ?)
+    ld   a, b                   ;; [1]
+    or   c                      ;; [1]
+    jr   z, end_compression$    ;; [2/3]
 
-    ld   a, (hl)                ;; [2] A = current byte value
-    ld   c, #1                  ;; [2] Initialize repetition count to 1
+    ;; Consommer le premier octet de la nouvelle séquence
+    ld   a, (hl)                ;; [2] A = valeur courante
+    inc  hl                     ;; [2]
+    dec  bc                     ;; [2]
+    ld__ixl_a                   ;; [2] IXL = val
+    ld__ixh #1                  ;; [3] IXH = run_length = 1
 
 count_loop$:
-    dec  b                      ;; [1] Decrement remaining bytes counter
-    jr   z, write_block$        ;; [2/3] IF no more input bytes THEN force block write
+    ;; Reste-t-il des octets dans le tampon source ?
+    ld   a, b                   ;; [1]
+    or   c                      ;; [1]
+    jr   z, count_done$         ;; [2/3]
 
-    inc  hl                     ;; [2] Advance source pointer
-    cp   a, (hl)                ;; [2] Compare current byte with next byte
-    jr   nz, mismatch$          ;; [2/3] IF values differ THEN break RLE sequence
+    ;; Limite maximale RLEWB par bloc (254 répétitions)
+    ld__a_ixh                  ;; [2]
+    cp   #254                   ;; [2]
+    jr   z, count_done$         ;; [2/3]
 
-    inc  c                      ;; [1] Increment repetition counter
-    ld   a, c                   ;; [1] A = current count
-    cp   #127                   ;; [2] Check max RLE limit (127)
-    ld   a, (hl)                ;; [2] Restore current value into A
-    jr   nz, count_loop$        ;; [2/3] IF count < 127 THEN continue counting
-    jr   write_block$           ;; [3] IF count == 127 THEN force block write
+    ;; Comparaison avec l'octet suivant
+    ld   a, (hl)                ;; [2]
+    cp__ixl                    ;; [2] Compare avec IXL (val)
+    jr   nz, count_done$        ;; [2/3] Valeur différente -> séquence terminée
 
-mismatch$:
-    inc  b                      ;; [1] Revert B decrement (unconsume mismatched byte)
-    jr   write_decision$        ;; [3] Jump to format decision logic
+    ;; Octet identique validé
+    inc  hl                     ;; [2]
+    dec  bc                     ;; [2]
+    inc__ixh                   ;; [2] run_length++
+    jr   count_loop$            ;; [3]
 
-write_block$:
-    inc  hl                     ;; [2] Advance source pointer past completed run
+count_done$:
+    ;; Décision selon la valeur de l'octet et sa répétition
+    ld__a_ixl                   ;; [2] A = val
+    cp   #0x80                  ;; [2] Est-ce le Control Digit (0x80) ?
+    jr   z, write_cd$           ;; [2/3]
 
-write_decision$:
-    ld__ixl_a                   ;; [2] Store current byte value into IXL
-    ld   a, c                   ;; [1] A = repetition count
-    cp   #1                     ;; [2] Compare count with 1
-    jr   nz, write_rle$         ;; [2/3] IF count > 1 THEN write RLE sequence
+    ;; ---------------------------------------------------------
+    ;; Cas 1 : Octet normal (val != 0x80)
+    ;; ---------------------------------------------------------
+    ld__a_ixh                   ;; [2] A = run_length
+    cp   #4                     ;; [2] Rentable en RLEWB seulement à partir de 4 octets
+    jr   c, write_raw$          ;; [2/3] Si < 4 -> sortie directe en octets bruts
 
-    ld__a_ixl                   ;; [2] Retrieve byte value from IXL
-    bit  7, a                   ;; [2] Test if bit 7 is set (val >= 0x80)
-    jr   nz, write_rle$         ;; [2/3] IF val >= 0x80 THEN write RLE sequence
+    ;; RLE : 0x80, [run_length], [val]
+    ld   a, #0x80               ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    ld__a_ixh                  ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    ld__a_ixl                  ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    jr   main_loop$             ;; [3]
 
-    ld   (de), a                ;; [2] Write raw byte directly to destination
-    inc  de                     ;; [2] Advance destination pointer
-    jr   main_loop$             ;; [3] Loop for next sequence
+write_raw$:
+    ;; Écriture de 1 à 3 octets bruts (consomme run_length sans toucher à BC)
+    ld__a_ixl                  ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    dec__ixh                   ;; [2]
+    jr   nz, write_raw$         ;; [2/3]
+    jr   main_loop$             ;; [3]
 
-write_rle$:
-    ld   a, c                   ;; [1] A = repetition count
-    set  7, a                   ;; [2] Set bit 7 to mark RLE control byte
-    ld   (de), a                ;; [2] Write RLE header byte [0x80 | count]
-    inc  de                     ;; [2] Advance destination pointer
-    ld__a_ixl                   ;; [2] Retrieve raw byte value
-    ld   (de), a                ;; [2] Write repeated byte value
-    inc  de                     ;; [2] Advance destination pointer
-    jr   main_loop$             ;; [3] Loop for next sequence
+    ;; ---------------------------------------------------------
+    ;; Cas 2 : Octet d'échappement (val == 0x80)
+    ;; ---------------------------------------------------------
+write_cd$:
+    ld   a, #0x80               ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    ld__a_ixh                  ;; [2] A = run_length
+    cp   #1                     ;; [2]
+    jr   z, write_cd_isolated$  ;; [2/3]
 
-end_encode:
-    pop  bc                     ;; [3] Restore B = initial D
-    pop  af                     ;; [3] Restore C = initial E
-    ld   c, a                   ;; [1] C = initial E
+    ;; 0x80 répété : 0x80, [run_length], 0x80
+    ld   (de), a                ;; [2] Écrit run_length
+    inc  de                     ;; [2]
+    ld   a, #0x80               ;; [2]
+    ld   (de), a                ;; [2] Écrit 0x80
+    inc  de                     ;; [2]
+    jr   main_loop$             ;; [3]
 
-    ld   a, e                   ;; [1] A = final E
-    sub  c                      ;; [1] A = final E - initial E
-    ld   l, a                   ;; [1] L = low byte of compressed size
-    ld   a, d                   ;; [1] A = final D
-    sbc  a, b                   ;; [1] A = final D - initial D - borrow
-    ld   h, a                   ;; [1] HL = total compressed size in bytes
+write_cd_isolated$:
+    ;; 0x80 isolé : 0x80, 0x00
+    xor  a                      ;; [1]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    jr   main_loop$             ;; [3]
 
-    pop  ix                     ;; [4] Restore IX register
-    ret                         ;; [3] Return to caller (HL = compressed length)
+    ;; ---------------------------------------------------------
+    ;; Marqueur de fin de flux
+    ;; ---------------------------------------------------------
+end_compression$:
+    ;; Marqueur de fin RLEWB : 0x80, 0xFF
+    ld   a, #0x80               ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+    ld   a, #0xFF               ;; [2]
+    ld   (de), a                ;; [2]
+    inc  de                     ;; [2]
+
+    ;; Calcul de la longueur totale compressée = DE final - DE initial
+    pop  bc                     ;; [3] BC = dst initial
+    ld   a, e                   ;; [1]
+    sub  c                      ;; [1]
+    ld   l, a                   ;; [1]
+    ld   a, d                   ;; [1]
+    sbc  a, b                   ;; [1]
+    ld   h, a                   ;; [1] HL = taille compressée
+
+    ;; Retour double : DE pour __sdcccall(1), HL pour les appels ASM
+    ld   d, h                   ;; [1]
+    ld   e, l                   ;; [1] DE = taille compressée
+
+    pop  ix                     ;; [4] Restaurer IX
+    ret                         ;; [3]

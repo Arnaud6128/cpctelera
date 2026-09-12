@@ -18,15 +18,19 @@
 ;;-------------------------------------------------------------------------------
 .module cpct_compression
 
+;; Macros for easy use of undocumented opcodes
+.include "macros/cpct_undocumentedOpcodes.h.s"
+
 ;;
 ;; C bindings for <cpct_rlewb_compress>
 ;;
-;;  10 microSecs, 3 bytes
+;;  11 microSecs, 4 bytes
 ;;
 _cpct_rlewb_compress::
     pop  af                     ;; [3] Retrieve return address
     pop  bc                     ;; [3] B = useless / C = Sprite Width
     push af                     ;; [4] Restore return address in stack
+	ex   de, hl                 ;; [1] Dst <-> Src compressed
 	
 	.include  /cpct_rlewb_compress.asm/
 	

@@ -29,8 +29,8 @@
 ;;   void cpct_rlewb_decrunch(const u8* src, u8* dst) __z88dk_callee;
 ;;
 ;; Input Parameters (4 bytes):
-;;   (2B HL) src   - Pointer to source (compressed data)
-;;   (2B DE) dst   - Pointer to destination array
+;;   (2B HL) dst   - Pointer to destination array
+;;   (2B DE) src   - Pointer to source (compressed data)
 ;;
 ;; Details:
 ;;   - Uses RLEWB format (Run-Length Encoding Wonder Boy).
@@ -47,7 +47,7 @@
 ;;   AF, BC, DE, HL
 ;
 ;; Required memory:
-;;   33 bytes (33 bytes routine + 0 bytes binding wrapper)
+;;   34 bytes (33 bytes routine + 1 bytes C binding wrapper)
 ;;
 ;; Time Measures:
 ;; (start code)
@@ -72,11 +72,17 @@ RLEWB_CD=#0x80
 ;;  ED = End Data Block = 0xFF
 RLEWB_END=#0xFF
 
-;; ASM and C bindings for <cpct_rlewb_decrunch>
+;; C bindings for <cpct_rlewb_decrunch>
 ;;
-;;  0 microSecs, 0 bytes
+;;  1 microSecs, 1 bytes
 ;;
 _cpct_rlewb_decrunch::
+     ex  de, hl                ;; [1] HL = dst; DE = src compressed
+	 
+;; ASM bindings for <cpct_rlewb_decrunch>
+;;
+;;  0 microSecs, 0 bytes
+;;	 
 _cpct_rlewb_decrunch_asm::
 
 unRLEWBRAM:
