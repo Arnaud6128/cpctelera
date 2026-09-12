@@ -1,6 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
-//  Copyright (C) 2014-2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 Bouche Arnaud
+//  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -22,8 +23,8 @@ extern void cpct_fdcOff(void);
 extern void cpct_fdcOn(void);
 
 // Sectorial read and write on disk
-#define CPCT_DISK_FACE_A		0
-#define CPCT_DISK_FACE_B		1
+#define CPCT_DISK_FLOPPY_A		0
+#define CPCT_DISK_FLOPPY_B		1
 #define CPCT_DISK_SECTOR_START	0xC1
 #define CPCT_DISK_SECTOR_END	0xC9
 #define CPCT_DISK_NB_OF_SECTORS	9

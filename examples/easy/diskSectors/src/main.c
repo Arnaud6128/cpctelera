@@ -42,7 +42,7 @@ void ReadTracks(u8 track, u16 size, u8* dest)
 		// This function read by sector by sector of 512-Bytes
 		// ! BEWARE ! If destination is not multiple of 512-Bytes you can overwrite next memory.
 		// In this case use temporary buffer.
-        cpct_sectorRead(dest, track, CPCT_DISK_SECTOR_START, CPCT_DISK_NB_OF_SECTORS, CPCT_DISK_FACE_A);
+        cpct_sectorRead(dest, track, CPCT_DISK_SECTOR_START, CPCT_DISK_NB_OF_SECTORS, CPCT_DISK_FLOPPY_A);
 		
 		// Decrease full size to read of TRACK_SIZE
         size -= CPCT_DISK_TRACK_SIZE;
@@ -58,7 +58,7 @@ void ReadTracks(u8 track, u16 size, u8* dest)
 		// Compute number of sectors to read
         u8 nbSectors = size / CPCT_DISK_SECTOR_SIZE;
 
-        cpct_sectorRead(dest, track, sector, nbSectors, CPCT_DISK_FACE_A);
+        cpct_sectorRead(dest, track, sector, nbSectors, CPCT_DISK_FLOPPY_A);
 		// Decrease full size to read of nbSectors * SECTOR_SIZE
         size -= CPCT_DISK_SECTOR_SIZE * nbSectors;
 		// Move destination pointer of of nbSectors * SECTOR_SIZE
@@ -71,7 +71,7 @@ void ReadTracks(u8 track, u16 size, u8* dest)
 	// read to last sector to temporary buffer and copy to destination
     if (size != 0)
     {
-        cpct_sectorRead(_temp, track, sector, 1, CPCT_DISK_FACE_A);
+        cpct_sectorRead(_temp, track, sector, 1, CPCT_DISK_FLOPPY_A);
         cpct_memcpy(dest, _temp, size);
     }
 }
@@ -89,10 +89,10 @@ void SaveDataToDisk(void)
 		*randData++ = cpct_getRandom_mxor_u8();
 	
 	// Write random data to track 2 sector 2 (0xC2) into one sector
-	cpct_sectorWrite(randomData, DATA_DAT_TRACK, DATA_DAT_SECT, 1, CPCT_DISK_FACE_A);
+	cpct_sectorWrite(randomData, DATA_DAT_TRACK, DATA_DAT_SECT, 1, CPCT_DISK_FLOPPY_A);
 	
 	// Read 512-Bytes data from disk
-	cpct_sectorRead(_temp, DATA_DAT_TRACK, DATA_DAT_SECT, 1, CPCT_DISK_FACE_A);
+	cpct_sectorRead(_temp, DATA_DAT_TRACK, DATA_DAT_SECT, 1, CPCT_DISK_FLOPPY_A);
 	
 	// Compare 300 values
 	u8 valueEquals = 1;
