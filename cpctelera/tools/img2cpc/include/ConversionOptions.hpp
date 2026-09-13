@@ -86,6 +86,7 @@ public:
 	bool OneFilePerSourceFile;
 	bool RLE;
 	bool IsScr;
+	bool HardSprites;
 
 	ByteOrder PixelOrder;
 

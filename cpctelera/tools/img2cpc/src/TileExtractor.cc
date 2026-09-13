@@ -41,10 +41,10 @@ vector<Tile*> TileExtractor::GetTiles(const string &fileName) {
 				theTile->SourceFileName = fileName;
 				FreeImage_Unload(tileBitmap);
 
-				theTile->TileHeight = this->TileHeight;
-				theTile->TileWidth = this->TileWidth;
+				theTile->TileHeight = this->Options.HardSprites ? 16 : this->TileHeight;
+				theTile->TileWidth = this->Options.HardSprites ? 16 : this->TileWidth;
 				theTile->Palette = this->Options.Palette;
-				theTile->TileWidthInBytes = theTile->TileWidth / this->ModeIncrement;
+				theTile->TileWidthInBytes = this->Options.HardSprites ? 16 : (theTile->TileWidth / this->ModeIncrement);
 
 				stringstream nameStream;
 				if(!baseName.empty()) {
@@ -75,7 +75,10 @@ vector<Tile*> TileExtractor::GetTiles(const string &fileName) {
 
 Tile* TileExtractor::getTile(FIBITMAP* bmp) {
 	Tile* result = new Tile();
-	if(this->Options.RLE) {
+	if (this->Options.HardSprites) {
+		this->fillTileHardSprite(result, bmp);
+	}
+	else if(this->Options.RLE) {
 		this->fillTileRLE(result, bmp);
 	} else if(this->Options.IsScr) {
 		this->fillTileSCR(result, bmp);
@@ -249,6 +252,47 @@ void TileExtractor::fillTileByCols(Tile* tile, FIBITMAP* bmp) {
 	}
 }
 
+void TileExtractor::fillTileHardSprite(Tile* tile, FIBITMAP* bmp) {
+	unsigned int bmpWidth = FreeImage_GetWidth(bmp);
+	unsigned int bmpHeight = FreeImage_GetHeight(bmp);
+
+	for (unsigned int y = 0; y < 16; ++y) {
+		bool oddY = ((y & 1) == 1);
+		bool flip = this->Options.ZigZag && oddY;
+
+		for (unsigned int x = 0; x < 16; ++x) {
+			unsigned int sourceX = flip ? (15 - x) : x;
+			unsigned char pen = 0;
+
+			if (sourceX < bmpWidth && y < bmpHeight) {
+				RGBQUAD rgb;
+				FreeImage_GetPixelColor(bmp, sourceX, bmpHeight - 1 - y, &rgb);
+
+				// Transparency by black color or alpha
+				if (FreeImage_IsTransparent(bmp) && rgb.rgbReserved == 0) {
+					pen = 0;
+				}
+				else {
+					Color current = Color(rgb.rgbReserved, rgb.rgbRed, rgb.rgbGreen, rgb.rgbBlue);
+					int idx = this->Options.Palette.getNearestIndex(current);
+					if (this->Options.Palette.TransparentIndex != -1 && idx == this->Options.Palette.TransparentIndex) {
+						pen = 0; // Transparency color = 0
+					}
+					else {
+						pen = (unsigned char)(idx & 0x0F);
+					}
+				}
+			}
+			else {
+				pen = 0; // If sprite smaller than 16x16 fill with transparency
+			}
+
+			tile->Data.push_back(pen);
+			tile->SourceValues.push_back(pen);
+		}
+	}
+}
+
 void TileExtractor::getByteAt(Tile* tile, FIBITMAP* bmp, int col, int row, bool flip, bool halfFlip) {
 	ColorAndMaskValues byteValues = getColorAndMask(bmp, col, row, flip, halfFlip);
 
@@ -318,6 +362,9 @@ vector<unsigned char> TileExtractor::extractTransPixels(vector<unsigned char> co
 }
 
 unsigned int TileExtractor::getModeIncrement() {
+	if (this->Options.HardSprites) {
+		return 1;
+	}
 	switch (this->Options.Mode) {
 	case 0:
 		return 2;

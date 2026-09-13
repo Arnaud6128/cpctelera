@@ -1,3 +1,9 @@
+# Generation of Sprite Hardware with configuration in src directory, transparency is 0 index
+./img2cpc -p src/config_sh_game.json -t 0 -sh -nm -of asm -bn sprite ship.png
+
+# Generation of Sprite Hardware with configuration in src directory, no transparency index because sprite have transparency
+./img2cpc -p src/config_sh_game.json -sh -nm -of asm -bn sprite ship_alpha.png
+
 # Paleta en src/config_rgb.json, salida en formato C, mode 0, fichero de salida gfx.c, generar PNGs, nombre base: tile, tiles de 32x32.
 ./img2cpc -p src/config_rgb.json -of c -m 0 -o gfx.c -g -bn tile -h 32 -w 32 bee.png
 

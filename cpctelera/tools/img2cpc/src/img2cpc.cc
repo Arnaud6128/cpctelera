@@ -3,6 +3,7 @@
 
 int initializeParser(ezOptionParser &parser) {
 	parser.overview = "img2cpc - (c) 2007-2018 Retroworks.";
+	parser.overview = "(c) 2026 - Arnaud6128 for Sprite Hardware support.";
 	parser.syntax = "img2cpc [OPTIONS] fileNames";
 	parser.example = "img2cpc -w 8 -h 8 --outputFormat asm -bn tile -m 0 tiles.png\n";
 	parser.footer = "If you liked this program, drop an email at: augusto.ruiz@gmail.com\n";
@@ -17,6 +18,7 @@ int initializeParser(ezOptionParser &parser) {
 	parser.add("", 0, 0, 0, "Create a flipped values look-up table for the current palette and mode.", "-f");
 
 	parser.add("0", 0, 1, 0, "Specifies the CPC Mode to generate data for. Valid values are 0 (default), 1 or 2.", "-m", "--mode");
+	parser.add("", 0, 0, 0, "CPC+ Hardware Sprites (16x16, 1 byte per pixel, 256 bytes per sprite).", "-sh", "--hardSprites");
 	parser.add("", 0, 0, 0, "Generate tile map", "-map", "--tilemap");
 	parser.add("", 0, 1, 0, "Output file name. img2cpc will append the proper extension based on format.", "-o", "--outputFileName");
 	parser.add("", 0, 1, ',', "Scanline order. Default value is 01234567", "-s", "--scanlineOrder");
@@ -129,11 +131,16 @@ int dumpTiles(vector<Tile*>& tiles, ConversionOptions &convOptions) {
 	return 0;
 }
 
-int extractPalette(ezOptionParser &options, ConversionOptions &convOptions) {
+int extractPalette(ezOptionParser& options, ConversionOptions& convOptions) {
 	int result = 0;
 
-	TPalette &palette = convOptions.Palette;
-	palette.UpdateMaxEntries(convOptions.Mode, !convOptions.NoMaskData);
+	TPalette& palette = convOptions.Palette;
+	if (convOptions.HardSprites) {
+		palette.UpdateMaxEntries(0, false); // 16 colors for HS
+	}
+	else {
+		palette.UpdateMaxEntries(convOptions.Mode, !convOptions.NoMaskData);
+	}
 
 	if (!options.isSet("-fwp") && !options.isSet("-rgbp") && !options.isSet("-hwp") && !options.isSet("-p")) {
 		return -1;
@@ -188,10 +195,17 @@ int extractPalette(ezOptionParser &options, ConversionOptions &convOptions) {
 	return result;
 }
 
-int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOptions) {
+int extractConversionOptions(ezOptionParser& options, ConversionOptions& convOptions) {
 	int result = 0;
 	convOptions.CreateTileset = !(options.isSet("-nt"));
 	convOptions.OneFilePerSourceFile = options.isSet("--oneFile");
+
+	convOptions.HardSprites = options.isSet("-sh") || options.isSet("--hardSprites");
+	if (convOptions.HardSprites) {
+		convOptions.TileWidth = 16;
+		convOptions.TileHeight = 16;
+		convOptions.NoMaskData = true;
+	}
 
 	convOptions.PaletteFormat = ConversionOptions::NONE;
 	if (options.isSet("-ophw")) {
@@ -406,11 +420,11 @@ int main(int argc, const char** argv)
 		}
 	}
 
-	if(convOptions.CreateFlipLut) {
+	if (convOptions.CreateFlipLut) {
 		createFlipLut(convOptions);
 	}
-	if(convOptions.NoMaskData) {
-		createAndOrTables(convOptions);		
+	if (convOptions.NoMaskData && !convOptions.HardSprites) {
+		createAndOrTables(convOptions);
 	}
 
 	dumpTiles(tiles, convOptions);
