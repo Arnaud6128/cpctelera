@@ -53,44 +53,50 @@
 ##    Provided image file may be a PNG, JPG, BMP, GIF or TIFF file. 
 ##
 ## Command line options:
-##    -bn  | --tiles-basename  <name>          - Sets the basename that will be used as C-identifier 
-##                                               for tiles or sprites. Default: g_tile
-##    -bnp | --tiles-basename-prefix <prefix>  - Sets the prefix for the basename that will be used for the 
-##                                               C-identifier of tiles and sprites. C-identifier will be "<prefix>_<image_file>"
-##    -g   | --gray-code                       - Generate rows of pixels ordered in Gray Code sequence.
-##                                               For example, for 8 rows the order would be { 0, 1, 3, 2, 6, 7, 5, 4 }
-##    -h   | --help                            - Shows help information on the terminal.
-##    -im  | --interlaced-masks                - Generates transparent sprites with interlaced masks
-##                                               using 0 as the default index of the palette colour to
-##                                               be considered transparent
-##    -m   | --mode <cpc_graphics_mode>        - Sets the CPC Graphics mode the output data will 
-##                                               be produced for (0, 1 or 2). Default: 0.
-##    -nt  | --no-tileset                      - Do not generate a tileset array containing pointers to
-##                                               generated sprites/tiles
-##    -oph | --output-palette-hardware         - Generate output palette array containing hardware values.
-##                                               Resulting palette array will be named "<prefix>_palette"
-##    -opn | --output-palette-hard-named <name>- Generate output palette array containing hardware values.
-##                                               Resulting palette array will be named <name>
-##    -of  | --output-format <format>          - Sets the output format. Valid formats: c, bin. Default: c
-##    -pf  | --palette-firmware <palete_array> - Sets the Amstrad CPC palette 
-##               to be used for the conversion as an array of firmware colour values (up to 16, 
-##               in mode 0). Values must be passed inside '{' '}' and separated by spaces. 
-##               Following example sets mode 1 palette to Black, white, red and green colours, 
-##               to convert the file tiles.png,
+##    -bn   | --tiles-basename  <name>          - Sets the basename that will be used as C-identifier 
+##                                                for tiles or sprites. Default: g_tile
+##    -bnp  | --tiles-basename-prefix <prefix>  - Sets the prefix for the basename that will be used for the 
+##                                                C-identifier of tiles and sprites. C-identifier will be "<prefix>_<image_file>"
+##    -g    | --gray-code                       - Generate rows of pixels ordered in Gray Code sequence.
+##                                                For example, for 8 rows the order would be { 0, 1, 3, 2, 6, 7, 5, 4 }
+##    -h    | --help                            - Shows help information on the terminal.
+##    -im   | --interlaced-masks                - Generates transparent sprites with interlaced masks
+##                                                using 0 as the default index of the palette colour to
+##                                                be considered transparent
+##    -m    | --mode <cpc_graphics_mode>        - Sets the CPC Graphics mode the output data will 
+##                                                be produced for (0, 1 or 2). Default: 0.
+##    -nt   | --no-tileset                      - Do not generate a tileset array containing pointers to
+##                                                generated sprites/tiles
+##    -oph  | --output-palette-hardware         - Generate output palette array containing hardware values.
+##                                                Resulting palette array will be named "<prefix>_palette"
+##    -opn  | --output-palette-hard-named <name>- Generate output palette array containing hardware values.
+##                                                Resulting palette array will be named <name>
+##    -of   | --output-format <format>          - Sets the output format. Valid formats: c, bin. Default: c
+##    -pf   | --palette-firmware <palete_array> - Sets the Amstrad CPC palette 
+##                to be used for the conversion as an array of firmware colour values (up to 16, 
+##                in mode 0). Values must be passed inside '{' '}' and separated by spaces. 
+##                Following example sets mode 1 palette to Black, white, red and green colours, 
+##                to convert the file tiles.png,
 ##
-##                        > cpct_img2tileset -m 1 -pf { 0 26 6 18 } tiles.png
+##                         > cpct_img2tileset -m 1 -pf { 0 26 6 18 } tiles.png
 ##
-##    -scr | --screen-format                   - Outputs data following Amstrad CPC's screen distribution. Rows
-##                                               are interlaced: 0, 8, 16, 32... 192, 200, 1, 9, 17... 193, 2, 18...
-##    -t   | --transparent-index <index>       - Changes the colour index to be considered transparent
-##                                               and is used to generate masks.
-##    -th  | --tile-height  <pixels>           - Sets the height of a tile in pixels. Default: 4.
-##    -ts  | --tileset <name>                  - Generate output tileset as an array of pointers to tiles 
-##                                               with the C-identifier <name> (Default: <basename>_tileset)
-##    -tw  | --tile-width   <pixels>           - Sets the width of a tile in pixels. Default: 4.
-##    -z   | --zig-zag                         - Generate pixel lines using zig-zag order (left-to-right
-##                                               for one line, and right-to-left for the next one)
+##    -rgbp | --palette-rgb <palette_array>     - Sets the palette to be used for the conversion as an
+##                                                array of 24-bit RGB hexadecimal colour values (up to 16).
+##                                                Values must be passed inside '{' '}' and separated by spaces:
 ##
+##                         > cpct_img2tileset -sh -rgbp { 0x000000 0xFF00FF 0x00FF00 } hero.png
+##
+##    -scr  | --screen-format                   - Outputs data following Amstrad CPC's screen distribution. Rows
+##                                                are interlaced: 0, 8, 16, 32... 192, 200, 1, 9, 17... 193, 2, 18...
+##    -sh   | --sprite-hardware                 - Outputs CPC Plus ASIC hardware sprites (16x16, 16 colours).
+##    -t    | --transparent-index <index>       - Changes the colour index to be considered transparent
+##                                                and is used to generate masks.
+##    -th   | --tile-height  <pixels>           - Sets the height of a tile in pixels. Default: 4 (16 for -sh).
+##    -ts   | --tileset <name>                  - Generate output tileset as an array of pointers to tiles 
+##                                                with the C-identifier <name> (Default: <basename>_tileset)
+##    -tw   | --tile-width   <pixels>           - Sets the width of a tile in pixels. Default: 4 (16 for -sh).
+##    -z    | --zig-zag                         - Generate pixel lines using zig-zag order (left-to-right
+##                                                for one line, and right-to-left for the next one)
 ##
 
 ## Bash Include files
@@ -102,6 +108,9 @@ IMG2CPC=${CPCT_PATH}/tools/img2cpc/bin/img2cpc
 ## Configuration 
 PALETTE=( 1 24 20 6 26 0 2 8 10 12 14 16 18 22 24 16 )
 PALETTE_SIZE=16
+PALETTE_TYPE="firmware"
+RGB_PALETTE=()
+RGB_PALETTE_SIZE=0
 ROWORDER=""
 ROWORDER_MSG="Ascending Linear"
 PIXELORDER=""
@@ -115,6 +124,7 @@ INTERLACED_MASKS=""
 INTERLACED_MASKS_MSG="no"
 TRANSPARENT_INDEX=""
 TRANSPARENT_INDEX_MSG="no"
+SPRITE_HARDWARE=""
 TILES_WIDTH=4
 TILES_HEIGHT=4
 TILES_BASENAME_DEFAULT=g_tile
@@ -125,7 +135,7 @@ VALIDFORMATS=( c bin )
 OUTPUT_FORMAT="c"
 OUTPUT_FORMAT_OPTION="-of c"
 
-## Simbols used as 'parentheses' delimiters for passing arrays as parameters
+## Symbols used as 'parentheses' delimiters for passing arrays as parameters
 LPAR="{"
 RPAR="}"
 
@@ -162,28 +172,28 @@ that is set when a CPC computer starts)."
    echo
    echo "${COLOR_LIGHT_YELLOW}OPTIONS"
    echo 
-   echo "${COLOR_LIGHT_BLUE}  -bn  | --tiles-basename  <name>"
+   echo "${COLOR_LIGHT_BLUE}  -bn   | --tiles-basename  <name>"
    echo "${COLOR_CYAN}       Sets the basename that will be used as C identifier for tiles or sprites. Default: g_tile"
-   echo "${COLOR_LIGHT_BLUE}  -bnp | --tiles-basename-prefix <prefix>"
+   echo "${COLOR_LIGHT_BLUE}  -bnp  | --tiles-basename-prefix <prefix>"
    echo "${COLOR_CYAN}       Sets the prefix for the basename that will be used for the C-identifier of tiles and sprites. C-identifier will be \"<prefix>_filename\""
-   echo "${COLOR_LIGHT_BLUE}  -g   | --gray-code"
+   echo "${COLOR_LIGHT_BLUE}  -g    | --gray-code"
    echo "${COLOR_CYAN}       Generate rows of pixels ordered in Gray Code sequence. For example, for 8 rows the order would be { 0, 1, 3, 2, 6, 7, 5, 4 }"
-   echo "${COLOR_LIGHT_BLUE}  -h   | --help"
+   echo "${COLOR_LIGHT_BLUE}  -h    | --help"
    echo "${COLOR_CYAN}       Shows this help information"
-   echo "${COLOR_LIGHT_BLUE}  -im  | --interlaced-masks"
+   echo "${COLOR_LIGHT_BLUE}  -im   | --interlaced-masks"
    echo "${COLOR_CYAN}       Generates transparent sprites with interlaced masks using 0 as the default colour index \
 of the palette to be considered transparent."
-   echo "${COLOR_LIGHT_BLUE}  -m   | --mode   <cpc_graphics_mode>"
+   echo "${COLOR_LIGHT_BLUE}  -m    | --mode   <cpc_graphics_mode>"
    echo "${COLOR_CYAN}       Sets the CPC Graphics mode the output data will be produced for (0, 1 or 2). Default: 0."
-   echo "${COLOR_LIGHT_BLUE}  -nt  | --no-tileset"
+   echo "${COLOR_LIGHT_BLUE}  -nt   | --no-tileset"
    echo "${COLOR_CYAN}       Do not generate a tileset array containing pointers to generated sprites/tiles."
-   echo "${COLOR_LIGHT_BLUE}  -of  | --output-format <format>"
+   echo "${COLOR_LIGHT_BLUE}  -of   | --output-format <format>"
    echo "${COLOR_CYAN}       Sets the output format. Valid formats: c, bin. Default: c"
-   echo "${COLOR_LIGHT_BLUE}  -oph | --output-palette-hardware"
+   echo "${COLOR_LIGHT_BLUE}  -oph  | --output-palette-hardware"
    echo "${COLOR_CYAN}       Generate output palette array containing hardware values. Resulting palette array will be named \"<prefix>_palette\""
-   echo "${COLOR_LIGHT_BLUE}  -opn | --output-palette-hard-named <name>"
+   echo "${COLOR_LIGHT_BLUE}  -opn  | --output-palette-hard-named <name>"
    echo "${COLOR_CYAN}       Generate output palette array containing hardware values. Resulting palette array will be named <name>."
-   echo "${COLOR_LIGHT_BLUE}  -pf  | --palette-firmware <palete_array> "
+   echo "${COLOR_LIGHT_BLUE}  -pf   | --palette-firmware <palete_array> "
    echo "${COLOR_CYAN}       Sets the Amstrad CPC palette to be used for the conversion as an array \
 of firmware colour values (up to 16, in mode 0). Values must be passed inside '$LPAR' '$RPAR' and \
 separated by spaces. Following example sets mode 1 palette to Black, white, red and green colours, \
@@ -191,17 +201,25 @@ to convert the file tiles.png: "
    echo
    echo "          ${COLOR_WHITE}cpct_img2tileset -m 1 -pf { 0 26 6 18 } tiles.png"
    echo
-   echo "${COLOR_LIGHT_BLUE}  -scr | --screen-format"
+   echo "${COLOR_LIGHT_BLUE}  -rgbp | --palette-rgb <palette_array> "
+   echo "${COLOR_CYAN}       Sets the palette to be used as an array of 24-bit RGB hexadecimal colour \
+values (up to 16). Values must be passed inside '$LPAR' '$RPAR' and separated by spaces: "
+   echo
+   echo "          ${COLOR_WHITE}cpct_img2tileset -sh -rgbp { 0x000000 0xFF00FF 0x00FF00 } hero.png"
+   echo
+   echo "${COLOR_LIGHT_BLUE}  -scr  | --screen-format"
    echo "${COLOR_CYAN}       Outputs data following Amstrad CPC's screen distribution. Rows are interlaced: 0, 8, 16, 32... 192, 200, 1, 9, 17... 193, 2, 18..."
-   echo "${COLOR_LIGHT_BLUE}  -t   | --transparent-index <colour_index>"
+   echo "${COLOR_LIGHT_BLUE}  -sh   | --sprite-hardware"
+   echo "${COLOR_CYAN}       Outputs CPC Plus ASIC hardware sprites (16x16, 16 colours)."
+   echo "${COLOR_LIGHT_BLUE}  -t    | --transparent-index <colour_index>"
    echo "${COLOR_CYAN}       Changes the colour index to be considered transparent and is used to generate masks"
-   echo "${COLOR_LIGHT_BLUE}  -th  | --tile-height  <pixels>"
-   echo "${COLOR_CYAN}       Sets the height of a tile in pixels. Default: 4."
-   echo "${COLOR_LIGHT_BLUE}  -ts  | --tileset  <name>"
+   echo "${COLOR_LIGHT_BLUE}  -th   | --tile-height  <pixels>"
+   echo "${COLOR_CYAN}       Sets the height of a tile in pixels. Default: 4 (16 for -sh)."
+   echo "${COLOR_LIGHT_BLUE}  -ts   | --tileset  <name>"
    echo "${COLOR_CYAN}       Generate output tileset as an array of pointers to tiles with the C-identifier <name>"
-   echo "${COLOR_LIGHT_BLUE}  -tw  | --tile-width   <pixels>"
-   echo "${COLOR_CYAN}       Sets the width of a tile in pixels. Default: 4."
-   echo "${COLOR_LIGHT_BLUE}  -z   | --zig-zag"                         
+   echo "${COLOR_LIGHT_BLUE}  -tw   | --tile-width   <pixels>"
+   echo "${COLOR_CYAN}       Sets the width of a tile in pixels. Default: 4 (16 for -sh)."
+   echo "${COLOR_LIGHT_BLUE}  -z    | --zig-zag"                         
    echo "${COLOR_CYAN}       Generate pixel lines using zig-zag order (left-to-right for one line, and right-to-left for the next one)"
    echo ${COLOR_NORMAL}
    exit 1
@@ -339,8 +357,9 @@ while (( $# >= 1 )); do
             this one: $LPAR 1 20 4 5 $RPAR "
          INTEGERERROR="is not an integer value between 0 and 26. $PALETTEERROR"
 
-         ## Set Palette to 0's and palete size to 0
+         ## Set Palette to 0's and palette size to 0
          PALETTE=( 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 )
+         PALETTE_TYPE="firmware"
 
          ## Check initial parenthesis
          shift
@@ -389,10 +408,72 @@ while (( $# >= 1 )); do
          done
          PALETTE_SIZE=$(( PALETTE_SIZE + i ))
       ;;
-      ## Zig-Zag pixel order
+      ## Get a palette as an array of RGB hex values
+      "-rgbp" | "--palette-rgb")
+         PALETTEERROR="Parameter -rgbp (--palette-rgb) must be followed by an array \
+            of RGB hexadecimal colour values (e.g. 0xRRGGBB) separated by spaces and \
+            enclosed into '$LPAR' '$RPAR'. An example: $LPAR 0x000000 0xFF0000 0x00FF00 $RPAR"
+         HEXERROR="is not a valid hexadecimal RGB value (expected 0xRRGGBB). $PALETTEERROR"
+
+         RGB_PALETTE=()
+         PALETTE_TYPE="rgb"
+
+         ## Check initial parenthesis
+         shift
+         NEXT=$1
+         if [[ "${NEXT:0:1}" != "$LPAR" ]]; then
+            paramError "$PALETTEERROR" 12
+         elif (( ${#NEXT} > 1 )); then
+            NEXT=${NEXT:1}
+         else
+            shift
+            NEXT=$1
+         fi
+
+         ## Go through all palette values
+         i=0
+         RPAR_FOUND=0
+         RGB_PALETTE_SIZE=0
+         while (( ! RPAR_FOUND )); do
+            ## Check for parenthesis first
+            if (( ${#NEXT} > 1 )) && [[ "${NEXT:(-1)}" == "$RPAR" ]]; then
+               RPAR_FOUND=1
+               RGB_PALETTE_SIZE=1
+               NLEN1=$(( ${#NEXT} - 1 ))
+               NEXT=${NEXT:0:$NLEN1}
+            fi
+            if [[ "$NEXT" == "$RPAR" ]]; then
+               RPAR_FOUND=1
+            elif isEmpty "$NEXT"; then
+               paramError "Closing '$RPAR' not found while processing palette array."
+            elif [[ ! "$NEXT" =~ ^0[xX][0-9a-fA-F]{1,6}$ ]]; then
+               paramError "'$NEXT' $HEXERROR" 13
+            else
+               ## Insert new palette element only if we have not exceeded size
+               if (( i > 15 )); then
+                  paramError "Palette array exceeds maximum size. It must have 16 values at most."
+               fi               
+               RGB_PALETTE[$i]="$NEXT"
+   
+               ## Move to next value
+               if (( ! RPAR_FOUND )); then
+                  i=$((i+1))
+                  shift
+                  NEXT="$1"
+               fi
+            fi
+         done
+         RGB_PALETTE_SIZE=$(( RGB_PALETTE_SIZE + i ))
+      ;;
+      ## Screen format distribution
       "-scr" | "--screen-format")
          SCREEN_FORMAT="-scr"
          SCREEN_FORMAT_MSG="Screen Distribution"
+      ;;
+      ## CPC Plus Hardware Sprites
+      "-sh" | "--sprite-hardware")
+         SPRITE_HARDWARE="-sh"
+         SCREEN_FORMAT_MSG="Hardware Sprite (CPC Plus)"
       ;;
       ## Get transparent Index for generating Masks
       "-t" | "--transparent-index")
@@ -413,7 +494,7 @@ while (( $# >= 1 )); do
 
          ## Tile height must be an integer
          if ! isInt "$2"; then
-            paramError "Parameter -th (--tile-height) must be followed by an integer representing the hieght of a tile in bytes." 9
+            paramError "Parameter -th (--tile-height) must be followed by an integer representing the height of a tile in bytes." 9
          fi
          TILES_HEIGHT=$2
          shift
@@ -493,6 +574,12 @@ if [ "$TILES_BASENAME" = "" ]; then
    TILES_BASENAME="$TILES_BASENAME_DEFAULT"
 fi
 
+## For hardware sprites, default to 16x16 if still set to default (4x4)
+if [ "$SPRITE_HARDWARE" != "" ]; then
+   if [ "$TILES_WIDTH" -eq 4 ]; then TILES_WIDTH=16; fi
+   if [ "$TILES_HEIGHT" -eq 4 ]; then TILES_HEIGHT=16; fi
+fi
+
 ##
 ## Generate Gray Code sequence for Gray-Coded Row Orders
 ##
@@ -529,14 +616,27 @@ echo "${COLOR_GREEN}Pixel Order     : ${COLOR_LIGHT_YELLOW}${PIXELORDER_MSG}"
 if [ "$SCREEN_FORMAT" = "" ]; then
    echo "${COLOR_GREEN}Row Order       : ${COLOR_LIGHT_YELLOW}${ROWORDER_MSG}"
 fi
-printf "${COLOR_GREEN}Palette         : ${COLOR_LIGHT_YELLOW}"
-for((i=0; i < ${MODECOLOURS[$MODE]}; i++)); do
-   printf "%s " ${PALETTE[$i]}
-done
-echo "${COLOR_CYAN}(Firmware values)${COLOR_NORMAL}"
+
+## Print Palette info and configure palette argument for img2cpc
+if [ "$PALETTE_TYPE" = "rgb" ]; then
+   printf "${COLOR_GREEN}Palette         : ${COLOR_LIGHT_YELLOW}"
+   for((i=0; i < RGB_PALETTE_SIZE; i++)); do
+      printf "%s " ${RGB_PALETTE[$i]}
+   done
+   echo "${COLOR_CYAN}(RGB 24-bit values)${COLOR_NORMAL}"
+   PALETTE_ARG="-rgbp $(valuesToCommaList ${RGB_PALETTE[@]:0:$RGB_PALETTE_SIZE})"
+else
+   printf "${COLOR_GREEN}Palette         : ${COLOR_LIGHT_YELLOW}"
+   for((i=0; i < ${MODECOLOURS[$MODE]}; i++)); do
+      printf "%s " ${PALETTE[$i]}
+   done
+   echo "${COLOR_CYAN}(Firmware values)${COLOR_NORMAL}"
+   PALETTE_ARG="-fwp $(valuesToCommaList ${PALETTE[@]:0:$PALETTE_SIZE})"
+fi
+
 # Message to be generated only when outputing palette array
 if [ "$OUTPUTPALETTE_ID" != "" ]; then
-echo "${COLOR_GREEN}Palette C-name  : ${COLOR_LIGHT_YELLOW}'${OUTPUTPALETTE_ID}'"
+   echo "${COLOR_GREEN}Palette C-name  : ${COLOR_LIGHT_YELLOW}'${OUTPUTPALETTE_ID}'"
 fi
 
 ## Pass img2cpc to convert to CPCtelera's C Arrays
@@ -544,10 +644,10 @@ echo "${COLOR_LIGHT_RED}[${COLOR_LIGHT_YELLOW}PROCESSING${COLOR_LIGHT_RED}]${COL
 to ${COLOR_NORMAL}CPCtelera${COLOR_CYAN}'s C code using ${COLOR_NORMAL}Img2CPC${COLOR_CYAN}..."
 
 ## Run IMG2CPC and check exit status
-if ${IMG2CPC} -fwp "$(valuesToCommaList ${PALETTE[@]:0:$PALETTE_SIZE})" $OUTPUT_FORMAT_OPTION -m "$MODE" \
+if ${IMG2CPC} $PALETTE_ARG $OUTPUT_FORMAT_OPTION -m "$MODE" \
 -w "$TILES_WIDTH" -h "$TILES_HEIGHT" -bn "$TILES_BASENAME" $ABSOLUTE_BASENAME --includes "<types.h>" -osz \
 -o "$IMG2CPC_OUTPUT" $INTERLACED_MASKS $TRANSPARENT_INDEX $GENTILESET $OUTPUTPALETTE $ROWORDER $SCREEN_FORMAT \
-$PIXELORDER "${FILE}"; then
+$PIXELORDER $SPRITE_HARDWARE "${FILE}"; then
    ## Postprocess depending on output format
    if [ "${OUTPUT_FORMAT}" = "c" ]; then
       ## Change generated palette names from ${TILES_BASENAME}_palette to selected name, in case
@@ -585,7 +685,7 @@ created with ${COLOR_NORMAL}CPCtelera${COLOR_CYAN}'s codification of tiles/sprit
 else
    ## Error message
    echo "${COLOR_LIGHT_RED}ERROR!${COLOR_WHITE} Some error happened while processing file with img2cpc. Please, "\
-"review files and image conversion optins to fix the problem.${COLOR_NORMAL}"
+"review files and image conversion options to fix the problem.${COLOR_NORMAL}"
    echo
    exit 20
 fi

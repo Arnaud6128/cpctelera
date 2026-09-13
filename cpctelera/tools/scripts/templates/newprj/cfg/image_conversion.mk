@@ -29,16 +29,21 @@
 
 ## 16 colours palette
 #PALETTE=0 1 2 3 6 9 11 12 13 15 16 18 20 24 25 26
+#PALETTE_SPRITE_HW=0x000000 0xAA2805 0xFF0000 0xFFFFFF \
+# 0x808080 0x1E64A0 0x2896DC 0x501414 \
+# 0xFF6419 0xFFE141 0x28232C 0x413741 \
+# 0x5A4B4B 0x5A505F 0xC8E6F5 0xFFFFC8
 
 ## Default values
-#$(eval $(call IMG2SP, SET_MODE        , 0                  ))  { 0, 1, 2 }
-#$(eval $(call IMG2SP, SET_MASK        , none               ))  { interlaced, none }
+#$(eval $(call IMG2SP, SET_MODE        , 0                  ))  # { 0, 1, 2 }
+#$(eval $(call IMG2SP, SET_MASK        , none               ))  # { interlaced, none }
 #$(eval $(call IMG2SP, SET_FOLDER      , src/               ))
 #$(eval $(call IMG2SP, SET_EXTRAPAR    ,                    ))
-#$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites            ))	{ sprites, zgtiles, screen }
-#$(eval $(call IMG2SP, SET_OUTPUT      , c                  ))  { bin, c }
+#$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites            ))	# { sprites, zgtiles, screen, spritehardware }
+#$(eval $(call IMG2SP, SET_OUTPUT      , c                  ))  # { bin, c }
 #$(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE)         ))
 #$(eval $(call IMG2SP, CONVERT_PALETTE , $(PALETTE), g_palette ))
+#$(eval $(call IMG2SP, CONVERT_PALETTE_PLUS, $(PALETTE_SPRITE_HW), g_palette_hw ))
 #$(eval $(call IMG2SP, CONVERT         , img.png , w, h, array, palette, tileset))
 
 ##
@@ -78,6 +83,8 @@
 ##     - "tileset": generate a tileset array with pointers to all sprites ##
 ##     - "zgtiles": generate tiles/sprites in Zig-Zag pixel order and     ##
 ##                  Gray Code row order                                   ##
+##     - "spritehardware": generate sprites in sprite hardware format     ##
+##                         compatible only for CPC plus                   ##
 ##  (8): Output subfolder for generated .C/.H files (in project folder)   ##
 ##  (9): (hwpalette)                                                      ##
 ##     - "hwpalette": output palette array with hardware colour values    ##

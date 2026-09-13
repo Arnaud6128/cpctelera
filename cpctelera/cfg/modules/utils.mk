@@ -480,6 +480,44 @@ define VERIFY_FW_PALETTE
 endef
 
 #################
+# CONVERT_RGB2ASIC_PALETTE: Converts 24-bit RGB values (0xRRGGBB) to 16-bit ASIC words (0x0GRB).
+# Warning: $(2) is a variable name and not its contents
+#
+# $(1): Palette values in hex (e.g. 0xFF00FF)
+# $(2): Output variable with converted ASIC 16-bit values
+#
+define CONVERT_RGB2ASIC_PALETTE
+	$(eval $(2) := $(shell \
+		for c in $(1); do \
+			v=$$(( c )); \
+			r4=$$(( (v >> 20) & 0xF )); \
+			g4=$$(( (v >> 12) & 0xF )); \
+			b4=$$(( (v >> 4) & 0xF )); \
+			asic=$$(( (g4 << 8) | (r4 << 4) | b4 )); \
+			printf "%04X " $$asic; \
+		done \
+	))
+endef
+
+#################
+# VERIFY_RGB_PALETTE: Verifies that a given Plus RGB palette is valid (hex colors 0x000000 - 0xFFFFFF)
+#
+# $(1): Palette values
+# $(2): Name of the macro that called (for error msgs)
+#
+define VERIFY_RGB_PALETTE
+	# Check each color for hex format and 24-bit range
+	$(eval _MSG:=is not a valid 24-bit RGB hexadecimal value [$(2)]. Expected format: 0xRRGGBB (0x000000 to 0xFFFFFF))
+	$(foreach _I,$(1),\
+		$(if $(call ISHEX,$(_I)),,$(error <<ERROR>> '$(_I)' $(_MSG))) \
+		$(if $(call INTINRANGE,$(call HEX2DEC,$(_I)),0,16777215),,$(error <<ERROR>> '$(_I)' $(_MSG)))\
+	)
+
+	# Check that palette has a valid size (at least 1, max 16)
+	$(if $(call INTINRANGE,$(words $(1)),1,16),,$(error <<ERROR>> [$(2)] Plus RGB palette must have at least 1 element and 16 at most. $(words $(1)) is not a valid size.))
+endef
+
+#################
 # ENSURE_SINGLE_VALUE: Ensures that passed parameter is comprised of a single 
 # value (be it a word, and integer or whatever) after stripping whitespaces.
 # If the value is not single, throw an error (given as second parameter)
