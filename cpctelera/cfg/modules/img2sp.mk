@@ -203,7 +203,8 @@ define IMG2SP_CONVERT_PALETTE
 	$(eval I2SCP_PHW:=)
 	# ISCP_PHW fills up with hardware palette values converted from firmware values
 	$(call CONVERT_FW2HW_PALETTE,$(1),I2SCP_PHW)
-
+	$(eval I2S_PAL := -rgbp { $(1) })
+	
 	# Get the C-identifier and palette size
 	$(eval I2SCP_CID := $(2))
 	$(eval I2SCP_PSZ := $(words $(1)))
