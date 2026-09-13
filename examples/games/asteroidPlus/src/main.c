@@ -32,11 +32,14 @@
 // Add boolean type
 #include "stdbool.h"
 
+CPCT_ABSOLUTE_LOCATION_AREA(0x100);
 // Hardware sprites definitions
 #include "sprites.h"
 #include "explosions.h"
 #include "moon.h"
 #include "win.h"
+#include "ship.h"
+#include "g_palette_hw.h"
 
 // Software sprites definitions
 #include "planet.h"
@@ -45,14 +48,14 @@
 #define STARS_AREA_HEIGHT        140
 
 // Hardware Sprites in screen size according to sprite magnification Mode 1
-#define SPRITE_WIDTH_SCREEN        (HW_SPRITE_WIDTH*HW_SPRITE_MODE_1_ZOOM_X)
+#define SPRITE_WIDTH_SCREEN     (HW_SPRITE_WIDTH*HW_SPRITE_MODE_1_ZOOM_X)
 #define SPRITE_HEIGHT_SCREEN    HW_SPRITE_HEIGHT
 
 // Definition of Hardware Id of sprites
-#define HW_SPRITE_SHIP_REAR        12
+#define HW_SPRITE_SHIP_REAR     12
 #define HW_SPRITE_SHIP_FRONT    13
-#define HW_SPRITE_REACTOR        14
-#define HW_SPRITE_MOON            15
+#define HW_SPRITE_REACTOR       14
+#define HW_SPRITE_MOON          15
 
 // Define 4 colours of mode 1 in asic rgb
 #define MODE_1_NB_COLORS        4
@@ -72,6 +75,20 @@ const u16 paletteDown[] =
     cpctm_asicColor(0x0, 0x8, 0xF), 
     cpctm_asicColor(0x8, 0xF, 0xF), 
     cpctm_asicColor(0xF, 0xF, 0xF)
+};
+
+u8* const allSprites[] = 
+{
+	sprite_ship_00, //sprite_ship_rear,
+	sprite_ship_01, // sprite_ship_front, 
+	sprite_ship_02, //sprite_large_asteroid_1,
+	sprite_ship_03, // sprite_large_asteroid_2, 
+	sprite_ship_04, // sprite_large_asteroid_3, 
+	sprite_ship_05, // sprite_large_asteroid_4,
+	sprite_ship_06, // sprite_medium_asteroid, 
+	sprite_ship_07, // sprite_small_asteroid,
+	sprite_reactor_0,
+	sprite_reactor_1
 };
 
 // Definition of position structure
@@ -253,7 +270,7 @@ void InitVideo(void)
     cpct_setVideoMode(1);
     
     // Set HWSprite palette 15 colours + border (colour 0)
-    cpct_asicSetSpritePalette(sprite_palette, 16);
+    cpct_asicSetSpritePalette(g_palette_hw, 16);
 }
 
 ////////////////////////////////////////////////////
@@ -328,7 +345,7 @@ void SetShipExplosionSprites(void)
     #define NB_SPRITES_EXPLOSIONS    4
     
     // Compute explosion sprite position in all in one explosions sprite
-    const u8* currentSpriteExplosion = sprite_explosions + ((NB_SPRITES_EXPLOSIONS - gShip.status) * HW_SPRITE_SIZE * NB_SPRITES_EXPLOSIONS);
+    const u8* currentSpriteExplosion = sprite_explosion_00 + ((NB_SPRITES_EXPLOSIONS - gShip.status) * HW_SPRITE_SIZE * NB_SPRITES_EXPLOSIONS);
 
     // Replace current sprites by explosion
     cpct_asicCopySpriteData(HW_SPRITE_REACTOR,    currentSpriteExplosion);
@@ -724,12 +741,9 @@ void ReadInput(void)
     UpdateShipPosition();
 }
 
-////////////////////////////////////////////////////
-//    Main loop                                         
-//        
-void main(void) 
+void Game(void)
 {
-    InitCpcPlus();
+	InitCpcPlus();
     InitVideo();
     
     DrawBackground();
@@ -748,4 +762,13 @@ void main(void)
         
         ReadInput();
     }
+}
+
+CPCT_RELOCATABLE_AREA();
+////////////////////////////////////////////////////
+//    Main loop                                         
+//        
+void main(void) 
+{
+	Game();
 }

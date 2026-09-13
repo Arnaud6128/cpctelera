@@ -23,14 +23,23 @@
 ## PNG, GIF, etc. into C-arrays.                                          ##
 ############################################################################
 
+PALETTE_SPRITE_HW=0x000000 0xAA2805 0xFF0000 0xFFFFFF \
+0x808080 0x1E64A0 0x2896DC 0x501414 \
+0xFF6419 0xFFE141 0x28232C 0x413741 \
+0x5A4B4B 0x5A505F 0xC8E6F5 0xFFFFC8
+
 PALETTE_PLANET=0 11 23 26
 PALETTE_FIRE=0 7 8 17
 
 $(eval $(call IMG2SP, SET_MODE        , 1 )) 
 $(eval $(call IMG2SP, SET_FOLDER      , src/ ))
 $(eval $(call IMG2SP, SET_OUTPUT      , c ))  # { bin, c }
-$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites ))  #{ sprites, zgtiles, screen }
+$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites ))  #{ sprites, zgtiles, screen, spritehardware }
 $(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE_PLANET) ))
 $(eval $(call IMG2SP, CONVERT         , assets/planet.png , 0, 0, pre_planet , , ))
 $(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE_FIRE)   ))
 $(eval $(call IMG2SP, CONVERT         , assets/stars.png , 8, 5, pre_stars , , pre_tileset ))
+$(eval $(call IMG2SP, SET_IMG_FORMAT  , spritehardware ))
+$(eval $(call IMG2SP, CONVERT_PALETTE_PLUS, $(PALETTE_SPRITE_HW), g_palette_hw ))
+$(eval $(call IMG2SP, CONVERT         , assets/ship.png , 16, 16, sprite_ship , , ))
+$(eval $(call IMG2SP, CONVERT         , assets/explosions.png , 16, 16, sprite_explosion , , ))
