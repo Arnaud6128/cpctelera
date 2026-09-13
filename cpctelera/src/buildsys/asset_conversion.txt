@@ -6,53 +6,114 @@ Following explanations will help you use these systems of automatic conversion.
 
 Section: Graphics Autoconversion
 
-CPCtelera helps you autoconvert almost any present graphic file (PNG, GIF, TIFF, BMP, ...) into pixel-formatted arrays ready to be used in your programs. Lets start with an example. Supose we want to convert a 20x10 pixels sprite we have created in PNG, to use it in a mode 0 game. To do it, we proceed this way,
+CPCtelera helps you autoconvert almost any graphic file (PNG, GIF, TIFF, BMP, ...) into pixel-formatted arrays ready to be used in your programs.
 
-  1. - Create a folder called *img/* in our project
-  2. - Move *sprite.png* file to *img/sprite.png*
-  3. - Edit the file *cfg/image_conversion.mk* and add this line
-  > $(eval $(call IMG2SPRITES,img/sprite.png,0,g,20,10,{14 0 3 4 9 10 11 12 13 16 23 26 6 15 18 24},,src/,hwpalette))
+Image conversion is configured in the file *cfg/image_conversion.mk* using the unified Makefile macro *IMG2SP*. This macro operates as a stateful controller: you set common conversion settings (folder, output format, screen mode, pixel format, palette), and then call conversion commands (*CONVERT* or palette generators).
 
-From this moment on, each time we compile our project, two new files will be generated: *src/sprite.c* & *src/sprite.h*. Then, the only thing we have to do is to #include<src/sprite.h> wherever we want to use our sprite and use it. The array with the pixel definition of the sprite will be called *g_sprite*.
+Subsection: Quick Start Example
 
-This is the proccess, but lets see now how it works and what does the previous line mean. That line calls the Makefile macro IMG2SPRITES (defined in cpctelera/cfg/global_functions.mk). This macro is a bridge to use the script *cpct_img2sprites* from inside your compilation process. Therefore, the information given to IMG2SPRITES through parameters is in turn passed to *cpct_img2sprites* which will do the job of converting your images or sprites.
+Suppose we want to convert a 16x16 pixel sprite from *assets/hero.png* into C arrays for a Mode 0 game.
 
-We can add as many lines to *cfg/image_conversion.mk* calling IMG2SPRITES as we want. Each line will do a new conversion. This lets us convert as many images and sprites as required. To use it for our needs, lets understand the parameters given to IMG2SPRITES. Consider this placeholder-filled call,
-  > $(eval $(call IMG2SPRITES,(1),(2),(3),(4),(5),(6),(7),(8),(9),(10)))
+  1. - Place your image in *assets/hero.png* inside your project.
+  2. - Edit *cfg/image_conversion.mk* and add:
 
-These are ten places for the ten different parameters we can give to IMG2SPRITES,
-  * (1): This is the image file to be converted. In our example, that is *img/sprite.png*, but could be anything.
-  * (2): Screen mode (0,1,2). Data conversion is different depending on the screen mode: pixel format and available colours change. So do not forget to correctly put your desired screen mode.
-  * (3): Prefix for C-Identifiers. In our example, we convert sprite.png into g_sprite. This 'g' is the prefix we selected. You can add whatever prefix you prefer for your identifiers. Conversion will use the name of the file for the identifier, along with your selected prefix and numeric suffixes if there are several sprites to convert.
-  * (4): Width in pixels of the sprite/s to convert. Important: always make the width of your sprites even. With odd wides your can have extrange problems because they will not be byte-aligned.
-  * (5): Height in pixels of the sprite/s to convert.
-  * (6): Firmware palette to be used for conversion. In order to do a propper conversion to pixel values, the conversor needs to know which colours will be used when drawing the sprite into the screen. So, here you have to give the complete palette using firmware vales. The format is a list of space-separated numeric values, enclosed into brackets, as in the example.
-  * (7): Optional. Valid values: *mask*, *tileset*. Optionally, produce an inline mask or a tileset reference array. If you pass *mask*, converted sprites will include an inline mask to be use for transparency. If you pass *tileset*, converted sprites will be considered as tiles and an array of pointers to each one of them (a tileset) will be generated. 
-  * (8): Output subfolder for generated .c/.h files. This is where you want generated files to be placed, *inside your project folder*. Normally, you will want them inside your *src/* project folder, because they are code files. But you can place them in other existing places like *src/sprites/* or *src/tilesets*.
-  * (9): Optional. Valid values: *hwpalette*. Optionally, produce an array with the values composing the palette converted into hardware values. Generated array will be named *g_palette*.
-  * (10): Optional. Additional parameters for *cpct_img2sprites*. You can add here additional command line parameters that will be passed "as is" to *cpct_img2sprites*. If you know how to use this utility, you can use this parameter for advanced things. 
+  > PALETTE_HERO := 0 11 23 26 15 16 6 24 13 9 4 3 12 2 8 1
+  > $(eval $(call IMG2SP, SET_FOLDER    , src/ ))
+  > $(eval $(call IMG2SP, SET_OUTPUT    , c ))
+  > $(eval $(call IMG2SP, SET_MODE      , 0 ))
+  > $(eval $(call IMG2SP, SET_IMG_FORMAT, sprites ))
+  > $(eval $(call IMG2SP, SET_PALETTE_FW, $(PALETTE_HERO) ))
+  > $(eval $(call IMG2SP, CONVERT       , assets/hero.png, 16, 16, g_hero, , ))
 
-Important considerations:
-  * This is a Makefile macro, not a function. 
-  * Parameters are passed "as is", *including all the spaces you write*. 
-  * So, *do not add spaces to parameters*.
-  * To leave a parameter blank do not write anything into it. That may left you with 2 or more commas written toghether, as in our previous example.
-  * Last parameters, if they are blank, there is no need to put even the commas. Again, as in previous example.
+From this moment on, each time you compile your project, *src/hero.c* & *src/hero.h* will be generated automatically if *assets/hero.png* or *cfg/image_conversion.mk* has changed. You can then simply #include "hero.h" and access your sprite data through the array *g_hero*.
 
-Some examples:
-  You will find examples in the examples/ folder of CPCtelera. Most examples do use sprites or tilesets and the autoconversion tools to convert them into code.
+Subsection: The IMG2SP Command Reference
 
-  Here you are some more.
+The macro *IMG2SP* is invoked as:
+  > $(eval $(call IMG2SP, <COMMAND>, <ARG1>, <ARG2>, ... ))
 
-  > PALETTE={6 2 8 24}
-  > $(eval $(call IMG2SPRITES,assets/monsters.png,1,mym,16,8,$(PALETTE),mask,src/monsters/))
+Available commands are grouped into configuration commands and conversion commands:
 
-In this example, we define the macro PALETTE previous to the call to IMG2SPRITES for clarity. You can use the same strategy with other values. The file *assets/monsters.png* contains a set of 18 sprites of monsters, each one of 16x8 pixels. All of them will be converted into arrays called *mym_monsters_XX[4*8]*, with XX in the range [00-17], and containing pixel values and mask values for transparency. Palette only has 4 colours because sprites are being converted to mode 1. This will generated the files *src/monsters/monsters.c* & *src/monsters/monsters.h*.
+Configuration Commands (settings remain active for all subsequent CONVERT calls):
 
-  > PALETTE={3 6}
-  > $(eval $(call IMG2SPRITES,maps/map1tiles.bmp,2,gt,8,8,$(PALETTE),tileset,src/,hwpalette))
+  * SET_FOLDER: Sets the target directory inside your project where generated files are stored (default: *src/*).
+    > $(eval $(call IMG2SP, SET_FOLDER, src/sprites/ ))
 
-File *maps/map1tiles.bmp* is being converted into *src/map1tiles.c* & *src/map1tiles.h*, with 120 small 8x8 pixel sprites that will be considered as tiles. It will generate 120 arrays named gt_map1tiles_XXX[1*8] with XXX ranging [000-119]. It will also generate a *g_tileset* array containing 120 pointers to each one of the *gt_map1tiles_XXX* arrays, and a *g_palette* array containing values [ 0x1C, 0x0C ], which are corresponding hardware values for 3 and 6 in hexadecimal.
+  * SET_OUTPUT: Sets the output format. Valid values are *c* (generates .c / .h files) or *bin* (generates .bin, .h and .h.s assembly declarations). Default is *c*.
+    > $(eval $(call IMG2SP, SET_OUTPUT, c ))
+
+  * SET_MODE: Sets the CPC Graphics mode (0, 1 or 2). Default is 0.
+    > $(eval $(call IMG2SP, SET_MODE, 1 ))
+
+  * SET_IMG_FORMAT: Defines the pixel layout. Valid formats:
+    - *sprites*: Standard linear sprite/tile memory layout (default).
+    - *zgtiles*: Generates tiles in Zig-Zag pixel order and Gray Code row order (ideal for tilemap blitters).
+    - *screen*: Direct screen distribution layout (interlaced CPC scanline order).
+    - *spritehardware*: Generates CPC Plus ASIC hardware sprites (16x16, 16 colours, 4 bpp, 128 bytes per sprite).
+    > $(eval $(call IMG2SP, SET_IMG_FORMAT, sprites ))
+
+  * SET_MASK: Configures transparency masks for sprites. Valid values: *none* or *interlaced*. If *interlaced* is set, sprites are generated with interleaved pixel and mask bytes.
+    > $(eval $(call IMG2SP, SET_MASK, interlaced ))
+
+  * SET_PALETTE_FW: Sets the active palette using standard Amstrad CPC firmware colour numbers (integers from 0 to 26, up to 16 values).
+    > $(eval $(call IMG2SP, SET_PALETTE_FW, 0 11 23 26 ))
+
+  * SET_PALETTE_PLUS: Sets the active palette for CPC Plus conversions using 24-bit hexadecimal RGB colours (format 0xRRGGBB, up to 16 values).
+    > $(eval $(call IMG2SP, SET_PALETTE_PLUS, 0x000000 0xFF00FF 0x00FF00 0xFFFFFF ))
+
+  * SET_EXTRAPAR: Passes additional, arbitrary command-line arguments directly to the underlying conversion script (*cpct_img2tileset*).
+    > $(eval $(call IMG2SP, SET_EXTRAPAR, --extra-option ))
+
+Conversion Commands:
+
+  * CONVERT: Converts an image file into data arrays using current settings.
+    > $(eval $(call IMG2SP, CONVERT, (1), (2), (3), (4), (5), (6) ))
+    - (1) Image file path (e.g., assets/tiles.png).
+    - (2) Tile/sprite width in pixels.
+    - (3) Tile/sprite height in pixels.
+    - (4) C-identifier basename for generated sprite/tile array(s).
+    - (5) Optional: C-identifier to also generate a hardware palette array from this conversion. Leave empty if not required.
+    - (6) Optional: C-identifier for an array of pointers to all extracted sprites/tiles (tileset). Leave empty if not required.
+
+  * CONVERT_PALETTE: Standalone firmware palette conversion. Takes an array of firmware colour numbers (0-26) and generates a standalone .c/.h file containing an array of converted CPC hardware colour bytes (<u8>).
+    > $(eval $(call IMG2SP, CONVERT_PALETTE, 0 11 23 26, g_palette ))
+    This generates *src/g_palette.c* and *src/g_palette.h* with:
+    `const u8 g_palette[4] = { 0x54, 0x57, 0x5B, 0x4B };`
+
+  * CONVERT_PALETTE_PLUS: Standalone CPC Plus palette conversion. Takes an array of 24-bit RGB hexadecimal values (0xRRGGBB) and generates a standalone .c/.h file with native CPC Plus ASIC 12-bit palette words (<u16>, format 0x0GRB).
+    > $(eval $(call IMG2SP, CONVERT_PALETTE_PLUS, 0x000000 0xFF00FF 0x00FF00, g_pal_plus ))
+    This generates *src/g_pal_plus.c* and *src/g_pal_plus.h* with:
+    `const u16 g_pal_plus[3] = { 0x0000, 0x00FF, 0x0F00 };`
+
+Subsection: CPC Plus Hardware Sprites & ASIC Palettes
+
+To convert images into CPC Plus ASIC hardware sprites (16x16 pixels, 16 colours) and generate the corresponding 12-bit ASIC palette:
+
+  > # 1. Define the 16 RGB colours (0xRRGGBB)
+  > PAL_HERO := 0x000000 0xFFFFFF 0xFF0000 0x00FF00 0x0000FF 0xFFFF00 0xFF00FF 0x00FFFF \
+  >             0x808080 0xC0C0C0 0x800000 0x008000 0x000080 0x808000 0x800080 0x008080
+  >
+  > # 2. Generate the ASIC palette source file (u16 array, format 0x0GRB)
+  > $(eval $(call IMG2SP, SET_FOLDER          , src/ ))
+  > $(eval $(call IMG2SP, CONVERT_PALETTE_PLUS, $(PAL_HERO), pal_hero ))
+  >
+  > # 3. Convert image into CPC Plus hardware sprite format
+  > $(eval $(call IMG2SP, SET_OUTPUT          , c ))
+  > $(eval $(call IMG2SP, SET_IMG_FORMAT      , spritehardware ))
+  > $(eval $(call IMG2SP, SET_PALETTE_PLUS    , $(PAL_HERO) ))
+  > $(eval $(call IMG2SP, CONVERT             , assets/hero.png, 16, 16, sp_hero, , ))
+
+This produces:
+  * *src/pal_hero.c* / *.h*: `const u16 pal_hero[16];` ready to be loaded into the ASIC palette registers (0x6400).
+  * *src/hero.c* / *.h*: `sp_hero` containing the 128-byte hardware sprite pixel data ready to be copied into ASIC sprite memory.
+
+Subsection: Legacy Compatibility (IMG2SPRITES)
+
+The older macro *IMG2SPRITES* is still supported for backwards compatibility with legacy CPCtelera projects:
+  > $(eval $(call IMG2SPRITES, (1), (2), (3), (4), (5), (6), (7), (8), (9), (10) ))
+
+Where parameters are: (1) Image file, (2) Mode, (3) Basename prefix, (4) Width, (5) Height, (6) Firmware palette array inside brackets, (7) 'mask' or 'tileset', (8) Output folder, (9) 'hwpalette' or custom name, (10) Extra options.
+For all new projects, using *IMG2SP* is strongly recommended.
 
 Section: Tilemap Autoconversion
 
