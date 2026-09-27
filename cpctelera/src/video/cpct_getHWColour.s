@@ -72,5 +72,5 @@ cpct_getHWColour_asm::       ;; Assembly entry point
    ld   de, #cpct_firmware2hw_colour ;; [3] DE points to the start of the colour table
    add  hl, de                       ;; [3] HL += DE, HL points to the exact hardware color value to return
 
-   ld    l, (hl)            ;; [2] L = Return value (hardware colour for firmware colour supplied)
+   ld    a, (hl)            ;; [2] A = Return value (hardware colour for firmware colour supplied)
    ret                      ;; [3] Return
