@@ -128,7 +128,7 @@ _cpct_fdcOn::
 FDCON: 
     ld a,(FDCMOTOR)
     or a
-    ret nz
+    jr nz,FDCON_DI ; Motor already on : no wait, but DI like after the wait
     inc a
     ld (FDCMOTOR),a
     ld bc,#0xFA7E
@@ -142,6 +142,7 @@ WAIT:
     ld a,b
     or c
     jr nz,WAIT
+FDCON_DI:
 	di
     ret
 ;Turn FDC off.	
@@ -397,7 +398,7 @@ BUILDTAB:
     ld hl,(TABSECTS)
     ld de,(TABSECTS)
 	inc de
-    ld bc,#256 ; Size of buffer
+    ld bc,#255 ; Size of buffer - 1 (first byte already set)
     ld (hl),#0xfe
     ldir ; Repeats LDI (LD (DE),(HL), then increments DE, HL, and decrements BC) until BC=0. Note that if BC=0 before this instruction is called, it will loop around until BC=0 again.
 BTLOOP: 
