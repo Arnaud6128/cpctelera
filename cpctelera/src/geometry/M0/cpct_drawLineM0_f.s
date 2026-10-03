@@ -23,18 +23,18 @@
 .include "macros/cpct_opcodeConstants.h.s"
 
 ;;
-;; ASM / C bindings for <cpct_drawLineM1_f>
+;; ASM / C bindings for <cpct_drawLineM0_f>
 ;;
 ;;  34 microSecs, 26 bytes
 ;;
-_cpct_drawLineM1_f::
+_cpct_drawLineM0_f::
    ld   (restore_ix), ix       ;; [6] Save IX to restore it before returning
    ld   (restore_iy), iy       ;; [6] Save IY to restore it before returning
 	
    pop   ix                    ;; [4] IX = Return address
    ld   (simulated_return), ix ;; [6] Save return address for simulated return
 
-.include  /cpct_drawLineM1_f.asm/
+.include  /cpct_drawLineM0_f.asm/
 
 restore_iy=.+2
    ld   iy, #0000              ;; [4] Restore IY before returning  

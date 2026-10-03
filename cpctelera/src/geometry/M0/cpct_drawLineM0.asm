@@ -17,29 +17,33 @@
 ;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
 .globl cpct_getScreenPtr_asm
+.globl cpct_pen2twoPixelM0_table
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Function: cpct_drawLineM1
+;; Function: cpct_drawLineM0
 ;;
 ;;    Draws a straight line between two points (X0, Y0) and (X1, Y1)
-;;    in Mode 1 (320x200, 4 colors) using a compact generic Bresenham algorithm.
+;;    in Mode 0 (160x200, 16 colors) using a compact generic Bresenham algorithm.
 ;;    Size optimized version, intended for user interface drawing. Use
-;;    <cpct_drawLineM1_f> when speed matters (3D, many lines per frame).
+;;    <cpct_drawLineM0_f> when speed matters (3D, many lines per frame).
 ;;
+;;    This version PRESERVES ALL ALTERNATE REGISTERS (AF', BC', DE', HL') and
+;;    does not touch interrupts, for compatibility with interrupt-driven audio
+;;    players (IM 1).
 ;;
 ;; C Definition:
-;;    void cpct_drawLineM1(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
+;;    void cpct_drawLineM0(void* screen_base, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 ;;
 ;; Input Parameters:
 ;;    (2B DE) screen_base - Base VRAM memory address
-;;    (2B HL) x0          - Starting X coordinate (0-319)
+;;    (2B HL) x0          - Starting X coordinate (0-159)
 ;;    (Stack) y0          - Starting Y coordinate (0-199, 16-bit integer)
-;;    (Stack) x1          - Ending X coordinate (0-319, 16-bit integer)
-;;    (Stack) color / y1  - Color index (B: 0-3) and Ending Y coordinate (C: 0-199)
+;;    (Stack) x1          - Ending X coordinate (0-159, 16-bit integer)
+;;    (Stack) color / y1  - Pen color index (B: 0-15) and Ending Y coordinate (C: 0-199)
 ;;
 ;; Assembly call:
-;;     > call cpct_drawLineM1
+;;     > call cpct_drawLineM0
 ;;
 ;; Compact Bresenham Architecture:
 ;;    1. One single loop for all directions, driven by the major axis:
@@ -48,8 +52,8 @@
 ;;       - Horizontal and vertical lines and single points are handled by the
 ;;         generic loop (no special case).
 ;;    2. Pixel write with a constant solid color byte: (VRAM ^ solid) & mask ^ solid,
-;;       so that only the pixel mask is rotated when stepping in X.
-;;    3. Pixel counter split in IXL / IXH (8-bit decrement in the loop).
+;;       so that only the pixel mask (0x55 / 0xAA) is rotated when stepping in X.
+;;    3. 8-bit pixel counter in IXL (at most 200 pixels in Mode 0).
 ;;
 ;; Known limitations:
 ;;  * This function will not work from ROM, as it uses self-modifying code.
@@ -58,34 +62,22 @@
 ;;    AF, BC, DE, HL
 ;;
 ;; Required memory:
-;;    271 bytes (240 bytes routine + 5 bytes data + 26 bytes binding wrapper)
+;;    239 bytes (208 bytes routine + 5 bytes data + 26 bytes binding wrapper)
+;;    (+16 bytes for cpct_pen2twoPixelM0_table)
 ;;
 ;; Time Measures (Measured from C, including call and binding wrapper overhead):
 ;; (start code)
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Single Point  (50,50) to (50,50)         | 1      | ~450           | ~1800
-;;    Horizontal    (0,0)   to (100,0)         | 101    | ~4690          | ~18760
-;;    Vertical      (0,0)   to (0,100)         | 101    | ~5150          | ~20600
-;;    Shallow Slope (0,0)   to (100,25)        | 101    | ~5410          | ~21640
-;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | ~7605          | ~30420
-;;    Steep Slope   (0,0)   to (25,100)        | 101    | ~5760          | ~23040
+;;    Single Point  (50,50) to (50,50)         | 1      | ~385           | ~1540
+;;    Horizontal    (0,0)   to (100,0)         | 101    | ~4715          | ~18860
+;;    Vertical      (0,0)   to (0,100)         | 101    | ~5100          | ~20400
+;;    Shallow Slope (0,0)   to (100,25)        | 101    | ~5445          | ~21780
+;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | ~7630          | ~30520
+;;    Steep Slope   (0,0)   to (25,100)        | 101    | ~5725          | ~22900
 ;;   ---------------------------------------------------------------------------------
 ;; (end code)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;-------------------------------------------------------------------------------
-;; MACROS
-;;-------------------------------------------------------------------------------
-;; DIV4_HL: HL = HL / 4 (Converts X pixel coordinate to X byte column 0..79)
-;;   Execution time: 8 us / 32 CPU cycles
-;;   Size: 8 bytes
-.macro DIV4_HL
-    srl   h                       ;; [2] Shift H right
-    rr    l                       ;; [2] Rotate L right through carry
-    srl   h                       ;; [2] Shift H right second time
-    rr    l                       ;; [2] Rotate L right second time (HL = HL / 4)
-.endm
 
 ;;-------------------------------------------------------------------------------
 ;; DATA SECTION
@@ -109,18 +101,18 @@ y0_val:         .db 0          ;; Y0 coordinate (RAM storage)
     pop   hl                      ;; [3] HL = X1 coordinate
     or    a                       ;; [1] Clear carry flag
     sbc   hl, de                  ;; [4] HL = signed DX = X1 - X0
-    pop   bc                      ;; [3] B = color, C = Y1
+    pop   bc                      ;; [3] B = pen, C = Y1
 
-    ;; ---- B = solid color byte (0 -> 0x00, 1 -> 0xF0, 2 -> 0x0F, 3 -> 0xFF) ----
-    ld    a, b                    ;; [1] A = color index (0-3)
-    rrca                          ;; [1] Carry = color bit 0 (LSB)
-    sbc   a, a                    ;; [1] A = 0xFF if LSB set, 0x00 otherwise
-    and   #0xF0                   ;; [2] A = LSB bits of the 4 pixels
-    bit   1, b                    ;; [2] Test color bit 1 (MSB)
-    jr    z, solid_ok             ;; [2/3] IF MSB not set THEN solid ready
-    or    #0x0F                   ;; [2] A |= MSB bits of the 4 pixels
-solid_ok:
-    ld    b, a                    ;; [1] B = solid color byte
+    ;; ---- B = solid color byte (2 pixels of the pen) ----
+    push  hl                      ;; [4] Save signed DX
+    ld    a, b                    ;; [1] A = pen (0-15)
+    add   a, #<cpct_pen2twoPixelM0_table ;; [2] HL = &cpct_pen2twoPixelM0_table[pen]
+    ld    l, a                    ;; [1] |
+    adc   a, #>cpct_pen2twoPixelM0_table ;; [2] |
+    sub   l                       ;; [1] |
+    ld    h, a                    ;; [1] |
+    ld    b, (hl)                 ;; [2] B = solid color byte
+    pop   hl                      ;; [3] HL = signed DX
 
     ld    a, (y0_val)             ;; [4] A = Y0
     sub   c                       ;; [1] A = Y0 - Y1 (Carry = Y0 < Y1)
@@ -137,52 +129,40 @@ dy_ok:
     ld    c, a                    ;; [1] C = |DY|
     push  de                      ;; [4] Save Y step routine
 
-    ;; ---- SX step routine and |DX| ----
+    ;; ---- SX step routine and |DX| (|DX| <= 159, 8-bit result in L) ----
     ld    de, #step_right         ;; [3] DE = X+1 step (DX >= 0)
     bit   7, h                    ;; [2] Check sign of DX
-    jr    z, dx_ok                ;; [2/3] IF DX >= 0 THEN HL = |DX|
+    jr    z, dx_ok                ;; [2/3] IF DX >= 0 THEN L = |DX|
     ld    de, #step_left          ;; [3] DE = X-1 step
-    xor   a                       ;; [1] HL = -DX
+    xor   a                       ;; [1] L = -DX
     sub   l                       ;; [1] |
     ld    l, a                    ;; [1] |
-    sbc   a, a                    ;; [1] |
-    sub   h                       ;; [1] |
-    ld    h, a                    ;; [1] HL = |DX|
 dx_ok:
 
     ;; ---- Major / minor axis: gentle if |DX| >= |DY| ----
-    ld    a, h                    ;; [1] IF |DX| >= 256
-    or    a                       ;; [1] |
-    jr    nz, axis_ok             ;; [2/3] THEN gentle slope
     ld    a, l                    ;; [1] A = |DX|
     cp    c                       ;; [1] Compare |DX| and |DY|
     jr    nc, axis_ok             ;; [2/3] IF |DX| >= |DY| THEN gentle slope
-    ld    l, c                    ;; [1] Steep: HL = major = |DY| (H = 0)
+    ld    l, c                    ;; [1] Steep: L = major = |DY|
     ld    c, a                    ;; [1] C = minor = |DX|
     ex    de, hl                  ;; [1] Swap major / minor step routines
     ex    (sp), hl                ;; [6] |
     ex    de, hl                  ;; [1] |
 axis_ok:
-    ;; HL = major, C = minor, DE = major step routine, (SP) = minor step routine
+    ;; L = major, C = minor, DE = major step routine, (SP) = minor step routine
     ld    (major_call + 1), de    ;; [6] Patch major axis step call
     pop   de                      ;; [3] DE = minor step routine
     ld    (minor_call + 1), de    ;; [6] Patch minor axis step call
 
-    ;; ---- IX = major + 1 = pixel count (IXL = low byte, IXH = high byte adjusted) ----
-    inc   hl                      ;; [2] HL = major + 1
-    ld    a, l                    ;; [1] IXL = low byte of count
-    ld__ixl_a                     ;; [2] |
-    or    a                       ;; [1] Z = (low byte == 0)
-    ld    a, h                    ;; [1] A = high byte of count
-    jr    z, count_ok             ;; [2/3] IF low byte != 0
-    inc   a                       ;; [1] THEN one more IXH round for the first partial round
-count_ok:
-    ld__ixh_a                     ;; [2] IXH = high byte of count (adjusted)
-    dec   hl                      ;; [2] HL = major
+    ;; ---- IXL = major + 1 = pixel count (<= 200) ----
+    ld    a, l                    ;; [1] A = major
+    inc   a                       ;; [1] A = pixel count
+    ld__ixl_a                     ;; [2] IXL = pixel count
 
     ;; ---- Error deltas: +2*minor always, -2*major on minor step, Err0 = 2*minor - major ----
-    ex    de, hl                  ;; [1] DE = major
-    ld    h, #0                   ;; [2] HL = minor
+    ld    e, l                    ;; [1] DE = major
+    ld    d, #0                   ;; [2] |
+    ld    h, d                    ;; [1] HL = minor
     ld    l, c                    ;; [1] |
     add   hl, hl                  ;; [3] HL = 2*minor (Carry = 0)
     ld    (nostep_delta + 1), hl  ;; [5] Patch 2*minor delta
@@ -197,27 +177,21 @@ count_ok:
 
     ;; ---- DE = VRAM address of (X0, Y0), B = pixel mask, C = solid color ----
     push  bc                      ;; [4] Save solid color byte (B)
-    ld    hl, (x0_val)            ;; [5] HL = X0 coordinate
-    ld    a, l                    ;; [1] A = pixel offset (0..3)
-    and   #3                      ;; [2] |
-    push  af                      ;; [4] Save pixel offset
-    DIV4_HL                       ;; [8] Convert X0 to byte column
+    ld    hl, (x0_val)            ;; [5] HL = X0 coordinate (0-159)
+    srl   l                       ;; [2] L = X_byte, Carry = pixel index (0-1)
+    push  af                      ;; [4] Save pixel index (Carry)
     ld    c, l                    ;; [1] C = X_byte
     ld    a, (y0_val)             ;; [4] B = Y0
     ld    b, a                    ;; [1] |
     ld    de, (screen_start)      ;; [6] DE = base VRAM address
     call  cpct_getScreenPtr_asm   ;; [5] HL = VRAM address
     ex    de, hl                  ;; [1] DE = VRAM address
-    pop   af                      ;; [3] A = pixel offset
+    pop   af                      ;; [3] Carry = pixel index
     pop   bc                      ;; [3] B = solid color byte
     ld    c, b                    ;; [1] C = solid color byte
-    ld    b, #0x77                ;; [2] B = mask of pixel 0
-    or    a                       ;; [1] IF pixel offset != 0
-    jr    z, mask_ok              ;; [2/3] |
-mask_rot:
-    rrc   b                       ;; [2] THEN rotate mask to pixel offset
-    dec   a                       ;; [1] |
-    jr    nz, mask_rot            ;; [2/3] |
+    ld    b, #0x55                ;; [2] B = mask of pixel 0 (keeps pixel 1)
+    jr    nc, mask_ok             ;; [2/3] IF pixel 0 THEN mask ready
+    ld    b, #0xAA                ;; [2] B = mask of pixel 1 (keeps pixel 0)
 mask_ok:
     pop   hl                      ;; [3] HL = initial error
 
@@ -244,10 +218,8 @@ nostep_delta:
     ld    bc, #0x0000             ;; [3] SMC: 2*minor
     add   hl, bc                  ;; [3] |
     pop   bc                      ;; [3] |
-    dec__ixl                      ;; [2] Decrement pixel counter low byte
-    jr    nz, line_loop           ;; [2/3] IF pixels remaining in round THEN loop
-    dec__ixh                      ;; [2] Decrement pixel counter high byte
-    jr    nz, line_loop           ;; [2/3] IF rounds remaining THEN loop
+    dec__ixl                      ;; [2] Decrement pixel counter
+    jr    nz, line_loop           ;; [2/3] IF pixels remaining THEN loop
     jr    end_draw_line           ;; [3] Line completed
 
 ;; ----------------------------------------------------------------------------

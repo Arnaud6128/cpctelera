@@ -57,7 +57,7 @@
 ;;    AF, BC, DE, HL, IX, IY
 ;;
 ;; Required memory:
-;;    258 bytes core routine 
+;;    255 bytes core routine
 ;;     18 bytes C binding
 ;;      9 bytes Asm binding
 ;;
@@ -97,6 +97,11 @@
     ld    hl, #3               ;; [3] HL = 3
     or    a                    ;; [1] Clear carry flag
     sbc   hl, de               ;; [4] HL = 3 - (2 * radius)
+    inc   c                    ;; [1] IF radius == 0
+    dec   c                    ;; [1] |
+    jr    nz, radius_ok        ;; [2/3] |
+    dec   h                    ;; [1] THEN d < 0: only the center is plotted (y never goes below 0)
+radius_ok:
     ld   (smc_d), hl           ;; [5] Store initial decision variable d
 
 ;; Circle loop draw

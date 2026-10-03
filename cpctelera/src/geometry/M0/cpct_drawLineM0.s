@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
-;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -14,27 +14,26 @@
 ;;  GNU Lesser General Public License for more details.
 ;;
 ;;  You should have received a copy of the GNU Lesser General Public License
-;;  along with this program. If not, see <http://www.gnu.org/licenses/>.
+;;  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;-------------------------------------------------------------------------------
 .module cpct_geometry
 
 ;; Macros for easy use of undocumented opcodes
 .include "macros/cpct_undocumentedOpcodes.h.s"
-.include "macros/cpct_opcodeConstants.h.s"
 
 ;;
-;; ASM / C bindings for <cpct_drawLineM1_f>
+;; ASM / C bindings for <cpct_drawLineM0>
 ;;
 ;;  34 microSecs, 26 bytes
 ;;
-_cpct_drawLineM1_f::
+_cpct_drawLineM0::
    ld   (restore_ix), ix       ;; [6] Save IX to restore it before returning
    ld   (restore_iy), iy       ;; [6] Save IY to restore it before returning
 	
    pop   ix                    ;; [4] IX = Return address
    ld   (simulated_return), ix ;; [6] Save return address for simulated return
 
-.include  /cpct_drawLineM1_f.asm/
+.include  /cpct_drawLineM0.asm/
 
 restore_iy=.+2
    ld   iy, #0000              ;; [4] Restore IY before returning  
