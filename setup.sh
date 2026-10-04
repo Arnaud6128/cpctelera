@@ -184,10 +184,6 @@ fi
 if ! checkSystem "cygwin"; then
    REQUIRED_LIBRARIES+=( "FreeImage.h" )
    LIBRARIES_EXPLANATION+=( "Freeimage (development) is required to build Img2CPC. Please, install freeimage / libfreeimage-dev / freeimage-devel or similar in your system and run setup again." )
-   REQUIRED_COMMANDS+=( mono )
-   COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to convert arkos audio files to code automatically. Please, install it \
-and run setup again." 
-   COMM_NUM=$((COMM_NUM + 1))
 fi
 
 ## On cygwin, machine echo is disabled by default as it is too slow
@@ -256,88 +252,28 @@ for (( i = 0; i < ${#CPCT_FILES[@]}; i++ )); do
 done
 drawOK
 
-# Setup Arkos Tracker version update
-AT3_VERSION=3.5
-AT3_WWW_LINUX64=https://www.julien-nevo.com/arkostracker/release/${AT3_VERSION}/linux64/ArkosTracker-linux64-${AT3_VERSION}.zip
-AT3_WWW_OSX=https://www.julien-nevo.com/arkostracker/release/${AT3_VERSION}/macosx/ArkosTracker-macosx-${AT3_VERSION}.zip
-
-# Check OS
-if checkSystem "linux32"; then
-   AT3_RUNNING_OS=linux32
-elif checkSystem "linux64"; then
-   AT3_RUNNING_OS=linux64
-elif checkSystem "win10linux"; then
-   AT3_RUNNING_OS=win10linux
-elif checkSystem "cygwin32"; then
-   AT3_RUNNING_OS=cygwin32
-elif checkSystem "cygwin64"; then
-   AT3_RUNNING_OS=cygwin64
+# Arkos Tracker 3 command line tools : one folder per system
+#   tools/windows : SongTo*.exe  (Cygwin)
+#   tools/linux   : SongTo*      (Linux, Windows Subsystem for Linux)
+#   tools/macos   : SongTo*      (Mac OSX)
+# Old layout (tools/SongTo*.exe) is kept if the system folder doesn't exist
+if checkSystem "cygwin"; then
+   AT3_TOOLS_OS=windows
+   AT3_TOOLS_EXT=.exe
 elif checkSystem "osx"; then
-   AT3_RUNNING_OS=osx
+   AT3_TOOLS_OS=macos
+   AT3_TOOLS_EXT=
 else
-   AT3_RUNNING_OS=other
+   AT3_TOOLS_OS=linux
+   AT3_TOOLS_EXT=
 fi
 
-# Check installed ArkosTracker version
-if [[ -f "${CPCT_TOOLS_ARKOS_DIR}/ArkosTracker3" ]]; then
-    AT3_INSTALLED_VER=linux64
-elif [[ -f "${CPCT_TOOLS_ARKOS_DIR}/ArkosTracker3.exe" ]]; then
-    AT3_INSTALLED_VER=win10
-elif [[ -d "${CPCT_TOOLS_ARKOS_DIR}/ArkosTracker3.app" ]]; then
-    AT3_INSTALLED_VER=osx
-else
-    AT3_INSTALLED_VER=other
-fi
-
-# Ask for update if version available and not already installed
-AT3_ASK_UPDATE=no
-if [[ "$AT3_RUNNING_OS" == "linux64"  &&  "$AT3_INSTALLED_VER" != "linux64" ]]; then
-    AT3_WWW_DOWNLOAD=${AT3_WWW_LINUX64}
-    AT3_SEDFLAGS="-i -e" 
-    AT3_ASK_UPDATE=yes
-elif [[ "$AT3_RUNNING_OS" == "osx"  &&  "$AT3_INSTALLED_VER" != "osx" ]]; then
-    AT3_WWW_DOWNLOAD=${AT3_WWW_OSX}
-    AT3_SEDFLAGS="-i '' -e" 
-    AT3_ASK_UPDATE=yes
-fi
-if [[ "$AT3_ASK_UPDATE" == "yes" ]]; then
-   echo
-   echo "${COLOR_WHITE} You are currently running ${COLOR_LIGHT_CYAN}${AT3_RUNNING_OS}${COLOR_WHITE}, and installed version of"
-   echo "ArkosTracker in CPCteleraNext is ${COLOR_LIGHT_CYAN}${AT3_INSTALLED_VER}${COLOR_WHITE}. Do you want to download"
-   askSimpleQuestion y n "and use Arkos Tracker ${AT3_VERSION} for ${COLOR_LIGHT_CYAN}${AT3_RUNNING_OS}${COLOR_WHITE}? (y/n)" ANSWER
-   echo
-   if [[ "$ANSWER" == "y" ]]; then
-      echo "${COLOR_CYAN}Downloading Arkos Tracker ${AT3_VERSION} (${AT3_RUNNING_OS} version) from (${COLOR_WHITE}${AT3_WWW_DOWNLOAD}${COLOR_CYAN})...${COLOR_NORMAL}"
-      wget -nv --progress=bar -O "${CPCT_TOOLS_DIR}/AT3.zip" "$AT3_WWW_DOWNLOAD"
-      if [[ -s "${CPCT_TOOLS_DIR}/AT3.zip" ]]; then
-         echo "${COLOR_CYAN}Unpacking Arkos Tracker...${COLOR_NORMAL}"
-         unzip -o -q "${CPCT_TOOLS_DIR}/AT3.zip" -d "${CPCT_TOOLS_DIR}"
-         if [[ -s "${CPCT_TOOLS_DIR}/ArkosTracker3/tools/SongToAkg" ]]; then
-            cp -r ${CPCT_TOOLS_DIR}/ArkosTracker-3/cpctelera ${CPCT_TOOLS_DIR}/ArkosTracker3
-            rm -rf ${CPCT_TOOLS_DIR}/ArkosTracker-3
-            mv ${CPCT_TOOLS_DIR}/ArkosTracker3 ${CPCT_TOOLS_DIR}/ArkosTracker-3
-            sed ${AT3_SEDFLAGS} 's/SongToAkg.exe/SongToAkg/g' ${CPCT_SCRIPTS_DIR}/cpct_aks2c
-            sed ${AT3_SEDFLAGS} 's/SongToAkm.exe/SongToAkm/g' ${CPCT_SCRIPTS_DIR}/cpct_aks2c
-            sed ${AT3_SEDFLAGS} 's/SongToSoundEffects.exe/SongToSoundEffects/g' ${CPCT_SCRIPTS_DIR}/cpct_aks2c
-            AT3_INSTALLED_VER=${AT3_RUNNING_OS}
-            coloredMachineEcho ${COLOR_LIGHT_GREEN} 0.002 "Updated Arkos Tracker to ${AT3_RUNNING_OS} version."$'\n'
-         else
-            echo "${COLOR_RED}%% Error unzipping Arkos Tracker. Continuing with installed version..."
-            rm -rf ${CPCT_TOOLS_DIR}/ArkosTracker3
-         fi
-      else
-         echo "${COLOR_RED}%% Error downloading Arkos Tracker. Continuing with installed version..."
-      fi
-      rm ${CPCT_TOOLS_DIR}/AT3.zip
-   fi	
-fi
-
-# Update CPCT_EXECUTABLE_FILES according to installed Arkos Tracker version
-if [[ "${AT3_INSTALLED_VER}" == "linux64" || "${AT3_INSTALLED_VER}" == "osx" ]]; then
+AT3_TOOLS_DIR=${CPCT_TOOLS_ARKOS_DIR}/tools/${AT3_TOOLS_OS}
+if [[ -d "${AT3_TOOLS_DIR}" ]]; then
    for (( i = 0; i < ${#CPCT_EXECUTABLE_FILES[@]}; i++ )); do 
-      CPCT_EXECUTABLE_FILES[$i]=${CPCT_EXECUTABLE_FILES[$i]/${CPCT_ARKOS_SONG2AKG}/"${CPCT_TOOLS_ARKOS_DIR}/tools/SongToAkg"}
-      CPCT_EXECUTABLE_FILES[$i]=${CPCT_EXECUTABLE_FILES[$i]/${CPCT_ARKOS_SONG2AKM}/"${CPCT_TOOLS_ARKOS_DIR}/tools/SongToAkm"}
-      CPCT_EXECUTABLE_FILES[$i]=${CPCT_EXECUTABLE_FILES[$i]/${CPCT_ARKOS_SONG2FX}/"${CPCT_TOOLS_ARKOS_DIR}/tools/SongToSoundEffects"}
+      CPCT_EXECUTABLE_FILES[$i]=${CPCT_EXECUTABLE_FILES[$i]/${CPCT_ARKOS_SONG2AKG}/"${AT3_TOOLS_DIR}/SongToAkg${AT3_TOOLS_EXT}"}
+      CPCT_EXECUTABLE_FILES[$i]=${CPCT_EXECUTABLE_FILES[$i]/${CPCT_ARKOS_SONG2AKM}/"${AT3_TOOLS_DIR}/SongToAkm${AT3_TOOLS_EXT}"}
+      CPCT_EXECUTABLE_FILES[$i]=${CPCT_EXECUTABLE_FILES[$i]/${CPCT_ARKOS_SONG2FX}/"${AT3_TOOLS_DIR}/SongToSoundEffects${AT3_TOOLS_EXT}"}
    done
 fi
 
