@@ -215,7 +215,8 @@ PLY_AKM_DATA_OFFSETTRACKPITCHSPEED = .+1
 	
 _cpct_PLY_AKM_StopSoundEffectFromChannel::
 ;; CPCtelera according __z88dk_fastcall convention
-;; A = Channel
+;; L = Channel
+    ld a, l
 cpct_PLY_AKM_StopSoundEffectFromChannel:
 cpct_PLY_AKM_StopSoundEffectFromChannel_asm::
     add a,a

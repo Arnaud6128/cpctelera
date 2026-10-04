@@ -220,7 +220,8 @@ PLY_AKG_OPCODE_SCF: ld (hl),a
 
 _cpct_PLY_AKG_StopSoundEffectFromChannel::
 ;; CPCtelera according __z88dk_fastcall convention
-;; A = Channel
+;; L = Channel (C call), A = Channel (asm call)
+    ld a, l
 cpct_PLY_AKG_StopSoundEffectFromChannel:
 cpct_PLY_AKG_StopSoundEffectFromChannel_asm:
     add a,a
