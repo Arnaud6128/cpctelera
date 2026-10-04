@@ -26,13 +26,12 @@
 ;;
 ;;   28 us, 10 bytes
 ;;
-
 _cpct_drawSpriteHFlipMasked_at::
    ld (restoreIX), ix  ;; [6] Save IX before using it
-   
-   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention
-   ;; HL = Source Address (Sprite data array)
-   ;; DE = Destination address (Video memory location)
+   ;; Get parameters from HL and DE registers and stack ((16 + 16) + (8 + 8 + 16) bits) with __sdcccall(1) convention 
+   ex    de, hl        ;; [1] HL <-> DE
+   ;; HL = Destination address (Video memory location)
+   ;; DE = Source Address (Sprite data array)
    
    ;; GET next parameters from the stack
    pop   af            ;; [3] AF = Return address
