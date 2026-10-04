@@ -28,6 +28,10 @@
 #ifndef cpct_geometry_H
 #define cpct_geometry_H
 
+// Line clipping (all modes)
+extern void cpct_setClipRect(i16 xmin, i16 ymin, i16 xmax, i16 ymax) __z88dk_callee;
+extern u8   cpct_clipLine(i16* x0, i16* y0, i16* x1, i16* y1) __z88dk_callee;
+
 // Mode 1
 extern void cpct_drawLineM1_f(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
 extern void cpct_drawLineM1(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
