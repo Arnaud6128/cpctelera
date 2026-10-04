@@ -82,10 +82,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
  ;; Get next parameters from the stack 
-   pop  af                      ;; [3] AF = Return Address
-   pop  bc                      ;; [3] BC = Height / Width (B = Height, C = Width)
-   push af                      ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention
-
    push ix                      ;; [5] Store IX
    
    ld__ixh_b                    ;; [2] IXH = B (Height)
