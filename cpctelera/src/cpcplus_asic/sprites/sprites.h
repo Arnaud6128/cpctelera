@@ -170,6 +170,8 @@
 extern void cpct_asicSetSpriteData(u8 hardware_sprite_id, u8 value) __z88dk_callee;
 extern void cpct_asicCopySpriteData(u16 hardware_sprite_id, const u8* sprite_array) __z88dk_callee;
 extern void cpct_asicDrawToSpriteData(u16 hardware_sprite_id, u8 pos_x, u8 pos_y, const u8* sprite_array, u8 width, u8 height) __z88dk_callee;
+extern void cpct_asicEntrelaceSpriteData(u8* sprite_array_dst, const u8* sprite_array_src) __z88dk_callee;
+extern void cpct_asicSwapSprite(u8 hardware_sprite_id) __z88dk_fastcall;
 
 // Sprite Hardware move and zoom
 extern void cpct_asicSetSpritePosition(u16 hardware_sprite_id, i16 position_x, i16 position_y) __z88dk_callee;
