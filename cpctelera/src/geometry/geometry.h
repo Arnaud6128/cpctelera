@@ -34,14 +34,15 @@ extern u8   cpct_clipLine(i16* x0, i16* y0, i16* x1, i16* y1) __z88dk_callee;
 
 // Mode 1
 extern void cpct_drawLineM1_f(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
-extern void cpct_drawLineM1(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
-extern void cpct_drawPlotM1(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
+extern void cpct_drawLineM1  (u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
+extern void cpct_drawPlotM1  (u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
 extern void cpct_drawCircleM1(u8* vmem, u16 centerx, u16 centery, u8 radius, u8 color) __z88dk_callee;
+extern void cpct_scanFillM1  (u8* vmem, u16 x, u8 y, u8 newColor) __z88dk_callee;
 
 // Mode 0
 extern void cpct_drawLineM0_f(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
-extern void cpct_drawLineM0(u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
-extern void cpct_drawPlotM0(u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
+extern void cpct_drawLineM0  (u8* screen_start, u16 x0, u16 y0, u16 x1, u8 y1, u8 color) __z88dk_callee;
+extern void cpct_drawPlotM0  (u8* screen_start, u16 x, u8 y, u8 color) __z88dk_callee;
 extern void cpct_drawCircleM0(u8* vmem, u16 centerx, u16 centery, u8 radius, u8 color) __z88dk_callee;
 
 #endif

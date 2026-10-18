@@ -216,13 +216,18 @@ void ClipTestM1(i16 xmin, i16 ymin, i16 xmax, i16 ymax, u8 color, u8 fast)
 // Speed test in Mode 1 (320x200, 4 colors)
 void SpeedTestM1(void)
 {
-	// Circle
+	// Circles
 	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
-	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 21, 2);
-	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 22, 3);
+	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 15, 2);
+	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 10, 3);
+	
+	// Fill circles
+	cpct_scanFillM1 (CPCT_VMEM_START, 141, 100, 3);
+    cpct_scanFillM1 (CPCT_VMEM_START, 146, 100, 2);
+	cpct_scanFillM1 (CPCT_VMEM_START, 151, 100, 1);
 
 	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
-	i16 x,y;
+	i16 x, y;
 
 	y = 0;
 	for (x = 0; x < 320; x += 8)
@@ -267,7 +272,6 @@ void SpeedTestM1(void)
 // Speed test in Mode 0 (160x200, 16 colors)
 void SpeedTestM0(void)
 {
-
 	// Circles (radius in lines, Mode 0 circles are corrected to look round)
 	cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 20, 12);
 	cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 21, 13);
