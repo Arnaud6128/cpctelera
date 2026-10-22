@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2026 Xavier Jollet (@SagaDS)
-;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -36,15 +36,13 @@
 ;;    (1B  C)  y          -  Y coordinate (0-199 no checks)
 ;;    (1B  B)  newColor   -  Color to use (0-3)
 ;;
-;;
 ;; Assembly call:
 ;;    > call cpct_scanFillM1_asm
 ;;
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL
 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Algorithm comment
+;; Algorithm comment:
 ;;    Init algo: 
 ;;       get screen adress from X,Y, compute X Offset and subpixel, get old color on X,Y
 ;;       Compute new and old_color subpixels and full octet, exit if new color == old color
@@ -72,19 +70,24 @@
 ;;                new_color if 'old_color'  (only case we have values ready, else switch back to pixel check)
 ;;                fall back to pixel checking in doubt, exit subLoop if right end of drawn line is reached or passed
 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (start code)
 ;; Required memory:
-;;    571 bytes core routine  + 115 bytes data (+ 3 binding c overhead)
+;;    571 bytes core routine  + 115 bytes data (+ 3 c binding overhead)
 ;;
-;; Time Measures (+10 binding overhead):
-;;    Case                                      | microSecs (us) | CPU Cycles
-;;   ---------------------------------------------------------------------------------
-;;    (10,20),(30,40)     in  (0 intersect)     | XXX            | XXX
-;;    (-10,-20),(330,240) in  (4 intersect)     | XXX            | XXX
-;;    (-10,20),(-30,40)   out (0 intersect)     | XXX            | XXX
-;;    (-10,-20),(30,-40)  out (1 intersect)     | XXX            | XXX
-;;   ---------------------------------------------------------------------------------
+;; Test measure: 
+;;    Screen set to color 0
+;;    4 points:
+;;       pt1 (100,100) pt2 (125,75) pt3 (150,100) pt4 (125,125)
+;;    4 lines of color 2 between:
+;;       pt1,pt2  pt2,pt3 pt3,pt4 pt4,pt1
+;;    Time to fill from pt (125,100) with color 3
+;;
+;;  Totals and assumptions:
+;;    Pixels drawn: 1,201
+;;    Estimated drawing work: about 28,300 NOPs
+;;    Estimated above/below checks and point-queue costs: about 51,400 NOPs
+;;  Estimated overall: 
+;;    about 80,000 NOPs, including roughly 30 NOPs for the initial screen-pointer helper and the documented 10-NOP C-binding overhead; allow a few hundred more for setup.
 ;; (end code)
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
