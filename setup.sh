@@ -153,7 +153,7 @@ CPCT_TAG_MAINPATH="%%%CPCTELERA_PATH%%%"
 CPCT_TAG_SCRIPTSPATH="%%%CPCTELERA_SCRIPTS_PATH%%%"
 
 ## Required stuff for running CPCtelera
-REQUIRED_COMMANDS=(gcc g++ make bison flex)
+REQUIRED_COMMANDS=(gcc g++ make bison flex clang zlib1g-dev)
 COMM_NUM=0
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} compiler is required to compile tools. Please \
 install it or build-essentials and run setup again."
@@ -163,6 +163,12 @@ install it or build-essentials and run setup again."
 COMM_NUM=$((COMM_NUM + 1))
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required for all CPCtelera's build systems. \
 Please, install it and run setup again."
+COMM_NUM=$((COMM_NUM + 1))
+COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile SDCC. Please, install it \
+and run setup again."
+COMM_NUM=$((COMM_NUM + 1))
+COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile SDCC. Please, install it \
+and run setup again."
 COMM_NUM=$((COMM_NUM + 1))
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile SDCC. Please, install it \
 and run setup again."
