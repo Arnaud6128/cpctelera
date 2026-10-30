@@ -79,6 +79,7 @@ CPCT_TOOLS_IMG2CPC_DIR=${CPCT_TOOLS_DIR}/img2cpc
 CPCT_TOOLS_RGAS_DIR=${CPCT_TOOLS_DIR}/gfx/rgas-1.2.5
 CPCT_TOOLS_ARKOS_DIR=${CPCT_TOOLS_DIR}/ArkosTracker-3
 CPCT_TOOLS_ZX7B_DIR=${CPCT_TOOLS_DIR}/zx7b
+CPCT_TOOLS_RASM_DIR=${CPCT_TOOLS_DIR}/rasm
 CPCT_TOOLS_ANDROID_DIR=${CPCT_TOOLS_DIR}/android
 CPCT_TOOLS_ANDROID_BIN_DIR=${CPCT_TOOLS_ANDROID_DIR}/bin
 CPCT_TOOLS_ANDROID_CERTS_DIR=${CPCT_TOOLS_ANDROID_DIR}/certs
@@ -141,19 +142,19 @@ CPCT_EXECUTABLE_FILES=("${CPCT_ARKOS_SONG2AKG}" "${CPCT_ARKOS_SONG2AKM}" "${CPCT
 CPCT_EXAMPLES_BUILD_LOG=${CPCT_LOGS_DIR}/examples_building.log
 CPCT_TOOLS_BUILD_LOG=${CPCT_LOGS_DIR}/tool_building.log
 CPCT_LIB_BUILD_LOG=${CPCT_LOGS_DIR}/library_building.log
-CPCT_EXAMPLES_BUILD_LOG_TOTAL_BYTES_CLEAN=28969
-CPCT_EXAMPLES_BUILD_LOG_TOTAL_BYTES=168536
-CPCT_TOOLS_BUILD_LOG_TOTAL_BYTES_CLEAN=25948
-CPCT_TOOLS_BUILD_LOG_TOTAL_BYTES=627034
-CPCT_LIB_BUILD_LOG_TOTAL_BYTES_CLEAN=319
-CPCT_LIB_BUILD_LOG_TOTAL_BYTES=63048
+CPCT_EXAMPLES_BUILD_LOG_TOTAL_BYTES_CLEAN=41116
+CPCT_EXAMPLES_BUILD_LOG_TOTAL_BYTES=244148
+CPCT_TOOLS_BUILD_LOG_TOTAL_BYTES_CLEAN=65645
+CPCT_TOOLS_BUILD_LOG_TOTAL_BYTES=1235188
+CPCT_LIB_BUILD_LOG_TOTAL_BYTES_CLEAN=363
+CPCT_LIB_BUILD_LOG_TOTAL_BYTES=141551
 
 ## Substitution tags
 CPCT_TAG_MAINPATH="%%%CPCTELERA_PATH%%%"
 CPCT_TAG_SCRIPTSPATH="%%%CPCTELERA_SCRIPTS_PATH%%%"
 
 ## Required stuff for running CPCtelera
-REQUIRED_COMMANDS=(gcc g++ make bison flex clang zlib1g-dev)
+REQUIRED_COMMANDS=(gcc g++ make bison flex clang)
 COMM_NUM=0
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} compiler is required to compile tools. Please \
 install it or build-essentials and run setup again."
@@ -170,16 +171,16 @@ COMM_NUM=$((COMM_NUM + 1))
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile SDCC. Please, install it \
 and run setup again."
 COMM_NUM=$((COMM_NUM + 1))
-COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile SDCC. Please, install it \
-and run setup again."
-COMM_NUM=$((COMM_NUM + 1))
-COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile SDCC. Please, install it \
+COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile rasm. Please, install it \
 and run setup again."
 COMM_NUM=$((COMM_NUM + 1))
 GCC_MINIMUM_VERSION="5.1"
 
 REQUIRED_LIBRARIES=("boost/graph/adjacency_list.hpp")
 LIBRARIES_EXPLANATION[0]="${REQUIRED_LIBRARIES[0]} is part of libboost, which is required for building SDCC. Please, install boost / libboost-dev / libboost-devel or similar in your system and run setup again."
+
+REQUIRED_LIBRARIES+=("zlib.h")
+LIBRARIES_EXPLANATION+=("${REQUIRED_LIBRARIES[1]} is required for building tools. Please, install zlib1g-dev / zlib-devel or similar in your system and run setup again.")
 
 ## libintl.h is not required in Mac OSX
 if ! checkSystem "osx"; then
@@ -373,6 +374,14 @@ coloredMachineEcho "${COLOR_CYAN}" 0.005 ">>> Building compilation tools:       
 makeWithProgressSupervision "$CPCT_TOOLS_DIR" "$CPCT_TOOLS_BUILD_LOG" "" \
                            "$CPCT_TOOLS_BUILD_LOG_TOTAL_BYTES"  35  0.3  \
                          "There was an error building CPCtelera tools"
+
+# RASM executable name depends on the system: the default Makefile builds 'rasm.exe', while
+# Makefile.MacOS / Makefile.MorphOS build 'rasm', and CPCtelera uses 'rasm' (see cfg/global_paths.mk).
+# Cygwin resolves both names to the same file, so only other systems need a copy.
+if ! checkSystem "cygwin" && [[ -f "${CPCT_TOOLS_RASM_DIR}/rasm.exe" ]]; then
+   cp -f "${CPCT_TOOLS_RASM_DIR}/rasm.exe" "${CPCT_TOOLS_RASM_DIR}/rasm"
+fi
+ensureExistsAndIsExecutable file "${CPCT_TOOLS_RASM_DIR}/rasm"
 
 # Build library in subshell process, then go monitoring until it finishes
 coloredMachineEcho "${COLOR_CYAN}" 0.005 ">>> Building cpctelera z80 lib:        "
