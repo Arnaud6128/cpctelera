@@ -21,7 +21,7 @@
 .include "../cpct_geomConstants.h.s"
 
 ;;
-;; ASM bindings for <cpct_scanFillM1>
+;; C bindings for <cpct_scanFillM1>
 ;;
 ;;  0 microSecs, 0 bytes
 ;;

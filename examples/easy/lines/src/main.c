@@ -135,43 +135,43 @@ void TransformAndProject(const SPoint3D* in, SPoint2D* out, u8 angleX, u8 angleY
 // Clear screens and display text in both
 void InitScreen(void)
 {
-	cpct_memset_f64(VRAM_PAGE_40, 0x00, 0x4000);
-	cpct_drawStringM1("Press any key to flip vertices / points", VRAM_PAGE_40);
+    cpct_memset_f64(VRAM_PAGE_40, 0x00, 0x4000);
+    cpct_drawStringM1("Press any key to flip vertices / points", VRAM_PAGE_40);
 
-	cpct_memset_f64(VRAM_PAGE_C0, 0x00, 0x4000);			
-	cpct_drawStringM1("Press any key to flip vertices / points", VRAM_PAGE_C0);
+    cpct_memset_f64(VRAM_PAGE_C0, 0x00, 0x4000);
+    cpct_drawStringM1("Press any key to flip vertices / points", VRAM_PAGE_C0);
 }
 
 /////////////////////////////////////
 // Init mode 1 and colors for speed test and 3D demo
 void InitDisplayM1(void)
 {
-	cpct_setDrawCharM1(1, 0);
+    cpct_setDrawCharM1(1, 0);
     cpct_setVideoMode(1);
 
-	cpct_setBorder(0x54);       // Black
-	cpct_setPALColour(0, 0x54); // Black
-	cpct_setPALColour(1, 0x57); // Sky Blue
-	cpct_setPALColour(2, 0x43); // Pastel Yellow
-	cpct_setPALColour(3, 0x4C); // Bright Red
+    cpct_setBorder(0x54);       // Black
+    cpct_setPALColour(0, 0x54); // Black
+    cpct_setPALColour(1, 0x57); // Sky Blue
+    cpct_setPALColour(2, 0x43); // Pastel Yellow
+    cpct_setPALColour(3, 0x4C); // Bright Red
 }
 
 //////////////////////////////////////////
 // Init mode 0 and colors for speed test
 void InitDisplayM0(void)
 {
-	// 16 colors palette (hardware values)
-	static const u8 paletteM0[16] =
-	{
-		0x54, 0x44, 0x55, 0x5C, 0x58, 0x5D, 0x4C, 0x45,
-		0x4D, 0x56, 0x46, 0x57, 0x5E, 0x40, 0x5F, 0x4E
-	};
+    // 16 colors palette (hardware values)
+    static const u8 paletteM0[16] =
+    {
+        0x54, 0x44, 0x55, 0x5C, 0x58, 0x5D, 0x4C, 0x45,
+        0x4D, 0x56, 0x46, 0x57, 0x5E, 0x40, 0x5F, 0x4E
+    };
 
-	cpct_setDrawCharM0(13, 0);
+    cpct_setDrawCharM0(13, 0);
     cpct_setVideoMode(0);
 
-	cpct_setBorder(0x54);       // Black
-	cpct_setPalette(paletteM0, 16);
+    cpct_setBorder(0x54);       // Black
+    cpct_setPalette(paletteM0, 16);
 }
 
 ////////////////////////////////////////
@@ -181,198 +181,220 @@ void InitDisplayM0(void)
 // (xmin must be a multiple of 4 for the window clearing because m1 has 4 pixels by byte)
 void ClipTestM1(i16 xmin, i16 ymin, i16 xmax, i16 ymax, u8 color, u8 fast)
 {
-	i16 cx = (xmin + xmax) / 2;
-	i16 cy = (ymin + ymax) / 2;
+    i16 cx = (xmin + xmax) / 2;
+    i16 cy = (ymin + ymax) / 2;
 
-	// Clear window area (frame included) and draw the frame just outside of the clipping rectangle
-	cpct_drawSolidBox(cpct_getScreenPtr(CPCT_VMEM_START, (xmin - 4) / 4, ymin - 1), 0, (xmax - xmin + 9) / 4, ymax - ymin + 3);
-	cpct_drawLineM1_f(CPCT_VMEM_START, xmin - 1, ymin - 1, xmax + 1, ymin - 1, 2);
-	cpct_drawLineM1_f(CPCT_VMEM_START, xmin - 1, ymax + 1, xmax + 1, ymax + 1, 2);
-	cpct_drawLineM1_f(CPCT_VMEM_START, xmin - 1, ymin - 1, xmin - 1, ymax + 1, 2);
-	cpct_drawLineM1_f(CPCT_VMEM_START, xmax + 1, ymin - 1, xmax + 1, ymax + 1, 2);
+    // Clear window area (frame included) and draw the frame just outside of the clipping rectangle
+    cpct_drawSolidBox(cpct_getScreenPtr(CPCT_VMEM_START, (xmin - 4) / 4, ymin - 1), 0, (xmax - xmin + 9) / 4, ymax - ymin + 3);
+    cpct_drawLineM1_f(CPCT_VMEM_START, xmin - 1, ymin - 1, xmax + 1, ymin - 1, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START, xmin - 1, ymax + 1, xmax + 1, ymax + 1, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START, xmin - 1, ymin - 1, xmin - 1, ymax + 1, 2);
+    cpct_drawLineM1_f(CPCT_VMEM_START, xmax + 1, ymin - 1, xmax + 1, ymax + 1, 2);
 
-	cpct_setClipRect(xmin, ymin, xmax, ymax);
+    cpct_setClipRect(xmin, ymin, xmax, ymax);
 
-	// 16 lines through the window center, both endpoints ~1000 pixels away
-	for (u8 a = 0; a < 32; a += 2)
-	{
-		i16 x0 = cx - FAST_COS(a) * 16;
-		i16 y0 = cy - FAST_SIN(a) * 16;
-		i16 x1 = cx + FAST_COS(a) * 16;
-		i16 y1 = cy + FAST_SIN(a) * 16;
+    // 16 lines through the window center, both endpoints ~1000 pixels away
+    for (u8 a = 0; a < 32; a += 2)
+    {
+        i16 x0 = cx - FAST_COS(a) * 16;
+        i16 y0 = cy - FAST_SIN(a) * 16;
+        i16 x1 = cx + FAST_COS(a) * 16;
+        i16 y1 = cy + FAST_SIN(a) * 16;
 
-		if (cpct_clipLine(&x0, &y0, &x1, &y1))
-		{
-			if (fast) cpct_drawLineM1_f(CPCT_VMEM_START, x0, y0, x1, y1, color);
-			else      cpct_drawLineM1  (CPCT_VMEM_START, x0, y0, x1, y1, color);
-		}
-	}
+        if (cpct_clipLine(&x0, &y0, &x1, &y1))
+        {
+            if (fast) cpct_drawLineM1_f(CPCT_VMEM_START, x0, y0, x1, y1, color);
+            else      cpct_drawLineM1  (CPCT_VMEM_START, x0, y0, x1, y1, color);
+        }
+    }
 
-	// Restore default clipping rectangle (whole Mode 1 screen)
-	cpct_setClipRect(0, 0, 319, 199);
+    // Restore default clipping rectangle (whole Mode 1 screen)
+    cpct_setClipRect(0, 0, 319, 199);
 }
 
 ////////////////////////////////////////
 // Speed test in Mode 1 (320x200, 4 colors)
 void SpeedTestM1(void)
 {
-	// Circles
-	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
-	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 15, 2);
-	cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 10, 3);
-	
-	// Fill circles
-	cpct_scanFillM1 (CPCT_VMEM_START, 141, 100, 3);
+    // Circles
+    cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 20, 1);
+    cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 15, 2);
+    cpct_drawCircleM1(CPCT_VMEM_START, 160, 100, 10, 3);
+    
+    // Fill circles
+    cpct_scanFillM1 (CPCT_VMEM_START, 141, 100, 3);
     cpct_scanFillM1 (CPCT_VMEM_START, 146, 100, 2);
-	cpct_scanFillM1 (CPCT_VMEM_START, 151, 100, 1);
+    cpct_scanFillM1 (CPCT_VMEM_START, 151, 100, 1);
 
-	// Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
-	i16 x, y;
+    // Constants dx/N = 320/40 = 8 | dy/N = 200/40 = 5
+    i16 x, y;
 
-	y = 0;
-	for (x = 0; x < 320; x += 8)
-	{
-		cpct_drawLineM1_f(CPCT_VMEM_START, x, 0, 319, y, 1);
-		y += 5;
-	}
+    y = 0;
+    for (x = 0; x < 320; x += 8)
+    {
+        cpct_drawLineM1_f(CPCT_VMEM_START, x, 0, 319, y, 1);
+        y += 5;
+    }
 
-	x = 319;
-	for (y = 0; y < 200; y += 5)
-	{
-		cpct_drawLineM1(CPCT_VMEM_START, 319, y, x, 199, 3);
-		x -= 8;
-	}
+    x = 319;
+    for (y = 0; y < 200; y += 5)
+    {
+        cpct_drawLineM1(CPCT_VMEM_START, 319, y, x, 199, 3);
+        x -= 8;
+    }
 
-	y = 199;
-	for (x = 319; x > 0; x -= 8)
-	{
-		cpct_drawLineM1_f(CPCT_VMEM_START, x, 199, 0, y, 1);
-		y -= 5;
-	}
+    y = 199;
+    for (x = 319; x > 0; x -= 8)
+    {
+        cpct_drawLineM1_f(CPCT_VMEM_START, x, 199, 0, y, 1);
+        y -= 5;
+    }
 
-	x = 0;
-	for (y = 199; y > 0; y -= 5)
-	{
-		cpct_drawLineM1(CPCT_VMEM_START, 0, y, x, 0, 3);
-		x += 8;
-	}
+    x = 0;
+    for (y = 199; y > 0; y -= 5)
+    {
+        cpct_drawLineM1(CPCT_VMEM_START, 0, y, x, 0, 3);
+        x += 8;
+    }
 
-	// Frame
+    // Frame
     cpct_drawLineM1_f(CPCT_VMEM_START,   0,   0, 319,   0, 2);
     cpct_drawLineM1_f(CPCT_VMEM_START, 319,   0, 319, 199, 2);
     cpct_drawLineM1_f(CPCT_VMEM_START, 319, 199,   0, 199, 2);
     cpct_drawLineM1_f(CPCT_VMEM_START,   0, 199,   0,   0, 2);
 
-	// Line clipping in 2 windows on both sides of the circles
-	ClipTestM1( 72, 70, 127, 129, 1, 1);  // Fast line version
-	ClipTestM1(192, 70, 247, 129, 3, 0);  // Compact line version
+    // Line clipping in 2 windows on both sides of the circles
+    ClipTestM1( 72, 70, 127, 129, 1, 1);  // Fast line version
+    ClipTestM1(192, 70, 247, 129, 3, 0);  // Compact line version
+    
+    // Plots in the center, one per pen
+    for (u8 pen = 0; pen < 4; pen++)
+    {
+        cpct_drawPlotM1(CPCT_VMEM_START, 158 + pen, 150, pen);
+    
+        // Get pixel color and draw plot with it
+        u8 getPen = cpct_getColorAtM1(CPCT_VMEM_START, 158 + pen, 150);
+        cpct_drawPlotM1(CPCT_VMEM_START, 158 + pen, 152, pen);
+    }
 }
 
 ////////////////////////////////////////
 // Speed test in Mode 0 (160x200, 16 colors)
 void SpeedTestM0(void)
 {
-	// Circles (radius in lines, Mode 0 circles are corrected to look round)
-	cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 20, 12);
-	cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 21, 13);
-	cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 22, 14);
+    // Circles (radius in lines, Mode 0 circles are corrected to look round)
+    cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 20, 12);
+    cpct_drawCircleM0(CPCT_VMEM_START, 80, 100, 10, 14);
 
-	// Constants dx/N = 160/40 = 4 | dy/N = 200/40 = 5
-	i16 x,y;
-	u8  pen;
+    // Fill circles
+    cpct_scanFillM0(CPCT_VMEM_START, 80, 100, 14);
+    cpct_scanFillM0(CPCT_VMEM_START, 71, 100, 12);
 
-	y = 0;
-	for (x = 0; x < 160; x += 4)
-	{
-		pen = 1 + (x >> 2) % 11;
-		cpct_drawLineM0_f(CPCT_VMEM_START, x, 0, 159, y, pen);
-		y += 5;
-	}
+    // Constants dx/N = 160/40 = 4 | dy/N = 200/40 = 5
+    i16 x,y;
+    u8  pen;
 
-	x = 159;
-	for (y = 0; y < 200; y += 5)
-	{
-		pen = 1 + (y / 5) % 11;
-		cpct_drawLineM0(CPCT_VMEM_START, 159, y, x, 199, pen);
-		x -= 4;
-	}
+    y = 0;
+    for (x = 0; x < 160; x += 4)
+    {
+        pen = 1 + (x >> 2) % 11;
+        cpct_drawLineM0_f(CPCT_VMEM_START, x, 0, 159, y, pen);
+        y += 5;
+    }
 
-	y = 199;
-	for (x = 159; x > 0; x -= 4)
-	{
-		pen = 1 + (x >> 2) % 11;
-		cpct_drawLineM0_f(CPCT_VMEM_START, x, 199, 0, y, pen);
-		y -= 5;
-	}
+    x = 159;
+    for (y = 0; y < 200; y += 5)
+    {
+        pen = 1 + (y / 5) % 11;
+        cpct_drawLineM0(CPCT_VMEM_START, 159, y, x, 199, pen);
+        x -= 4;
+    }
 
-	x = 0;
-	for (y = 199; y > 0; y -= 5)
-	{
-		pen = 1 + (y / 5) % 11;
-		cpct_drawLineM0(CPCT_VMEM_START, 0, y, x, 0, pen);
-		x += 4;
-	}
+    y = 199;
+    for (x = 159; x > 0; x -= 4)
+    {
+        pen = 1 + (x >> 2) % 11;
+        cpct_drawLineM0_f(CPCT_VMEM_START, x, 199, 0, y, pen);
+        y -= 5;
+    }
 
-	// Frame
+    x = 0;
+    for (y = 199; y > 0; y -= 5)
+    {
+        pen = 1 + (y / 5) % 11;
+        cpct_drawLineM0(CPCT_VMEM_START, 0, y, x, 0, pen);
+        x += 4;
+    }
+
+    // Frame
     cpct_drawLineM0_f(CPCT_VMEM_START,   0,   0, 159,   0, 15);
     cpct_drawLineM0_f(CPCT_VMEM_START, 159,   0, 159, 199, 15);
     cpct_drawLineM0_f(CPCT_VMEM_START, 159, 199,   0, 199, 15);
     cpct_drawLineM0_f(CPCT_VMEM_START,   0, 199,   0,   0, 15);
 
-	// Plots in the center, one per pen
-	for (pen = 0; pen < 16; pen++)
-		cpct_drawPlotM0(CPCT_VMEM_START, 72 + pen, 100, pen);
+    // Plots in the center, one per pen
+    for (pen = 0; pen < 16; pen++)
+    {
+        cpct_drawPlotM0(CPCT_VMEM_START, 72 + pen, 150, pen);
+        
+        // Get pixel color and draw plot with it
+        u8 getPen = cpct_getColorAtM0(CPCT_VMEM_START, 72 + pen, 150);
+        cpct_drawPlotM0(CPCT_VMEM_START, 72 + pen, 152, pen);
+    }
+    
+    while(1);
 }
+
 ////////////////////////////////////////
 // Main demo
 // Use line and plot to display 3d ship
 void main(void) 
 {
-	// Transformation variables
+    // Transformation variables
     u8 angleX = 32;
     u8 angleY = 0;
     u8 scale = 48;
-	
-	// Flip vertices or points to draw
-	u8 drawVertice = 1;
+    
+    // Flip vertices or points to draw
+    u8 drawVertice = 1;
     
     // Current frame projected coordinates
     SPoint2D proj[SHIP_VERTICES];
 
-	// Double buffer to avoid tearing
+    // Double buffer to avoid tearing
     u8* draw_buffer = VRAM_PAGE_40;
-	
-	// 0 = page 40, 1 = page C0
+    
+    // 0 = page 40, 1 = page C0
     u8 buffer_index = 0; 
     
-	// Initialisations
-	cpct_disableFirmware();
+    // Initialisations
+    cpct_disableFirmware();
 
-	// Speed testing in Mode 1 then Mode 0
-	InitDisplayM1();
-	SpeedTestM1();
-	cpct_memset_f64(CPCT_VMEM_START, 0x00, 0x4000);  // Clear Mode 1 pattern before switching mode
+    // Speed testing in Mode 1 then Mode 0
+    InitDisplayM1();
+    SpeedTestM1();
+    cpct_memset_f64(CPCT_VMEM_START, 0x00, 0x4000);  // Clear Mode 1 pattern before switching mode
 
     // Speed testing in Mode 0
-	InitDisplayM0();
-	SpeedTestM0();
+    InitDisplayM0();
+    SpeedTestM0();
 
-	// Init screen for 3d in Mode 1
-	InitDisplayM1();
-	InitScreen();
+    // Init screen for 3d in Mode 1
+    InitDisplayM1();
+    InitScreen();
 
     // Render loop
     while (1) 
-	{
+    {
         // ---------------------------------------------------------------------
         // 1. SCREEN ERASING
-        // ---------------------------------------------------------------------	
-		u8* cleanBox = cpct_getScreenPtr(draw_buffer, 18, 25);
-		cpct_drawSolidBox(cleanBox, 0, 50, 150);
-	
+        // ---------------------------------------------------------------------    
+        u8* cleanBox = cpct_getScreenPtr(draw_buffer, 18, 25);
+        cpct_drawSolidBox(cleanBox, 0, 50, 150);
+    
         // ---------------------------------------------------------------------
         // 2. COMPUTE NEW POSITION
-        // ---------------------------------------------------------------------	
+        // ---------------------------------------------------------------------    
         angleY = (angleY + 1) % 64;
 
         for (u8 i = 0; i < SHIP_VERTICES; i++) {
@@ -382,52 +404,52 @@ void main(void)
         // ---------------------------------------------------------------------
         // 4. RENDER SHIP
         // ---------------------------------------------------------------------
-		if (drawVertice)
-		{
-			// Draw wireframe edges using their color attribute
-			for (u8 i = 0; i < SHIP_EDGES; i++) 
-			{
-				u8 v0 = ship_edges[i].v0;
-				u8 v1 = ship_edges[i].v1;
-				
-				cpct_drawLineM1_f(draw_buffer,
-							        proj[v0].x, proj[v0].y,
-							        proj[v1].x, proj[v1].y, 
-							        ship_edges[i].color);			  
-			}
+        if (drawVertice)
+        {
+            // Draw wireframe edges using their color attribute
+            for (u8 i = 0; i < SHIP_EDGES; i++) 
+            {
+                u8 v0 = ship_edges[i].v0;
+                u8 v1 = ship_edges[i].v1;
+                
+                cpct_drawLineM1_f(draw_buffer,
+                                    proj[v0].x, proj[v0].y,
+                                    proj[v1].x, proj[v1].y, 
+                                    ship_edges[i].color);              
+            }
         }
-		else        
-		{
-			// Draw plots with Color 1
-			for (u8 i = 0; i < SHIP_VERTICES; i++) 	{
-				cpct_drawPlotM1(draw_buffer, proj[i].x, proj[i].y, 1);
-			}
-		}
+        else        
+        {
+            // Draw plots with Color 1
+            for (u8 i = 0; i < SHIP_VERTICES; i++)     {
+                cpct_drawPlotM1(draw_buffer, proj[i].x, proj[i].y, 1);
+            }
+        }
 
         // ---------------------------------------------------------------------
         // 5. HARDWARE PAGE FLIP TO AVOID TEARING
         // ---------------------------------------------------------------------
         if (buffer_index == 0) 
-		{
+        {
             cpct_setVideoMemoryPage(cpct_page40);
             draw_buffer = VRAM_PAGE_C0;
             buffer_index = 1;
         } 
-		else 
-		{
+        else 
+        {
             cpct_setVideoMemoryPage(cpct_pageC0);
             draw_buffer = VRAM_PAGE_40;
             buffer_index = 0;
         }
-		
-		// ---------------------------------------------------------------------
+        
+        // ---------------------------------------------------------------------
         // 5. CHANGE DISPLAY MODE IF KEY PRESSED
         // ---------------------------------------------------------------------
-		cpct_scanKeyboard_f();
-		if (cpct_isAnyKeyPressed_f())
-		{
-			drawVertice = !drawVertice;
-			cpct_waitVSYNC();
-		}
+        cpct_scanKeyboard_f();
+        if (cpct_isAnyKeyPressed_f())
+        {
+            drawVertice = !drawVertice;
+            cpct_waitVSYNC();
+        }
     }
 }

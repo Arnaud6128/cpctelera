@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2026 Xavier Jollet (@SagaDS)
-;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -34,7 +34,8 @@
 ;;    (2B HL)  vmem       - Base VRAM memory address (typically 0xC000)
 ;;    (2B DE)  x          -  X coordinate (0-319 no checks)
 ;;    (1B  C)  y          -  Y coordinate (0-199 no checks)
-;;    (1B  B)  newColor   -  Color to use (0-3)
+;;    (1B  B)  newColor   -  New color to use (0-3)
+;;
 ;;
 ;; Assembly call:
 ;;    > call cpct_scanFillM1_asm
@@ -42,7 +43,8 @@
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL
 ;;
-;; Algorithm comment:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Algorithm comment
 ;;    Init algo: 
 ;;       get screen adress from X,Y, compute X Offset and subpixel, get old color on X,Y
 ;;       Compute new and old_color subpixels and full octet, exit if new color == old color
@@ -70,9 +72,20 @@
 ;;                new_color if 'old_color'  (only case we have values ready, else switch back to pixel check)
 ;;                fall back to pixel checking in doubt, exit subLoop if right end of drawn line is reached or passed
 ;;
+;; Comment on stack size
+;;    A memory buffer is set to store next points to check above and below vurrent line.
+;;    By default this is a 30 points storage using 3 Bytes each, 90 Bytes.
+;;    If area to fill has a lot of different vertical area to fill
+;;    the algorithm will need all this area. The algorithm stops adding points if 
+;;    buffer is filled. So some area will not be checked and some area may miss in result.
+;;    A simple rectangular area just need 2 points.
+;;    If you know how many elements in stacks you need, you can adjust 
+;;    the STACK_SIZE value to your need and recompile cpctelera to decrease memory need.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (start code)
 ;; Required memory:
-;;    571 bytes core routine  + 115 bytes data (+ 3 c binding overhead)
+;;    602 bytes core routine (including 3 bytes of c binding) + 115 bytes data
 ;;
 ;; Test measure: 
 ;;    Screen set to color 0
@@ -82,12 +95,14 @@
 ;;       pt1,pt2  pt2,pt3 pt3,pt4 pt4,pt1
 ;;    Time to fill from pt (125,100) with color 3
 ;;
-;;  Totals and assumptions:
+;;  AI computation: 
+;;  Totals and assumptions
 ;;    Pixels drawn: 1,201
 ;;    Estimated drawing work: about 28,300 NOPs
 ;;    Estimated above/below checks and point-queue costs: about 51,400 NOPs
 ;;  Estimated overall: 
 ;;    about 80,000 NOPs, including roughly 30 NOPs for the initial screen-pointer helper and the documented 10-NOP C-binding overhead; allow a few hundred more for setup.
+;;
 ;; (end code)
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -382,8 +397,8 @@ snp_setColorToJump:
 snp_loopFullOctet:
    ld    a,(cur_byte_offset)     ;; [4] a = right X Offset
    cp    e                       ;; [1] compare with current X Offset
-   ;; jr    z, snp_mainLoop      ;; We are on last octet (a == e), move slowly and check with subpixels
    ret   c                       ;; [2/4] We move above last pixel (e > a), ret from there
+
    ld    a,b                     ;; [1] a = color full octet to skip
    cp    (hl)                    ;; [2] compare with screen octet
    jr    nz,snp_mainLoop         ;; [2/3] not equal so we need to check pixels
@@ -467,6 +482,7 @@ checkOldColor:                   ;; Returns ZFlag ON if color of the pixel at (H
    pop   de                      ;; [3] retrieve de
    pop   hl                      ;; [3] retrieve screen adress
    ret                           ;; [3] Z Flag is true if color found in pixel
+
 pushPoint:                       ;; Push point DE and C into stack - FZ not set : OK - FZ set : no more room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ld    a,(stack_idx)           ;; [4] Get current stack index
@@ -485,9 +501,8 @@ pushPoint:                       ;; Push point DE and C into stack - FZ not set 
    inc   hl                      ;; [2] Move down
    ld    (hl),c                  ;; [2] Save Y Coordinates
    inc   hl                      ;; [2] Move down
-	ld    (stack_adress),hl       ;; [5] Save new stack address
+   ld    (stack_adress),hl       ;; [5] Save new stack address
    pop   hl                      ;; [3] retrieve hl
-
    ret                           ;; [3] Going back
 
 popPoint:                        ;; Pop point into DE and C from stack - No need to preserve HL (recomputed) - FZ not set : OK - FZ set : empty stack
@@ -499,16 +514,15 @@ popPoint:                        ;; Pop point into DE and C from stack - No need
    dec   a                       ;; [1] a = stck_idx - 1
    ld    (stack_idx),a           ;; [4] store stack_idx
 
-	ld    hl,(stack_adress)       ;; [5] Points to last stack adress - no need to preserve, will be recomputed
+   ld    hl,(stack_adress)       ;; [5] Points to last stack adress - no need to preserve, will be recomputed
    dec   hl                      ;; [2] Move up
    ld    c,(hl)                  ;; [2] Get Y coordinates
    dec   hl                      ;; [2] Move up
    ld    d,(hl)                  ;; [2] Get subpixel
    dec   hl                      ;; [2] Move up
    ld    e,(hl)                  ;; [2] Get X byte offset
-	ld    (stack_adress),hl       ;; [5] Save new stack address
+   ld    (stack_adress),hl       ;; [5] Save new stack address
    or    #0x01                   ;; [2] reset Z flag
-
    ret                           ;; [3] return
 
 storeColor:                      ;; Store color subpixels into HL - a = color of subpixel
