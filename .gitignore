@@ -8,6 +8,8 @@
 **/sdcc-4.6.0/**/*.asm
 **/img2cpc/Makefile.this
 **/sdcc-4.6.0/share/
+**/sdcc-4.6.0/include/
+**/sdcc-4.6.0/lib/
 **/winape/
 *.mp3
 *.wav
@@ -53,4 +55,4 @@ printer.txt
 
 *.binamsdos
 *.binamsdos.log
-cpctelera/tools/sdcc-3.5.0/share
+
