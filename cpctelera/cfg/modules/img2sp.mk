@@ -344,9 +344,9 @@ define IMG2SP_CONVERT_BIN
 	@$(call PRINT,$(PROJNAME)," - '$(I2S_H)' > '$(I2S_H2)'")
 	@$(call PRINT,$(PROJNAME)," - '$(I2S_B)' > '$(I2S_B2)'")
 	@if [ "$(I2S_FOLD)" != "" ]; then \
-	   mv "$(I2S_S)" "$(I2S_S2)"; \
-	   mv "$(I2S_H)" "$(I2S_H2)"; \
-	   mv "$(I2S_B)" "$(I2S_B2)"; \
+	   [ "$(I2S_S)" -ef "$(I2S_S2)" ] || mv "$(I2S_S)" "$(I2S_S2)"; \
+	   [ "$(I2S_H)" -ef "$(I2S_H2)" ] || mv "$(I2S_H)" "$(I2S_H2)"; \
+	   [ "$(I2S_B)" -ef "$(I2S_B2)" ] || mv "$(I2S_B)" "$(I2S_B2)"; \
 	fi
 
 # Variables that need to be updated to ensure they are erased on clean
