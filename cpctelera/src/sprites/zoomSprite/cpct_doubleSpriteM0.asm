@@ -41,6 +41,7 @@
 ;;    > call cpct_doubleSpriteM0_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * spr must be an array containing sprite's pixels in CPC Mode 0 format 
 ;; (2 bits per pixel, 2 pixels per byte, 4 bits per pixel index). Pixels must 
 ;; be stored consecutively starting from top-left corner, going left-to-right 
@@ -58,6 +59,7 @@
 ;; compatible and will produce corrupted output.
 ;;
 ;; Known limitations:
+;;
 ;;    * width or height values of 0 will cause infinite loops or erratic behaviour.
 ;;    * This function is Mode 0 specific (2bpp, 2px/byte). Using it with Mode 1 
 ;; or Mode 2 sprites will produce corrupted output.

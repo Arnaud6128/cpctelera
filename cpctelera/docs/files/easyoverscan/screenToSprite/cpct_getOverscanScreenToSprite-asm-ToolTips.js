@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({180:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies sprite data from overscan screen video memory to a linear array (a sprite)</div></div>",758:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies sprite data from screen video memory to a linear array (a sprite)</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_setSeed_mxor.s","cpct_setSeed_mxor.s");NDSummary.OnSummaryLoaded("File:random/cpct_setSeed_mxor.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[521,0,1,"Functions","Functions"],[522,0,0,"cpct_setSeed_mxor","cpct_setSeed_mxor"]]);

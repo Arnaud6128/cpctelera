@@ -35,10 +35,12 @@
 ;;    > call cpct_setSeed_glfsr16_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *newseed* - Any value can be used as seed *except 0*. If you seed the G-LFSR
 ;; random number generator with 0, you will get a always 0 sequence.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;
 ;; Details:

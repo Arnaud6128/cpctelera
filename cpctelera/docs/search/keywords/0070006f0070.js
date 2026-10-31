@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("pop",["File"],[["Pop",,[[,"Push - Pop Macros",,"push-pop macros",0,"File:macros/cpct_pushpop.h.s:Push-Pop_Macros"]]]]);

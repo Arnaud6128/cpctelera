@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("man",["Section","File"],[["Manual",,[[,"Arkos Player Manual",,,0,"File:audio/arkosplayer.txt:Arkos_Player_Manual"],[,"CPCtelera Reference Manual",,,1,"File:readme.txt:CPCtelera_Reference_Manual"]]]]);

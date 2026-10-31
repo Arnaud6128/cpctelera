@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:files/cpct_loadFile.asm","cpct_loadFile.asm");NDSummary.OnSummaryLoaded("File:files/cpct_loadFile.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[221,0,1,"Functions","Functions"],[222,0,0,"cpct_loadFile","cpct_loadFile"]]);

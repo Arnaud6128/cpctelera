@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:memutils/cpct_memset_f64.asm","cpct_memset_f64.asm");NDSummary.OnSummaryLoaded("File:memutils/cpct_memset_f64.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[481,0,1,"Functions","Functions"],[482,0,0,"cpct_memset_f64","cpct_memset_f64"]]);

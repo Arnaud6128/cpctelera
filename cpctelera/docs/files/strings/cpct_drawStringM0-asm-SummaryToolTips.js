@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_drawStringM0.asm",{784:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a null-terminated string with ROM characters to video memory or to a hardware backbuffer in Mode 0 (160x200, 16 colours).</div></div>"});

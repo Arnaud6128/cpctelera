@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ble",["Section"],[["Blended-Sprites",,[[,"Blended-Sprites Structs",,,0,"File:sprites/blending/sprite_types.h:Blended-Sprites_Structs"]]]]);

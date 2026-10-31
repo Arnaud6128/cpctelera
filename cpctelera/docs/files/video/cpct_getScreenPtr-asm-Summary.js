@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_getScreenPtr.asm","cpct_getScreenPtr.asm");NDSummary.OnSummaryLoaded("File:video/cpct_getScreenPtr.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[855,0,1,"Functions","Functions"],[856,0,0,"cpct_getScreenPtr","cpct_getScreenPtr"]]);

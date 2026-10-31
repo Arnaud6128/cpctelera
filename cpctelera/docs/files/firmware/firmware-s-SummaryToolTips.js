@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:firmware/firmware.s",{225:"<div class=\"NDToolTip TConstant LAssembly\"><div class=\"TTSummary\">Constants used by firmware routines.</div></div>"});

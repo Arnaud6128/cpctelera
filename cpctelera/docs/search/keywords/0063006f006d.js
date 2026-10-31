@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("com",["File","Macro"],[["Combined",,[[,"Combined operations",,,0,"File:macros/cpct_combinedOperations.h.s:Combined_operations"]]],["common",,[[,"Simple aliases for most common random generators",,,1,"File:random/random.h:Simple_aliases_for_most_common_random_generators"]]]]);

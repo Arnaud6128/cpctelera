@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("tec",["Section"],[["Technical",,[[,"Technical details on memory pagination",,,0,"File:memutils/banks.h:Technical_details_on_memory_pagination"],[,"Credits and Some technical details",,,0,"File:audio/arkosplayer.txt:Credits_and_Some_technical_details"]]],["Technicals",,[[,"Keyboard Technicals",,,0,"File:keyboard/keyboard.txt:Keyboard_Technicals"]]]]);

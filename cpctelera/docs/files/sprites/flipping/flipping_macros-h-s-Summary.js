@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/flipping/flipping_macros.h.s","flipping_macros.h.s");NDSummary.OnSummaryLoaded("File:sprites/flipping/flipping_macros.h.s",[["Assembly","Assembly"]],[["Groups","Group"],["Macros","Macro"]],[[682,0,0,"Macros","Macros"],[683,0,1,"cpctm_ld_spbloff","cpctm_ld_spbloff"]]);

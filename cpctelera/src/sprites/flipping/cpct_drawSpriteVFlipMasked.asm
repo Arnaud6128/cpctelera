@@ -37,6 +37,7 @@
 ;;    > call cpct_drawSpriteVFlipMasked_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; along with mask data. Each mask byte will contain enabled bits as those that should
 ;; be picked from the background (transparent) and disabled bits for those that will
@@ -60,6 +61,7 @@
 ;; bytes and pixels is the same value.
 ;;
 ;; Known limitations:
+;;
 ;;    * A sprite *width* of 0 will be considered as 256 and will potentially 
 ;; make your program behave erratically or crash.
 ;;    * This function does not do any kind of boundary check or clipping. If you 

@@ -42,6 +42,7 @@
 ;; it. For more details on how it works, see <cpct_removeInterruptHandler>
 ;;
 ;;    Disabling the firmware is useful for several reasons:
+;;
 ;;    - Firmware code gets executed 6 times per frame (1 at each interrupt) when 
 ;; is active. If you turn it off, you win CPU clock cycles for your program, 
 ;; because firmware will not execute anymore.

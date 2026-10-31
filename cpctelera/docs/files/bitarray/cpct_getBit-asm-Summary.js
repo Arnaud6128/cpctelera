@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:bitarray/cpct_getBit.asm","cpct_getBit.asm");NDSummary.OnSummaryLoaded("File:bitarray/cpct_getBit.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[55,0,1,"Functions","Functions"],[56,0,0,"cpct_getBit","cpct_getBit"]]);

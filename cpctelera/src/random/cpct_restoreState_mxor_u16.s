@@ -30,6 +30,7 @@
 ;;    > call cpct_restoreState_mxor_u16_asm
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *cannot be used from ROM*, as is uses self-modifying code.
 ;;
 ;; Details:

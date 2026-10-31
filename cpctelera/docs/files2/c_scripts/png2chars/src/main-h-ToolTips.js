@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({1:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Script for generating UDG character definitions from PNG files.</div></div>"});

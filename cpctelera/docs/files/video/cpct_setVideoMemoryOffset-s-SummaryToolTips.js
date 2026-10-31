@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_setVideoMemoryOffset.s",{844:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the 8 Least Significant bits (the offset) of the memory address where video memory starts.</div></div>"});

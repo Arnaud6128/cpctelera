@@ -37,6 +37,7 @@
 ;;    > call cpct_getScreenToSprite_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *memory* could be any place in memory, inside or outside current video memory. It
 ;; will be equally treated as video memory (taking into account CPC's video memory 
 ;; disposition). This lets you copy software or hardware backbuffers, and
@@ -52,6 +53,7 @@
 ;; consecutive pixels in the horizontal space.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function does not do any kind of boundary check or clipping. If you 
 ;; get data beyond your video memory or screen buffer the sprite will also contains 
 ;; not video data.

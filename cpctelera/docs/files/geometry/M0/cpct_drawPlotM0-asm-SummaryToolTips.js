@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:geometry/M0/cpct_drawPlotM0.asm",{260:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a single pixel on screen in Mode 0 (160x200, 16 colors) at specified coordinates.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_setVideoMode.asm","cpct_setVideoMode.asm");NDSummary.OnSummaryLoaded("File:video/cpct_setVideoMode.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[824,0,1,"Functions","Functions"],[825,0,0,"cpct_setVideoMode","cpct_setVideoMode"]]);

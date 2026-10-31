@@ -60,6 +60,7 @@
 //    | CPCT_BLEND_NOP |  0x00 | = background                |
 //    %======================================================%
 // (end code)
+//
 // * Background = bytes of data read from screen video memory (where background lies)
 // * Data       = bytes of data read from the sprite
 // * Carry      = Carry bits from previous additions and subtractions

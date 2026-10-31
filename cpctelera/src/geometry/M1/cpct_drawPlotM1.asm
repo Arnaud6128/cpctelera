@@ -41,6 +41,7 @@
 ;;    > call cpct_drawPlotM1_asm
 ;;
 ;; Requirements and limitations:
+;;
 ;;   * Coordinates must stay within Mode 1 screen bounds (X: 0-319, Y: 0-199).
 ;;   * Requires `cpct_plotColorTable_M1`, and `cpct_plotMasksTable_M1`
 ;;     to be defined globally.

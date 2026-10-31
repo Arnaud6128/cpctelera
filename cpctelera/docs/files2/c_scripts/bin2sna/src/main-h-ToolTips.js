@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({2:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Creates a runnable 64K snapshot (SNA) with a binary file in its memory, ready to be run.</div></div>"});

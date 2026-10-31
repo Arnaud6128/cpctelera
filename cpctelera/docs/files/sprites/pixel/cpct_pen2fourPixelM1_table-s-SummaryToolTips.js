@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/pixel/cpct_pen2fourPixelM1_table.s",{754:"<div class=\"NDToolTip TVariable LAssembly\"><div class=\"TTSummary\">Mode 1 PEN to 4-pixels-byte in screen mode format conversion table</div></div>"});

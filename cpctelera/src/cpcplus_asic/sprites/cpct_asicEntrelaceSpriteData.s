@@ -35,10 +35,12 @@
 ;;   (2B DE) sprite_array_src - Pointer to source 256-byte sprite array
 ;;
 ;; Parameter Restrictions:
+;;
 ;;   * *sprite_array_dst* must point to an array of at least 256 bytes (RAM or ASIC area 0x4000..0x4FFF).
 ;;   * *sprite_array_src* must point to an array of at least 256 bytes containing the second sprite frame.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * If pointers target the ASIC sprite RAM (0x4000..0x4FFF), *cpct_asicUnlock* and 
 ;;    *cpct_asicPageConnect* must be called beforehand.
 ;;  * The ASIC registers / RAM are paged from 0x4000 to 0x7FFF *beware* the code located 

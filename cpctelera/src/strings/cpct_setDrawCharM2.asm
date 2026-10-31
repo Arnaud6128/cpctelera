@@ -35,12 +35,14 @@
 ;;    > call cpct_setDrawCharM2_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *fg_pen* will be interpreted as [0-1]. Values greater than 1 will be interpreted
 ;; as 1 if they are odd, and as 0 if they are even.
 ;;  * *bg_pen* will be interpreted as [0-1]. Values greater than 1 will be interpreted
 ;; as 1 if they are odd, and as 0 if they are even.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * This function *will not work from ROM*, as it uses self-modifying code.
 ;;
 ;; Details:

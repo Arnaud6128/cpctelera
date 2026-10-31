@@ -47,6 +47,7 @@
 ;;    > pop  de                  ;; 
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *px0*, *px1*, *px2* and *px3* must be firmware colour values in the range 
 ;; [0-3]. If any of them is greater than 3, unexpected colours may appear on screen.
 ;; *px?* are used as indexes in a colour conversion table, and values greater

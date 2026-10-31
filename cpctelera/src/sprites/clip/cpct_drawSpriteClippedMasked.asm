@@ -39,6 +39,7 @@
 ;;    > call cpct_drawSpriteMasked_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *width_to_draw* must be the width *in bytes* to draw partially the sprite 
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; along with mask data. Each mask byte will contain enabled bits as those that should
@@ -68,9 +69,11 @@
 ;; the horizontal space.
 ;;
 ;; Known limitations:
+;;
 ;;    * See <cpct_drawSpriteMasked>
 ;;
 ;; Details:
+;;
 ;;    * See <cpct_drawSpriteMasked>
 ;;
 ;; Destroyed Register values: 

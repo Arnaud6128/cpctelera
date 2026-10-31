@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:cpct_mkproject","cpct_mkproject");NDSummary.OnSummaryLoaded("File2:cpct_mkproject",[["Bash","Bash"]],[["Files","File"]],[[9,0,0,"cpct_mkproject","cpct_mkproject"]]);

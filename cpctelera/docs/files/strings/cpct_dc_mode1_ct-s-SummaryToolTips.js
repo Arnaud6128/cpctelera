@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_dc_mode1_ct.s",{794:"<div class=\"NDToolTip TVariable LAssembly\"><div id=\"NDPrototype794\" class=\"NDPrototype\"><div class=\"PSection PPlainSection\">dc_mode1_ct:: .db <span class=\"SHNumber\">0x00</span></div></div><div class=\"TTSummary\">Mode 1 Color conversion table (PEN to Screen pixel format)</div></div>"});

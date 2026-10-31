@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({50:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the value of a selected element of 6 bits into a bitarray to [0-63].</div></div>"});

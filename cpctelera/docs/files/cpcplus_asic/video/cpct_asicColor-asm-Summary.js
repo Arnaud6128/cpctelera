@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/video/cpct_asicColor.asm","cpct_asicColor.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/video/cpct_asicColor.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[177,0,1,"Functions","Functions"],[178,0,0,"cpct_asicColor","cpct_asicColor"]]);

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_setVideoMemoryPage.s",{846:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the 6 most significant bits (the page) of the memory address where video memory starts.</div></div>"});

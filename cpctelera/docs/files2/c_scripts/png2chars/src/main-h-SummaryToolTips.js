@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:c_scripts/png2chars/src/main.h",{1:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Script for generating UDG character definitions from PNG files.</div></div>"});

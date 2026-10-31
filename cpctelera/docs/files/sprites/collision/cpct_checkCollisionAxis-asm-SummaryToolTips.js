@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/collision/cpct_checkCollisionAxis.asm",{562:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Check collision between two segments on same axis</div></div>"});

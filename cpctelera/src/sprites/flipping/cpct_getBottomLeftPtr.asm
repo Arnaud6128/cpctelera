@@ -35,6 +35,7 @@
 ;;    > call cpct_getBottomLeftPtr
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *memory* must be a pointer to top-left corner of a sprite in video memory.
 ;; It could be any place in memory, inside or outside current video memory. 
 ;; It will be equally treated as video  memory (taking into account CPC's video 

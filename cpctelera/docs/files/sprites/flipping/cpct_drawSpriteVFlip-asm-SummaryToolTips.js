@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/cpct_drawSpriteVFlip.asm",{714:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a sprite from an array to video memory or Hardware Back Buffer flipping it vertically (top to bottom)</div></div>"});

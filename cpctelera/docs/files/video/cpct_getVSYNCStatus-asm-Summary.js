@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_getVSYNCStatus.asm","cpct_getVSYNCStatus.asm");NDSummary.OnSummaryLoaded("File:video/cpct_getVSYNCStatus.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[853,0,1,"Functions","Functions"],[854,0,0,"cpct_getVSYNCStatus","cpct_getVSYNCStatus"]]);

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/video/cpct_asicSetScrollBorder.asm",{170:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Hide left border of screen for hardware scrolling</div></div>"});

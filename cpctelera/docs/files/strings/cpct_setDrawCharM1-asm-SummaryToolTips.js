@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_setDrawCharM1.asm",{770:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets foreground and background colours that will be used by &lt;cpct_drawCharM1_inner&gt; when called. &lt;cpct_drawCharM1_inner&gt; is used by both cpct_drawCharM1 and cpct_drawStringM1.</div></div>"});

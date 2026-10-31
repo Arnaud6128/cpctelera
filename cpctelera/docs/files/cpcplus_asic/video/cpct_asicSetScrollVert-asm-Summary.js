@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/video/cpct_asicSetScrollVert.asm","cpct_asicSetScrollVert.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/video/cpct_asicSetScrollVert.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[165,0,1,"Functions","Functions"],[166,0,0,"cpct_asicSetScrollVert","cpct_asicSetScrollVert"]]);

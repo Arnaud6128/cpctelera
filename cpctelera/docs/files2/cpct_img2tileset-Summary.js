@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:cpct_img2tileset","cpct_img2tileset");NDSummary.OnSummaryLoaded("File2:cpct_img2tileset",[["Bash","Bash"]],[["Files","File"]],[[29,0,0,"cpct_img2tileset","cpct_img2tileset"]]);

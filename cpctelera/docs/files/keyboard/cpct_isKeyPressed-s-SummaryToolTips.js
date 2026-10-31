@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:keyboard/cpct_isKeyPressed.s",{298:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Checks if a concrete key is pressed or not.</div></div>"});

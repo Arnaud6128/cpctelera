@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/drawTile/cpct_drawTileAligned2x8.asm","cpct_drawTileAligned2x8.asm");NDSummary.OnSummaryLoaded("File:sprites/drawTile/cpct_drawTileAligned2x8.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[631,0,1,"Functions","Functions"],[632,0,0,"cpct_drawTileAligned2x8","cpct_drawTileAligned2x8"]]);

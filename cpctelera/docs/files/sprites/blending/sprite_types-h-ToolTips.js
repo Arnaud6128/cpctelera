@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({551:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws sprites blending them with current contents of screen video memory.&nbsp; It uses XOR by default, but many other blending modes are available.</div></div>"});

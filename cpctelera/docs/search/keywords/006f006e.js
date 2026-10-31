@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("on",["Section"],[["on",,[[,"Technical details on memory pagination",,,0,"File:memutils/banks.h:Technical_details_on_memory_pagination"]]]]);

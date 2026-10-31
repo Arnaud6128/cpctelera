@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easyoverscan/cpct_getScreenPtrOvercan.s",{191:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Calculates a video memory pointer for Amstrad CPC overscan modes.&nbsp; Uses a threshold check to switch between memory banks and computes the interlaced address based on y-coordinate.</div></div>"});

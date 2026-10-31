@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_mxor32_seed.s","cpct_mxor32_seed.s");NDSummary.OnSummaryLoaded("File:random/cpct_mxor32_seed.s",[["Assembly","Assembly"]],[["Groups","Group"],["Variables","Variable"]],[[527,0,0,"Variables","Variables"],[528,0,1,"cpct_mxor32_seed","cpct_mxor32_seed"]]);

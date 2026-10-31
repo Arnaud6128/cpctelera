@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:c_scripts/binpatch/src/main.h","main.h");NDSummary.OnSummaryLoaded("File2:c_scripts/binpatch/src/main.h",[["C/C++","C"]],[["Files","File"]],[[4,0,0,"cpct_binpatch","cpct_binpatch"]]);

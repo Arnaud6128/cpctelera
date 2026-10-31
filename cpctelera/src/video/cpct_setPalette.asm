@@ -33,6 +33,7 @@
 ;;    > call cpct_setPalette_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *colour_array* must be an array of unsigned 8-bit values (u8), each one
 ;; in the [0-31] range.
 ;;  * *size* must be between 1 and 16. A size of 0 will be treated as 256, and any

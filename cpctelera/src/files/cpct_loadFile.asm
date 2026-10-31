@@ -34,6 +34,7 @@
 ;;    (2B BC) sectorTable   - 256-byte buffer for internal sector table construction
 ;;
 ;; Details:
+;;
 ;;    - Supports AMSDOS format on tracks 0-41, sectors C1-C9 (9 sectors/track, single-sided).
 ;;    - Automatically skips AMSDOS file header (first 128 bytes).
 ;;    - Filename must be 11 characters uppercase, without dot (e.g., "MYFILE  BIN").
@@ -55,6 +56,7 @@
 ;;    ASM-bindings - 0 bytes 
 ;;
 ;; Notes:
+;;
 ;;    - The sectorTable buffer (256 bytes) is used internally to build the file's sector map.
 ;;    - destBuffer and sectorTable can overlap, but visual artifacts may occur if loading to video RAM.
 ;;    - Supports reading from second side of 3"5 disks by setting head=1 via FDCVARS.

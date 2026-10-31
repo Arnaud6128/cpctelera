@@ -36,6 +36,7 @@
 ;;    > call cpct_set6Bits_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *array* must be the memory location of the first byte of the array.
 ;; However, this function will accept any given 16-value, without performing
 ;; any check. So, be warned that giving mistaken values to this function will
@@ -49,6 +50,7 @@
 ;; random location in memory, yielding unexpected results.
 ;;
 ;; Known limitations:
+;;
 ;;    * Maximum of 65536 elements of 6-bits, 49152 bytes per *array*.      
 ;;
 ;; Details:

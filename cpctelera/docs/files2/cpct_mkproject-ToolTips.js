@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({9:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">This script helps in the creation of new projects that use CPCtelera engine.</div></div>"});

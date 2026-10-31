@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_drawCharM0.asm",{800:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a ROM character to the screen or hardware back-buffer in Mode 0 format (160x200 px, 16 colours).</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_drawStringM1_f.s",{778:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Prints a null-terminated string with ROM characters on a given byte-aligned position on the screen in Mode 1 (320x200 px, 4 colours). This function is ~55% faster than cpct_drawStringM1</div></div>"});

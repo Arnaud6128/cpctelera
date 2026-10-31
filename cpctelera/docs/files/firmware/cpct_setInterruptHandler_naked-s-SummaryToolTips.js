@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:firmware/cpct_setInterruptHandler_naked.s",{238:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets a user provided function as new interrupt handler.</div></div>"});

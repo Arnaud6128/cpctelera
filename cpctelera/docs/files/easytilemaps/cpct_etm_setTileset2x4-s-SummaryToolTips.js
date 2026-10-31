@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/cpct_etm_setTileset2x4.s",{202:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets an internal pointer to the tileset that will be used when drawing tilemaps with etm-2x4 functions.</div></div>"});

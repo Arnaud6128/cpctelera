@@ -34,6 +34,7 @@
 ;;    > call cpct_setTaps_glfsr16_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *tapset* could theoretically be any 16-value. However, there are only 1024 values that
 ;; will produce complete sequences of 65535 16-bit pseudo-random numbers without repetition. For 
 ;; those sequences, a set of 1024 enumerated values <GLFSR16_TAPSET_YYYY> (with YYYY from 0000 to 1023)
@@ -42,6 +43,7 @@
 ;; produced, with no guarantee on their final frequency.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;
 ;; Details:

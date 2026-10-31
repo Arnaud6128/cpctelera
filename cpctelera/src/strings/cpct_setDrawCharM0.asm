@@ -35,12 +35,14 @@
 ;;    > call cpct_setDrawCharM0_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *fg_pen* must be in the range [0-15]. It is used to access a colour mask table and,
 ;; so, a value greater than 15 will return a random colour mask giving unpredictable 
 ;; results (typically bad character rendering, with odd colour bars).
 ;;  * *bg_pen* must be in the range [0-15], with identical reasons to *fg_pen*.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * This function *will not work from ROM*, as it uses self-modifying code.
 ;;
 ;; Details:

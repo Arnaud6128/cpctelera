@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:memutils/cpct_setStackLocation.s",{472:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets a new location for the program stack in memory.</div></div>"});

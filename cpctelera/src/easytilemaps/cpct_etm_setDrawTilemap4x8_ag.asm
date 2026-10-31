@@ -40,6 +40,7 @@
 ;;    > call cpct_etm_setDrawTilemap4x8_ag_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *width* (1-256) is the horizontal size in *tiles* of view window. The view window is 
 ;; the  part of the tilemap that will be drawn when calling <cpct_etm_drawTilemap4x8_ag> (A 
 ;; region of *width* x *height* tiles of the complete tilemap. This view window must be 
@@ -60,6 +61,7 @@
 ;; as the tilemap will use 1-byte as index to refer to each individual tile.
 ;;
 ;; Known issues:
+;;
 ;;    * This function *MUST be called at least once* before using <cpct_etm_drawTilemap4x8_ag>.
 ;; Otherwise, unexpected results will happen.
 ;;    * Parameters are not checked to be correct. Any mistake in sizes or *tileset* pointer

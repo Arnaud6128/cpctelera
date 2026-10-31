@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easyoverscan/cpct_configureOverscan.s",{193:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Configure CRTC in order to have 96 x 272 video resolution.&nbsp; Sets an active area of 48 characters wide and 34 characters high.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/blending/cpct_setBlendMode.s","cpct_setBlendMode.s");NDSummary.OnSummaryLoaded("File:sprites/blending/cpct_setBlendMode.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[541,0,1,"Functions","Functions"],[542,0,0,"cpct_setBlendMode","cpct_setBlendMode"]]);

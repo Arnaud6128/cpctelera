@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ali",["Type","Macro"],[["Aliases",,[[,"Aliases for builtin types",,,0,"File:types.h:Aliases_for_builtin_types"],[,"Simple aliases for most common random generators",,,1,"File:random/random.h:Simple_aliases_for_most_common_random_generators"]]]]);

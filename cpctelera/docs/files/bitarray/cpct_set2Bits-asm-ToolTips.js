@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({54:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the value of a selected group of 2 bits into a bitarray to [0-3]</div></div>"});

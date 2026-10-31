@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({74:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">ZX1 decoder by Einar Saukas &amp; introspec &quot;Turbo&quot; version (128 bytes, 20% faster).&nbsp; ZX1 is a simpler but faster version of ZX0 that sacrifices about 1.5% compression to run about 15% faster and successor of widely popular compressor ZX7.</div></div>"});

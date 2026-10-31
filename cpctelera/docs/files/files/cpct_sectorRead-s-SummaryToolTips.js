@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:files/cpct_sectorRead.s",{212:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Reads an array of consecutive sectors from a given track and drive into memory</div></div>"});

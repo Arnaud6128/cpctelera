@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({692:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Horizontally flips a sprite, encoded in screen pixel format, <b>mode 2</b> (ROM-friendly version).</div></div>"});

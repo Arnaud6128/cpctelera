@@ -44,6 +44,7 @@
 ;;     IX   - Final memory address (IX+DE if everything went ok)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *mem_load* must be a pointer to the byte where loaded bytes will start
 ;; to be copied to. Bytes will be copied from *mem_load* onwards into memory.
 ;; There is no restriction on were this pointer can point to, but it is 
@@ -55,6 +56,7 @@
 ;; programmers responsibility to give correct size values. 
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;    * This function does not do any kind of boundary or size checking. If you
 ;; give an incorrect value for *size* or your *mem_load* pointer is placed wrong,
@@ -154,6 +156,7 @@
 ;; Dividing, 1 sec can load 197,072072072 bytes, or equivalently, 1576,57657658 bits.
 ;; 
 ;;    That makes this loader run at a estimated average speed of:
+;;
 ;;    - 1576,58 bits per second
 ;;    -  197,07 bytes per second
 ;;    -    0,19 Kb per second

@@ -84,6 +84,7 @@ extern void cpct_drawMaskedAlignedToSpriteBufferHFlipM2(u16 buffer_width, void* 
 //    Y         - Y coordinate of the point inside the sprite to be calculated
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will procuce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slow.

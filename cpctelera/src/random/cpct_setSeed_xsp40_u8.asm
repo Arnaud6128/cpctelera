@@ -36,6 +36,7 @@
 ;;    > call cpct_setSeed_xsp40_u8_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *seed32* can be any 32-bits value *except 0*. If 0 is set as seed, the random 
 ;; number generator's internal state will never be modifiyed. This would yield a 
 ;; poor quality pseudo-random pequence with period 256.
@@ -44,6 +45,7 @@
 ;; odd numbers for *plusSeed*, as even numbers do not yield good quality results.
 ;;
 ;; Important details:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;
 ;; Details:
@@ -53,6 +55,7 @@
 ;; as 0. 
 ;;
 ;;    The internal state has 2 parts,
+;;
 ;;    * The 32-bits seed (*seed32*), which is the number from which next pseudo-random
 ;; states are produced. This is the proper seed of the algorithm.
 ;;    * The plus modifier (*plusSeed*), which is part of the way Marsaglia's XORShift+

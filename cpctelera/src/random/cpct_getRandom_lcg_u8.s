@@ -38,6 +38,7 @@
 ;;    <u8> - Next 8-bits pseudo-random value.
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *entropy_byte* this parameter is a byte to be used as sequence mixer. This byte is
 ;; XORed with previous seed before calculating next pseudo-random number from the sequence.
 ;; There is no restriction for this parameter. If you use 0 as *entropy_byte*, the pseudo-random
@@ -47,9 +48,11 @@
 ;; etc. That may improve the quality of the random sequence.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;
 ;; Important details:
+;;
 ;;    * This function uses a previous 8-bits seed to calculate next pseudo-random byte, and 
 ;; stores returned byte minus 1 as seed for the next time. If you want a reproducible sequence
 ;; you may set the seed using <cpct_setSeed_lcg_u8> to ensure that all calls

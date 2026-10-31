@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/flipping_macros.h",{685:"<div class=\"NDToolTip TMacro LC\"><div class=\"TTSummary\">Macro that calculates a pointer to the bottom left pixel of a given sprite.</div></div>",686:"<div class=\"NDToolTip TMacro LC\"><div class=\"TTSummary\">Vertically flips a masked sprite</div></div>"});

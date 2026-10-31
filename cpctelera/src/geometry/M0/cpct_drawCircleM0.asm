@@ -40,6 +40,7 @@
 ;;
 ;;    Decision Variable Optimization:
 ;;      Multiplying the decision variable d by 2 eliminates floating-point math:
+;;
 ;;        - Initial decision variable   : d = 3 - 2 * radius
 ;;        - If d < 0  (East step)       : d_new = d + 4 * x + 6
 ;;        - If d >= 0 (South-East step) : y = y - 1, d_new = d + 4 * (x - y) + 10
@@ -59,6 +60,7 @@
 ;;    > call _cpct_drawCircleM0_asm
 ;;
 ;; Known limitations:
+;;
 ;;  * The whole circle must stay within screen bounds (no clipping).
 ;;  * This function will not work from ROM, as it uses self-modifying code.
 ;;

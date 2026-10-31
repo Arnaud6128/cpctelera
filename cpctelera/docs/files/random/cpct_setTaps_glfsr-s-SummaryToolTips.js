@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_setTaps_glfsr.s",{507:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Returns a pseudo-random byte uniformly distributed using fast method (33*Seed mod 257)</div></div>"});

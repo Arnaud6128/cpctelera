@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({12:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Script for converting binary files to C arrays</div></div>"});

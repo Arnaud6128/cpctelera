@@ -23,10 +23,6 @@
 ;;
 ;;    Fills an area defined by a point and its actual color with a new color in Mode 1 (320x200, 4 colors)
 ;;
-;; Algorithm & Details:
-;;    Scanline Fill, starting from a point, it fills the area with the color specified.
-;;    It will stop when it finds a pixel with a different color than the one found initialy
-;;
 ;; C Definition:
 ;;    void cpct_scanFillM1 (u8* vmem, u16 x, u8 y, u8 newColor) __z88dk_callee;
 ;;
@@ -36,15 +32,16 @@
 ;;    (1B  C)  y          -  Y coordinate (0-199 no checks)
 ;;    (1B  B)  newColor   -  New color to use (0-3)
 ;;
-;;
 ;; Assembly call:
 ;;    > call cpct_scanFillM1_asm
 ;;
 ;; Destroyed Register values:
 ;;    AF, BC, DE, HL
 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Algorithm comment
+;; Algorithm & Details:
+;;    Scanline Fill, starting from a point, it fills the area with the color specified.
+;;    It will stop when it finds a pixel with a different color than the one found initialy
+;;
 ;;    Init algo: 
 ;;       get screen adress from X,Y, compute X Offset and subpixel, get old color on X,Y
 ;;       Compute new and old_color subpixels and full octet, exit if new color == old color
@@ -72,17 +69,16 @@
 ;;                new_color if 'old_color'  (only case we have values ready, else switch back to pixel check)
 ;;                fall back to pixel checking in doubt, exit subLoop if right end of drawn line is reached or passed
 ;;
-;; Comment on stack size
-;;    A memory buffer is set to store next points to check above and below vurrent line.
-;;    By default this is a 30 points storage using 3 Bytes each, 90 Bytes.
-;;    If area to fill has a lot of different vertical area to fill
-;;    the algorithm will need all this area. The algorithm stops adding points if 
-;;    buffer is filled. So some area will not be checked and some area may miss in result.
-;;    A simple rectangular area just need 2 points.
-;;    If you know how many elements in stacks you need, you can adjust 
-;;    the STACK_SIZE value to your need and recompile cpctelera to decrease memory need.
+;;    Comment on stack size:
+;;       A memory buffer is set to store next points to check above and below vurrent line.
+;;       By default this is a 30 points storage using 3 Bytes each, 90 Bytes.
+;;       If area to fill has a lot of different vertical area to fill
+;;       the algorithm will need all this area. The algorithm stops adding points if 
+;;       buffer is filled. So some area will not be checked and some area may miss in result.
+;;       A simple rectangular area just need 2 points.
+;;       If you know how many elements in stacks you need, you can adjust 
+;;       the STACK_SIZE value to your need and recompile cpctelera to decrease memory need.
 ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (start code)
 ;; Required memory:
 ;;    602 bytes core routine (including 3 bytes of c binding) + 115 bytes data
@@ -95,7 +91,6 @@
 ;;       pt1,pt2  pt2,pt3 pt3,pt4 pt4,pt1
 ;;    Time to fill from pt (125,100) with color 3
 ;;
-;;  AI computation: 
 ;;  Totals and assumptions
 ;;    Pixels drawn: 1,201
 ;;    Estimated drawing work: about 28,300 NOPs

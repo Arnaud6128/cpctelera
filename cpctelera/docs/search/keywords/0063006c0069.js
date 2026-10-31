@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("cli",["Section"],[["Clip",,[[,"Clip sprite",,,0,"File:sprites/clip/clip.h:Clip_sprite"]]]]);

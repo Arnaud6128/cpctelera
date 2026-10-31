@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/blending/cpct_drawSpriteBlended.asm","cpct_drawSpriteBlended.asm");NDSummary.OnSummaryLoaded("File:sprites/blending/cpct_drawSpriteBlended.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[550,0,1,"Functions","Functions"],[551,0,0,"cpct_drawSpriteBlended","cpct_drawSpriteBlended"]]);

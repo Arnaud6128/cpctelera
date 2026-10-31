@@ -37,6 +37,7 @@
 ;;    > call cpct_drawSpriteBlended_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; Sprite must be rectangular and all bytes in the array must be consecutive pixels, 
 ;; starting from top-left corner and going left-to-right, top-to-bottom down to the
@@ -60,6 +61,7 @@
 ;; not only video memory.
 ;;
 ;; Known limitations:
+;;
 ;;  * This function could be used from ROM, but it will only perform a XOR
 ;; blending operation. Blending operation will not be possible to change 
 ;; on ROM, as it requires to change a byte of the code. That can only be
@@ -198,6 +200,7 @@ _cpct_dsb_blendFunction::
 
    dec   c         ;; [1] C holds sprite height. We decrease it to count another pixel line finished
    jr    z,copy_ended;; [2/3] If 0, we have finished the last sprite line.
+                                ;;
                                 ;;      - If not 0, we have to move pointers to the next pixel line
 
    ld__b_ixl       ;; [3] Restore Sprite Width into B

@@ -36,6 +36,7 @@
 ;;    > call cpct_hflipSpriteM1_r_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; (Mode 1 data, 4 pixels per byte). Sprite must be rectangular and all bytes in the array 
 ;; must be consecutive pixels, starting from top-left corner and going left-to-right, top-to-bottom 
@@ -55,6 +56,7 @@
 ;; as bytes after the sprite array might result modified. 
 ;;
 ;; Known limitations:
+;;
 ;;  * This function does not do any kind of boundary check. If you give it 
 ;; incorrect values for *width*, *height* or *sprite* pointer it might 
 ;; potentially alter the contents of memory locations beyond *sprite* boundaries. 

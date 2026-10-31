@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/flipping_macros.h.s",{683:"<div class=\"NDToolTip TMacro LAssembly\"><div class=\"TTSummary\">Macro that calculates the offset to add to a sprite pointer to point to it sbottom left pixel.</div></div>"});

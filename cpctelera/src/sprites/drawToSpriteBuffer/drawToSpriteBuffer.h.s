@@ -40,6 +40,7 @@
 ;;    Y         - Y coordinate of the point inside the sprite to be calculated
 ;; 
 ;; Known limitations:
+;;
 ;;    * This macro can only be used from assembly programs and files. It is not
 ;; visible from C scope. For C programs please uses <cpctm_spriteBufferPtr>.
 ;;    * This macro will *only* work with constant values as parameters. All the 

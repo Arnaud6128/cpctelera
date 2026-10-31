@@ -35,6 +35,7 @@
 ;;    > call cpct_hflipSpriteM0_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; (Mode 0 data). Sprite must be rectangular and all bytes in the array must be consecutive 
 ;; pixels, starting from top-left corner and going left-to-right, top-to-bottom down to the
@@ -54,6 +55,7 @@
 ;; as bytes after the sprite array might result modified. 
 ;;
 ;; Known limitations:
+;;
 ;;  * This function will not work from ROM, as it uses self-modifying code.
 ;;  * This function does not do any kind of boundary check. If you give it 
 ;; incorrect values for *width*, *height* or *sprite* pointer it might 
@@ -167,6 +169,7 @@ jr_byteloop = 0x18 + 0x100 * ((nextbyte + 1) - (varjump + 2))
 ;;
 ;; SET UP CODE: Set up loop internal "variable jump" (varjump) so that it takes
 ;;    into account the differences between odd-wide and even-wide sprites. 
+;;
 ;;    - Even-width sprites flip 2 bytes per each loop iteration (and switches them)
 ;;    - Odd-width sprites have a first iteration of the loop in which only the 
 ;;      central byte is flipped (and then leaved in its same place)

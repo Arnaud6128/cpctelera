@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicCopySpriteData.asm",{141:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copy array of sprite data to location of hardware sprite data</div></div>"});

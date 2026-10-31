@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("rel",["Information","Section"],[["relocate",,[[,"How to relocate songs",,,0,"File:audio/arkosplayer.txt:How_to_relocate_songs"]]],["Relocation",,[[,"Memory Relocation Utilities",,,1,"File:memutils/relocation.h:Memory_Relocation_Utilities"]]]]);

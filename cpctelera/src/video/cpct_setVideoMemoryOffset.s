@@ -34,6 +34,7 @@
 ;;    > call cpct_setVideoMemoryOffset_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *offset* could be any 8-bit value, and should contain video memory 
 ;; offset value. Its 8-bits will become the 8 Least Significant bits (LSb) of
 ;; the programmable Video Memory Start Address (VMSA), as the 2 least significant 

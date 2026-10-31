@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_setSeed_glfsr.s","cpct_setSeed_glfsr.s");NDSummary.OnSummaryLoaded("File:random/cpct_setSeed_glfsr.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[515,0,1,"Functions","Functions"],[516,0,0,"cpct_setSeed_glfsr16","cpct_setSeed_glfsr16"]]);

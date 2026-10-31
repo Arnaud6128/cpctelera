@@ -38,6 +38,7 @@
 ;;    > call cpct_spriteMaskedColourizeM0_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *rplcPat* ([0000-FFFF], 16bits, unsigned) should contain 2 8-bit colour pixel 
 ;; patterns in Mode 0 screen pixel format (see below for an explanation of patterns).
 ;; Any value is valid, but values different of what you actually want will probably
@@ -106,6 +107,7 @@
 ;; (end code)
 ;;
 ;; Known limitations:
+;;
 ;;    * Beware! The function does not change mask bytes. Therefore, no matter what pixels
 ;; you change the colour of in your sprite, same pixels will be removed from background
 ;; each time you draw the sprite. If you change colours of pixels outside your mask

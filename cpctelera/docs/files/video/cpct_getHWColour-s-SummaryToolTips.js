@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_getHWColour.s",{858:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Converts a firmware colour value into its equivalent hardware one.</div></div>"});

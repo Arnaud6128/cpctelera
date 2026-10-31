@@ -41,6 +41,7 @@
 ;;    > call cpct_drawSpriteVFlipMasked_at_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; Sprite must be rectangular and all bytes in the array must be consecutive pixels, 
 ;; starting from top-left corner and going left-to-right, top-to-bottom down to the 
@@ -64,6 +65,7 @@
 ;; memory page. <cpct_transparentMaskTable00M0> is an example table you might want to use.
 ;;
 ;; Known limitations:
+;;
 ;;    * *width*s or *height*s of 0 will be considered as 256 and will potentially 
 ;; make your program behave erratically or crash.
 ;;    * Transparent drawing will only work if *pmasktable0* uses *palette index 0*

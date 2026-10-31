@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/video/cpct_asicSetPalette.asm","cpct_asicSetPalette.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/video/cpct_asicSetPalette.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[171,0,1,"Functions","Functions"],[172,0,0,"cpct_asicSetPalette","cpct_asicSetPalette"]]);

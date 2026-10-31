@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/clip/clip.h","clip.h");NDSummary.OnSummaryLoaded("File:sprites/clip/clip.h",[["C/C++","C"]],[["Sections","Section"]],[[552,0,0,"Clip sprite","Clip_sprite"]]);

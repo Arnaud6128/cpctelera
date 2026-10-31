@@ -36,6 +36,7 @@
 ;;  (2B HL) sprite_array - Pointer to the start of the array of sprite data
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *hardware_sprite_id* hardware sprite identifier from 0 to 15
 ;;  * *sprite_array* must be an array containing sprite's pixels data. 
 ;; 1-Byte per pixel : 0b0000cccc (4-bits used for 16 colours indexed)
@@ -44,6 +45,7 @@
 ;; bottom-right corner. Total amount of bytes is fixed (16x16) 256-Bytes.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * The functions *cpct_asicUnlock* and *cpct_asicPageConnect* must be called before using this function.
 ;;  * The Asic registers are paged from 0x4000 to 0x7FFF *beware* the code located in this area will be hidden.
 ;;  * Asic page can be disconnected with *cpct_asicPageDisconnect* function to recover code at 0x4000 to 0x7FFF.

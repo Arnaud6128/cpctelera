@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("def",["Macro","Section","Constant"],[["DEFAULT_MEM_CFG",,[[,,,,0,"File:memutils/banks.h:DEFAULT_MEM_CFG"]]],["Defined",,[[,"Defined Types",,,1,"File:random/random_types.h:Defined_Types"]]],["Definitions",,[[,"Key Definitions",,,2,"File:keyboard/keyboard.h.s:Key_Definitions"]]]]);

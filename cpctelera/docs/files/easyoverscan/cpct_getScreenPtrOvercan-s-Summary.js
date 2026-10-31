@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:easyoverscan/cpct_getScreenPtrOvercan.s","cpct_getScreenPtrOvercan.s");NDSummary.OnSummaryLoaded("File:easyoverscan/cpct_getScreenPtrOvercan.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[190,0,1,"Functions","Functions"],[191,0,0,"cpct_getScreenPtrOvercan","cpct_getScreenPtrOvercan"]]);

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/firmware/cpct_asicPageDisconnect.s","cpct_asicPageDisconnect.s");NDSummary.OnSummaryLoaded("File:cpcplus_asic/firmware/cpct_asicPageDisconnect.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[115,0,1,"Functions","Functions"],[116,0,0,"cpct_asicPageDisconnect","cpct_asicPageDisconnect"]]);

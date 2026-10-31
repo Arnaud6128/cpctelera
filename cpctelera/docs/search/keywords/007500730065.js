@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("use",["Section","File","Constant"],[["use",,[[,"How to use the player",,,0,"File:audio/arkosplayer.txt:How_to_use_the_player"]]],["Useful",,[[,"Useful macros",,,1,"File:bitarray/bitarray_macros.h:Useful_macros"],[,"Firmware useful constants",,,2,"File:firmware/firmware.s:Firmware_useful_constants"]]]]);

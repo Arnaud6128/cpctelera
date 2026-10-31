@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("get",["Function","Section"],[["getchar",,[[,,,,0,"File:strings/cpct_getchar.s:getchar"]]],["Getting",,[[,"Getting the most of intellisense",,,1,"File:buildsys/vscode_integration.txt:Getting_the_most_of_intellisense"]]]]);

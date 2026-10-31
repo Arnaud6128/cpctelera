@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ope",["File"],[["operations",,[[,"Combined operations",,,0,"File:macros/cpct_combinedOperations.h.s:Combined_operations"]]]]);

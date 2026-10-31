@@ -39,6 +39,7 @@
 ;;    (2B HL)  mask_table   - Pointer to the aligned mask-table used to create transparency
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format.
 ;; Sprite must be rectangular and all bytes in the array must be consecutive pixels, 
 ;; starting from top-left corner and going left-to-right, top-to-bottom down to the
@@ -64,6 +65,7 @@
 ;; example table you might want to use.
 ;; 
 ;; Known limitations:
+;;
 ;;     * This function *will not work from ROM*, as it uses self-modifying code.
 ;;     * This function does not do any kind of boundary check or clipping. If you 
 ;; try to draw sprites on the frontier of the buffer or the sprite

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/clip/cpct_drawSpriteClippedMaskedAlignedTable.asm",{554:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies partially a sprite from an array to video memory (or to a screen buffer).</div></div>"});

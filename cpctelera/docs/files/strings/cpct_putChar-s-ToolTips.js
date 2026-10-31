@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({772:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Prints a character on the screen using firmware routines. This function is required by printf when we use C standard library.</div></div>"});

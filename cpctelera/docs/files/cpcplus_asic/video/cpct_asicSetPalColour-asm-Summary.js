@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/video/cpct_asicSetPalColour.asm","cpct_asicSetPalColour.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/video/cpct_asicSetPalColour.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[173,0,1,"Functions","Functions"],[174,0,0,"cpct_asicSetPalColour","cpct_asicSetPalColour"]]);

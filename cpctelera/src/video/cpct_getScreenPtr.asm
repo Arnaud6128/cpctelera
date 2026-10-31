@@ -38,6 +38,7 @@
 ;;    > call cpct_getScreenPtr_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *screen_start* will normally be the start of the video memory where you want to 
 ;; draw something. However, you may give a pointer to the start of a screen backbuffer
 ;; located everywhere in memory.
@@ -58,6 +59,7 @@
 ;; at *screen_start*.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function only works for default screens (80 bytes wide, 200 pixel
 ;; lines, 25 characters of 8 pixel lines). If you change screen configuration
 ;; by modifying CRTC registers, this function may not work for you.

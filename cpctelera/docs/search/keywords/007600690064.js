@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("vid",["Constant","Section"],[["Video",,[[,"Video Memory Pages","Assembly",,0,"File:video/video_macros.h.s:Video_Memory_Pages"],[,"Video Memory Pages","C/C++",,0,"File:video/video_macros.h:Video_Memory_Pages"],[,"Asic video Macros",,,1,"File:cpcplus_asic/video/video.h:Asic_video_Macros"]]]]);

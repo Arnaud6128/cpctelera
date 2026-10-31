@@ -36,11 +36,13 @@
 ;;   (2B DE) position_y - Position of sprite in pixels on y axis
 ;;
 ;; Parameter Restrictions:
+;;
 ;;   * *hardware_sprite_id* hardware sprite identifier from 0 to 15
 ;;   * *position_x* is set in pixels mode 2 resolution from HW_SPRITE_MIN_X (-256) to HW_SPRITE_MAX_X (767)
 ;;   * *position_y* is set in pixels mode 2 resolution from HW_SPRITE_MIN_Y (-256) to HW_SPRITE_MAX_Y (255)
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * The functions *cpct_asicUnlock* and *cpct_asicPageConnect* must be called before using this function.
 ;;  * The Asic registers are paged from 0x4000 to 0x7FFF *beware* the code located in this area will be hidden.
 ;;  * Asic page can be disconnected with *cpct_asicPageDisconnect* function to recover code at 0x4000 to 0x7FFF.

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/drawSprite/cpct_drawSolidBox.asm","cpct_drawSolidBox.asm");NDSummary.OnSummaryLoaded("File:sprites/drawSprite/cpct_drawSolidBox.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[613,0,1,"Functions","Functions"],[614,0,0,"cpct_drawSolidBox","cpct_drawSolidBox"]]);

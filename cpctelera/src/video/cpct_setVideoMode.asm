@@ -38,6 +38,7 @@
 ;;    (1B C) videoMode - [0-3] Video mode to set
 ;;
 ;; Parameter Restrictions: 
+;;
 ;;  - *videomode* must be < 3, otherwise unexpected results may happen. Namely,
 ;; ROM/RAM pagination and Interrupt Status may get altered, typically yielding
 ;; erratic behaviour and/or crashes.

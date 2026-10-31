@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/pixel/cpct_pen2pixelPatternM1.asm","cpct_pen2pixelPatternM1.asm");NDSummary.OnSummaryLoaded("File:sprites/pixel/cpct_pen2pixelPatternM1.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[751,0,1,"Functions","Functions"],[752,0,0,"cpct_pen2pixelPatternM1","cpct_pen2pixelPatternM1"]]);

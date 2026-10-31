@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:files/cpct_sectorWrite.s","cpct_sectorWrite.s");NDSummary.OnSummaryLoaded("File:files/cpct_sectorWrite.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[209,0,1,"Functions","Functions"],[210,0,0,"cpct_sectorWrite","cpct_sectorWrite"]]);

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("spr",["Section"],[["sprite",,[[,"Clip sprite",,,0,"File:sprites/clip/clip.h:Clip_sprite"]]],["sprites",,[[,"Asic sprites macros",,,0,"File:cpcplus_asic/sprites/sprites.h:Asic_sprites_macros"]]]]);

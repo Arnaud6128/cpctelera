@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:geometry/M0/cpct_getColorAtM0.asm",{256:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Get the pen color of one pixel in Mode 0 (160x200, 16 colors).</div></div>"});

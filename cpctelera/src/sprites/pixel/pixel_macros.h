@@ -48,6 +48,7 @@
 //    PEN - ([0-15], unsigned) Pen Colour from which create the pixel pattern
 // 
 // Known limitations:
+//
 //    * It does not perform any kind of checking. Values other than unsigned integers [0-15]
 // will produce undefined behaviour.
 //    * As this is a macro, this is designed only for CONSTANT values, to perform compile-time
@@ -114,6 +115,7 @@
 //    NewPen - ([0-15], unsigned) Second Pen Colour (OldPen when used for <cpct_spriteColourizeM0>)
 // 
 // Known limitations:
+//
 //    * It does not perform any kind of checking. Values other than unsigned integers [0-15]
 // will produce undefined behaviour.
 //    * As this is a macro, this is designed only for CONSTANT values, to perform compile-time
@@ -177,6 +179,7 @@
 //    PEN - ([0-3], unsigned) Pen Colour from which create the pixel pattern
 // 
 // Known limitations:
+//
 //    * It does not perform any kind of checking. Values other than unsigned integers [0-3]
 // will produce undefined behaviour.
 //    * As this is a macro, this is designed only for CONSTANT values, to perform compile-time
@@ -243,6 +246,7 @@
 //    NewPen - ([0-3], unsigned) Second Pen Colour (OldPen when used for <cpct_spriteColourizeM1>)
 // 
 // Known limitations:
+//
 //    * It does not perform any kind of checking. Values other than unsigned integers [0-3]
 // will produce undefined behaviour.
 //    * As this is a macro, this is designed only for CONSTANT values, to perform compile-time
@@ -330,6 +334,7 @@
 //    Any variable value  - Use the function <cpct_px2byteM0>
 //
 // Known issues:
+//
 //		* This is a C-language macro. It cannot be called or used from assembly code.
 //
 #define cpctm_px2byteM0(X, Y) (u8)( (((X) & 0x01) << 6 | ((X) & 0x02) << 1 | ((X) & 0x04) << 2 | ((X) & 0x08) >> 3) << 1 | \
@@ -375,6 +380,7 @@
 //    Any variable value  - Use the function <cpct_px2byteM1>
 //
 // Known issues:
+//
 //		* This is a C-language macro. It cannot be called or used from assembly code.
 //
 #define cpctm_px2byteM1(A, B, C, D) (u8)( (((A) & 0x01) << 4 |  ((A) & 0x02) >> 1) << 3 | \

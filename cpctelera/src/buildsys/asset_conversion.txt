@@ -104,6 +104,7 @@ To convert images into CPC Plus ASIC hardware sprites (16x16 pixels, 16 colours)
   > $(eval $(call IMG2SP, CONVERT             , assets/hero.png, 16, 16, sp_hero, , ))
 
 This produces:
+
   * *src/pal_hero.c* / *.h*: `const u16 pal_hero[16];` ready to be loaded into the ASIC palette registers (0x6400).
   * *src/hero.c* / *.h*: `sp_hero` containing the 128-byte hardware sprite pixel data ready to be copied into ASIC sprite memory.
 
@@ -118,6 +119,7 @@ For all new projects, using *IMG2SP* is strongly recommended.
 Section: Tilemap Autoconversion
 
 CPCtelera is able to convert tilemaps designed with <tiled at http://www.mapeditor.org/> and saved in TMX-CSV format. At present moment, this conversion has some limitations,
+
   * Maps con only have one layer of tiles.
   * Only one tileset shall be used.
   * You should have 255 different tiles at most.

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:geometry/M1/cpct_drawLineM1_f.asm","cpct_drawLineM1_f.asm");NDSummary.OnSummaryLoaded("File:geometry/M1/cpct_drawLineM1_f.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[277,0,1,"Functions","Functions"],[278,0,0,"cpct_drawLineM1_f","cpct_drawLineM1_f"]]);

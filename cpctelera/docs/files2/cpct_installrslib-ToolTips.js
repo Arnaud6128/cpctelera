@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({11:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Installs and configures CPCRSLib to be used together with CPCtelera</div></div>"});

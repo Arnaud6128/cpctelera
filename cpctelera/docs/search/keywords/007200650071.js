@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("req",["Information","Section"],[["Requirements",,[[,"Software Requirements",,,0,"File:readme.txt:Software_Requirements"]]],["Requisites",,[[,,,,1,"File:buildsys/android_exporter.txt:Requisites"]]]]);

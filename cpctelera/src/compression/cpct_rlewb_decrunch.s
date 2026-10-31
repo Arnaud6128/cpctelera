@@ -33,6 +33,7 @@
 ;;   (2B DE) src   - Pointer to source (compressed data)
 ;;
 ;; Details:
+;;
 ;;   - Uses RLEWB format (Run-Length Encoding Wonder Boy).
 ;;   - Algorithm :
 ;;      CD = Control Digit = 0x80
@@ -45,7 +46,7 @@
 ;;
 ;; Destroyed Register values: 
 ;;   AF, BC, DE, HL
-;
+;;
 ;; Required memory:
 ;;   34 bytes (33 bytes routine + 1 bytes C binding wrapper)
 ;;
@@ -62,6 +63,7 @@
 ;; (end code)
 ;;
 ;; Credits:
+;;
 ;;    * RLEWB encoder is inspired by Wonder Boy RLE <https://www.smspower.org/Development/Compression#WonderBoyRLE>
 ;;    * Original code by mvac7 <https://github.com/mvac7/Z80_RLEWB>
 ;;    

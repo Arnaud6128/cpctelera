@@ -36,12 +36,14 @@
 ;;    > call cpct_vflipSprite_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *width*  [1-255] must be the width of the sprite *in bytes* (Not! in pixels).
 ;;  * *height* [2-255] must be the height of the sprite in pixels.
 ;;  * *spbl*   must be a pointer to the bottom-left byte of the *sprite*.
 ;;  * *sprite* must be a pointer to an array containing sprite's pixels data.
 ;;
 ;; Known limitations:
+;;
 ;;  * This function will not work from ROM, as it uses self-modifying code.
 ;;  * This function does not do any kind of boundary check. If you give it 
 ;; incorrect values for *width*, *height*, *spbl* or *sprite* it might 

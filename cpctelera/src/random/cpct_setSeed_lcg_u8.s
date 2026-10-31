@@ -33,10 +33,12 @@
 ;;    > call cpct_setSeed_lcg_u8_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *seed* New seed byte that will be set internally in the random number generator.
 ;; There is no restriction about the value of this byte.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *will not work from a ROM*. It does not specifically use self-modifying
 ;; code, but indirectly modifies the code of <cpct_getRandom_lcg_u8>.
 ;;

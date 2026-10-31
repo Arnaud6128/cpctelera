@@ -81,6 +81,7 @@ _cpct_setClipRect::
 ;;           0 if the line is fully outside: the coordinates are left unchanged.
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * Coordinates must be in the range [-16384, 16383], so that differences
 ;;      between coordinates fit in 16 bits.
 ;;
@@ -102,6 +103,7 @@ _cpct_setClipRect::
 ;; (end code)
 ;;
 ;; Known limitations:
+;;
 ;;  * This function will not work from ROM, as the clipping rectangle is
 ;;    stored with the code.
 ;;

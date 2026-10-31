@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/flipping/flipping_macros.h","flipping_macros.h");NDSummary.OnSummaryLoaded("File:sprites/flipping/flipping_macros.h",[["C/C++","C"]],[["Groups","Group"],["Macros","Macro"]],[[684,0,0,"Macros","Macros"],[685,0,1,"cpctm_spriteBottomLeftPtr","cpctm_spriteBottomLeftPtr"],[686,0,1,"cpctm_vflipSpriteMasked","cpctm_vflipSpriteMasked"]]);

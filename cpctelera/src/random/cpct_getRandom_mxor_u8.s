@@ -34,6 +34,7 @@
 ;;    <u8> - Next 8-bits pseudo-random value.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *cannot be used from ROM*, as is uses self-modifying code.
 ;;
 ;; Details:
@@ -47,6 +48,7 @@
 ;; this function will produce (2^34)-1 8-bits values without repetition.
 ;;
 ;;    It is important to know that this function will have 2 different behaviors:
+;;
 ;;    * [*available*] 3 out of every 4 calls, it will only return the next random-byte from the buffer
 ;; (<cpct_mxor32_seed>).
 ;;    * [*production*] 1 out of every 4 calls, it will also call <cpct_nextRandom_mxor_u32> to produce
@@ -62,6 +64,7 @@
 ;; Required memory:
 ;;    76 bytes divided in, 
 ;;    *  37 bytes (this function's code)
+;;
 ;;    * +35 bytes (from <cpct_nextRandom_mxor_u32> function's code)
 ;;    *  +4 bytes (from <cpct_mxor32_seed>)
 ;;

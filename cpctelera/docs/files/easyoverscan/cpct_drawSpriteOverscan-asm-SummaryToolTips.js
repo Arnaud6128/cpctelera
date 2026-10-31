@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easyoverscan/cpct_drawSpriteOverscan.asm",{189:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a sprite from an array to overscan video memory.</div></div>"});

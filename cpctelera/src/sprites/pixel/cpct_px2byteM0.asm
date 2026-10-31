@@ -37,6 +37,7 @@
 ;;    > call cpct_px2byteM0_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *px0* and *px1* must be firmware colour values in the range [0-15]. If
 ;; any of them is greater than 15, unexpected colours may appear on screen. *px0*
 ;; and *px1* are used as indexes in a colour conversion table, and values greater

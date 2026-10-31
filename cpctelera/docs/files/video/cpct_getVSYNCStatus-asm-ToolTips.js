@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({854:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Check if the vertical synchronization signal (VSYNC) is active or not.</div></div>"});

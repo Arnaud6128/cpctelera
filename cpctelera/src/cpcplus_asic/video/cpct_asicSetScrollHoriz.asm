@@ -35,11 +35,13 @@
 ;;
 ;; Parameter Restrictions:
 ;;  Offset of one pixel is according to mode :
+;;
 ;;   * MODE0 : 4 bits (ASIC_SCROLL_MODE0)
 ;;   * MODE1 : 2 bits (ASIC_SCROLL_MODE1)
 ;;   * MODE2 : 1 bits (ASIC_SCROLL_MODE2)
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * The functions *cpct_asicUnlock* and *cpct_asicPageConnect* must be called before using this function.
 ;;  * The Asic registers are paged from 0x4000 to 0x7FFF *beware* the code located in this area will be hidden.
 ;;  * Asic page can be disconnected with *cpct_asicPageDisconnect* function to recover code at 0x4000 to 0x7FFF.

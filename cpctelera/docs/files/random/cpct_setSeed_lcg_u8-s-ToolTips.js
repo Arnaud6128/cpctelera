@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({514:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the random seed used by cpct_getRandom_lcg_u8.</div></div>",540:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Returns a pseudo-random byte using a fast Linear-Congruential-Algebra (LCG) method (33*Seed mod 257)</div></div>"});

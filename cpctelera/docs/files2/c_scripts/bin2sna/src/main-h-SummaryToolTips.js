@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:c_scripts/bin2sna/src/main.h",{2:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Creates a runnable 64K snapshot (SNA) with a binary file in its memory, ready to be run.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:keyboard/cpct_scanKeyboard_i.s","cpct_scanKeyboard_i.s");NDSummary.OnSummaryLoaded("File:keyboard/cpct_scanKeyboard_i.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[289,0,1,"Functions","Functions"],[290,0,0,"cpct_scanKeyboard_i","cpct_scanKeyboard_i"]]);

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/video/cpct_asicSetBorder.asm","cpct_asicSetBorder.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/video/cpct_asicSetBorder.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[175,0,1,"Functions","Functions"],[176,0,0,"cpct_asicSetBorder","cpct_asicSetBorder"]]);

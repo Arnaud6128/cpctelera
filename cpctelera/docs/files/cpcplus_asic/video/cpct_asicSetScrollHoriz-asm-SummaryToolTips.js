@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/video/cpct_asicSetScrollHoriz.asm",{168:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Scroll horizontally screen per pixel</div></div>"});

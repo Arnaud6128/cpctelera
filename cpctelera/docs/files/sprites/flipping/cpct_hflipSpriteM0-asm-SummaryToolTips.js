@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/cpct_hflipSpriteM0.asm",{708:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Horizontally flips a sprite, encoded in screen pixel format, <b>mode 0</b>.</div></div>"});

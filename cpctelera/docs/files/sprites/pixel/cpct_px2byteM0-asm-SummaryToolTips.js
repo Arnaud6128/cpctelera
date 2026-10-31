@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/pixel/cpct_px2byteM0.asm",{736:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Transforms 2 pixel colour values [0-15] into a byte value in the video memory pixel format for Mode 0.</div></div>"});

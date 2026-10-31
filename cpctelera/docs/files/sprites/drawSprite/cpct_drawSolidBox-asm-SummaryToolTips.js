@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawSprite/cpct_drawSolidBox.asm",{614:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a rectangle in video memory (or screen buffer) with a given colour data byte. Could be used for drawing coloured rectangles as well as erasing screen rectangles easily.</div></div>"});

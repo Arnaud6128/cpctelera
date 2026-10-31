@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:geometry/M1/cpct_getColorAtM1.asm","cpct_getColorAtM1.asm");NDSummary.OnSummaryLoaded("File:geometry/M1/cpct_getColorAtM1.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[269,0,1,"Functions","Functions"],[270,0,0,"cpct_getColorAtM1","cpct_getColorAtM1"]]);

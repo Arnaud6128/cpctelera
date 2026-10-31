@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:memutils/cpct_memset.asm",{486:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a complete byte-array in memory with a given 8-bit value (as std memset)</div></div>"});

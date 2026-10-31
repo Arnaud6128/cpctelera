@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({13:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Converts an Arkos Tracker (aks) music file into an absolutely located data array to be compiled directly into a binary program.</div></div>"});

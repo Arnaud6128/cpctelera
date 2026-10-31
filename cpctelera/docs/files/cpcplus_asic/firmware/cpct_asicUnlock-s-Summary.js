@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/firmware/cpct_asicUnlock.s","cpct_asicUnlock.s");NDSummary.OnSummaryLoaded("File:cpcplus_asic/firmware/cpct_asicUnlock.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[109,0,1,"Functions","Functions"],[110,0,0,"cpct_asicUnlock","cpct_asicUnlock"]]);

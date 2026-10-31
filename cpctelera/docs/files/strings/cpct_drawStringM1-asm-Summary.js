@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:strings/cpct_drawStringM1.asm","cpct_drawStringM1.asm");NDSummary.OnSummaryLoaded("File:strings/cpct_drawStringM1.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[781,0,1,"Functions","Functions"],[782,0,0,"cpct_drawStringM1","cpct_drawStringM1"]]);

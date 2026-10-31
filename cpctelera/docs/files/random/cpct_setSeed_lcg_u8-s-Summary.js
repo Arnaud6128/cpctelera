@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_setSeed_lcg_u8.s","cpct_setSeed_lcg_u8.s");NDSummary.OnSummaryLoaded("File:random/cpct_setSeed_lcg_u8.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[513,0,1,"Functions","Functions"],[514,0,0,"cpct_setSeed_lcg_u8","cpct_setSeed_lcg_u8"]]);

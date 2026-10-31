@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({232:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets a user provided function as new interrupt handler.</div></div>"});

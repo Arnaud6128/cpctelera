@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/cpct_etm_drawTileBox2x4.asm",{218:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws (or redraws) a determined rectangle of tiles inside a tilemap. It is mainly used to restore parts of a tilemap.</div></div>"});

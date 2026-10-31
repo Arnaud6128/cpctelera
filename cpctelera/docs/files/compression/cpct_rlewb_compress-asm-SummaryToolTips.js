@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:compression/cpct_rlewb_compress.asm",{112:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Compresses uncompressed input data into Wonder Boy RLE (RLEWB) stream format.</div></div>"});

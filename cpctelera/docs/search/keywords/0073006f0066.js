@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("sof",["Information","Section"],[["Software",,[[,"Software Requirements",,,0,"File:readme.txt:Software_Requirements"],[,"3rdparty software authors",,,1,"File:authors.txt:3rdparty_software_authors"]]]]);

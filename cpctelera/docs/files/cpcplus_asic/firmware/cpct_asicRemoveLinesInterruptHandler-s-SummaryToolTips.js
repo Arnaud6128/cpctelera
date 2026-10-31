@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/firmware/cpct_asicRemoveLinesInterruptHandler.s",{114:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Restore default CRTC interrupt at 300hz and remove raster line interrupt</div></div>"});

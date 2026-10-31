@@ -34,6 +34,7 @@
 ;;    > call cpct_isKeyPressed_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *key* (HL) must be a valid <cpct_keyID>, containing a Matrix Line (1st byte, 
 ;; 0-9) and a Bit Mask (2nd byte, only 1 bit enabled). All keyID values are defined 
 ;; in <cpct_keyID> enum. Giving any other value is possible, but returned value
@@ -45,6 +46,7 @@
 ;; account that *true* is not 1, but any non-0 number. 
 ;;
 ;; Flag Output Status:
+;;
 ;;    - *Z* = 1 (Key NOT pressed) / 0 (Key pressed)
 ;;    - *C*,*N* = 0
 ;;    - *H* = 1

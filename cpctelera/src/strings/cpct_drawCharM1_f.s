@@ -48,6 +48,7 @@
 ;;    > call cpct_drawCharM1_f_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *video_memory* could theoretically be any 16-bit memory location. It will work
 ;; outside current screen memory boundaries, which is useful if you use any kind of
 ;; double buffer. However, be careful where you use it, as it does no kind of check
@@ -59,6 +60,7 @@
 ;;  * *ascii* could be any 8-bit value, as 256 characters are available in ROM.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * *Do not put this function's code below 0x4000 in memory*. In order to read
 ;; characters from ROM, this function enables Lower ROM (which is located 0x0000-0x3FFF),
 ;; so CPU would read code from ROM instead of RAM in first bank, effectively shadowing
@@ -416,6 +418,7 @@ dcm1f_calculate_two_bytes:
    ld    c, a                  ;; [ 4] C = A :: C stores a copy of A that will be used to copy A nibbles up and down
 
    ;; DYNAMIC CODE SECTION
+   ;;
    ;;  * Processing foreground colour values of the 1st Byte
 dcm1f_start_b1fg:
    .ds 7                       ;; [xx] This 7 bytes are filled up with dynamic code for calculating 
@@ -430,6 +433,7 @@ dcm1f_end_b1fg:
    cpl                         ;; [ 4] Invert pixel-line definition (light up background pixels instead of foreground ones)
 
    ;; DYNAMIC CODE SECTION
+   ;;
    ;;  * Processing background colour values of the 1st Byte
 dcm1f_start_b1bg:
    .ds 7                       ;; [xx] This 7 bytes are filled up with dynamic code for calculating 
@@ -448,6 +452,7 @@ dcm1f_end_b1bg:
    ld    a, c                  ;; [ 4] Restore pixel-line definition into A
 
    ;; DYNAMIC CODE SECTION
+   ;;
    ;;  * Processing foreground colour values of the 2nd Byte
 dcm1f_start_b2fg:
    .ds 7                       ;; [xx] This 7 bytes are filled up with dynamic code for calculating 
@@ -462,6 +467,7 @@ dcm1f_end_b2fg:
    cpl                         ;; [ 4] Invert pixel-line definition (light up background pixels instead of foreground ones)
 
    ;; DYNAMIC CODE SECTION
+   ;;
    ;;  * Processing background colour values of the 2nd Byte
 dcm1f_start_b2bg:
    .ds 7                       ;; [xx] This 7 bytes are filled up with dynamic code for calculating 

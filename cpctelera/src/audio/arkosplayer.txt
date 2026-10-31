@@ -18,11 +18,13 @@ Section: How to use the player
 So you've got a great song ready with ArkosTracker3, and you want to use it on CPC. How clever you are.
 
 This player will allow you to,
+
    - Play any exported song on CPC
    - Play Sound Effects
    - Play music and sound effects in C or Assembler
 
 On the Sound Effects side, you'll be able to,
+
    - Play any of your Sound Effects on any, or all of the 3 channels.
    - Play a SFX on the note you want.
    - Play a SFX with the volume you want.
@@ -52,6 +54,7 @@ Topic: Using the music file
 Once a binary or assembly file has been exported, you can use the player kindly given with this software. Take a look at the examples included in examples/ folder. 
 
 In order to include the binary song in your program you may do these steps:
+
    * Convert the binary file to a C Array. You may use <cpct_bin2c> script for this task.
    * Include the C Array into a file in your project
    * Use the file in your project calling Arkos Tracker Player's CPCtelera C functions.
@@ -69,6 +72,7 @@ In order to include the binary song in your program you may do these steps:
          cpct_PLY_AKG_Play();
       }
    (end code)
+
    * *Important!* Your song data must be at the same location in memory that the one you choose if exporting it to binary (File->Export as binary) in Arkos Tracker3. To accomplish this, you sometimes will have to force SDCC to locate the C Array containing your song at the required place in memory. Imagine that you wanted to locate your song at 0x0100 in memory; you can do it with this code:
    (start code)
       __at(0x100) const unsigned char mysong[] = { ...
@@ -83,11 +87,13 @@ In order to include the binary song in your program you may do these steps:
 Topic: Using the player
 
 Though there is just one player, it can be used in three different mode:
+
    - Your production is done in Assembler. You don't mind if the player modifies all the registers. If you need some registers to be saved, you will do it by yourself. This is called the "ASM" mode. 
    - Your production is in C, but you want to have full control of the player. You will manage to call the player every time, at your song's required frequency. This is the default way of using the player.
    - Your production is either on C or ASM, but you don't want to have fine-grained control of the player, and you just want the music to play, consuming whatever cycles it requires.
 
 These are the functions available for C modes. All of them may be called on ASM mode just by adding the suffix "_asm" to the name. ASM mode lets you call the functions passing the parameters in registers, instead of using the stack:
+
    - <cpct_PLY_AKG_Init>  : Set up a new music file for reproducing
    - <cpct_PLY_AKG_Play>  : Reproduce a 1/nth of the song. nth depends on the frequency at which the song has been created.
    - <cpct_PLY_AKG_Stop>  : Stop all musing and sound effects.
@@ -145,6 +151,7 @@ Relocating a song is complicated. All data values inside the song point to absol
 Topic: Can I remove parts of the code if I need memory ?
 
 Well, as long as it won't crash it, why not ? :) Arkos Traker Player and CPCtelera are distributed under GNU GPL license, that lets you do any changes that you like, provided that you distribute your modifications if you publicize your results. Don't forget that a lot of code is actually only assembled with conditions. You don't have to remove the SFX code part if <PLY_UseSoundEffects> is set to 0. But,
+
    * You can remove the <cpct_PLY_AKG_Stop> function if you don't intend to stop the song!
    
 If you want a custom player well suited for your music, see tutorial https://www.julien-nevo.com/arkostracker/index.php/using-cpctelera-with-at3/ 
@@ -154,12 +161,14 @@ Section: Credits and Some technical details
 
 
 Version and credits:
+
    * [21/09/2009] Arkos Tracker Player V1.01 - CPC & MSX version (by Targhan/Arkos)
    * [07/04/2015] CPCtelera's Arkos Player CPC-only version (by ronaldo / Fremos / Cheesetea / ByteRealms).
    * PSG registers sendings based on Madram/Overlander's optimisation trick. Restoring interruption status snippet by Grim/Arkos.
    * [30/01/2025] Update for Arkos Tracker Player V3 for cpcteleraNext (by Arnaud6128)
 
 Register modification:
+
    * This player modifies all these registers = hl, de, bc, AF, HL', DE', BC', AF', IX, IY. 
    * The Stack is used in conventional manners (Call, Ret, Push, Pop) so integration with any of your code should be seamless.
 

@@ -43,6 +43,7 @@
 //   SPR   - Hardware sprite identifier (0..15)
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will procuce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slow.
@@ -64,6 +65,7 @@
 //   SPR   - Hardware sprite identifier (0..15)
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will procuce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slow.
@@ -85,6 +87,7 @@
 //   SPR   - Hardware sprite identifier (0..15)
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will procuce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slow.
@@ -106,6 +109,7 @@
 //   SPR   - Hardware sprite identifier (0..15)
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will procuce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slow.
@@ -127,6 +131,7 @@
 //   X, Y   - Zoom X and Y
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will procuce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slow.

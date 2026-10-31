@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({122:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Define lines raster interrupt with a user provided function as new interrupt handler.</div></div>"});

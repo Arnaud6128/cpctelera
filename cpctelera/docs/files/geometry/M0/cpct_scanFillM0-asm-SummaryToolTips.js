@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:geometry/M0/cpct_scanFillM0.asm",{258:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills an area defined by a point and its actual color with a new color in Mode 0 (160x200, 16 colors)</div></div>"});

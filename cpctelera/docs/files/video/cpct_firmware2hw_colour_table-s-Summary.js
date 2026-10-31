@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_firmware2hw_colour_table.s","cpct_firmware2hw_colour_table.s");NDSummary.OnSummaryLoaded("File:video/cpct_firmware2hw_colour_table.s",[["Assembly","Assembly"]],[["Groups","Group"],["Variables","Variable"]],[[859,0,0,"Variables","Variables"],[860,0,1,"cpct_firmware2hw_colour","cpct_firmware2hw_colour"]]);

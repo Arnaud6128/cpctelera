@@ -34,6 +34,7 @@
 ;;    <u32> - Next 32-bits pseudo-random value.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function will never produce a 0 as random 32-bits integer value. If you 
 ;; require a 0 to be produced, use returned value minus 1.
 ;;    * This function does not repeat a single 32-bits value in the sequence it produces
@@ -54,6 +55,7 @@
 ;; Required memory:
 ;;    57 bytes divided in, 
 ;;    *  18 bytes (this function's code)
+;;
 ;;    * +35 bytes (from <cpct_nextRandom_mxor_u32> function's code)
 ;;    *  +4 bytes (from <cpct_mxor32_seed>)
 ;;

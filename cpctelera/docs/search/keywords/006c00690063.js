@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("lic",["Section"],[["License",,[[,,,,0,"File:gpl-license.txt:License"],[,"Authors and License",,,0,"File:buildsys/android_exporter.txt:Authors_and_License"]]]]);

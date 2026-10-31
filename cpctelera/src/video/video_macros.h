@@ -109,6 +109,7 @@
 //    (1B) Y    - Y Coordinate of the video memory location in pixels / bytes (they are same amount)
 //
 // Parameter Restrictions:
+//
 //    * *VMEM* will normally be the start of the video memory buffer where you want to 
 // draw something. It could theoretically be any 16-bits value. 
 //    * *X* must be in the range [0-79] for normal screen sizes (modes 0,1,2). Screen is

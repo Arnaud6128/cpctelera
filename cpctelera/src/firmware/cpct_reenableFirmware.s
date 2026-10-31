@@ -43,6 +43,7 @@
 ;; This is the address where firmware ROM code starts.
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *firmware_ROM_pointer* is a 16bits value that should have been previously obtained
 ;; calling <cpct_disableFirmware> or <cpct_removeInterruptHandler>. This 16bits value should
 ;; be the pointer to the firmware ROM code that must be called every time an interrupt happens.

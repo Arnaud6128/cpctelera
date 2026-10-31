@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/cpct_drawSpriteHFlipM2.asm",{722:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a Mode 2 sprite from an array to video memory or Hardware Back Buffer flipping it Horizontally (right to left)</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/firmware/cpct_asicPageDisconnect.s",{116:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Disconnect Asic Page and restore memory access from 0x4000 to 0x7FFF</div></div>"});

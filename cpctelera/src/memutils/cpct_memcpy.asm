@@ -34,9 +34,11 @@
 ;;
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_memcpy_asm
+;;
 ;;    * Note: you may prefer using Z80's *LDIR* instead.
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *to*, *from* can be any 16-bit values. Just take into account that this 
 ;; function doest not do any kind of check, so you are responsible for where you
 ;; copy bytes to. If you accidentally copy bytes to an undesired location, unpredictable

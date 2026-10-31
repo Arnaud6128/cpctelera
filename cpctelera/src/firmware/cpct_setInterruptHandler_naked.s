@@ -36,6 +36,7 @@
 ;;    > call cpct_setInterruptHandler_naked_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *intHandler* (HL) can theoretically be any 16-bit value. However, it must point to
 ;; the start of a function that will be called at each interrupt. If it points to somewhere else,
 ;; undefined behaviour will happen. Most probably, the program will crash as random code will

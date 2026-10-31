@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("dra",["Function"],[["drawSpriteMaskedAlignedColorizeM0",,[[,,,,0,"File:sprites/colorReplace/M0/cpct_drawSpriteMaskedAlignedColorizeM0.asm:drawSpriteMaskedAlignedColorizeM0"]]]]);

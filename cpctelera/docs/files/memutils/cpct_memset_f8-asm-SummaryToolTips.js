@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:memutils/cpct_memset_f8.asm",{480:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a complete array in memory setting bytes 2-by-2, in chuncks of 8 bytes. Size of the array must be multiple of 8.</div></div>"});

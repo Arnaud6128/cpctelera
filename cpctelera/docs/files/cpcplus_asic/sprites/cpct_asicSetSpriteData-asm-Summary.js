@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpriteData.asm","cpct_asicSetSpriteData.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpriteData.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[134,0,1,"Functions","Functions"],[135,0,0,"cpct_asicSetSpriteData","cpct_asicSetSpriteData"]]);

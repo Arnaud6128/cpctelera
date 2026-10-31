@@ -73,6 +73,7 @@
 ;; Examples of use:
 ;;   For next examples we'll suppose that *myIntHandler* is an interrupt handler
 ;; function defined by the user.
+;;
 ;; * Saving standard registers
 ;; (start code)
 ;; cpctm_createInterruptHandlerWrapper_asm StandardRegsWrapper, myIntHandler, af, bc, de, hl, ix, iy
@@ -105,6 +106,7 @@
 ;; (start code)
 ;; cpctm_createInterruptHandlerWrapper_asm AllRegsWrapper, myIntHandler, af, bc, de, hl, ix, iy, alt, af, bc, de, hl
 ;; (end code)
+;;
 ;; * Saving no registers
 ;;
 ;;   If you don't need to preserve any register you can use the next calling. Be
@@ -112,6 +114,7 @@
 ;; (start code)
 ;; cpctm_createInterruptHandlerWrapper_asm NoRegsWrapper, myIntHandler
 ;; (end code)
+;;
 ;; * Saving standard registers + AF' + HL'
 ;;
 ;;   As another example, next line creates a custom interrupt handler wrapper that
@@ -121,6 +124,7 @@
 ;; (end code)
 ;;
 ;; Known issues:
+;;
 ;;   * This macro can only be used from assembler code. It is not accessible from
 ;; C scope. For C programs, please refer to <cpctm_createInterruptHandlerWrapper>
 ;; C macro. However, the resulting code of this macro can be used from a C scope.
@@ -141,6 +145,7 @@
 ;; (end code)
 ;;
 ;; Time Measures:
+;;
 ;;  * This measure is the time overhead required for safely calling user defined
 ;; function. That is, time required by the generated wrapper function to save
 ;; registers, call user's *intHandler*, restoring the registers and returning.

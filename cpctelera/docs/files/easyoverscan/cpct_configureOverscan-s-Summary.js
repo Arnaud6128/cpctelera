@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:easyoverscan/cpct_configureOverscan.s","cpct_configureOverscan.s");NDSummary.OnSummaryLoaded("File:easyoverscan/cpct_configureOverscan.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[192,0,1,"Functions","Functions"],[193,0,0,"cpct_configureOverscan","cpct_configureOverscan"]]);

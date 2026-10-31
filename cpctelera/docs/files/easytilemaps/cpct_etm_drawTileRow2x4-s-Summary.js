@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:easytilemaps/cpct_etm_drawTileRow2x4.s","cpct_etm_drawTileRow2x4.s");NDSummary.OnSummaryLoaded("File:easytilemaps/cpct_etm_drawTileRow2x4.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[205,0,1,"Functions","Functions"],[206,0,0,"cpct_etm_drawTileRow2x4","cpct_etm_drawTileRow2x4"]]);

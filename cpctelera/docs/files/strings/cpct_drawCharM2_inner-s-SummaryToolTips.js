@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_drawCharM2_inner.s",{788:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Inner function used by cpct_drawCharM2 and cpct_drawStringM2 to actually draw the character. This function shall not be used directly unless you know exactly what it does.</div></div>"});

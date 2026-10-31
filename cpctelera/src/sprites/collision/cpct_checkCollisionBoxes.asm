@@ -38,6 +38,7 @@
 ;;
 ;;  Details :
 ;;   For each axis (X and Y), the function checks if the boxes are separated:
+;;
 ;;     - If (x1 + w1 - 1 < x2) → boxes are separated on X (no collision)
 ;;     - If (x2 + w2 - 1 < x1) → boxes are separated on X (no collision)
 ;;     - Same logic applies vertically with Y coordinates.

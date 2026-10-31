@@ -44,6 +44,7 @@
 ;;    A - Register holding the return value
 ;;
 ;; Known limitations:
+;;
 ;;    * This function may not work properly if more than one key is pressed at
 ;; the same time. Particularly, this function does not take into account the
 ;; special keys (SHIFT, BLOQ-SHIFT, CONTROL, ETC) and their combinations, as it

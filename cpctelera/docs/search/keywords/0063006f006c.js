@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("col",["Constant","File"],[["colour",,[[,"Firmware colour values",,,0,"File:video/colours.h.s:Firmware_colour_values"],[,"Hardware colour values",,,0,"File:video/colours.h.s:Hardware_colour_values"]]],["Colours",,[[,,"Assembly",,1,"File:video/colours.h.s:Colours"],[,,"C/C++",,1,"File:video/colours.h:Colours"]]]]);

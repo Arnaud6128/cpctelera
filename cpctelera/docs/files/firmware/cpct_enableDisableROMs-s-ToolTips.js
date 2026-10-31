@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({244:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Disables Amstrad CPC firmware, preventing it from being executed at every CPU interrupt.</div></div>"});

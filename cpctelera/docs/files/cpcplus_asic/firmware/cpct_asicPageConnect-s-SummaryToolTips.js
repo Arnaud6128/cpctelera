@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/firmware/cpct_asicPageConnect.s",{118:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Connect Asic Page to get access to Asic registers and memory</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_count2VSYNC.s",{868:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Waits until CRTC produces vertical synchronization signal (VSYNC), counting the number of active wait loop cycles done.</div></div>"});

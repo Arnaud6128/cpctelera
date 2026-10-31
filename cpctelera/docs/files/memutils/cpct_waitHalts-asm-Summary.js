@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:memutils/cpct_waitHalts.asm","cpct_waitHalts.asm");NDSummary.OnSummaryLoaded("File:memutils/cpct_waitHalts.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[469,0,1,"Functions","Functions"],[470,0,0,"cpct_waitHalts","cpct_waitHalts"]]);

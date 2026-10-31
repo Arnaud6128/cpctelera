@@ -37,6 +37,7 @@
 ;;   (u16, HL) - Previous interrupt code pointer located at 0x0039.
 ;;
 ;; Details:
+;;
 ;;  * Disable Asic interrupt line raster and remove interrupt handler
 ;;  * Adapted from *cpct_removeInterruptHandler* see for more informations
 ;;

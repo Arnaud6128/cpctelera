@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_mxor32_seed.s",{528:"<div class=\"NDToolTip TVariable LAssembly\"><div class=\"TTSummary\">Contains the 32-bits seed for Marsaglia\'s XOR-shift random number generator.</div></div>"});

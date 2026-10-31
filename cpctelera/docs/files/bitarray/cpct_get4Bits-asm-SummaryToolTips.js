@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:bitarray/cpct_get4Bits.asm",{72:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Returns the value of a given group of 4 bits into an array ( [0-15] )</div></div>"});

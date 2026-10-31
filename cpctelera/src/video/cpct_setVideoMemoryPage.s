@@ -34,6 +34,7 @@
 ;;    > call cpct_setVideoMemoryPage_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *page_6LSb* should contain video memory page value encoded in its 6 
 ;; Least Significant bits (LSb). This parameter must be in the range [0-63] as 
 ;; only its 6 LSb must be used. These 6 bits will become the 6 Most significant 

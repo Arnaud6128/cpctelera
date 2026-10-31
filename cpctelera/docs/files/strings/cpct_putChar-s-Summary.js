@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:strings/cpct_putChar.s","cpct_putChar.s");NDSummary.OnSummaryLoaded("File:strings/cpct_putChar.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[771,0,1,"Functions","Functions"],[772,0,0,"putchar","putchar"]]);

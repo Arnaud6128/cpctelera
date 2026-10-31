@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/blending/sprite_types.h","sprite_types.h");NDSummary.OnSummaryLoaded("File:sprites/blending/sprite_types.h",[["C/C++","C"]],[["Enums","Enumeration"],["Groups","Group"],["Sections","Section"]],[[543,0,2,"Blended-Sprites Structs","Blended-Sprites_Structs"],[544,0,1,"Types","Types"],[545,0,0,"CPCT_BlendMode","CPCT_BlendMode"]]);

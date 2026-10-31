@@ -36,6 +36,7 @@
 ;;    > call cpct_drawTileZigZagGrayCode4x8_af_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *sprite* must be a pointer to the first byte of an array containing sprite's
 ;; pixels data in screen pixel format. Bytes in the sprite must be ordered as follows: 
 ;; lines in gray-code order, and bytes in each line zig-zagged. Zig-zagged means that 
@@ -62,6 +63,7 @@
 ;; results, erratic program behaviour, hangs and crashes).
 ;;
 ;; Known limitations:
+;;
 ;;     * This function *will not work from ROM*, as it uses self-modifying code.
 ;;     * This function does not do any kind of boundary check or clipping. If you 
 ;; try to draw sprites on the frontier of your video memory or screen buffer 
@@ -123,6 +125,7 @@
 ;;    HL, DE, F
 ;;
 ;; Interrupts:
+;;
 ;;    * Disables interrupts when called.
 ;;    * Enables interrupts before returning.
 ;;    * Uses SP register and POP to read from memory.

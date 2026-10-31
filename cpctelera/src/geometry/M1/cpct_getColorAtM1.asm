@@ -1,7 +1,7 @@
 ;;-----------------------------LICENSE NOTICE------------------------------------
 ;;  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ;;  Copyright (C) 2026 Xavier Jollet (@SagaDS)
-;;  Copyright (C) 2026 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+;;  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ;;
 ;;  This program is free software: you can redistribute it and/or modify
 ;;  it under the terms of the GNU Lesser General Public License as published by
@@ -34,13 +34,13 @@
 ;;   (2B BC) y          - Y coordinate (0-199 no checks)
 ;;
 ;; Return value:
-;;   (1B A) outCol      - Ink color of pixel (0..3)
+;;   (1B A) outColor    - Ink color of pixel (0..3)
 ;;
 ;; Assembly call:
 ;;    > call cpct_getColorAtM1_asm 
 ;;
 ;; Destroyed Register values:
-;;          AF, BC, DE, HL
+;;    AF, BC, DE, HL
 ;;
 ;; (start code)
 ;; Required memory:

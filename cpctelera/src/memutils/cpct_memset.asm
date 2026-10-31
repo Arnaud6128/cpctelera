@@ -35,6 +35,7 @@
 ;;    > call cpct_memset_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *array* could theoretically be any 16-bit memory location. However, take into 
 ;; account that this function does no check at all, and you could mistakenly overwrite 
 ;; important parts of your program, the screen, the firmware... Use it with care.

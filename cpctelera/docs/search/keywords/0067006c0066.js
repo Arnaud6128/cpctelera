@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("glf",["Enumeration"],[["GLFSR16_TAPSET",,[[,,,,0,"File:random/random_types.h:GLFSR16_TAPSET"]]]]);

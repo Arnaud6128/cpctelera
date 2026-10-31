@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:geometry/M0/cpct_scanFillM0.asm","cpct_scanFillM0.asm");NDSummary.OnSummaryLoaded("File:geometry/M0/cpct_scanFillM0.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[257,0,1,"Functions","Functions"],[258,0,0,"cpct_scanFillM0","cpct_scanFillM0"]]);

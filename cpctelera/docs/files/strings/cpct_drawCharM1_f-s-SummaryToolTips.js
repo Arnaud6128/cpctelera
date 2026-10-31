@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_drawCharM1_f.s",{802:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Prints a ROM character on a given byte-aligned position on the screen in Mode 1 (320x200 px, 4 colours). It does it ~50% faster than cpct_drawCharM1.</div></div>"});

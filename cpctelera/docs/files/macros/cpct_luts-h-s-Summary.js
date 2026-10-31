@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:macros/cpct_luts.h.s","cpct_luts.h.s");NDSummary.OnSummaryLoaded("File:macros/cpct_luts.h.s",[["Assembly","Assembly"]],[["Files","File"],["Groups","Group"],["Macros","Macro"]],[[430,0,0,"LUTs (Look-Up-Tables)","LUTs"],[431,0,1,"Macros","Macros"],[432,0,2,"cpctm_lutget8","cpctm_lutget8"]]);

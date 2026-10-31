@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_fw2hw.asm","cpct_fw2hw.asm");NDSummary.OnSummaryLoaded("File:video/cpct_fw2hw.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[861,0,1,"Functions","Functions"],[862,0,0,"cpct_fw2hw","cpct_fw2hw"]]);

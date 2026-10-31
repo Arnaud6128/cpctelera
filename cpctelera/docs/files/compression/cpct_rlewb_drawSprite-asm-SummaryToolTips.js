@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:compression/cpct_rlewb_drawSprite.asm",{105:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Decompresses and draws an RLEWB (Wonder Boy RLE) compressed sprite directly to Amstrad CPC video memory (VRAM).</div></div>"});

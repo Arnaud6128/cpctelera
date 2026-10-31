@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:macros/allmacros.h","allmacros.h");NDSummary.OnSummaryLoaded("File:macros/allmacros.h",[["C/C++","C"]],[["Groups","Group"],["Macros","Macro"]],[[460,0,0,"General Useful Macros","General_Useful_Macros"],[461,0,1,"cpctm_produceHalts","cpctm_produceHalts"]]);

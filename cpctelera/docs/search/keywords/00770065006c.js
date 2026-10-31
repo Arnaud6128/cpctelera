@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("wel",["Section"],[["Welcome",,[[,"Welcome to CPCtelera!",,,0,"File:readme.txt:Welcome_to_CPCtelera!"],[,"Welcome to CPCteleraNext!",,,0,"File:readme.txt:Welcome_to_CPCteleraNext!"]]]]);

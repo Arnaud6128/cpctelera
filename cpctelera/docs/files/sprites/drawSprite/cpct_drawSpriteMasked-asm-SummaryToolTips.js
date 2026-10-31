@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawSprite/cpct_drawSpriteMasked.asm",{618:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a masked sprite from an array to video memory (or to a screen buffer), using mask as transparency information, to prevent erasing the background.</div></div>"});

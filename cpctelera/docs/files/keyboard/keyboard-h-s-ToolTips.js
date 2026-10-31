@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({298:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Checks if a concrete key is pressed or not.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:easyoverscan/cpct_restoreCRTC.s","cpct_restoreCRTC.s");NDSummary.OnSummaryLoaded("File:easyoverscan/cpct_restoreCRTC.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[182,0,1,"Functions","Functions"],[183,0,0,"cpct_restoreCRTC","cpct_restoreCRTC"]]);

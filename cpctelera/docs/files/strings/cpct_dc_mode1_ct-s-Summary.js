@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:strings/cpct_dc_mode1_ct.s","cpct_dc_mode1_ct.s");NDSummary.OnSummaryLoaded("File:strings/cpct_dc_mode1_ct.s",[["Assembly","Assembly"]],[["Groups","Group"],["Variables","Variable"]],[[793,0,0,"Variables","Variables"],[794,0,1,"dc_mode1_ct","dc_mode1_ct"]]);

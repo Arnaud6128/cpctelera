@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({5:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">This converts RGAS sprite definitions in CPCRSLib asm output format to CPCtelera\'s C arrays.</div></div>"});

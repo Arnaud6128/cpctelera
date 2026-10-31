@@ -37,6 +37,7 @@
 ;;    (2B HL) sprite           - Pointer to source sprite data (mask + pixel interleaved)
 ;;
 ;; Details:
+;;
 ;;    - Sprite data format: [mask_byte, pixel_byte, mask_byte, pixel_byte, ...].
 ;;    - Only the rectangle (width_to_draw × height) is drawn.
 ;;    - REQUIRES CODE TO BE IN RAM — NOT EXECUTABLE FROM ROM.

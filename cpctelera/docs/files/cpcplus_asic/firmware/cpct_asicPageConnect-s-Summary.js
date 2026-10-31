@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/firmware/cpct_asicPageConnect.s","cpct_asicPageConnect.s");NDSummary.OnSummaryLoaded("File:cpcplus_asic/firmware/cpct_asicPageConnect.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[117,0,1,"Functions","Functions"],[118,0,0,"cpct_asicPageConnect","cpct_asicPageConnect"]]);

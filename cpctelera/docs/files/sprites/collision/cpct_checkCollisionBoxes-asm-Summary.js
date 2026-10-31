@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/collision/cpct_checkCollisionBoxes.asm","cpct_checkCollisionBoxes.asm");NDSummary.OnSummaryLoaded("File:sprites/collision/cpct_checkCollisionBoxes.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[559,0,1,"Functions","Functions"],[560,0,0,"cpct_checkCollisionBoxes","cpct_checkCollisionBoxes"]]);

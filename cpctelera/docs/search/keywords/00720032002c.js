@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("r2,",["Macro"],[["R2,",,[[,"cpctm_pop RO, R1, R2, R3, R4, R5",,"cpctm_pop ro,r1,r2,r3,r4,r5",0,"File:macros/cpct_pushpop.h.s:cpctm_pop_RO,R1,R2,R3,R4,R5"],[,"cpctm_push RO, R1, R2, R3, R4, R5",,"cpctm_push ro,r1,r2,r3,r4,r5",0,"File:macros/cpct_pushpop.h.s:cpctm_push_RO,R1,R2,R3,R4,R5"]]]]);

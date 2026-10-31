@@ -39,6 +39,7 @@
 ;;    > call cpct_drawSolidBox_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *memory* could be any place in memory, inside or outside current video memory. It
 ;; will be equally treated as video memory (taking into account CPC's video memory 
 ;; disposition). This lets you copy sprites to software or hardware backbuffers, and
@@ -61,6 +62,7 @@
 ;; the horizontal space.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function does not do any kind of boundary check or clipping. If you 
 ;; try to draw boxes on the frontier of your video memory or screen buffer 
 ;; if might potentially overwrite memory locations beyond boundaries. This 

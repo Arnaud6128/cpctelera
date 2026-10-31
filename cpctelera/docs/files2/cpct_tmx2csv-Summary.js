@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:cpct_tmx2csv","cpct_tmx2csv");NDSummary.OnSummaryLoaded("File2:cpct_tmx2csv",[["Bash","Bash"]],[["Files","File"]],[[7,0,0,"cpct_tmx2csv","cpct_tmx2csv"]]);

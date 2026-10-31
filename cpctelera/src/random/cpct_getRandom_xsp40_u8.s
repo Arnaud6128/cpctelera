@@ -34,6 +34,7 @@
 ;;    <u8> - Next 8-bits pseudo-random value.
 ;;
 ;; Important details:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;
 ;; Details:
@@ -81,11 +82,13 @@
 ;; (end code)
 ;;
 ;; Random quality measures:
+;;
 ;;  * Dieharder tests rank: (113 Pass, 1 Weak, 0 Failed) (340/342 = 99.42%)
 ;;  * Pseudo-random bit stream velocity: 5,5 us / bit. (8 bits produced in 44 us)
 ;;  * Pseudo-random bits per second: 181.818,18 bps.
 ;;
 ;; Credits:
+;;
 ;;   * Original <XORshift+ algorithm published by George Marsaglia at 
 ;; http://www.jstatsoft.org/article/view/v008i14/xorshift.pdf>
 ;;

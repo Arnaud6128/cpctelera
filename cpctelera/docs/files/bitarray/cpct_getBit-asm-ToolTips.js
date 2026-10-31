@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({56:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Returns the status of a given bit into a bitarray (0 or !0)</div></div>"});

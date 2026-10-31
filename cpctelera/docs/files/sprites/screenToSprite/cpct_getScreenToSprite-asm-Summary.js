@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/screenToSprite/cpct_getScreenToSprite.asm","cpct_getScreenToSprite.asm");NDSummary.OnSummaryLoaded("File:sprites/screenToSprite/cpct_getScreenToSprite.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[757,0,1,"Functions","Functions"],[758,0,0,"cpct_getScreenToSprite","cpct_getScreenToSprite"]]);

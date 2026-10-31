@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:loaders/cpct_miniload.asm",{308:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Load a binary block of data from cassette and copy it to a given place in memory. Pulse length of data bytes must be 740T (1T = 1/3500000s)</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("1",["Section"],[["1",,[[,"Transparency Tables for Mode 1",,,0,"File:sprites/drawSprite/transparency_tables_m1.h:Transparency_Tables_for_Mode_1"]]]]);

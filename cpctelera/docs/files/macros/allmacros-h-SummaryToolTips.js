@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:macros/allmacros.h",{461:"<div class=\"NDToolTip TMacro LC\"><div class=\"TTSummary\">Produce a set of consecutive halt instructions in order to wait for a given number of interrupts.</div></div>"});

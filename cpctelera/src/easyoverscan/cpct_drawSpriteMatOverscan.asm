@@ -41,9 +41,11 @@
 ;;    > call cpct_drawSpriteMatOverscan_asm
 ;;
 ;; Remarks:
+;;
 ;;     * Memory layout must be configurated with fonction *cpct_configureOverscan*
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; Sprite must be rectangular and all bytes in the array must be consecutive pixels, 
 ;; starting from top-left corner and going left-to-right, top-to-bottom down to the 
@@ -73,6 +75,7 @@
 ;; memory page. <cpct_transparentMaskTable00M0> is an example table you might want to use.
 ;;
 ;; Known limitations:
+;;
 ;;    * *width* or *height* of 0 will be considered as 256 and will potentially 
 ;; make your program behave erratically or crash.
 ;;    * Transparent drawing will only work if *pmasktable0* uses *palette index 0*
@@ -172,6 +175,7 @@ dms_sprite_width_loop:
 
    dec__ixl        ;; [2] IXL holds sprite width, we decrease it to count pixels in this line.
    jr   nz,dms_sprite_width_loop;; [2/3] While not 0, we are still painting this sprite line 
+                                ;;
                                 ;;      - When 0, we have to jump to next pixel line
 
    pop  de         ;; [3] Recover DE from stack. We use it to calculate start of next pixel line on screen
@@ -179,6 +183,7 @@ dms_sprite_width_loop:
 
    dec__ixh        ;; [2] IXH holds sprite height. We decrease it to count another pixel line finished
    jr    z,dms_sprite_copy_ended;; [2/3] If 0, we have finished the last sprite line.
+                                ;;
                                 ;;      - If not 0, we have to move pointers to the next pixel line
 restore_ixl:
    ld__ixl #00     ;; [3] IXL = Restore IXL to the width of the sprite (00 is a placeholder)

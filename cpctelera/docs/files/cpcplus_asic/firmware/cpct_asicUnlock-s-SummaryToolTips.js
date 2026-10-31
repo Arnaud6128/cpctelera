@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/firmware/cpct_asicUnlock.s",{110:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Unlock ASIC by sending code sequence to CRTC</div></div>"});

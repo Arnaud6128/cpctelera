@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:keyboard/cpct_scanKeyboard.s",{294:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Reads the status of keyboard and joysticks and stores it in the 10 bytes reserved as cpct_keyboardStatusBuffer</div></div>"});

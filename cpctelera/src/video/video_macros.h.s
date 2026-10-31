@@ -81,6 +81,7 @@ cpct_page00_asm = 0x00
 ;; (1B) PAGE - Video memory page wanted 
 ;;
 ;; Known issues:
+;;
 ;;   * This macro can only be used from assembler code. It is not accessible from 
 ;; C scope. For C programs, please refer to <cpct_memPage6>
 ;;   * This macro will work *only* with constant values, as its value needs to
@@ -94,6 +95,7 @@ cpct_page00_asm = 0x00
 ;;    2 bytes 
 ;;
 ;; Time Measures:
+;;
 ;;    * 2 microseconds
 ;;    * 8 CPU Cycles
 ;;
@@ -123,6 +125,7 @@ cpct_page00_asm = 0x00
 ;;    (1B) Y     - Y Coordinate of the video memory location in pixels / bytes (they are same amount)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *REG16* has to be a 16-bits register that can perform ld REG16, #value.
 ;;    * *VMEM* will normally be the start of the video memory buffer where you want to 
 ;; draw something. It could theoretically be any 16-bits value. 
@@ -139,6 +142,7 @@ cpct_page00_asm = 0x00
 ;; care.
 ;;
 ;; Known issues:
+;;
 ;;   * This macro can only be used from assembler code. It is not accessible from 
 ;; C scope. For C programs, please refer to <cpct_getScreenPtr>
 ;;   * This macro will work *only* with constant values, as calculations need to be 
@@ -151,6 +155,7 @@ cpct_page00_asm = 0x00
 ;;    3 bytes 
 ;;
 ;; Time Measures:
+;;
 ;;    * 3 microseconds
 ;;    * 12 CPU Cycles
 ;;
@@ -187,6 +192,7 @@ cpct_page00_asm = 0x00
 ;;    (1B) Y     - Y Coordinate of the video memory location in pixels / bytes (they are same amount)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *SYM* need to be a valid symbol according to ASZ80 rules for symbols
 ;;    * *VMEM* will normally be the start of the video memory buffer where you want to 
 ;; draw something. It could theoretically be any 16-bits value. 
@@ -203,6 +209,7 @@ cpct_page00_asm = 0x00
 ;; care.
 ;;
 ;; Known issues:
+;;
 ;;   * This macro can only be used from assembler code. It is not accessible from 
 ;; C scope. For C programs, please refer to <cpct_getScreenPtr>
 ;;   * This macro will work *only* with constant values, as calculations need to be 
@@ -215,6 +222,7 @@ cpct_page00_asm = 0x00
 ;;    none (symbols are compile-time, do not generate code)
 ;;
 ;; Time Measures:
+;;
 ;;    - not applicable -
 ;;
 ;; Details:
@@ -246,11 +254,13 @@ cpct_page00_asm = 0x00
 ;;    (1B) HEXVAL - Number of the register to be set (in hexadecimal)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *HEXREG* has to be an hexadecimal value from 00 to 1F
 ;;    * *HEXVAL* has to be an hexadecimal value. Its valid range will depend
 ;;          upon the selected register that will be modified. 
 ;;
 ;; Known issues:
+;;
 ;;   * This macro can *only* be used from assembler code. It is not accessible from 
 ;; C scope. 
 ;;   * This macro can only be used with *constant values*. As given values are 
@@ -266,6 +276,7 @@ cpct_page00_asm = 0x00
 ;;    10 bytes 
 ;;
 ;; Time Measures:
+;;
 ;;    * 14 microseconds
 ;;    * 56 CPU Cycles
 ;;
@@ -301,6 +312,7 @@ cpct_page00_asm = 0x00
 ;;   (1B) HWC - Hardware colour value for the screen border in *hexadecimal [00-1B]*.
 ;;
 ;; Known issues:
+;;
 ;;   * *Beware!* *HWC* colour value must be given in *hexadecimal*, as it is
 ;; substituted in place, and must be in the range [00-1B].
 ;;   * This macro can only be used from assembler code. It is not accessible from 
@@ -312,11 +324,13 @@ cpct_page00_asm = 0x00
 ;;    AF, B, HL
 ;;
 ;; Size of generated code:
+;;
 ;;    * 16 bytes 
 ;;     6b - generated code
 ;;    10b - cpct_setPALColour_asm code
 ;;
 ;; Time Measures:
+;;
 ;;    * 28 microseconds
 ;;    * 112 CPU Cycles
 ;;
@@ -361,6 +375,7 @@ cpct_page00_asm = 0x00
 ;; combination with <cpct_px2byteM0>, <cpct_px2byteM1> or a manually created colour pattern.
 ;;
 ;; Known issues:
+;;
 ;;   * This macro can only be used from assembler code. It is not accessible from 
 ;; C scope. For C programs, please refer to <cpct_clearScreen>
 ;;

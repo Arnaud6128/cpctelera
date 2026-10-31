@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_restoreState_mxor_u8.s",{518:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Restores internal index state of Marsaglia\'s XORShift 8-bits generator.</div></div>"});

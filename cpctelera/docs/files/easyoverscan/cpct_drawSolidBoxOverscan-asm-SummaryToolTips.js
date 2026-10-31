@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easyoverscan/cpct_drawSolidBoxOverscan.asm",{200:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a rectangle in video memory overscan(or screen buffer) with a given colour data byte. Could be used for drawing coloured rectangles as well as erasing screen rectangles easily.</div></div>"});

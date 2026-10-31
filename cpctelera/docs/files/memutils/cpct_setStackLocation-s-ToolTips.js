@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({472:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets a new location for the program stack in memory.</div></div>",488:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a bunch of bytes from one place in memory to other.</div></div>"});

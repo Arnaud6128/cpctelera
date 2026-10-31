@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_count2VSYNC.s","cpct_count2VSYNC.s");NDSummary.OnSummaryLoaded("File:video/cpct_count2VSYNC.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[867,0,1,"Functions","Functions"],[868,0,0,"cpct_count2VSYNC","cpct_count2VSYNC"]]);

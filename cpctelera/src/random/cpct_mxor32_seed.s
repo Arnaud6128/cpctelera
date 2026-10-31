@@ -27,6 +27,7 @@
 ;;    <u32> <cpct_mxor32_seed>;
 ;;
 ;; Known limitations:
+;;
 ;;    * This seed should never be set to 0. Functions that use this seed will always
 ;; return 0 if this seed is set to 0.
 ;;    * You may assing a value to this seed direcly from C or ASM. If directly accessed 
@@ -34,6 +35,7 @@
 ;;
 ;; Used by:
 ;;    This seed variable is used by these functions,
+;;
 ;;    * <cpct_getRandom_mxor_u32>
 ;;    * <cpct_getRandom_mxor_u16>
 ;;    * <cpct_getRandom_mxor_u8>

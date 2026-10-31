@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpritePosition.asm",{126:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Set Hardware Sprite at screen coordinates</div></div>"});

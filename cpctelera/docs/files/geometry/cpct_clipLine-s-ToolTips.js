@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({285:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the clipping rectangle used by cpct_clipLine. Bounds are inclusive.</div></div>"});

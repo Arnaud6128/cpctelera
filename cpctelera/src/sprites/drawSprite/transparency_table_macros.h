@@ -45,6 +45,7 @@
 // *trailing zeros*.
 // 
 // Known limitations:
+//
 //    * This macro may be used several times in different files, resulting in several copies 
 // of a same table in memory. There is no way to prevent this, so take care when using this 
 // macro several times: be sure of what you want to do.
@@ -104,6 +105,7 @@
 // substituting colour 0 in the sprites by the background pixels. 
 //
 // General recommendations:
+//
 //    * Remember that locating items at a specific memory location is done writing them at a concrete
 // location in the final binary, taking into account where it will be loaded. That can make the size
 // of the final binary increase, and even overwrite parts of the memory you did not intended. For instance,

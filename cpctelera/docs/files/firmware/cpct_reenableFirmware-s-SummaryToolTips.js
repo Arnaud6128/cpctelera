@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:firmware/cpct_reenableFirmware.s",{240:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Re-enables previously disabled Amstrad CPC firmware.</div></div>"});

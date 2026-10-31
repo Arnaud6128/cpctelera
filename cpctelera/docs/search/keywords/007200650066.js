@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ref",["Section","File"],[["Reference",,[[,"Reference documentation",,,0,"File:buildsys/android_exporter.txt:Reference_documentation"],[,"CPCtelera Reference Manual",,,1,"File:readme.txt:CPCtelera_Reference_Manual"]]]]);

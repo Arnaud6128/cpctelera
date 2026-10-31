@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:cpct_rvm",{8:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">This script lets the user execute RetroVirtualMachine from command line and automatically run a file from a DSK/SNA/CDT at will.</div></div>"});

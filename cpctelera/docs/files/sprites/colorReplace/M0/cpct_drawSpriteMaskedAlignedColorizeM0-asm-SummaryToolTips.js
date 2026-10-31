@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/colorReplace/M0/cpct_drawSpriteMaskedAlignedColorizeM0.asm",{570:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Directly replace a color and draw a sprite to video memory (or to a screen buffer), making use of a given 256-bytes aligned mask table to create transparencies.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_getScreenPtr.asm",{856:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Returns a byte-pointer to a screen memory location, given its X, Y coordinates.&nbsp; (in <b>bytes</b>, NOT in pixels!)</div></div>"});

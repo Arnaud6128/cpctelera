@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:memutils/cpct_pageMemory.asm","cpct_pageMemory.asm");NDSummary.OnSummaryLoaded("File:memutils/cpct_pageMemory.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[477,0,1,"Functions","Functions"],[478,0,0,"cpct_pageMemory","cpct_pageMemory"]]);

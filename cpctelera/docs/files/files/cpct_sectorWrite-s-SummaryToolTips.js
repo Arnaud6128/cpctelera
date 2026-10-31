@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:files/cpct_sectorWrite.s",{210:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Writes an array of consecutive sectors from memory onto a given track and drive</div></div>"});

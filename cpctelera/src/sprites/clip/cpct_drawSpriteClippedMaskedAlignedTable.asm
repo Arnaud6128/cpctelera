@@ -40,6 +40,7 @@
 ;;    > call cpct_drawSpriteClippedMaskedAlignedTable_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *width_to_draw* must be the width *in bytes* to draw partially the sprite  
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; Sprite must be rectangular and all bytes in the array must be consecutive pixels, 
@@ -70,9 +71,11 @@
 ;; example table you might want to use.
 ;;
 ;; Known limitations:
+;;
 ;;    * See <cpct_drawSpriteMaskedAlignedTable>
 ;;
 ;; Details:
+;;
 ;;    * See <cpct_drawSpriteMaskedAlignedTable>
 ;;
 ;; Destroyed Register values: 

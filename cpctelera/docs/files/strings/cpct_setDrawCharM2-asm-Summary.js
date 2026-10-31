@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:strings/cpct_setDrawCharM2.asm","cpct_setDrawCharM2.asm");NDSummary.OnSummaryLoaded("File:strings/cpct_setDrawCharM2.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[767,0,1,"Functions","Functions"],[768,0,0,"cpct_setDrawCharM2","cpct_setDrawCharM2"]]);

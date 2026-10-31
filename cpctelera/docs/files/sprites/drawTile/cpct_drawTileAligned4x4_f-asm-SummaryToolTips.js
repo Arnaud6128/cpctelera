@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawTile/cpct_drawTileAligned4x4_f.asm",{628:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a 4x4-byte sprite to video memory (or screen buffer), assuming that location to be copied is from Pixel Line 0 to Pixel Line 3 of a character line.</div></div>"});

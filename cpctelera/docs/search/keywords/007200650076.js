@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("rev",["File"],[["Reverse",,[[,"Reverse Bits",,,0,"File:macros/cpct_reverseBits.h.s:Reverse_Bits"]]]]);

@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({6:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">This script lets the user execute winape from command line and automatically run a file from a DSK at will.</div></div>"});

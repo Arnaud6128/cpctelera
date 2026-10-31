@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpriteZoom.asm",{124:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Set hardware sprite zoom for width and height</div></div>"});

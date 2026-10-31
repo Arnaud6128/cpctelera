@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/cpct_etm_setDrawTilemap4x8_ag.asm",{208:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets internal configuration values for cpct_etm_drawTilemap4x8_ag.</div></div>"});

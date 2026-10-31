@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_getHWColour.s","cpct_getHWColour.s");NDSummary.OnSummaryLoaded("File:video/cpct_getHWColour.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[857,0,1,"Functions","Functions"],[858,0,0,"cpct_getHWColour","cpct_getHWColour"]]);

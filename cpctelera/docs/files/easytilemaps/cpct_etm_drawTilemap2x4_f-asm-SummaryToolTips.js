@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/cpct_etm_drawTilemap2x4_f.asm",{214:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a complete tilemap made of 2x4-bytes tiles.</div></div>"});

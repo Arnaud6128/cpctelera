@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/pixel/cpct_pen2twoPixelM0_table.s","cpct_pen2twoPixelM0_table.s");NDSummary.OnSummaryLoaded("File:sprites/pixel/cpct_pen2twoPixelM0_table.s",[["Assembly","Assembly"]],[["Groups","Group"],["Variables","Variable"]],[[747,0,0,"Variables","Variables"],[748,0,1,"cpct_pen2twoPixelM0_table","cpct_pen2twoPixelM0_table"]]);

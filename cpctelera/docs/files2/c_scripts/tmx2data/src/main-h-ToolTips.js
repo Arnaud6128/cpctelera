@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({7:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Script for generating csv files with maps defined in tmx files (from tiled map editor).</div></div>"});

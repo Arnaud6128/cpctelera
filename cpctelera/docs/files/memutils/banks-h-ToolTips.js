@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({478:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Makes accesible a memory zone from the upper 64Kb on a standard CPC 6128 or from a memory extension.</div></div>"});

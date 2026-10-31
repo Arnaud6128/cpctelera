@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ram",["Macro"],[["RAMCFG_X",,[[,,,,0,"File:memutils/banks.h:RAMCFG_X"]]]]);

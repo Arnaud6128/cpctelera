@@ -37,9 +37,11 @@
 ;;
 ;; Assembly call (Input parameters on registers):
 ;;    > call cpct_fw2hw_asm
+;;
 ;;    * BC = *size* implies that B = 0, C = *size*
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *fw_colour_array* must be an array of values in the range [0-26], otherwise, return 
 ;; value will be unexpected.
 ;;    * *size* must be the number of elements in the array, and must be at least 1. A size of 0 
@@ -57,6 +59,7 @@
 ;; Required memory:
 ;;     C-bindings - 19 bytes
 ;;   ASM-bindings - 15 bytes
+;;
 ;;   + 27 bytes colour conversion table
 ;;
 ;; Time Measures:

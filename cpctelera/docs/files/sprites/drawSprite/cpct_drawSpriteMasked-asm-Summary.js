@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/drawSprite/cpct_drawSpriteMasked.asm","cpct_drawSpriteMasked.asm");NDSummary.OnSummaryLoaded("File:sprites/drawSprite/cpct_drawSpriteMasked.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[617,0,1,"Functions","Functions"],[618,0,0,"cpct_drawSpriteMasked","cpct_drawSpriteMasked"]]);

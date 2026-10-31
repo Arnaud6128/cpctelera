@@ -37,6 +37,7 @@
 ;;    > call cpct_etm_drawTilemap2x4_f_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *ptilemap* could be any 16-bits value, representing the memory address where 
 ;; the tilemap is stored. This function expects the parameter to point the start of
 ;; a 2D tile-index matrix (the tilemap) well populated. If the pointer points to any other 
@@ -56,6 +57,7 @@
 ;; outside video memory could be overwritten.
 ;;
 ;; Known limitations:
+;;
 ;;     * This function does not do any kind of checking over the tilemap, its
 ;; contents or size. If you give a wrong pointer, your tilemap has different
 ;; dimensions than required or has less / more tiles than will be used later,

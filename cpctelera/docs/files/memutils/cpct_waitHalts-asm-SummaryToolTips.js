@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:memutils/cpct_waitHalts.asm",{470:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Waits for a given number of <b>halt</b> assembler instructions to be executed.</div></div>"});

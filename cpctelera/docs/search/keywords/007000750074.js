@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("put",["Function"],[["putchar",,[[,,,,0,"File:strings/cpct_putChar.s:putchar"]]]]);

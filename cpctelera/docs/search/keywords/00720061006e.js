@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ran",["Section","Macro"],[["Random",,[[,,,,0,"File:random/random.h:Random"],[,"Random Questions",,,0,"File:audio/arkosplayer.txt:Random_Questions"],[,"Simple aliases for most common random generators",,,1,"File:random/random.h:Simple_aliases_for_most_common_random_generators"]]]]);

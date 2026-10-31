@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:c_scripts/png2chars/src/main.h","main.h");NDSummary.OnSummaryLoaded("File2:c_scripts/png2chars/src/main.h",[["C/C++","C"]],[["Files","File"]],[[1,0,0,"cpct_png2chars","cpct_png2chars"]]);

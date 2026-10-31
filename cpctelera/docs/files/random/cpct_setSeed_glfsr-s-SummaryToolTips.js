@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_setSeed_glfsr.s",{516:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets machine state (seed) for 16-bits Galois Linear-Feedback Shift Register pseudo-random number generator.</div></div>"});

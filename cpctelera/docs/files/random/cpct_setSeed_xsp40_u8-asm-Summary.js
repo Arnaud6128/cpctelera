@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_setSeed_xsp40_u8.asm","cpct_setSeed_xsp40_u8.asm");NDSummary.OnSummaryLoaded("File:random/cpct_setSeed_xsp40_u8.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[508,0,1,"Functions","Functions"],[509,0,0,"cpct_setSeed_xsp40_u8","cpct_setSeed_xsp40_u8"]]);

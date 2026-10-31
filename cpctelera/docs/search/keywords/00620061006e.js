@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ban",["Macro"],[["BANK_NUM_SHIFT",,[[,,,,0,"File:memutils/banks.h:BANK_NUM_SHIFT"]]],["BANK_X",,[[,,,,0,"File:memutils/banks.h:BANK_X"]]]]);

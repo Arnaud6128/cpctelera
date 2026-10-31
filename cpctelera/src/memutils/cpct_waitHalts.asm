@@ -33,10 +33,12 @@
 ;;    > call cpct_waitHalts_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *n* can be any 8-bits value. Take into account that a value of 0 will result
 ;; on 256 halts to be waited for, as it will be decremented before comparison.
 ;;
 ;; Known issues:
+;;
 ;;    * Warning: if interrupts are disabled when this function gets called, it 
 ;; will effectively hang your CPU forever, requiring a reset.
 ;;

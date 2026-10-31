@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/flipping/cpct_getBottomLeftPtr.asm","cpct_getBottomLeftPtr.asm");NDSummary.OnSummaryLoaded("File:sprites/flipping/cpct_getBottomLeftPtr.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[705,0,1,"Functions","Functions"],[706,0,0,"cpct_getBottomLeftPtr","cpct_getBottomLeftPtr"]]);

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/blending/cpct_setBlendMode.s",{542:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Establishes the blending mode that cpct_drawSpriteBlended will use from now on.</div></div>"});

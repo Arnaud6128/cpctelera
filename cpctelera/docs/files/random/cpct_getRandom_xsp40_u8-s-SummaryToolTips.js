@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_getRandom_xsp40_u8.s",{534:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Generates an 8-bits, high-quality, pseudo-random number with each call. It uses 40 state-bits, giving a period of 962.072.672.512 numbers without repeating.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:cpct_installrslib",{11:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Installs and configures CPCRSLib to be used together with CPCtelera</div></div>"});

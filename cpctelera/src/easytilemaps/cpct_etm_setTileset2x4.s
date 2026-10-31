@@ -34,6 +34,7 @@
 ;;    > call cpct_etm_setTileset2x4_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *ptileset* could be any 16-bits value, representing the memory address where 
 ;; the tileset is stored. This function expects the parameter to point to an array of
 ;; pointers to tile definitions (2-bytes each) , but does not perform any kind of check. 
@@ -42,6 +43,7 @@
 ;; get called)
 ;;
 ;; Important details:
+;;
 ;;    * This function *MUST be called at least once* previous to the use of other
 ;; EasyTilemap (etm) 2x4 drawing functions. Otherwise, those functions will use NULL (0x0000)
 ;; as pointer to the tileset, which will lead to undefined behaviour (typically 

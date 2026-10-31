@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:c_scripts/binpatch/src/main.h",{4:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Patches a binary file</div></div>"});

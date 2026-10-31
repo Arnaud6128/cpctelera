@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:firmware/cpc_mode_rom_status.s","cpc_mode_rom_status.s");NDSummary.OnSummaryLoaded("File:firmware/cpc_mode_rom_status.s",[["Assembly","Assembly"]],[["Groups","Group"],["Variables","Variable"]],[[462,0,0,"Variables","Variables"],[463,0,1,"cpct_mode_rom_status","cpct_mode_rom_status"]]);

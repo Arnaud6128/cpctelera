@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:easytilemaps/easytilemaps.h","easytilemaps.h");NDSummary.OnSummaryLoaded("File:easytilemaps/easytilemaps.h",[["C/C++","C"]],[["Groups","Group"],["Macros","Macro"],["Sections","Section"]],[[196,0,2,"EasyTilemaps","EasyTilemaps"],[197,0,0,"Macros","Macros"],[198,0,1,"cpct_etm_drawTilemap2x4","cpct_etm_drawTilemap2x4"]]);

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_setPALColour.asm",{850:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Changes one colour value of the Palette, similarly to BASIC\'s INK instruction.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:files/cpct_sectorRead.s","cpct_sectorRead.s");NDSummary.OnSummaryLoaded("File:files/cpct_sectorRead.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[211,0,1,"Functions","Functions"],[212,0,0,"cpct_sectorRead","cpct_sectorRead"]]);

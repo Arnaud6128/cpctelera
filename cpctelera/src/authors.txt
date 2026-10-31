@@ -23,12 +23,14 @@ Section: Project authors
    Maintainer, low-level library and build system developers
 
 Project owner:
+
    * <ronaldo at http://twitter.com/frangallegobr> / (<Cheesetea at http://www.cheesetea.com>, <Fremos at http://fremos.cheesetea.com>, <ByteRealms at http://www.byterealms.com>)
  
 Awesome collaborators:
+
    * <Augusto Ruiz at https://twitter.com/augurui> / <RetroWorks at http://retroworks.es> 
-   * <Arnaud Bouche at http://www.cpcwiki.eu/forum/profile/?u=1424> / <CPCWiki at http://www.cpcwiki.eu>
-   * Stéphane Gourichon (<cpcitor at http://github.com/cpcitor>)
+   * <Arnaud Bouche (@Arnaud6128) at http://www.cpcwiki.eu/forum/profile/?u=1424> / <CPCWiki at http://www.cpcwiki.eu>
+   * <Stéphane Gourichon (@cpcitor) at http://github.com/cpcitor>
    * <César Nicolás González at https://twitter.com/cngsoft> / <CNGSoft at http://cngsoft.no-ip.org/index.htm>
    * <Diego Freniche at http://blog.freniche.com> (<@dfreniche at https://twitter.com/dfreniche>)
    * <Emilio Molina at http://twitter.com/EmilioMolinaR> / <Fremos at http://fremos.cheesetea.com> / <Carlio at http://carlio.es>
@@ -36,25 +38,32 @@ Awesome collaborators:
    * Stefano Beltran / <ByteRealms at http://www.byterealms.com>
    * <Syx at http://www.cpcwiki.eu/forum/profile/?u=324>
    * <Nestornillo at https://github.com/nestornillo>
+   * <Xavier Jollet (@SagaDS) at https://github.com/jolletx>
  
 Bitarrays idea and original implementation:
+
    * Alberto García García (Blitzman, albertgg93@gmail.com, <@albertgarcia93 at http://twitter.com/albertgarcia93>)
    * Pablo Martínez González (pablo2093@gmail.com, <@pablo_2093 at http://twitter.com/pablo_2093>)
  
 Some original code and ideas for sprite drawing and firmware enabling/disabling:
+
    * Raúl Simarro (Artaburu / ESP Soft)
  
 Some makefile code, reviews and many great ideas:
+
    * Stéphane Gourichon <cpcitor at http://github.com/cpcitor>
  
 Arkos player original code:
+
    * <Targhan at http://www.julien-nevo.com/> / <Arkos at http://www.cpcwiki.eu/index.php/Arkos>
 
 Compression and decompression tools and functions:
+
    * ZX7 and ZX1 - <Einar Saukas at https://www.ime.usp.br/~einar/> and <https://github.com/einar-saukas>
    * ZX7B - <Antonio Villena at https://github.com/antoniovillena>
 
 Random number generation:
+
    * George Marsaglia
 
 (see logos_composite_long.png)
@@ -64,6 +73,7 @@ Section: 3rdparty software authors
    Developers of tools or 3rdparty software used by CPCtelera
  
  <Arkos Tracker at http://www.grimware.org/doku.php/documentations/software/arkos.tracker/start>:
+
    * Main Author: <Targhan at http://www.julien-nevo.com/> / <Arkos at http://www.cpcwiki.eu/index.php/Arkos> 
    * Other Authors / Collaborators: SuperSylvestre / Les Sucres, 
    <Augusto Ruiz at https://twitter.com/augurui> / <Retroworks at http://www.retroworks.es>, 
@@ -76,38 +86,49 @@ Section: 3rdparty software authors
    Syx
  
  <Small Devices C Compiler (SDCC) at http://sdcc.sourceforge.net/>:
+
    * <SDCC Team at http://sdcc.sourceforge.net/index.php#Who>
  
  <Z80 assembler compiler and linker (asz80 & aslink) at http://shop-pdp.net/ashtml/asxdoc.htm>:
+
    * Alan R. Baldwin (baldwin@shop-pdp.net)
 
  <iDSK at http://koaks.amstrad.free.fr/amstrad/projets/>:
+
    * Sid / IMPACT 
    * <Pulkomandy at http://www.pushnpop.net/profile-47.html> / <Shinra Team at http://pulko.mandy.pagesperso-orange.fr/shinra/index.shtml>
  
  <Hex2bin at http://sourceforge.net/projects/hex2bin/>:
+
    * <Jaques Pelletier at https://www.linkedin.com/pub/jacques-pelletier/a/668/309>
  
  CPC2CDT:
+
    * <César Nicolás González at https://twitter.com/cngsoft> / <CNGSoft at http://cngsoft.no-ip.org/index.htm>
 
  <2CDT at http://www.cpcwiki.eu/forum/applications/2cdt/>:
+
    * <Kevin Thacker at http://www.cpctech.org.uk/about.html> / <CPCTech at http://www.cpctech.org.uk/>
  
  <Retro Game Asset Studio (RGAS) at http://www.cpcwiki.eu/index.php/Retro_Game_Asset_Studio>:
+
    * <Lachlan Keown at http://www.twitter.com/lachlankeown> (lachlankeown@gmail.com)
 
  <Img2CPC at https://github.com/AugustoRuiz/Img2CPC>, <DSKGen at https://github.com/AugustoRuiz/dskgen>: 
+
    * <Augusto Ruiz at https://twitter.com/augurui> / <RetroWorks at http://retroworks.es> (augusto.ruiz@gmail.com)
 
  <libfreeimage at http://freeimage.sourceforge.net/>:
+
    * <Hervé Drolon at mailto:drolon@infonie.fr>
    * <Floris van den Berg at mailto:flvdberg@wxs.nl> (Stopped development and support on FreeImage. However, you can still contact him.)
 
  <WinApe emulator at http://winape.net>: 
+
    * <Richard Wilson at mailto:rich@bitwise-systems.com>
 
  <RetroVirtualMachine emulator at http://www.retrovirtualmachine.org/es/>: 
+
     * <Juan Carlos Gonzalez Amestoi at https://twitter.com/retrovm>
 
 Section: Code & fixes contributors

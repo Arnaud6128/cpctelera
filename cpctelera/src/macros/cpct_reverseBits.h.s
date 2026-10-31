@@ -126,6 +126,7 @@
 ;;    A - Resulting value with bits reversed 
 ;;
 ;; Requires:
+;;
 ;;   - Uses the macro <cpctm_reverse_and_select_bits_of_A>.
 ;;
 ;; Details:
@@ -172,6 +173,7 @@
 ;;    A - Resulting byte with the 4 pixels values reversed in order
 ;;
 ;; Requires:
+;;
 ;;   - Uses the macro <cpctm_reverse_and_select_bits_of_A>.
 ;;
 ;; Details:

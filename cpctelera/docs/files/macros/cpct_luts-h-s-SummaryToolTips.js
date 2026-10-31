@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:macros/cpct_luts.h.s",{430:"<div class=\"NDToolTip TFile LAssembly\"><div class=\"TTSummary\">Useful macros for accessing and managing Look-Up-Tables</div></div>",432:"<div class=\"NDToolTip TMacro LAssembly\"><div class=\"TTSummary\">Gets a value from a 256-byte-max 8-bit table into A register</div></div>"});

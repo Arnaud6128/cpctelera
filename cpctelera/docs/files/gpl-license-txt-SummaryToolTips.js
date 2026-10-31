@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:gpl-license.txt",{});

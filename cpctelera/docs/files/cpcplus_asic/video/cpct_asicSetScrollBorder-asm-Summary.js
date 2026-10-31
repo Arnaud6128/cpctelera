@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/video/cpct_asicSetScrollBorder.asm","cpct_asicSetScrollBorder.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/video/cpct_asicSetScrollBorder.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[169,0,1,"Functions","Functions"],[170,0,0,"cpct_asicSetScrollBorder","cpct_asicSetScrollBorder"]]);

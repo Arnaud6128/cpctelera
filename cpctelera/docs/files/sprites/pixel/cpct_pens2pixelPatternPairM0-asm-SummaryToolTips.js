@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/pixel/cpct_pens2pixelPatternPairM0.asm",{750:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Returns 16 bits in Mode 0 screen pixel format, containing two pattern with all 2 pixels in the same pen colour as given by the arguments <b>OldPen</b> and <b>NewPen</b>.</div></div>"});

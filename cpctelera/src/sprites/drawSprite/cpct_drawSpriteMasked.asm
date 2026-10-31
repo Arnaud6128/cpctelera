@@ -37,6 +37,7 @@
 ;;    > call cpct_drawSpriteMasked_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be an array containing sprite's pixels data in screen pixel format
 ;; along with mask data. Each mask byte will contain enabled bits as those that should
 ;; be picked from the background (transparent) and disabled bits for those that will
@@ -65,6 +66,7 @@
 ;; the horizontal space.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function does not do any kind of boundary check or clipping. If you 
 ;; try to draw sprites on the frontier of your video memory or screen buffer 
 ;; if might potentially overwrite memory locations beyond boundaries. This 
@@ -132,8 +134,8 @@
 ;;  Case      |    microSecs (us)        |    CPU Cycles
 ;; ----------------------------------------------------------------
 ;;  Best      |  20 + (20 + 18W)H + 10HH | 80 + (80 + 72W)H + 40HH
-;;  Worst     |       Best + 10          |     Best + 40;
-; ----------------------------------------------------------------
+;;  Worst     |       Best + 10          |     Best + 40
+;; ----------------------------------------------------------------
 ;;  W=2,H= 8  |        478 /  488        |    1912 /  1952
 ;;  W=2,H=16  |        926 /  936        |    3704 /  3744
 ;;  W=4,H=16  |       1502 / 1512        |    6008 /  6048
@@ -162,12 +164,14 @@ dms_sprite_width_loop:
 
    dec   c         ;; [1] C holds sprite width, we decrease it to count pixels in this line.
    jr   nz,dms_sprite_width_loop;; [2/3] While not 0, we are still painting this sprite line 
+                                ;;
                                 ;;      - When 0, we have to jump to next pixel line
 
    pop  de         ;; [3] Recover DE from stack. We use it to calculate start of next pixel line on screen
 
    dec   b         ;; [1] B holds sprite height. We decrease it to count another pixel line finished
    jr    z,dms_sprite_copy_ended;; [2/3] If 0, we have finished the last sprite line.
+                                ;;
                                 ;;      - If not 0, we have to move pointers to the next pixel line
 
    ld__c_ixl       ;; [2] Restore Sprite Width into C

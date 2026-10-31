@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/video/cpct_asicSetScrollVert.asm",{166:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Scroll vertically screen per pixel</div></div>"});

@@ -34,6 +34,7 @@
 ;;    > call cpct_setBlendMode_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *mode* it could theoretically be any 8-bits value, but only some values
 ;; will be really useful, whereas some others will have unexpected results, even
 ;; making the program crash. In C it is restricted by the <CPCT_BlendMode> enumeration
@@ -41,6 +42,7 @@
 ;; inserted into the blending function as blend operation.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function will produce no result if <cpct_drawSpriteBlended> is allocated 
 ;; in ROM space. This function modifies <cpct_drawSpriteBlended> code, therefore it
 ;; requires it to be in RAM space.

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ass",["Section","File"],[["Assembly",,[[,"Advice for Assembly coders",,,0,"File:readme.txt:Advice_for_Assembly_coders"]]],["Asset",,[[,"Asset Conversion Utilities",,,1,"File:buildsys/asset_conversion.txt:Asset_Conversion_Utilities"]]],["Assets",,[[,,,,0,"File:authors.txt:Assets"]]]]);

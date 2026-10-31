@@ -43,12 +43,14 @@
 ;;     > call cpct_drawLineM1_f
 ;;
 ;; Fast-Path Special Cases:
+;;
 ;;    - Single Point  (DX = 0, DY = 0)  : Direct pixel plot.
 ;;    - Horizontal    (DY = 0, DX != 0) : Byte-aligned fast solid fill.
 ;;    - Vertical      (DX = 0, DY != 0) : 8-line scanline stepping.
 ;;
 ;; Optimized Bresenham Architecture:
 ;;    1. Dual-Path Split:
+;;
 ;;       - Gentle Slope (DX >= DY) : X is the driving axis (steps unconditionally)
 ;;       - Steep Slope  (DY > DX)  : Y is the driving axis (steps unconditionally)
 ;;    2. Pixel write with a constant solid color byte: (VRAM ^ solid) & mask ^ solid,
@@ -59,6 +61,7 @@
 ;;    4. Pixel counter split in IXL / IXH (8-bit decrement in the loop).
 ;;
 ;; Known limitations:
+;;
 ;;  * This function will not work from ROM, as it uses self-modifying code.
 ;;  * This function disables interrupts while drawing sloped lines (alternate
 ;;    registers are used) and restores the previous interrupt status on exit.

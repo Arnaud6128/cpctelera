@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:keyboard/cpct_isAnyKeyPressed.s","cpct_isAnyKeyPressed.s");NDSummary.OnSummaryLoaded("File:keyboard/cpct_isAnyKeyPressed.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[299,0,1,"Functions","Functions"],[300,0,0,"cpct_isAnyKeyPressed","cpct_isAnyKeyPressed"]]);

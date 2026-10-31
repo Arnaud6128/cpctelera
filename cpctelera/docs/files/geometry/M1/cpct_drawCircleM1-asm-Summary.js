@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:geometry/M1/cpct_drawCircleM1.asm","cpct_drawCircleM1.asm");NDSummary.OnSummaryLoaded("File:geometry/M1/cpct_drawCircleM1.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[275,0,1,"Functions","Functions"],[276,0,0,"cpct_drawCircleM1","cpct_drawCircleM1"]]);

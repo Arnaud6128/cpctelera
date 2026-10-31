@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:types.h",{870:"<div class=\"NDToolTip TType LC\"><div class=\"TTSummary\">CPCtelera\'s short useful aliases for standard SDCC built-in types.</div></div>"});

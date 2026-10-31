@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:cpct_winape","cpct_winape");NDSummary.OnSummaryLoaded("File2:cpct_winape",[["Bash","Bash"]],[["Files","File"]],[[6,0,0,"cpct_winape","cpct_winape"]]);

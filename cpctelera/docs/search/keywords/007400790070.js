@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("typ",["Type","Section"],[["Types",,[[,"Aliases for builtin types",,,0,"File:types.h:Aliases_for_builtin_types"],[,"Defined Types",,,1,"File:random/random_types.h:Defined_Types"]]]]);

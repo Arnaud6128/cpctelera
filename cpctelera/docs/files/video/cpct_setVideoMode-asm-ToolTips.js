@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({825:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the video mode of the CPC Screen, changing resolution and palette size.</div></div>"});

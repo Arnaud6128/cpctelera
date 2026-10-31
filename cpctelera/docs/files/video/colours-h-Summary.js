@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/colours.h","colours.h");NDSummary.OnSummaryLoaded("File:video/colours.h",[["C/C++","C"]],[["Enums","Enumeration"],["Files","File"],["Groups","Group"]],[[880,0,1,"Colours (C)","Colours"],[881,0,2,"Types","Types"],[882,0,0,"CPCT_FW_Colour","CPCT_FW_Colour"],[883,0,0,"CPCT_HW_Colour","CPCT_HW_Colour"]]);

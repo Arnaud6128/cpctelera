@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_waitVSYNCStart.s","cpct_waitVSYNCStart.s");NDSummary.OnSummaryLoaded("File:video/cpct_waitVSYNCStart.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[805,0,1,"Functions","Functions"],[806,0,0,"cpct_waitVSYNCStart","cpct_waitVSYNCStart"]]);

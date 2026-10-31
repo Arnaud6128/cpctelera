@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/pixel/cpct_px2byteM1.s","cpct_px2byteM1.s");NDSummary.OnSummaryLoaded("File:sprites/pixel/cpct_px2byteM1.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[727,0,1,"Functions","Functions"],[728,0,0,"cpct_px2byteM1","cpct_px2byteM1"]]);

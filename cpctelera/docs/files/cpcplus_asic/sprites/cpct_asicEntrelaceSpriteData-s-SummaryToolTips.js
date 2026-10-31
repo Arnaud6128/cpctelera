@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicEntrelaceSpriteData.s",{137:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Interlaces two 16x16 hardware sprites into one 256-byte buffer</div></div>"});

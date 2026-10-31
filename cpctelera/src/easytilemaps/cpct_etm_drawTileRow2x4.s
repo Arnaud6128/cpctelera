@@ -47,6 +47,7 @@
 ;; (end code)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *ptilemap_row* and *pvideomem* could be any 16-bits value, representing the memory 
 ;; addresses where the first tile to be drawn is and the location on the video memory where to
 ;; draw the row, respectively. This does not do any check on these parameters and, if they
@@ -65,6 +66,7 @@
 ;; on the screen and, occasionally a crash.
 ;;
 ;; Known limitations:
+;;
 ;;     * This function does not do any kind of check on the parameters. It is up to the
 ;; programmer to provide correct values for them.
 ;;     * This function *will not properly work* if <cpct_etm_setTileset2x4> has not been

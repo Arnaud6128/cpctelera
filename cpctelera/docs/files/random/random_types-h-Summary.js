@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/random_types.h","random_types.h");NDSummary.OnSummaryLoaded("File:random/random_types.h",[["C/C++","C"]],[["Enums","Enumeration"],["Groups","Group"],["Sections","Section"]],[[510,0,2,"Defined Types","Defined_Types"],[511,0,1,"Types","Types"],[512,0,0,"GLFSR16_TAPSET","GLFSR16_TAPSET"]]);

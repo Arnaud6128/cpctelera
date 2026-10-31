@@ -22,10 +22,12 @@
 ;;    > call cpct_drawDoubleSpriteM1_asm
 ;;
 ;; Remarks:
+;;
 ;;     * Memory layout must be configurated with fonction *cpct_configureOverscan*
 ;;     * See <cpct_drawSpriteOverscan> for more informations
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * sprite must be an array containing sprite's pixels in CPC Mode 1 format 
 ;; (2 bits per pixel, 4 pixels per byte). Pixels must be stored consecutively 
 ;; starting from top-left corner, going left-to-right and top-to-bottom. Total 
@@ -42,6 +44,7 @@
 ;; will cause corruption of source data during processing.
 ;;
 ;; Known limitations:
+;;
 ;;    * w or h values of 0 will cause infinite loops (IXL/IXH underflow to 255).
 ;;    * This function is Mode 1 specific (2bpp). Using it with Mode 0 or Mode 2 
 ;; sprites will produce corrupted output.

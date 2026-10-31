@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/cpct_etm_drawTileRow2x4.s",{206:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a given number of consecutive 2x4-bytes tiles of a tilemap as a row.</div></div>"});

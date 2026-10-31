@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("or_",["Macro"],[["or__ixh",,[[,,,,0,"File:macros/cpct_undocumentedOpcodes.h.s:or__ixh"]]],["or__ixl",,[[,,,,0,"File:macros/cpct_undocumentedOpcodes.h.s:or__ixl"]]],["or__iyh",,[[,,,,0,"File:macros/cpct_undocumentedOpcodes.h.s:or__iyh"]]],["or__iyl",,[[,,,,0,"File:macros/cpct_undocumentedOpcodes.h.s:or__iyl"]]]]);

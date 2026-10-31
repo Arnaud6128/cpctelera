@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:cpct_img2tileset",{29:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Converts an image file with a set of tile or sprite images into a CPCtelera C-array tileset along with arrays for all tiles/sprites.</div></div>"});

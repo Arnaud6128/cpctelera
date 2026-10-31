@@ -38,14 +38,17 @@
 ;;    <u32> - Next 32-bits pseudo-random value in the sequence. 
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *seed* could be any 32-bits number *except 0*. A 0 as input will always produce
 ;; another 0 as output.
 ;;
 ;; Known limitations:
+;;
 ;;    * Marsaglia's XOR-shift algorithm will never produce a 32-bits 0 value as output.
 ;; However, when used to produce 8/16-bits values, 0's will be generated.
 ;;
 ;; Important details:
+;;
 ;;    * This function calculates next value in a 32-bits sequence that goes over all 32-bits
 ;; possible values except 0. Therefore, it has a repeating period of (2^32)-1. The walk this 
 ;; function does has a high pseudo-random quality: it passes most <Diehard tests at
@@ -100,6 +103,7 @@
 ;; (end code)
 ;;
 ;; Credits:
+;;
 ;;   * Original <XOR-shifting algorithm published by George Marsaglia at 
 ;; http://www.jstatsoft.org/article/view/v008i14/xorshift.pdf>
 ;;   * Some interesting ideas obtained from <Z88DK developers at

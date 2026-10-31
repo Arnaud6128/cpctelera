@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("int",["Section"],[["integration",,[[,"Basic integration",,,0,"File:buildsys/vscode_integration.txt:Basic_integration"]]],["intellisense",,[[,"Getting the most of intellisense",,,0,"File:buildsys/vscode_integration.txt:Getting_the_most_of_intellisense"]]]]);

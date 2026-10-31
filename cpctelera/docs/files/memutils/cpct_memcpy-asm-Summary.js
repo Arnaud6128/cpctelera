@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:memutils/cpct_memcpy.asm","cpct_memcpy.asm");NDSummary.OnSummaryLoaded("File:memutils/cpct_memcpy.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[487,0,1,"Functions","Functions"],[488,0,0,"cpct_memcpy","cpct_memcpy"]]);

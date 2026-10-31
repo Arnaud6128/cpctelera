@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_setCRTCReg.asm",{852:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets a new value for a given CRTC register</div></div>"});

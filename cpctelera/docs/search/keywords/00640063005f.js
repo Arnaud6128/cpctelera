@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("dc_",["Variable"],[["dc_mode0_ct",,[[,,,,0,"File:strings/cpct_dc_mode0_ct.s:dc_mode0_ct"]]],["dc_mode1_ct",,[[,,,,0,"File:strings/cpct_dc_mode1_ct.s:dc_mode1_ct"]]]]);

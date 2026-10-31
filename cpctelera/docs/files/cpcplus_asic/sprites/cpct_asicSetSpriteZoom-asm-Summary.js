@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpriteZoom.asm","cpct_asicSetSpriteZoom.asm");NDSummary.OnSummaryLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpriteZoom.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[123,0,1,"Functions","Functions"],[124,0,0,"cpct_asicSetSpriteZoom","cpct_asicSetSpriteZoom"]]);

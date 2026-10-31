@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_setPALColour.asm","cpct_setPALColour.asm");NDSummary.OnSummaryLoaded("File:video/cpct_setPALColour.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[849,0,1,"Functions","Functions"],[850,0,0,"cpct_setPALColour","cpct_setPALColour"]]);

@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:strings/cpct_drawCharM2_inner.s","cpct_drawCharM2_inner.s");NDSummary.OnSummaryLoaded("File:strings/cpct_drawCharM2_inner.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[787,0,1,"Functions","Functions"],[788,0,0,"cpct_drawCharM2_inner_asm","cpct_drawCharM2_inner_asm"]]);

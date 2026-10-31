@@ -70,6 +70,7 @@
 ;; take care of the expected size of the offset value.
 ;;
 ;; Known issues:
+;;
 ;;    * This is a assembler macro. It cannot be called or used from C code.
 ;;
 .macro cpctm_ld_spbloff REG, W, H

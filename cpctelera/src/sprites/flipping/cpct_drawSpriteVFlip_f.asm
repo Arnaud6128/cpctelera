@@ -38,6 +38,7 @@
 ;;    > call cpct_drawSpriteVFlip_f_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be a pointer to the sprite array containing pixel data to
 ;; be drawn. Sprite must be rectangular and all bytes in the array must be 
 ;; consecutive pixels, starting from top-left corner and going left-to-right, 
@@ -55,6 +56,7 @@
 ;; bytes and pixels is the same value.
 ;;
 ;; Known limitations:
+;;
 ;;    * A sprite *width* outside the range (1-63) will probably make the program 
 ;; hang or crash, due to the optimization technique used (unfolded LDI loop).
 ;;    * This function does not do any kind of boundary check or clipping. If you 

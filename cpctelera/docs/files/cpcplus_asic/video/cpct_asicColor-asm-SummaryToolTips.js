@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/video/cpct_asicColor.asm",{178:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Convert RGB to asic colour</div></div>"});

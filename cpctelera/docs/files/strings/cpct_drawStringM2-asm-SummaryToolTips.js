@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:strings/cpct_drawStringM2.asm",{780:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Prints a null-terminated string with ROM characters on a given byte-aligned position on the screen in Mode 2 (640x200px, 2 colours).</div></div>"});

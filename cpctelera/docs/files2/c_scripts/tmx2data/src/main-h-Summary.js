@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:c_scripts/tmx2data/src/main.h","main.h");NDSummary.OnSummaryLoaded("File2:c_scripts/tmx2data/src/main.h",[["C/C++","C"]],[["Files","File"]],[[3,0,0,"cpct_tmx2data","cpct_tmx2data"]]);

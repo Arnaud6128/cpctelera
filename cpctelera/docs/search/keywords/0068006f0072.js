@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("hor",["Section"],[["Horizontally",,[[,"Pixel Horizontally Flipping Macros",,,0,"File:sprites/flipping/flipping_table_macros.h:Pixel_Horizontally_Flipping_Macros"],[,"Pixel Horizontally Flipping Tables",,,0,"File:sprites/flipping/flipping_tables.h:Pixel_Horizontally_Flipping_Tables"]]]]);

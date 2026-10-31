@@ -34,6 +34,7 @@
 ;;    (1B  E) w         - width in tiles of the tile-box to be redrawn
 ;;    (1B  D) h         - height in tiles of the tile-box to be redrawn
 ;;    (1B  A) map_width - Width in tiles of a complete row of the tilemap
+;;
 ;;    * Always received on the stack
 ;;    (2B) pvideomem    - Pointer to upper left corner of the *tilemap* in video memory.
 ;;    (2B) ptilemap     - Pointer to the start of the tilemap
@@ -59,6 +60,7 @@
 ;; (end code)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * (*x*, *y*) represent the coordinates, in tiles, of the upper-left corner of 
 ;; the tilebox to be drawn. These coordinates are relative to the upper-left corner of
 ;; the tilemap (its first tile). They are not checked to be inside the tilemap, and 
@@ -81,6 +83,7 @@
 ;; kind of data, the result is undefined (most likely a crash or rubbish on the screen).
 ;;
 ;; Known limitations:
+;;
 ;;     * This function cannot be called using tail-recursion optimization. It *must*
 ;; be called using a CALL instruction. If you call it using JP, parameters passed on
 ;; the stack will be used as return address making your program execute arbitrary code.
@@ -258,6 +261,7 @@
    add  hl, de     ;; [3] HL += BC, so HL now points to the place where first tile should be drawn
 
    ;; And do not forget to add displacements for pixel lines 0 and 4
+   ;;
    ;;  - When map starts at pixel line 0, add 0x2000 on odd lines (to jump to pixel line 4)
    ;;  - When map starts at pixel line 4, add 0xE050 on odd lines (to jump to next pixel line 0)
    ;;

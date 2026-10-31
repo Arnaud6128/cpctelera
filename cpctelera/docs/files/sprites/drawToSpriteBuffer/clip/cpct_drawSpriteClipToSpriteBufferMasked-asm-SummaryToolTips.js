@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawToSpriteBuffer/clip/cpct_drawSpriteClipToSpriteBufferMasked.asm",{636:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a clipped, masked sprite into a sprite buffer.</div></div>"});

@@ -41,11 +41,13 @@
 ;;    ASM-bindings - 1 byte (in A)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *PEN* ([0-3], 16 bits, unsigned). Although parameter is 16-bits-wide, 
 ;; values outside the [0-3] range will produce undefined behaviour. It is 16-bits 
 ;; only for optimization purposes.
 ;; 
 ;; Known limitations:
+;;
 ;;    * Parameter boundaries are not checked. Providing parameters out of range 
 ;; will result in undefined behaviour.
 ;;    * This function is to be used with variable parameters. For constant 

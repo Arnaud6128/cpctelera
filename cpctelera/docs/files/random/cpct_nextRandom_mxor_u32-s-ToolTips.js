@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({524:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Calculates next 32-bits pseudo-random number in Marsaglia\'s XOR-shift 8-9-23 sequence.</div></div>"});

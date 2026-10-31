@@ -44,6 +44,7 @@
 ;;    > call cpct_drawStringM1_f_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *string* must be a null terminated string. It could contain any 8-bit value as 
 ;; characters except 0, which will signal the end of the string. Be careful to provide
 ;; strings with a 0 (null) at the end of the string. Otherwise, unexpected results may
@@ -59,6 +60,7 @@
 ;;  * *bg_pen* must be in the range [0-3], with identical reasons to *fg_pen*.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * *Do not put this function's code below 0x4000 in memory*. In order to read
 ;; characters from ROM, this function enables Lower ROM (which is located 0x0000-0x3FFF),
 ;; so CPU would read code from ROM instead of RAM in first bank, effectively shadowing

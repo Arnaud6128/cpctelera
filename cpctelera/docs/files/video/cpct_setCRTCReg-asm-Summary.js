@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_setCRTCReg.asm","cpct_setCRTCReg.asm");NDSummary.OnSummaryLoaded("File:video/cpct_setCRTCReg.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[851,0,1,"Functions","Functions"],[852,0,0,"cpct_setCRTCReg","cpct_setCRTCReg"]]);

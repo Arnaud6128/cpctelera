@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawToSpriteBuffer/draw/cpct_drawToSpriteBuffer.asm",{648:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws an sprite inside another sprite\'s buffer. This permits using the destination sprite as a temporary screen back buffer.</div></div>"});

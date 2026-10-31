@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({804:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Waits until CRTC produces vertical synchronization signal (VSYNC) and returns.</div></div>",806:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Waits until the start of the vertical synchronization signal (VSYNC) and returns.</div></div>"});

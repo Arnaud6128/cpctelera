@@ -54,12 +54,14 @@ Summing up,
 (end)
 
  Notes:
+
  	- Bit 6 on lines 9 and 6, may be used to report a third fire button on a joystick. This bit is also used as the middle button on an AMX compatible mouse.  
  	- *f.* is the *.* key on the numeric keypad. (Bit 7, Line 0)
  	- *Enter* is the Small enter key, whereas *Return* is the large one.
  	- If matrix lines 11-14 are selected, the returned byte is always 0xFF. After testing on a real CPC, it is found that these never change, they always return 0xFF. 
 
 References:
+
 	- <Retroisle::Scanning the Keyboard and Joystick at http://www.retroisle.com/amstrad/cpc/Technical/hardware_Kbd%20Joystick%20Scanning.php>
 	- <CPCWiki::Keyboard Scanning at http://www.cpcwiki.eu/index.php/Programming:Keyboard_scanning>
 	- <Odiesoft::The Amstrad CPC Keyboard Clash at http://www.odiesoft.de/amstrad/megablasters/keyboard/keyboard.html>

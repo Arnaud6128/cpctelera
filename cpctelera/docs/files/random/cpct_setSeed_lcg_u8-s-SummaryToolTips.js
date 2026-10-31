@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_setSeed_lcg_u8.s",{514:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the random seed used by cpct_getRandom_lcg_u8.</div></div>"});

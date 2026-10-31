@@ -39,17 +39,20 @@
 ;;    > call cpct_setCRTCReg_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    - *regnum* has to be a regiter number from 0 to 31
 ;;    - *newval* can be any 8-bits value. Its valid range depends on the selected 
 ;;             register. Each register has a different set of valid values.
 ;;
 ;; Known issues:
+;;
 ;;   * Using values out of range have unpredicted behaviour and can even 
 ;; potentially cause damage to real Amstrad CPC monitors. Please, use with care.
 ;;
 ;; Details:
 ;;    This function sets a new value for a given CRTC register. To do so, two 
 ;; commands have to be sent to two different ports of the CRTC: 
+;;
 ;;    - Select Register (Port 0xBC) 
 ;;    - Write Register (Port 0xBD)
 ;;

@@ -42,6 +42,7 @@
 //    R, G, B - Red, Green and Blue components (only 4-bits LSB are used)
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will produce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slower.
@@ -62,6 +63,7 @@
 //   RGB 12-bits format (0x0GRB)
 // 
 // Known limitations:
+//
 //    * This macro will produce no-code when used with constant values. If any of
 // the given values is a variable, it will produce calculation code. This code
 // will be translated by C-compiler into ASM, and may be slower.

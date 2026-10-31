@@ -30,6 +30,7 @@
 ;;    void <cpct_memset_f64_i> (void* *array*, <u16> *value*, <u16> *size*);
 ;;
 ;; Warning:
+;;
 ;;    * This function disables interrupts while operating and uses the stack
 ;; pointer. Take it into account when you require interrupts or the stack
 ;; pointer. When in doubt, use <cpct_memset> instead.
@@ -45,6 +46,7 @@
 ;;    > call cpct_memset_f64_i_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *array* could theoretically be any 16-bit memory location. However, take into 
 ;; account that this function does no check at all, and you could mistakenly overwrite 
 ;; important parts of your program, the screen, the firmware... Use it with care.
@@ -56,6 +58,7 @@
 ;; a pair of bytes that will be copied to every 2-bytes in the array.
 ;;
 ;; Known limitations:
+;;
 ;;  * This function *will not work from ROM*, as it uses self-modifying code.
 ;;
 ;; Details:

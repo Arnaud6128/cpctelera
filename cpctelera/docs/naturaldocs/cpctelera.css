@@ -1,0 +1,16 @@
+/* CPCtelera style: logo in the header, on top of the default Natural Docs style */
+
+#HTitle a:link,
+#HTitle a:hover,
+#HTitle a:active,
+#HTitle a:visited {
+	display: block;
+	width: 190px;
+	height: 49px;
+	overflow: hidden;
+	text-indent: -9999px;
+	white-space: nowrap;
+	background: #FFFFFF url("../../images/cpct_logo_long_190x49.png") no-repeat center;
+	border-radius: 4px;
+	}
+

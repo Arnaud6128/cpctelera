@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_setTaps_glfsr.s","cpct_setTaps_glfsr.s");NDSummary.OnSummaryLoaded("File:random/cpct_setTaps_glfsr.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[506,0,1,"Functions","Functions"],[507,0,0,"cpct_setTaps_glfsr16","cpct_setTaps_glfsr16"]]);

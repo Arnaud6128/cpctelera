@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_getRandom_mxor_u32.s",{536:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Gets a 32-bit pseudo-random number using Marsaglia\'s XOR-shift algorithm (using a 32-bits state)</div></div>"});

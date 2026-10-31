@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicSwapSprite.asm",{120:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Swaps low and high nibbles (4-bit pixels) of a 16x16 hardware sprite in ASIC memory</div></div>"});

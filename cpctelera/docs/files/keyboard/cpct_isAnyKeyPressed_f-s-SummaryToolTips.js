@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:keyboard/cpct_isAnyKeyPressed_f.s",{296:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Checks if there is at least one key pressed. This function does the same as cpct_isAnyKeyPressed but ~73% faster.</div></div>"});

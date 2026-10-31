@@ -41,6 +41,7 @@
 ;;    > call cpct_drawToSpriteBufferHFlipM2_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *buffer_width* must be greater or equal than *width*. Drawing a sprite into  
 ;; a buffer sprite that is shorter will probably cause sprite lines to be displaced,
 ;; and can potentially cause random memory outside buffer to be overwriten, leading
@@ -71,6 +72,7 @@
 ;;  must be greater than 0 and greater or equal than *width*.
 ;; 
 ;; Known limitations:
+;;
 ;;     * This function *will not work from ROM*, as it uses self-modifying code.
 ;;     * This function does not do any kind of boundary check or clipping. If you 
 ;; try to draw sprites on the frontier of the buffer or the sprite it might 

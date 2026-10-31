@@ -36,6 +36,7 @@
 ;;    > call cpct_get2Bits_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *array* must be the memory location of the first byte of the array.
 ;; However, this function will accept any given 16-value, without performing
 ;; any check. So, be warned that giving mistaken values to this function will
@@ -49,6 +50,7 @@
 ;;    u8 - Value of the selected group of 2 bits: 0, 1, 2 or 3
 ;;
 ;; Known limitations:
+;;
 ;;    * Maximum of 65536 groups of 2-bits, 16384 bytes per *array*.      
 ;;
 ;; Details:

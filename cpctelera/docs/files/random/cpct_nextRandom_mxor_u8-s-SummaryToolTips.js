@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_nextRandom_mxor_u8.s",{526:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Calculates next 32-bits state for a Marsaglia\'s XOR-Shift pseudo-random 8-bits generator, with the tuple (1,1,3) .</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({31:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets the value of a selected group of 4 bits (nibble) into a bitarray to [0-15]</div></div>"});

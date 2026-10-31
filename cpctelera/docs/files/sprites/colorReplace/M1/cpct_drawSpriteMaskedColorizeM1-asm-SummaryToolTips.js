@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/colorReplace/M1/cpct_drawSpriteMaskedColorizeM1.asm",{578:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Directly replace a color and draw a sprite Masked to video memory.</div></div>"});

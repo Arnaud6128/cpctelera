@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:files/cpct_loadFile.asm",{222:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Reads an AMSDOS file from floppy disk into memory using direct FDC access.&nbsp; This routine bypasses CPC firmware for maximum compatibility with custom disk formats.</div></div>"});

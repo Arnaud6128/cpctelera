@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_setVideoMemoryOffset.s","cpct_setVideoMemoryOffset.s");NDSummary.OnSummaryLoaded("File:video/cpct_setVideoMemoryOffset.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[843,0,1,"Functions","Functions"],[844,0,0,"cpct_setVideoMemoryOffset","cpct_setVideoMemoryOffset"]]);

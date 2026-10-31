@@ -33,12 +33,14 @@
 ;;    call cpct_setStackLocation_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *memory* has no restiction. You may place stack whereever you wanted, but you
 ;; should be cautious: contents of the stack could erase data, code or essential 
 ;; system information. If that happens, your program may crash. Have special care 
 ;; with system rst vector (0x0000-0x003F) and firmware memory (if enabled).
 ;;
 ;; Important notes:
+;;
 ;;  * This function only changes program stack to a new location by modifying the
 ;; stack pointer (SP). It does not take care of present contents of the stack. If
 ;; you want to preserve present contents of the stack, copy them to the new location
@@ -71,6 +73,7 @@
 ;;   Any      |       7        |    28
 ;; -----------------------------------------
 ;; (end code)
+;;
 ;;  * This function is identical called from C or from ASM
 ;;
 ;; Credits:

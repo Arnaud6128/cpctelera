@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/cpct_etm_drawTilemap4x8_ag.asm",{216:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws an aligned view of a tilemap made of 4x8-bytes tiles. Tiles must be codified as zig-zagged rows (left-to-right, then right-to-left) and with scanlines in Gray-code order 0,1,3,2,6,7,5,4 (zgtiles format).</div></div>"});

@@ -8,76 +8,82 @@ CPCtelera has been created by these *<Authors>*, and is distributed under *LGPL 
 
 We give *big thanks* to all users, contributors and supporters, and all respects to our *incredible <Donors>*.
 
-(see paypaldonations.jpg)
-
 Section: Welcome to CPCteleraNext!
    If you want to create games for Amstrad CPC, you are at the right place.  Welcome to CPCtelera!
    
    CPCteleraNext is a fork of cpctelera with new features, in order to install:
-     * Update your Cygwin environmment with latest package version you have alread used for CPCtelera
-     * Manually update the directory <cygwin_path>\usr\include\boost with the latest boost include (cygwin boost package is not updated anymore)
-        Download ZIP from https://www.boost.org/releases/latest/ and extract only boost subdirectory from archive
-	 * Download and unzip latest version of CPCteleraNext https://github.com/Arnaud6128/cpctelera/releases
-     * Run setup.sh as usual
+
+   * Update your Cygwin environmment with latest package version you have alread used for CPCtelera
+   * Manually update the directory <cygwin_path>\usr\include\boost with the latest boost include (cygwin boost package is not updated anymore)
+     Download ZIP from https://www.boost.org/releases/latest/ and extract only boost subdirectory from archive
+   * Download and unzip latest version of CPCteleraNext https://github.com/Arnaud6128/cpctelera/releases
+   * Run setup.sh as usual
 
    What's new ?
-     * Full support of SDCC 4.5.0 with all functions migrated to new call convention _sdcccall(1)
-     * ArkosTracker3 integrated (AKG and AKM players) (https://www.julien-nevo.com/arkostracker/)
-     * ZX0/ZX0B and ZX1/ZX1B compressors integrated (Néstor Gracia)
-     * CPC+ (Asic) functions
-	 * EasyOverscan functions
-     * Sprite clipping functions
-     * Collision functions
-     * SpriteBuffer new functions
-     * Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
-		
+
+   * Full support of SDCC 4.6.0 with all functions migrated to new call convention _sdcccall(1)
+   * ArkosTracker3 integrated (AKG and AKM players) (https://www.julien-nevo.com/arkostracker/)
+   * ZX0/ZX0B, ZX1/ZX1B (Néstor Gracia) and RLE compressors integrated 
+   * CPC+ (Asic) functions
+   * EasyOverscan functions
+   * Sprite clipping functions
+   * Collision functions
+   * SpriteBuffer new functions
+   * Disc file loader (https://www.julien-nevo.com/arkos/fdc-tools/)
+   * Disc sector read and write functions and automatic file data import.
+   * Geometry functions (mode 0 and 1)
+
+Section: Welcome to CPCtelera!     
    CPCtelera is a game development framework including a low-level game library for C and assembler programmers wanting to create games on Amstrad CPC. You have an easy-to-use, optimized library with a lot of ready-to-use basic functionalities:
-     * Draw different types of sprites, with and without transparency effects
-     * Draw solid colour boxes and speed up sprite trail erasing!
-     * Flip and blend sprites and apply different effects to them
-     * Reproduce audio and sound effects
-     * Create fade-in / fade-out effects with your sound FX and music!
-     * Mix-up sound effects with music, using the 3 audio channels for both at the same time!
-     * Draw strings and characters using ROM characters without using firmware.
-     * Change the complete hardware palette and individual palette colours
-     * Draw very fast tiles aligned with character lines in the screen.
-     * Change default screen video memory location 
-     * Do hardware double buffering and scrolling effects.
-     * Synchronize with VSYNC
-     * Change Video Modes (0, 1, 2 and undocumented mode 3!)
-     * Measure performance of your game loop (and know how many free CPU cycles you still have for doing more things in your routines!)
-     * Scan the keyboard for pressed keys with the fastest keyboard scanning routine available!
-     * Disable and re-enable firmware operation at will
-     * Enable and disable lower and higher ROM access
-     * Easily manage and draw tilemaps in the screen
-     * Optimize array storage using bitarrays (arrays of 1-bit, 2-bit and 4-bit elements available!)
-     * Easily hook a user function to system interrupts to generate timers and events and automatically do frequency related tasks
-     * Locate parts of your code and data in specify memory places
-     * Generate custom-quality random number sequences
+
+   * Draw different types of sprites, with and without transparency effects
+   * Draw solid colour boxes and speed up sprite trail erasing!
+   * Flip and blend sprites and apply different effects to them
+   * Reproduce audio and sound effects
+   * Create fade-in / fade-out effects with your sound FX and music!
+   * Mix-up sound effects with music, using the 3 audio channels for both at the same time!
+   * Draw strings and characters using ROM characters without using firmware.
+   * Change the complete hardware palette and individual palette colours
+   * Draw very fast tiles aligned with character lines in the screen.
+   * Change default screen video memory location 
+   * Do hardware double buffering and scrolling effects.
+   * Synchronize with VSYNC
+   * Change Video Modes (0, 1, 2 and undocumented mode 3!)
+   * Measure performance of your game loop (and know how many free CPU cycles you still have for doing more things in your routines!)
+   * Scan the keyboard for pressed keys with the fastest keyboard scanning routine available!
+   * Disable and re-enable firmware operation at will
+   * Enable and disable lower and higher ROM access
+   * Easily manage and draw tilemaps in the screen
+   * Optimize array storage using bitarrays (arrays of 1-bit, 2-bit and 4-bit elements available!)
+   * Easily hook a user function to system interrupts to generate timers and events and automatically do frequency related tasks
+   * Locate parts of your code and data in specify memory places
+   * Generate custom-quality random number sequences
 
    However, CPCtelera is much more than a low-level library. CPCtelera comes with a complete build system for easing your project creation and management. CPCtelera offers you:
-     * Integrated set of compiling and generation tools (SDCC, iDSK, Hex2Bin 2.0, 2cdt)
-     * Easy and automated project creation and management
-     * Automatic generation of CDT and DSK files
-     * Program completely in C, completely in Assembler or mix both languages at will. You won't even have to touch a line of the build system!
-     * Automatic generation of obj/ folder with all the intermediate object files (Never mess up your src/ directory!)
-     * Automatic generation of binaries, assembler output, symbol files and everything you need for debugging your program.
-     * Automatic identification of your project source files in C and ASM (.c and .s). Add new source files to your src/ directory and they will be automatically recognized an compiled!
-     * Automatic detection of src/ directory structure up to 1 level of subfolders without any modification!
-     * Automatically launch and run your programs into an emulator with a single command.
-     * Automatically load symbol files for debugging on launching your programs.   
-     * Automatically convert binary files into source code arrays and link them into your project
-     * Automatically convert and use PNG, JPG, GIF images into sprites and tiles
-     * Automatically convert TMX tilemaps into C-arrays and use them in your games
+
+   * Integrated set of compiling and generation tools (SDCC, iDSK, Hex2Bin 2.0, 2cdt)
+   * Easy and automated project creation and management
+   * Automatic generation of CDT and DSK files
+   * Program completely in C, completely in Assembler or mix both languages at will. You won't even have to touch a line of the build system!
+   * Automatic generation of obj/ folder with all the intermediate object files (Never mess up your src/ directory!)
+   * Automatic generation of binaries, assembler output, symbol files and everything you need for debugging your program.
+   * Automatic identification of your project source files in C and ASM (.c and .s). Add new source files to your src/ directory and they will be automatically recognized an compiled!
+   * Automatic detection of src/ directory structure up to 1 level of subfolders without any modification!
+   * Automatically launch and run your programs into an emulator with a single command.
+   * Automatically load symbol files for debugging on launching your programs.   
+   * Automatically convert binary files into source code arrays and link them into your project
+   * Automatically convert and use PNG, JPG, GIF images into sprites and tiles
+   * Automatically convert TMX tilemaps into C-arrays and use them in your games
 
    Moreover, CPCtelera also comes with some authoring tools (in the folder cpctelera/tools/) for your game content as well as some command line tools for format conversions:
-     * Create your musics with Arkos Tracker
-     * Create your sprites, tiles and maps with Retro Game Asset Studio! (And export them directly to CPCtelera C Array!)
-     * Convert any binary file to C Array and include it in your project with <cpct_bin2c>
-     * Convert a big sprite in a C Array into tiles of your desired size with <cpct_sp2tiles>!
-     * Convert old sprites in assembler CPCRSLib format into C Arrays with <cpct_rgas2c>!
-     * Convert any kind of PC image or sprite sheet into C or assembler code and add it to your project with <cpct_img2tileset> and Img2CPC
-     * Generate and manage special kinds of DSK using DSKGen.
+
+   * Create your musics with Arkos Tracker
+   * Create your sprites, tiles and maps with Retro Game Asset Studio! (And export them directly to CPCtelera C Array!)
+   * Convert any binary file to C Array and include it in your project with <cpct_bin2c>
+   * Convert a big sprite in a C Array into tiles of your desired size with <cpct_sp2tiles>!
+   * Convert old sprites in assembler CPCRSLib format into C Arrays with <cpct_rgas2c>!
+   * Convert any kind of PC image or sprite sheet into C or assembler code and add it to your project with <cpct_img2tileset> and Img2CPC
+   * Generate and manage special kinds of DSK using DSKGen.
 
    And, of course, CPCtelera comes with a complete API documentation and lots of well documented examples for you to quickly and easily learn it!
 
@@ -103,11 +109,12 @@ Section: Donors
    
 Section: Supporting CPCtelera
    We, as authors of CPCtelera, have started this journey to create a usable, free, convenient and up-to-date game engine. There are lots of things to do and improve in order to achieve our goals. If you want to help us, we are more than happy. Any kind of help is always welcome, but we prefer any of these ways,
-      * *Economic support*: make a donation using Bitcoin or Paypal (Links are at the top of this file). Big thanks for your support!
-      * *Documentation*: create videos, images, tutorials, better explanations... And send us an email to cpctelera@cheesetea.com. We will be happy to receive your links! :)
-      * *New library features*: develop new functions and features and give us a <Github pull request at https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next/pulls>. Please, do read pieces of CPCtelera code previously and try to meet our quality standards.
-      * *Beta Testing and reporting*: report your findings testing CPCtelera at any new platform or in new ways. You may leave us a <Github issue at https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next/issues>.
-      * *New tools*: creating new tools or adapting your tools to be included with CPCtelera is an awesome idea! 
+
+   * *Economic support*: make a donation using Bitcoin or Paypal. Big thanks for your support!
+   * *Documentation*: create videos, images, tutorials, better explanations... And send us an email to cpctelera@cheesetea.com. We will be happy to receive your links! :)
+   * *New library features*: develop new functions and features and give us a <Github pull request at https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next/pulls>. Please, do read pieces of CPCtelera code previously and try to meet our quality standards.
+   * *Beta Testing and reporting*: report your findings testing CPCtelera at any new platform or in new ways. You may leave us a <Github issue at https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next/issues>.
+   * *New tools*: creating new tools or adapting your tools to be included with CPCtelera is an awesome idea! 
 
    Any donation to our team will be used either in hardware / software to support this project, or as an aid for other Amstrad CPC related projects we manage (such us, for instance, <#CPCRetroDev anual contest at http://cpcretrodev.byterealms.com>!)
 
@@ -119,7 +126,7 @@ Topic: Downloading CPCtelera
 
    You can download CPCtelera from these sources
 
-   * Download <current stable version 1.4.2. at https://github.com/lronaldo/cpctelera/archive/v1.4.2.zip>
+   * Download current stable version at https://github.com/Arnaud6128/cpctelera/releases
 
    * Get Latest version from github:
    > git clone https://github.com/Arnaud6128/cpctelera/tree/cpctelera_next
@@ -131,8 +138,8 @@ Topic: Software Requirements
 _Under Linux_:
    Install these packages on your Linux distribution. Although they are pretty standard, names may slightly vary on some distributions.
 
-   * Commands: *gcc*, *g++*, *make*, *bison*, *flex*, *mono* (mono-complete)
-   * Libraries: *libboost-dev*, *libfreeimage-dev*
+   * Commands: *gcc*, *g++*, *make*, *bison*, *flex*, *clang*, *mono* (mono-complete)
+   * Libraries: *libboost-dev*, *libfreeimage-dev*, *zlib-dev*
 
    Next are recommented packages. They are not required for CPCtelera to work, but some included tool may require them (like *cpct_winape* script):
 
@@ -146,10 +153,10 @@ _Under Windows_:
    
    Under Windows <Cygwin at http://www.cygwin.com> is required for CPCtelera to work. You may download Cygwin 32 / 64 and install it along with these packages (you may launch cygwin's setup.exe at any time to install them),
 
-   * Commands: *gcc-core*, *gcc-g++*, *make*, *bison*, *flex*, *wget*, *unzip*, *bc*
-   * Libraries: *libboost-devel*, *libintl-devel*
+   * Commands: *gcc-core*, *gcc-g++*, *make*, *bison*, *flex*, *wget*, *unzip*, *bc*, *clang*
+   * Libraries: *libboost-devel*, *libintl-devel*, *zlib-dev*
 
-   Additionally, Windows 8/10 may ask you to install *.NET framework* during examples building. This is required to run Arkos Tracker and its command line tools. Proceed to install it when prompted.
+   Additionally, Windows 8/11 may ask you to install *.NET framework* during examples building. This is required to run Arkos Tracker and its command line tools. Proceed to install it when prompted.
 
 _Under OSX_:
 
@@ -163,6 +170,7 @@ _Under OSX_:
    > brew install boost freeimage mono wine wget
 
 Some things to take into account on OSX,
+
    * Some previous OSX systems may not understand the xcode-select --install command. On those systems, there usually are menu options from the XCode GUI to install Command Line Tools. If you need more advice, there is a <nice explanation on stack overflow about the XCode Command Line Tools at http://stackoverflow.com/questions/9329243/xcode-4-4-and-later-install-command-line-tools>. 
 
 Topic: Installing CPCtelera in your system
@@ -170,7 +178,7 @@ Topic: Installing CPCtelera in your system
    These are the steps to install CPCtelera in your system
 
    1.  - Install required <Software Requirements>
-   2.  - Download and unzip <current stable version 1.4.2. of CPCtelera at https://github.com/lronaldo/cpctelera/archive/v1.4.2.zip> (read "some considerations" below)
+   2.  - Download and unzip cpcteleraNext version
    3.  - Open a terminal an enter cpctelera/ folder. 
    > cd cpctelera/
    4.  - Launch *setup.sh* 
@@ -180,6 +188,7 @@ Topic: Installing CPCtelera in your system
 CPCtelera is ready to be used in your system.
 
    Some considerations:
+
    * It is recommended to unzip CPCtelera to a folder inside your user's $HOME path (typically /home/username/ or C:\cygwin\home\username\).
    * Once you run *setup.sh*, CPCtelera will be installed in the path you have previously unzipped it. If you move the folder to a new location, you should run *setup.sh* again.
    * However, CPCTelera can be installed anywhere in your system, provided the path does not contain any spaces.
@@ -209,6 +218,7 @@ For creating your own projects, CPCtelera includes the <cpct_mkproject> command 
     > cpct_mkproject [project_folder]
 
 Once you have your own new project, you can enter its folder and you will have a Makefile and 2 important subfolders:
+
    * src/ is the folder containing source files. At the start it only contains a main.c file, but you can create new files and folders (1 level of sub-folders) in it. All .c and .s files below src/ will be automatically detected and compiled when you type in "make" at your project folder.
    * cfg/ contains the building configuration of your project. In the file build_config.mk you will be able to make changes to the way the project is built. The 2 typical are changing the project name and its binary load address. Open the file and you will see 2 variables for this purpose. You can change them whenever you wanted.
 

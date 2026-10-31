@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("bas",["Section"],[["Basic",,[[,"Basic integration",,,0,"File:buildsys/vscode_integration.txt:Basic_integration"]]]]);

@@ -29,6 +29,7 @@
 ;;       Psg optimization trick on CPC by Madram/Overlanders.
 ;;
 ;;       v1.2:  
+;;
 ;;               - Added support for PCW and SVI. No change at all in the code, it uses the same access as MSX. Small label/constants refactor, but no Z80 change.
 ;;               - Removed ":" before EQUs (to be compatible with RASM 2.3.9).
 ;;               - Changed the MSX period table to 1789773 Hz (was 1773400 Hz like Spectrum before).
@@ -85,6 +86,7 @@
 ;;       Note that the PRESENCE of this variable is tested, NOT its value.
 
 ;;       Additional note:
+;;
 ;;       - There can be a slightly difference when using volume in/out effects compared to the PC side, because the volume management is
 ;;         different. This means there can be a difference of 1 at certain frames. As it shouldn't be a bother, I let it this way.
 ;;         This allows the Z80 code to be faster and simpler.

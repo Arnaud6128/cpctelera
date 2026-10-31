@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawToSpriteBuffer/draw/cpct_drawToSpriteBufferMaskedAlignedTable.asm",{644:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws an sprite to back buffer, making use of a given 256-bytes aligned mask table to create transparencies.</div></div>"});

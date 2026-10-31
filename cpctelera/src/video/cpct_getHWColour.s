@@ -40,6 +40,7 @@
 ;;    > call cpct_getHWColour_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *firmware_colour* must be in the range [0-26], otherwise, return value will be undefined.
 ;;
 ;; Return Value:
@@ -54,6 +55,7 @@
 ;;
 ;; Required memory:
 ;;      6 bytes
+;;
 ;;   + 27 bytes cpct_firmware2hw_colour conversion table
 ;;
 ;; Time Measures:

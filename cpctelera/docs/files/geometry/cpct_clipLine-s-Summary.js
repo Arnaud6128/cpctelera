@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:geometry/cpct_clipLine.s","cpct_clipLine.s");NDSummary.OnSummaryLoaded("File:geometry/cpct_clipLine.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[284,0,1,"Functions","Functions"],[285,0,0,"cpct_setClipRect","cpct_setClipRect"],[286,0,0,"cpct_clipLine","cpct_clipLine"]]);

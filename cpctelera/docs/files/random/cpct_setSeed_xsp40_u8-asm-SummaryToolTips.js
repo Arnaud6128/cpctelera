@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/cpct_setSeed_xsp40_u8.asm",{509:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Sets 40-bits initial state (seed) for cpct_getRandom_xsp40_u8 pseudo-random number generator.</div></div>"});

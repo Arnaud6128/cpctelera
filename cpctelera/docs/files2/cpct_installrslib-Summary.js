@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:cpct_installrslib","cpct_installrslib");NDSummary.OnSummaryLoaded("File2:cpct_installrslib",[["Bash","Bash"]],[["Files","File"]],[[11,0,0,"cpct_installrslib","cpct_installrslib"]]);

@@ -39,6 +39,7 @@
 ;;    (Note: height is passed via A after stack setup)
 ;;
 ;; Details:
+;;
 ;;   - The function uses self-modifying (cannot be used in ROM) code to set clipping parameters.
 ;;   - Source sprite data is expected in plain pixel format (no mask).
 ;;   - The destination buffer must be wide enough to hold 'buffer_width' bytes per line.

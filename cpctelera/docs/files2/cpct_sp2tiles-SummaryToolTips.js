@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:cpct_sp2tiles",{10:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Cuts up a big sprite into smaller tiles</div></div>"});

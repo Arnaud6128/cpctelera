@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File2:c_scripts/tmx2data/src/main.h",{3:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Script for generating csv files with maps defined in tmx files (from tiled map editor).</div></div>"});

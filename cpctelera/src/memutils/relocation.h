@@ -46,11 +46,13 @@
 //    (2B) MEM - Memory location where code produced next will be placed
 //
 // Parameter Restrictions:
+//
 //    * *MEM* could be any 16-bits value from 0x0000 to 0xFFFF. Passing
 // any value lower than 0 or greater than 0xFFFF will produce unpredictable
 // behaviour.
 //
 // Warnings:
+//
 //    * *MEM* should be different to any other *MEM* value used on previous
 // calls to this macro.
 //    * It is up to the programmer to locate code on available memory places.
@@ -162,11 +164,13 @@ void dummy_absolute_##MEM (void) __naked
 // functions for relative location areas.
 //
 // Parameter Restrictions:
+//
 //    * *ID* could be any valid identifier of, at most, 16 characters length.
 // This identifier is optional, and only required when name collisions do
 // appear.
 //
 // Warnings:
+//
 //    * *ID* parameter is not mandatory, but optional.
 //    * This macro should be used *outside* the scope of any function.
 //    * Read section *Details* if you have compilation problems using this

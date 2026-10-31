@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easytilemaps/easytilemaps.h",{198:"<div class=\"NDToolTip TMacro LC\"><div class=\"TTSummary\">This macro uses cpct_etm_drawTileBox2x4 to draw a complete tilemap.</div></div>"});

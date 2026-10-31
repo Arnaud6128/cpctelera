@@ -36,6 +36,7 @@
 ;;  (1B E)  size - Size of the array (<=16)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *rgb_array* array of rgb values (0x0GRB)
 ;;  * *size* number of rgb entries to set <=16   
 ;;
@@ -45,6 +46,7 @@
 ;;	See *cpctm_rgbColour* for RGB conversion.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * The functions *cpct_asicUnlock* and *cpct_asicPageConnect* must be called before using this function.
 ;;  * The Asic registers are paged from 0x4000 to 0x7FFF *beware* the code located in this area will be hidden.
 ;;  * Asic page can be disconnected with *cpct_asicPageDisconnect* function to recover code at 0x4000 to 0x7FFF.

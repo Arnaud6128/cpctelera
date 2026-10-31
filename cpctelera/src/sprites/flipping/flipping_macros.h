@@ -70,6 +70,7 @@
 // bigger. 
 //
 // Known issues:
+//
 //    * This is a C-language macro. It cannot be called or used from assembly code.
 //
 #define cpctm_spriteBottomLeftPtr(SP, X, Y)		(SP) + ((X) * (Y-1))
@@ -97,6 +98,7 @@
 // refer to <cpct_vflipSprite> documentation.
 //
 // Known issues:
+//
 //    * This is a C-language macro. It cannot be called or used from assembly code.
 //
 #define cpctm_vflipSpriteMasked(W, H, SPBL, SP)  cpct_vflipSprite(2*(W), (H), (SPBL), (SP))

@@ -38,6 +38,7 @@
 ;;    > call cpct_set4Bits_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *array* must be the memory location of the first byte of the array.
 ;; However, this function will accept any given 16-value, without performing
 ;; any check. Giving and incorrect *array* pointer will have unpredictable
@@ -53,6 +54,7 @@
 ;; unpredictable results.
 ;;
 ;; Known limitations:
+;;
 ;;    * Maximum of 65536 bits, 32768 bytes per array.
 ;;
 ;; Details:

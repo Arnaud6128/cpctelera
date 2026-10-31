@@ -48,10 +48,12 @@
 ;;    ASM-bindings - 2 bytes (in DE)
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *OldPen*/*NewPen* ([0-3], 8 bits, unsigned). Values outside the [0-3] range 
 ;; will produce undefined behaviour. 
 ;; 
 ;; Known limitations:
+;;
 ;;    * Parameter boundaries are not checked. Providing parameters out of range 
 ;; will result in undefined behaviour.
 ;;    * This function is to be used with variable parameters. For constant 

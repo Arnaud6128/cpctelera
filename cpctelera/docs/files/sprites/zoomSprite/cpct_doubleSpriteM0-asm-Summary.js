@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/zoomSprite/cpct_doubleSpriteM0.asm","cpct_doubleSpriteM0.asm");NDSummary.OnSummaryLoaded("File:sprites/zoomSprite/cpct_doubleSpriteM0.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[765,0,1,"Functions","Functions"],[766,0,0,"cpct_doubleSpriteM0","cpct_doubleSpriteM0"]]);

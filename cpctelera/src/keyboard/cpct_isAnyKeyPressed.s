@@ -37,6 +37,7 @@
 ;; value is placed in register A.
 ;;
 ;; Flag Output Status:
+;;
 ;;    - *Z* = 1 (NO Key Pressed) / 0 (Some Key Pressed)
 ;;
 ;; Details:

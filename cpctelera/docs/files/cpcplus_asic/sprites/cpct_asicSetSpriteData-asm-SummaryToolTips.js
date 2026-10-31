@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicSetSpriteData.asm",{135:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a complete sprite hardware with a given 1-Byte value</div></div>"});

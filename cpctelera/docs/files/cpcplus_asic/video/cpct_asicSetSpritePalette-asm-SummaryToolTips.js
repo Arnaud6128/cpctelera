@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/video/cpct_asicSetSpritePalette.asm",{143:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Set the Asic hardware sprites palette colours</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({774:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Reads a character from the input keyboard buffer and returns its ASCII code.&nbsp; If no character is available, it blocks until one is inserted.</div></div>"});

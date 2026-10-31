@@ -37,6 +37,7 @@
 ;;    > call cpct_drawSpriteHFlipM0_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be a pointer to the sprite array containing Mode 0 pixel data 
 ;; to be drawn. Sprite must be rectangular and all bytes in the array must be 
 ;; consecutive pixels, starting from top-left corner and going left-to-right, 
@@ -53,6 +54,7 @@
 ;; bytes and pixels is the same value.
 ;;
 ;; Known limitations:
+;;
 ;;    * *width*s or *height*s of 0 will be considered as 256, and could 
 ;; potentially make your code behave erratically or crash.
 ;;    * This function does not do any kind of boundary check or clipping. If you 
@@ -82,7 +84,7 @@
 ;; uses much less memory as you can save the 256-byte table.
 ;;
 ;; See next figure for details,
-; (start code)
+;; (start code)
 ;; ||-----------------------||-----------------------||
 ;; ||   MEMORY              ||  VIDEO MEMORY         ||
 ;; ||-----------------------||-----------------------|| 

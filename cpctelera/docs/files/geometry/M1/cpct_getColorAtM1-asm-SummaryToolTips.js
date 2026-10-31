@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:geometry/M1/cpct_getColorAtM1.asm",{270:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Get INK color of one pixel in Mode 1 (320x200, 4 colors).</div></div>"});

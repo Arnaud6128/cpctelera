@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:random/cpct_nextRandom_mxor_u32.s","cpct_nextRandom_mxor_u32.s");NDSummary.OnSummaryLoaded("File:random/cpct_nextRandom_mxor_u32.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[523,0,1,"Functions","Functions"],[524,0,0,"cpct_nextRandom_mxor_u32","cpct_nextRandom_mxor_u32"]]);

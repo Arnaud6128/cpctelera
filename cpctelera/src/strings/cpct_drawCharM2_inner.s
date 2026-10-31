@@ -33,6 +33,7 @@
 ;;    > call cpct_drawCharM2_inner_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *video_memory* could theoretically be any 16-bit memory location. It will work
 ;; outside current screen memory boundaries, which is useful if you use any kind of
 ;; double buffer. However, be careful where you use it, as it does no kind of check
@@ -40,6 +41,7 @@
 ;;  * *ascii* could be any 8-bit value, as 256 characters are available in ROM.
 ;;
 ;; Requirements and limitations:
+;;
 ;;  * This function *assumes Lower ROM (0x0000-0x3FFF) is enabled* to read ROM character 
 ;; definitions. Therefore, this code should be above 0x3FFF to work; otherwise, it would
 ;; become shadowed by ROM and results would be undefined. You may, theoretically, use it

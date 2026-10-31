@@ -48,6 +48,7 @@
 ;;   > call cpct_enableUpperROM_asm
 ;;
 ;; Known limitations:
+;;
 ;;    * If the execution of your program is going through some of these 2 
 ;; ROM spaces and you enable ROM, CPU will be unable to get machine code 
 ;; of your program, as it will start reading from ROM instead of RAM (where 

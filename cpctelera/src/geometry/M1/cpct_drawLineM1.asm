@@ -43,6 +43,7 @@
 ;;
 ;; Compact Bresenham Architecture:
 ;;    1. One single loop for all directions, driven by the major axis:
+;;
 ;;       - Major / minor axis steps are small subroutines (X+1, X-1, Y+1, Y-1)
 ;;         called through 2 SMC patched CALL instructions.
 ;;       - Horizontal and vertical lines and single points are handled by the
@@ -52,6 +53,7 @@
 ;;    3. Pixel counter split in IXL / IXH (8-bit decrement in the loop).
 ;;
 ;; Known limitations:
+;;
 ;;  * This function will not work from ROM, as it uses self-modifying code.
 ;;
 ;; Destroyed Register values:

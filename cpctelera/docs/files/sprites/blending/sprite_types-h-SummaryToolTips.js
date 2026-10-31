@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/blending/sprite_types.h",{545:"<div class=\"NDToolTip TEnumeration LC\"><div class=\"TTSummary\">Enumerates all blending modes for cpct_drawSpriteBlended.</div></div>"});

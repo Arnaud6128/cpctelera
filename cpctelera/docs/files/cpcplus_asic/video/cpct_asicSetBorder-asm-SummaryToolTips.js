@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/video/cpct_asicSetBorder.asm",{176:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Change screen border colour with RGB value (0x0GRB)</div></div>"});

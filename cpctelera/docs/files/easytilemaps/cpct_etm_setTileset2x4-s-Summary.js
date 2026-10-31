@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:easytilemaps/cpct_etm_setTileset2x4.s","cpct_etm_setTileset2x4.s");NDSummary.OnSummaryLoaded("File:easytilemaps/cpct_etm_setTileset2x4.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[201,0,1,"Functions","Functions"],[202,0,0,"cpct_etm_setTileset2x4","cpct_etm_setTileset2x4"]]);

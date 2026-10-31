@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("rom",["Function","Section"],[["ROM",,[[,"Lower ROM",,,0,"File:firmware/cpct_enableDisableROMs.s:Lower_ROM"],[,"Upper ROM",,,0,"File:firmware/cpct_enableDisableROMs.s:Upper_ROM"]]],["ROMs",,[[,"Enabling / disabling ROMs",,"enabling/disabling roms",1,"File:firmware/cpct_enableDisableROMs.s:Enabling/disabling_ROMs"]]]]);

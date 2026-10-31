@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("mos",["Section","Macro"],[["most",,[[,"Getting the most of intellisense",,,0,"File:buildsys/vscode_integration.txt:Getting_the_most_of_intellisense"],[,"Simple aliases for most common random generators",,,1,"File:random/random.h:Simple_aliases_for_most_common_random_generators"]]]]);

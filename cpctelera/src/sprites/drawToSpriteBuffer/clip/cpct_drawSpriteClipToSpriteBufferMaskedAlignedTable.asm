@@ -39,6 +39,7 @@
 ;;    (2B HL) mask_table       - Pointer to 256-byte aligned mask table
 ;;
 ;; Details:
+;;
 ;;    - Uses a 256-byte aligned mask table for transparency (table address = 0x??00).
 ;;    - Only the rectangle (width_to_draw × height) is drawn.
 ;;    - REQUIRES CODE TO BE IN RAM — NOT EXECUTABLE FROM ROM.

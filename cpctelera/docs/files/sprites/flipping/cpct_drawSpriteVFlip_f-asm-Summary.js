@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/flipping/cpct_drawSpriteVFlip_f.asm","cpct_drawSpriteVFlip_f.asm");NDSummary.OnSummaryLoaded("File:sprites/flipping/cpct_drawSpriteVFlip_f.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[709,0,1,"Functions","Functions"],[710,0,0,"cpct_drawSpriteVFlip_f","cpct_drawSpriteVFlip_f"]]);

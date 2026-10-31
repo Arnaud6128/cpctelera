@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:video/cpct_waitVSYNC.s",{804:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Waits until CRTC produces vertical synchronization signal (VSYNC) and returns.</div></div>"});

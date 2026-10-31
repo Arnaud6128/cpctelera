@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawToSpriteBuffer/draw/cpct_drawToSpriteBufferSolidBox.asm",{642:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a rectangle inside another sprite\'s buffer with a given colour data byte. Could be used for drawing coloured rectangles as well as erasing rectangles easily.</div></div>"});

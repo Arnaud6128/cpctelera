@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File2:cpct_sp2tiles","cpct_sp2tiles");NDSummary.OnSummaryLoaded("File2:cpct_sp2tiles",[["Bash","Bash"]],[["Files","File"]],[[10,0,0,"cpct_sp2tile","cpct_sp2tile"]]);

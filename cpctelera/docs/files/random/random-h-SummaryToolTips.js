@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:random/random.h",{498:"<div class=\"NDToolTip TMacro LC\"><div class=\"TTSummary\">This macros are designed to simplify the user interface for generating random numbers. Most of the time, a Marsaglia XOR-shift RNG is best choice for generating random numbers</div></div>"});

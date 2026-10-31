@@ -39,6 +39,7 @@
 ;;    <u8> - Next 8-bits pseudo-random value.
 ;;
 ;; Known limitations:
+;;
 ;;    * This function *will not work from a ROM*, as it uses self-modifying code.
 ;;    * Seed (machine state) must *never* be zero. 
 ;;    * Returned value using all 16 bits (<u16>) will never be 0, so it is
@@ -116,6 +117,7 @@
 ;;
 ;; Credits and References:
 ;;    This function is based on Galois Linear-Feedback Shift Register method.
+;;
 ;;  - On Linear-Feedback Shift Registers: https://es.wikipedia.org/wiki/LFSR
 ;;  - Theory on LSFRs: http://web.archive.org/web/20010605005727/homepage.mac.com/afj/lfsr.html
 ;;

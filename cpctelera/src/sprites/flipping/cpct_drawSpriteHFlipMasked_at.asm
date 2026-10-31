@@ -39,6 +39,7 @@
 ;;    > call cpct_drawSpriteHFlipMasked_at_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *sprite* must be a pointer to the sprite array containing sprite pixel data 
 ;; to be drawn. Sprite must be rectangular and all bytes in the array must be 
 ;; consecutive pixels, starting from top-left corner and going left-to-right, 
@@ -61,6 +62,7 @@
 ;; sprite using colour 0 as transparent pixels.
 ;;
 ;; Known limitations:
+;;
 ;;    * *width*s or *height*s of 0 will be considered as 256, and could 
 ;; potentially make your code behave erratically or crash.
 ;;    * This function does not do any kind of boundary check or clipping. If you 

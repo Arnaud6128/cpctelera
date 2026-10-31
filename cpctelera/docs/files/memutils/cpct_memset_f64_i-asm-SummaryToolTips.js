@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:memutils/cpct_memset_f64_i.asm",{484:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Fills up a complete array in memory setting bytes 2-by-2, in chunks of 64 bytes. Size of the array must be multiple of 64. Interrupts are disabled at the start of each 64-bytes-chunk and reenabled at its end.</div></div>"});

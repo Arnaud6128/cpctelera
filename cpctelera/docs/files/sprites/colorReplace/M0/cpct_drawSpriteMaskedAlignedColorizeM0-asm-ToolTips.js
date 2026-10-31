@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({570:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Directly replace a color and draw a sprite to video memory (or to a screen buffer), making use of a given 256-bytes aligned mask table to create transparencies.</div></div>"});

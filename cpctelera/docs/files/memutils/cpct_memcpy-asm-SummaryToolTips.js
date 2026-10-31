@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:memutils/cpct_memcpy.asm",{488:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a bunch of bytes from one place in memory to other.</div></div>"});

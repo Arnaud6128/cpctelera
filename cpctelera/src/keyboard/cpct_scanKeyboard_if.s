@@ -36,6 +36,7 @@
 ;;    > call cpct_scanKeyboard_if_asm
 ;;
 ;; Known limitations:
+;;
 ;;    * This function may not work properly if an interrupt occurs during the
 ;; execution of this code. You should use this function always in interrupt-safe 
 ;; places (inside an Interrupt Service Routine (ISR), for instance)

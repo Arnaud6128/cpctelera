@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/collision/cpct_checkCollisionAxis.asm","cpct_checkCollisionAxis.asm");NDSummary.OnSummaryLoaded("File:sprites/collision/cpct_checkCollisionAxis.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[561,0,1,"Functions","Functions"],[562,0,0,"cpct_checkCollisionAxis","cpct_checkCollisionAxis"]]);

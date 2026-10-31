@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("det",["Section"],[["details",,[[,"Credits and Some technical details",,,0,"File:audio/arkosplayer.txt:Credits_and_Some_technical_details"],[,"Technical details on memory pagination",,,0,"File:memutils/banks.h:Technical_details_on_memory_pagination"]]]]);

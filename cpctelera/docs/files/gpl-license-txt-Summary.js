@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:gpl-license.txt","gpl-license.txt");NDSummary.OnSummaryLoaded("File:gpl-license.txt",[["Text File","TextFile"]],[["Sections","Section"]],[[885,0,0,"License","License"]]);

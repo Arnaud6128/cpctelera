@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({706:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Gets a pointer to the bottom-left byte of a sprite in video memory, knowing its top-left byte and height.</div></div>"});

@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("stu",["File"],[["Studio",,[[,"Visual Studio Code",,,0,"File:buildsys/vscode_integration.txt:Visual_Studio_Code"]]]]);

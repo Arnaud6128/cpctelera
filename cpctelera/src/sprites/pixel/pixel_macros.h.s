@@ -35,6 +35,7 @@
 ;;    PEN - ([0-15], unsigned) Pen Colour from which create the pixel pattern
 ;; 
 ;; Known limitations:
+;;
 ;;    * It does not perform any kind of checking. Values other than unsigned integers [0-15]
 ;; will produce undefined behaviour.
 ;;    * As this is an assembly macro, it will only work with constant values or symbols. It
@@ -93,6 +94,7 @@
 ;;    NewPen - ([0-15], unsigned) New Pen Colour to be inserted in <cpct_spriteColourizeM0>
 ;; 
 ;; Known limitations:
+;;
 ;;    * It does not perform any kind of checking. Values other than unsigned integers [0-15]
 ;; will produce undefined behaviour.
 ;;    * As this is a macro, this is designed only for CONSTANT values, to perform compile-time
@@ -151,6 +153,7 @@
 ;;    PEN - ([0-3], unsigned) Pen Colour from which create the pixel pattern
 ;; 
 ;; Known limitations:
+;;
 ;;    * It does not perform any kind of checking. Values other than unsigned integers [0-3]
 ;; will produce undefined behaviour.
 ;;    * As this is an assembly macro, it will only work with constant values or symbols. It
@@ -209,6 +212,7 @@
 ;;    NewPen - ([0-3], unsigned) New Pen Colour to be inserted in <cpct_spriteColourizeM1>
 ;; 
 ;; Known limitations:
+;;
 ;;    * It does not perform any kind of checking. Values other than unsigned integers [0-3]
 ;; will produce undefined behaviour.
 ;;    * As this is a macro, this is designed only for CONSTANT values, to perform compile-time

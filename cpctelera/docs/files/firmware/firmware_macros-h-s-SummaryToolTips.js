@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:firmware/firmware_macros.h.s",{230:"<div class=\"NDToolTip TMacro LAssembly\"><div class=\"TTSummary\">Macro that creates a custom interrupt handler wrapper function.</div></div>"});

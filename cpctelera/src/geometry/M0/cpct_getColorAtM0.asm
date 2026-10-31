@@ -30,18 +30,16 @@
 ;; Input Parameters:
 ;;   (2B HL)    vmem - Base VRAM memory address (typically 0xC000)
 ;;   (2B DE)    x    - E = X coordinate (0-159 no checks)
-;;   (2B Stack) y    - Y coordinate (0-199 no checks)
+;;   (2B BC)    y    - C = Y coordinate (0-199 no checks)
 ;;
 ;; Return value:
-;;   (1B L) outCol   - Pen color of pixel (0..15)
-;;                     A contains also the pen color if needed
+;;   (1B L) outColor - Pen color of pixel (0..15)
 ;;
 ;; Assembly call:
 ;;    > call cpct_getColorAtM0_asm
-;;       HL = VMem , E = X, C = Y
 ;;
 ;; Destroyed Register values:
-;;          AF, BC, DE, HL
+;;    AF, BC, DE, HL
 ;;
 ;; Comment
 ;;  Uses cpct_getScreenPtr_asm
@@ -62,8 +60,8 @@
 .globl cpct_getScreenPtr_asm
 
    ;; As X < 160  Shift right to the byte offset; carry selects subpixel 1.
-   srl      e                       ;; [2] E = X / 2 (0..79), carry = X % 2 = subpixel (0..1)
-   push     af                      ;; [4] Save carry to select the pixel
+   srl     e                        ;; [2] E = X / 2 (0..79), carry = X % 2 = subpixel (0..1)
+   push    af                       ;; [4] Save carry to select the pixel
 
    ld      b, c                     ;; [1] b = Y
    ld      c, e                     ;; [1] c = X in bytes

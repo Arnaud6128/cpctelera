@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/cpct_drawSpriteVFlipMasked.asm",{716:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws a masked sprite from an array to video memory or Hardware Back Buffer flipping it vertically (top to bottom).</div></div>"});

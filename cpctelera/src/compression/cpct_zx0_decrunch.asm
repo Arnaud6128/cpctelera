@@ -38,6 +38,7 @@
 ;;    > call cpct_zx0_decrunch_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *dest_start* should be a 16-bit pointer to the first byte of the array where decompressed
 ;; data will be written. It could point anywhere in memory. Data will be written from that
 ;; byte onwards until all compressed data has been decompressed. No runtime checks
@@ -50,6 +51,7 @@
 ;; memory parts.
 ;;
 ;; Known limitations:
+;;
 ;;     * This function does not do any kind of checking over pointers or data passed. If any of the
 ;; pointers is badly calculated or incorrect, or compressed data is corrupted, undefined behaviour
 ;; will follow.
@@ -118,6 +120,7 @@
 ;; (end code)
 ;;
 ;; Credits:
+;;
 ;;    * <Original code at https://github.com/einar-saukas/ZX0> ZX0 decompressor ("Standard"
 ;; version) by Einar Saukas & Urusergi.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

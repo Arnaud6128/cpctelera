@@ -36,6 +36,7 @@
 ;;    > call cpct_getBit_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *array* must be the memory location of the first byte of the array.
 ;; However, this function will accept any given 16-value, without performing
 ;; any check. So, be warned that giving mistaken values to this function will
@@ -55,6 +56,7 @@
 ;;    Flag Z - Value of bit. (Z) bit=0, (NZ) bit=1
 ;;
 ;; Known limitations:
+;;
 ;;    * Maximum of 65536 bits, 8192 bytes per *array*.
 ;;    * This function *will not work from ROM*, as it uses self-modifying code.
 ;;

@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:easyoverscan/cpct_restoreCRTC.s",{183:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Restore CRTC with default CPC settings.&nbsp; Set video to 80 bytes x 200 lines and video memory at 0xC000 - 0xFFFF</div></div>"});

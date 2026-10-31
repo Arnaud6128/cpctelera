@@ -37,6 +37,7 @@
 ;;    > call cpct_etm_drawTilemap4x8_ag_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *memory* must be the location in video memory or backbuffer where to draw
 ;; the tilemap. This location *must be* a *4-byte-aligned* location at a 
 ;; *character pixel line 0*. *4-byte-aligned* means this address must be divisible
@@ -47,6 +48,7 @@
 ;; Please, consult details section for a deeper explanation.
 ;;
 ;; Known limitations:
+;;
 ;;     * This function *SHALL NOT* be used without a previous call to 
 ;; <cpct_etm_setDrawTilemap4x8_ag>. This call is required to configure view 
 ;; sizes and the tileset to be used.

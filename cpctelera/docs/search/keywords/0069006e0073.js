@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("ins",["Section","Information"],[["Installing",,[[,"Installing CPCtelera",,,0,"File:readme.txt:Installing_CPCtelera"],[,"Installing CPCtelera in your system",,,1,"File:readme.txt:Installing_CPCtelera_in_your_system"]]]]);

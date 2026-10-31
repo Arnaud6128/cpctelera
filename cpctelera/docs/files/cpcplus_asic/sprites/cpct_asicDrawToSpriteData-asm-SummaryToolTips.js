@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:cpcplus_asic/sprites/cpct_asicDrawToSpriteData.asm",{139:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Draws an sprite inside hardware sprite\'s buffer.</div></div>"});

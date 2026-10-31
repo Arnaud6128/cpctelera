@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:firmware/cpct_setInterruptHandler_naked.s","cpct_setInterruptHandler_naked.s");NDSummary.OnSummaryLoaded("File:firmware/cpct_setInterruptHandler_naked.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[237,0,1,"Functions","Functions"],[238,0,0,"cpct_setInterruptHandler_naked","cpct_setInterruptHandler_naked"]]);

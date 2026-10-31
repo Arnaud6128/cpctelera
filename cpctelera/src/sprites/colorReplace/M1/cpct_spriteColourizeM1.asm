@@ -38,6 +38,7 @@
 ;;    > call cpct_spriteColourizeM1_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;  * *rplcPat* ([0000-FFFF], 16bits, unsigned) should contain 2 8-bit colour pixel 
 ;; patterns in Mode 1 screen pixel format (see below for an explanation of patterns).
 ;; Any value is valid, but values different of what you actually want will probably
@@ -175,6 +176,7 @@
 ;; (end code)
 ;;
 ;; Known limitations:
+;;
 ;;    * This function does not check for parameter boundaries or their validity.
 ;; Incorrect our out-of-bounds values will cause undefined behaviour, potentially
 ;; overwritting memory outside the array/sprite.

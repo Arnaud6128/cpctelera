@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:macros/allmacros.h.s","allmacros.h.s");NDSummary.OnSummaryLoaded("File:macros/allmacros.h.s",[["Assembly","Assembly"]],[["Groups","Group"],["Macros","Macro"]],[[457,0,0,"General Useful Macros","General_Useful_Macros"],[458,0,1,"cpctm_produceHalts_asm","cpctm_produceHalts_asm"],[459,0,1,"cpctm_WINAPE_BRK","cpctm_WINAPE_BRK"]]);

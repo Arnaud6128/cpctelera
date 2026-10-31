@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:sprites/colorReplace/M1/cpct_spriteColourizeM1.asm","cpct_spriteColourizeM1.asm");NDSummary.OnSummaryLoaded("File:sprites/colorReplace/M1/cpct_spriteColourizeM1.asm",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[575,0,1,"Functions","Functions"],[576,0,0,"cpct_spriteColourizeM1","cpct_spriteColourizeM1"]]);

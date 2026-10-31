@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/colorReplace/M0/cpct_spriteColourizeM0.asm",{568:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Replaces a colour pattern (Find Pattern) by a new one (Insert Pattern) in an array/sprite. Typical use is to replace pixels of a given PEN Colour (OldPen) into pixels of a new PEN Colour (NewPen).</div></div>"});

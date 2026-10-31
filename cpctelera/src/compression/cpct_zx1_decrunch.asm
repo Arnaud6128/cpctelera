@@ -38,6 +38,7 @@
 ;;    > call cpct_ZX1_decrunch_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *source* should be a 16-bit pointer to the latest byte of the array where compressed
 ;; data is held. ZX1 algorithm will read the array from this byte.
 ;; No runtime checks are performed: if this value is incorrect, undefined behaviour will follow.
@@ -50,6 +51,7 @@
 ;; undesired parts of memory could be overwritten, causing undefined behaviour. 
 ;;
 ;; Known limitations:
+;;
 ;;     * This function does not do any kind of checking over pointers or data passed. If any of the
 ;; pointers is badly calculated or incorrect, or compressed data is corrupted, undefined behaviour 
 ;; will follow.
@@ -70,6 +72,7 @@
 ;;    ASM-bindings - 120 bytes 
 ;;
 ;; Credits:
+;;
 ;;    * <Original code at https://github.com/einar-saukas/ZX1> 
 ;;    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({4:"<div class=\"NDToolTip TFile LC\"><div class=\"TTSummary\">Patches a binary file</div></div>"});

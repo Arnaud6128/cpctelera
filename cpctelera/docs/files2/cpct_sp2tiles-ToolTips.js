@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({10:"<div class=\"NDToolTip TFile LBash\"><div class=\"TTSummary\">Cuts up a big sprite into smaller tiles</div></div>"});

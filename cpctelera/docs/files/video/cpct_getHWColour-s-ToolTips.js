@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({848:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Changes the hardware palette colour values (selecting new ones).</div></div>",858:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Converts a firmware colour value into its equivalent hardware one.</div></div>"});

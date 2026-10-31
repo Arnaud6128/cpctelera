@@ -34,6 +34,7 @@
 ;;    > call cpct_setSeed_mxor_asm
 ;;
 ;; Parameter Restrictions:
+;;
 ;;    * *newseed* is the new seed byte that will be set internally for Marsaglia's XOR-shift 
 ;; random number generator. It should *never be set to 0*. Functions that use this seed will always
 ;; return 0 if this seed is set to 0.

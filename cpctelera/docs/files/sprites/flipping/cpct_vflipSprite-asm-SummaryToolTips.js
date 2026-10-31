@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/flipping/cpct_vflipSprite.asm",{688:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Flips a sprite vertically in-place, modifying it.</div></div>"});

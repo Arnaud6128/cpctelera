@@ -1,0 +1,1 @@
+﻿NDSearch.OnPrefixDataLoaded("spe",["Section"],[["Special",,[[,"Special Thanks",,,0,"File:authors.txt:Special_Thanks"]]]]);

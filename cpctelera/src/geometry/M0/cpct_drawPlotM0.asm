@@ -40,6 +40,7 @@
 ;;    > call cpct_drawPlotM0_asm
 ;;
 ;; Requirements and limitations:
+;;
 ;;   * Coordinates must stay within Mode 0 screen bounds (X: 0-159, Y: 0-199).
 ;;   * Requires `cpct_pen2twoPixelM0_table` (16 bytes, PEN to 2 pixels byte).
 ;;

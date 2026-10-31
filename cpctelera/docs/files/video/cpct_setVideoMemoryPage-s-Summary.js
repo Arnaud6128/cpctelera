@@ -1,0 +1,1 @@
+﻿NDFramePage.OnPageTitleLoaded("File:video/cpct_setVideoMemoryPage.s","cpct_setVideoMemoryPage.s");NDSummary.OnSummaryLoaded("File:video/cpct_setVideoMemoryPage.s",[["Assembly","Assembly"]],[["Functions","Function"],["Groups","Group"]],[[845,0,1,"Functions","Functions"],[846,0,0,"cpct_setVideoMemoryPage","cpct_setVideoMemoryPage"]]);

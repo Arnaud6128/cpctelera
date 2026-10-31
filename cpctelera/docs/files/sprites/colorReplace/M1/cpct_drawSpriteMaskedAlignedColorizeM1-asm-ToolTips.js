@@ -1,0 +1,1 @@
+﻿NDContentPage.OnToolTipsLoaded({586:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Directly replace a color and draw a sprite Masked Aligned to video memory.</div></div>"});

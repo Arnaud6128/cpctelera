@@ -1,0 +1,1 @@
+﻿NDSummary.OnToolTipsLoaded("File:sprites/drawSprite/cpct_drawSprite.asm",{616:"<div class=\"NDToolTip TFunction LAssembly\"><div class=\"TTSummary\">Copies a sprite from an array to video memory (or to a screen buffer).</div></div>"});

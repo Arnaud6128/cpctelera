@@ -28,6 +28,7 @@
 ;;
 ;;       Thanks to Hicks/Vanity for two small (but relevant!) optimizations.
 ;;       v1.0b:  - Removed the ":" before EQU, for RASM 2.3.9.
+;;
 ;;               - Changed the MSX period table to 1789773 Hz (was 1773400 Hz like Spectrum before).
 ;;               - Cleaned conditionals when the SFX has hardware sounds, but not the main song, using player configuration (thanks Arnaud!).
 ;;       v1.0a: 
