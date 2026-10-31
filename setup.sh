@@ -2,6 +2,7 @@
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
 ##  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+##  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ##
 ##  This program is free software: you can redistribute it and/or modify
 ##  it under the terms of the GNU Lesser General Public License as published by
@@ -55,6 +56,12 @@ classical machine echo to screen or printer. Enabled by default, except under Cy
    echo "${COLOR_LIGHT_BLUE}  -cri | --clean-reinstall"
    echo "${COLOR_CYAN}       Cleans all previous builds of CPCtelera before compiling and \
 setting up tools, library and examples."
+   echo
+   echo "${COLOR_LIGHT_BLUE}  -sl | --slim"
+   echo "${COLOR_CYAN}       Once everything is installed, removes the intermediate files generated \
+while building SDCC (its build tree, hundreds of MB) to save disk space. SDCC's sources are not \
+removed and the installed tools keep working, but SDCC will be rebuilt from scratch next time \
+setup is run."
    echo
    echo "${COLOR_LIGHT_BLUE}  -h | --help"
    echo "${COLOR_CYAN}       Shows this help information"
@@ -203,6 +210,7 @@ fi
 ## Process Command line parameters
 ##
 CLEANREINSTALL=false
+SLIM=false
 while (( $# >= 1 )); do
    case $1 in
       ## Disable Machine Echo
@@ -216,6 +224,10 @@ while (( $# >= 1 )); do
       ## Get number of bytes
       "-cri" | "--clean-reinstall")
          CLEANREINSTALL=true
+      ;;
+      ## Remove SDCC intermediate build files once installed
+      "-sl" | "--slim")
+         SLIM=true
       ;;
       ## Show Help
       "-h" | "--help")
@@ -400,6 +412,22 @@ export CPCT_PATH=$CPCT_MAIN_DIR
 makeWithProgressSupervision "$CPCT_EXAMPLES_DIR" "$CPCT_EXAMPLES_BUILD_LOG" "" \
                               "$CPCT_EXAMPLES_BUILD_LOG_TOTAL_BYTES"  35  0.1  \
                                "There was an error building CPCtelera examples."
+
+###------
+# Slim installation: remove SDCC intermediate build files, if the user requested it
+###------
+if $SLIM; then
+   coloredMachineEcho "${COLOR_CYAN}" 0.005 $'\n'">>> Removing SDCC intermediate build files (--slim): "
+   SLIM_BEFORE_MB=$(du -sm "${CPCT_TOOLS_SDCC_DIR}" | cut -f1)
+   if ! make -C "${CPCT_TOOLS_SDCC_DIR}" clean >> "${CPCT_TOOLS_BUILD_LOG}" 2>&1; then
+      Error "There was an error removing SDCC intermediate build files. Please, check '${CPCT_TOOLS_BUILD_LOG}' for details." 125
+   fi
+   ## Installed compiler must have survived the cleaning
+   ensureExistsAndIsExecutable file "${CPCT_TOOLS_SDCC_DIR}/bin/sdcc"
+   drawOK
+   SLIM_AFTER_MB=$(du -sm "${CPCT_TOOLS_SDCC_DIR}" | cut -f1)
+   coloredMachineEcho "${COLOR_LIGHT_GREEN}" 0.002 "> Disk space saved: $(( SLIM_BEFORE_MB - SLIM_AFTER_MB )) MB"$'\n'
+fi
 
 ###############################################################
 ###############################################################
