@@ -4,6 +4,8 @@ src/g_palette_hw.c
 src/g_palette_hw.h
 src/planet.c
 src/planet.h
+src/reactor.c
+src/reactor.h
 src/ship.c
 src/ship.h
 src/stars.c

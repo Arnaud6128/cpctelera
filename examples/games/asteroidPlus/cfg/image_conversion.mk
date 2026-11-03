@@ -34,12 +34,15 @@ PALETTE_FIRE=0 7 8 17
 $(eval $(call IMG2SP, SET_MODE        , 1 )) 
 $(eval $(call IMG2SP, SET_FOLDER      , src/ ))
 $(eval $(call IMG2SP, SET_OUTPUT      , c ))  # { bin, c }
-$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites ))  #{ sprites, zgtiles, screen, spritehardware }
+$(eval $(call IMG2SP, SET_IMG_FORMAT  , sprites ))  #{ sprites, zgtiles, screen, spritehardware, spritehardwareinterlaced }
 $(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE_PLANET) ))
 $(eval $(call IMG2SP, CONVERT         , assets/planet.png , 0, 0, pre_planet , , ))
 $(eval $(call IMG2SP, SET_PALETTE_FW  , $(PALETTE_FIRE)   ))
 $(eval $(call IMG2SP, CONVERT         , assets/stars.png , 8, 5, pre_stars , , pre_tileset ))
 $(eval $(call IMG2SP, SET_IMG_FORMAT  , spritehardware ))
 $(eval $(call IMG2SP, CONVERT_PALETTE_PLUS, $(PALETTE_SPRITE_HW), g_palette_hw ))
+$(eval $(call IMG2SP, SET_PALETTE_PLUS, $(PALETTE_SPRITE_HW)   ))
 $(eval $(call IMG2SP, CONVERT         , assets/ship.png , 16, 16, sprite_ship , , ))
 $(eval $(call IMG2SP, CONVERT         , assets/explosions.png , 16, 16, sprite_explosion , , ))
+$(eval $(call IMG2SP, SET_IMG_FORMAT  , spritehardwareinterlaced ))
+$(eval $(call IMG2SP, CONVERT         , assets/reactor.png , 16, 16, sprite_reactor , , ))

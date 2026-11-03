@@ -33,19 +33,20 @@
 #include "stdbool.h"
 
 CPCT_ABSOLUTE_LOCATION_AREA(0x100);
+
 // Hardware sprites definitions
-#include "sprites.h"
 #include "explosions.h"
 #include "moon.h"
 #include "win.h"
 #include "ship.h"
+#include "reactor.h"
 #include "g_palette_hw.h"
 
 // Software sprites definitions
 #include "planet.h"
 #include "stars.h"
 
-#define STARS_AREA_HEIGHT        140
+#define STARS_AREA_HEIGHT       140
 
 // Hardware Sprites in screen size according to sprite magnification Mode 1
 #define SPRITE_WIDTH_SCREEN     (HW_SPRITE_WIDTH*HW_SPRITE_MODE_1_ZOOM_X)
@@ -77,18 +78,27 @@ const u16 paletteDown[] =
     cpctm_asicColor(0xF, 0xF, 0xF)
 };
 
+#define DATA_SPRITE_SHIP_REAR			0
+#define DATA_SPRITE_SHIP_FRONT			1
+#define DATA_SPRITE_ASTEROID_LARGE_0	2
+#define DATA_SPRITE_ASTEROID_LARGE_1	3
+#define DATA_SPRITE_ASTEROID_LARGE_2	4
+#define DATA_SPRITE_ASTEROID_LARGE_3	5
+#define DATA_SPRITE_ASTEROID_MEDIUM		6
+#define DATA_SPRITE_ASTEROID_SMALL		7
+#define DATA_SPRITE_SHIP_REACTOR		8
+
 u8* const allSprites[] = 
 {
-	sprite_ship_00, //sprite_ship_rear,
-	sprite_ship_01, // sprite_ship_front, 
-	sprite_ship_02, //sprite_large_asteroid_1,
-	sprite_ship_03, // sprite_large_asteroid_2, 
-	sprite_ship_04, // sprite_large_asteroid_3, 
-	sprite_ship_05, // sprite_large_asteroid_4,
-	sprite_ship_06, // sprite_medium_asteroid, 
-	sprite_ship_07, // sprite_small_asteroid,
-	sprite_reactor_0,
-	sprite_reactor_1
+    sprite_ship_00, //sprite_ship_rear,
+    sprite_ship_01, // sprite_ship_front, 
+    sprite_ship_02, //sprite_large_asteroid_1,
+    sprite_ship_03, // sprite_large_asteroid_2, 
+    sprite_ship_04, // sprite_large_asteroid_3, 
+    sprite_ship_05, // sprite_large_asteroid_4,
+    sprite_ship_06, // sprite_medium_asteroid, 
+    sprite_ship_07, // sprite_small_asteroid,
+    sprite_reactor_0,
 };
 
 // Definition of position structure
@@ -100,18 +110,18 @@ typedef struct
 } SPos;
 
 // Definition of player ship
-#define SHIP_OK                    0
-#define SHIP_DESTROYED            1
-#define SHIP_EXPLOSIONS            4
+#define SHIP_OK                 0
+#define SHIP_DESTROYED          1
+#define SHIP_EXPLOSIONS         4
 
 #define START_SHIP_X            10
 #define START_SHIP_Y            100
 #define SHIP_SPEED_X            4
 #define SHIP_SPEED_Y            1
 
-#define SHIP_SPRITE_WIDTH        (3*SPRITE_WIDTH_SCREEN) // Ship uses 3 HWSprite width
+#define SHIP_SPRITE_WIDTH       (3*SPRITE_WIDTH_SCREEN) // Ship uses 3 HWSprite width
 #define SHIP_COLLISION_Y        4 // Center ship sprite for collision
-#define SHIP_SPRITE_HEIGHT        7 // Ship sprite height do not fill whole HWSprite Height (16)
+#define SHIP_SPRITE_HEIGHT      7 // Ship sprite height do not fill whole HWSprite Height (16)
 
 // Definition of ship structure
 typedef struct
@@ -125,19 +135,19 @@ SShip gShip;
 ////////////////////////////////////////////////////
 // Definition of asteroids and Hardware Sprite number associated (0..15)
 // Hardware number defines also the internal order of drawing
-#define ASTEROID_NB                6
+#define ASTEROID_NB             6
 #define ASTEROID_WIDTH_LARGE    (SPRITE_WIDTH_SCREEN)
-#define ASTEROID_HEIGHT_LARGE    (SPRITE_HEIGHT_SCREEN*2)
+#define ASTEROID_HEIGHT_LARGE   (SPRITE_HEIGHT_SCREEN*2)
 
-#define ASTEROID_LARGE            0
-#define ASTEROID_MEDIUM            1
-#define ASTEROID_SMALL            2
+#define ASTEROID_LARGE          0
+#define ASTEROID_MEDIUM         1
+#define ASTEROID_SMALL          2
 
 #define ASTEROID_SPEED_LARGE    6
-#define ASTEROID_SPEED_MEDIUM    5
+#define ASTEROID_SPEED_MEDIUM   5
 #define ASTEROID_SPEED_SMALL    4
 
-#define ASTEROID_LIMIT_EXIT        -100
+#define ASTEROID_LIMIT_EXIT     -100
     
 // Definition of asteroid structure
 typedef struct
@@ -240,12 +250,7 @@ void SetInterruptHandler(void)
     static const u8 lines[] = {1, 20, 60, 90, 120, (u8)(STARS_AREA_HEIGHT-2), ASIC_SCREEN_HEIGHT};
 
     // Wait screen refresh is starting to top
-    cpct_waitVSYNC();
-    __asm
-    halt
-    halt
-    __endasm;
-    cpct_waitVSYNC();
+    cpct_waitVSYNCStart();
     
     // Set lines interrupt
     cpct_asicSetLinesInterruptHandler(InterruptFunction, lines, sizeof(lines));
@@ -256,7 +261,7 @@ void SetInterruptHandler(void)
 //        
 void InitCpcPlus(void)
 {
-    cpct_disableFirmware(); // Disable firmware
+    cpct_disableFirmware();    // Disable firmware
     cpct_asicUnlock();         // Unlock asic
     cpct_asicPageConnect();    // Connect Asic memory page configuration (0x4000)
 }
@@ -281,7 +286,7 @@ void UpdateShipPosition(void)
     if (gShip.status == SHIP_OK)
     {
         // Ship is composed of three parts
-        cpct_asicSetSpritePosition(HW_SPRITE_REACTOR,    gShip.pos.x + SPRITE_WIDTH_SCREEN/2, gShip.pos.y);
+        cpct_asicSetSpritePosition(HW_SPRITE_REACTOR,    gShip.pos.x, gShip.pos.y);
         cpct_asicSetSpritePosition(HW_SPRITE_SHIP_REAR,  gShip.pos.x + SPRITE_WIDTH_SCREEN, gShip.pos.y);
         cpct_asicSetSpritePosition(HW_SPRITE_SHIP_FRONT, gShip.pos.x + 2*SPRITE_WIDTH_SCREEN, gShip.pos.y);
     }
@@ -289,16 +294,18 @@ void UpdateShipPosition(void)
     else
     {
         // Not move when out of screen
-        if (gShip.pos.x > ASTEROID_LIMIT_EXIT)
+        if (gShip.pos.x > ASTEROID_LIMIT_EXIT*2)
         {
             // Move explosion of ship to left 
             gShip.pos.x -= SCROLL_SPEED;
             
             // Update four parts explosion sprites at screen
-            cpct_asicSetSpritePosition(HW_SPRITE_REACTOR,    gShip.pos.x, gShip.pos.y);
-            cpct_asicSetSpritePosition(HW_SPRITE_SHIP_REAR,  gShip.pos.x + SPRITE_WIDTH_SCREEN, gShip.pos.y);
-            cpct_asicSetSpritePosition(HW_SPRITE_SHIP_FRONT, gShip.pos.x, gShip.pos.y + SPRITE_HEIGHT_SCREEN);
-            cpct_asicSetSpritePosition(HW_SPRITE_MOON,       gShip.pos.x + SPRITE_WIDTH_SCREEN, gShip.pos.y + SPRITE_HEIGHT_SCREEN);
+			i16 x = gShip.pos.x - SPRITE_WIDTH_SCREEN;
+			u8 y = gShip.pos.y - SPRITE_HEIGHT_SCREEN;
+            cpct_asicSetSpritePosition(HW_SPRITE_REACTOR,    x, y);
+            cpct_asicSetSpritePosition(HW_SPRITE_SHIP_REAR,  x + SPRITE_WIDTH_SCREEN*2, y);
+            cpct_asicSetSpritePosition(HW_SPRITE_SHIP_FRONT, x, y + SPRITE_HEIGHT_SCREEN*2);
+            cpct_asicSetSpritePosition(HW_SPRITE_MOON,       x + SPRITE_WIDTH_SCREEN*2, y + SPRITE_HEIGHT_SCREEN*2);
         }
     }
 }
@@ -342,7 +349,7 @@ void SetAsteroidInitPosition(SAsteroid* asteroid)
 //        
 void SetShipExplosionSprites(void)
 {
-    #define NB_SPRITES_EXPLOSIONS    4
+    #define NB_SPRITES_EXPLOSIONS  4
     
     // Compute explosion sprite position in all in one explosions sprite
     const u8* currentSpriteExplosion = sprite_explosion_00 + ((NB_SPRITES_EXPLOSIONS - gShip.status) * HW_SPRITE_SIZE * NB_SPRITES_EXPLOSIONS);
@@ -409,8 +416,7 @@ void InitAsteroids(void)
     SAsteroid* asteroidPtr;
     asteroidPtr = (SAsteroid*)gAsteroids;
     
-    u8 i, j;
-    for (i = 0; i < ASTEROID_NB; i++)
+    for (u8 i = 0; i < ASTEROID_NB; i++)
     {
         u8 hwSpriteId = asteroidPtr->hwSpriteId;
     
@@ -418,7 +424,7 @@ void InitAsteroids(void)
         if (asteroidPtr->type == ASTEROID_LARGE)
         {
             // Set four parts of large asteroid
-            for (j = 0; j < ASTEROID_LARGE_SIZE; j++)
+            for (u8 j = 0; j < ASTEROID_LARGE_SIZE; j++)
                 cpct_asicCopySpriteData(hwSpriteId + j, allSprites[DATA_SPRITE_ASTEROID_LARGE_0 + j]);
         }
         else if (asteroidPtr->type == ASTEROID_MEDIUM)
@@ -475,9 +481,9 @@ void InitHWSprites(void)
 void DrawBackground(void)
 {
     #define MODE_1_SCREEN_HEIGHT    200
-    #define SCREEN_BYTES_WIDTH        80
-    #define NB_OF_STARS_TO_DRAW        100
-    #define NB_OF_DIFFERENTS_STARS    6
+    #define SCREEN_BYTES_WIDTH      80
+    #define NB_OF_STARS_TO_DRAW     100
+    #define NB_OF_DIFFERENTS_STARS  6
 
     // Compute video position of first planet sprite
     u8* vmem = cpctm_screenPtr(CPCT_VMEM_START, 0, MODE_1_SCREEN_HEIGHT - PRE_PLANET_H);
@@ -513,7 +519,7 @@ bool TestCollision(SAsteroid* asteroid)
     
     // Test if rectangles collide
     return (ValueInRange(asteroid->pos.y, shipY, shipCY) || ValueInRange(shipY, asteroid->pos.y, asteroidCY)) 
-            && (ValueInRange(asteroid->pos.x, gShip.pos.x, ShipCX) || ValueInRange(gShip.pos.x, asteroid->pos.x, AsteroidCX));
+        && (ValueInRange(asteroid->pos.x, gShip.pos.x, ShipCX) || ValueInRange(gShip.pos.x, asteroid->pos.x, AsteroidCX));
 }
 
 ////////////////////////////////////////////////////
@@ -626,8 +632,7 @@ void InPlay(void)
     if (sFire++ > REACTOR_SPEED_ANIMATION)
     {
         // Copy reactor sprite to HWSprite data
-        u8* spriteReactor = sReactorSprite ? allSprites[DATA_SPRITE_SHIP_REACTOR_1] :  allSprites[DATA_SPRITE_SHIP_REACTOR_2];
-        cpct_asicDrawToSpriteData(HW_SPRITE_REACTOR, 0, 5, spriteReactor, SPRITE_REACTOR_WIDTH, SPRITE_REACTOR_HEIGHT);
+		cpct_asicCopySpriteEntrelacedData(HW_SPRITE_REACTOR, sReactorSprite, allSprites[DATA_SPRITE_SHIP_REACTOR]);
         
         // Flip reactor sprites
         sReactorSprite = !sReactorSprite;            
@@ -699,7 +704,7 @@ void UpdateShip(void)
 void ReadInput(void)
 {
     #define LIMITE_UP        10
-    #define LIMITE_DOWN        140
+    #define LIMITE_DOWN      140
     
     // If play in progress and game not win
     if (gShip.status == SHIP_OK && !(gEscapeDistance < 0 && gAllAsteroidsExit))
@@ -743,7 +748,7 @@ void ReadInput(void)
 
 void Game(void)
 {
-	InitCpcPlus();
+    InitCpcPlus();
     InitVideo();
     
     DrawBackground();
@@ -770,5 +775,5 @@ CPCT_RELOCATABLE_AREA();
 //        
 void main(void) 
 {
-	Game();
+    Game();
 }
