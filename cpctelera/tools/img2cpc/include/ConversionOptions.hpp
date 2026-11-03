@@ -87,7 +87,8 @@ public:
 	bool RLE;
 	bool IsScr;
 	bool HardSprites;
-
+	bool HardSpritesInterlaced;
+	
 	ByteOrder PixelOrder;
 
 	vector<string> AdditionalIncludes;

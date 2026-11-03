@@ -89,6 +89,7 @@
 ##    -scr  | --screen-format                   - Outputs data following Amstrad CPC's screen distribution. Rows
 ##                                                are interlaced: 0, 8, 16, 32... 192, 200, 1, 9, 17... 193, 2, 18...
 ##    -sh   | --sprite-hardware                 - Outputs CPC Plus ASIC hardware sprites (16x16, 16 colours).
+##    -shi  | --sprite-hardware-interlaced      - Outputs CPC Plus ASIC two hardware sprites (16x16, 16 colours) interlaced
 ##    -t    | --transparent-index <index>       - Changes the colour index to be considered transparent
 ##                                                and is used to generate masks.
 ##    -th   | --tile-height  <pixels>           - Sets the height of a tile in pixels. Default: 4 (16 for -sh).
@@ -470,10 +471,15 @@ while (( $# >= 1 )); do
          SCREEN_FORMAT="-scr"
          SCREEN_FORMAT_MSG="Screen Distribution"
       ;;
-      ## CPC Plus Hardware Sprites
+      ## CPC Plus Hardware Sprites / interlaced
       "-sh" | "--sprite-hardware")
          SPRITE_HARDWARE="-sh"
          SCREEN_FORMAT_MSG="Hardware Sprite (CPC Plus)"
+      ;;
+      ## CPC Plus Hardware Sprites interlaced
+      "-shi" | "--sprite-hardware-interlaced")
+         SPRITE_HARDWARE="-shi"
+         SCREEN_FORMAT_MSG="Hardware Sprite interlaced (CPC Plus)"
       ;;
       ## Get transparent Index for generating Masks
       "-t" | "--transparent-index")

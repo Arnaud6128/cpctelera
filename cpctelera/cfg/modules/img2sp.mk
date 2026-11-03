@@ -29,14 +29,14 @@
 #
 # Default values for all IMG2SP functions
 #
-I2S_PAL  := 
-I2S_MODE := -m 0
-I2S_MASK := 
-I2S_FMT  := 
-I2S_OUT  := -of c
-I2S_FOLD := src/
-I2S_EXTP := 
-I2S_ERR  := <<ERROR>> [IMG2SP - 
+I2S_PAL    := 
+I2S_MODE   := -m 0
+I2S_MASK   := 
+I2S_FMT    := 
+I2S_OUT    := -of c
+I2S_FOLD   := src/
+I2S_EXTP   := 
+I2S_ERR    := <<ERROR>> [IMG2SP - 
 
 # Ensure that image_conversion.mk exists for compatibility with older CPCtelera projects
 I2S_DEPEND := cfg/image_conversion.mk
@@ -132,14 +132,14 @@ endef
 #################
 # IMG2SP_SET_IMG_FORMAT: Sets the pixel format to be used for following IMG2SP CONVERT commands
 #
-# $(1): Pixel Format { sprites, zgtiles, screen, spritehardware }
+# $(1): Pixel Format { sprites, zgtiles, screen, spritehardware, spritehardwareinterlaced }
 #
 # Updates variable I2S_FMT
 #
 define IMG2SP_SET_IMG_FORMAT
 	# Convert selected format into options
-	$(eval _VALID := zgtiles screen sprites spritehardware)
-	$(eval _CNV := -z'-g -scr '' -sh)
+	$(eval _VALID := zgtiles screen sprites spritehardware spritehardwareinterlaced)
+	$(eval _CNV := -z'-g -scr '' -sh -shi)
 	$(call CONVERTVALUE,$(1),_VALID,_CNV,none,_F)
 	
 	# Check that selected format is valid
@@ -424,7 +424,7 @@ define IMG2SP
 		,$(error $(I2S_ERR)]: '$(1)' is not a valid command. Commands must be exactly one-word in lenght with no whitespaces)\
 		,)
 	# Set the list of valid commands
-	$(eval IMG2SP_F_FUNCTIONS = SET_PALETTE_FW SET_PALETTE_PLUS SET_MODE SET_IMG_FORMAT SET_MASK SET_OUTPUT SET_FOLDER SET_EXTRAPAR CONVERT CONVERT_PALETTE CONVERT_PALETTE_PLUS)
+	$(eval IMG2SP_F_FUNCTIONS = SET_PALETTE_FW SET_PALETTE_PLUS SET_MODE SET_IMG_FORMAT SET_SH_INTERLACE SET_MASK SET_OUTPUT SET_FOLDER SET_EXTRAPAR CONVERT CONVERT_PALETTE CONVERT_PALETTE_PLUS)
 	# Filter given command as $(1) to see if it is one of the valid commands
 	$(eval IMG2SP_F_SF = $(filter $(IMG2SP_F_FUNCTIONS),$(1)))
 	# If the given command is valid, it will be non-empty, then we proceed to call the command (up to 8 arguments). Otherwise, raise an error
