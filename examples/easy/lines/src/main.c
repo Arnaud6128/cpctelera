@@ -341,8 +341,6 @@ void SpeedTestM0(void)
         u8 getPen = cpct_getColorAtM0(CPCT_VMEM_START, 72 + pen, 150);
         cpct_drawPlotM0(CPCT_VMEM_START, 72 + pen, 152, pen);
     }
-    
-    while(1);
 }
 
 ////////////////////////////////////////
