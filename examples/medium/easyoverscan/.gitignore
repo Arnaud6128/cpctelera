@@ -1,0 +1,4 @@
+src/g_palette.c
+src/g_palette.h
+src/winner.c
+src/winner.h
