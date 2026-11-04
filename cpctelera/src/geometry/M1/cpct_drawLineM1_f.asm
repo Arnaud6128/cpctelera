@@ -18,6 +18,7 @@
 ;;-------------------------------------------------------------------------------
 .globl cpct_plotColorTable_M1
 .globl cpct_plotMasksTable_M1
+.globl cpct_subPixelHorizontalMask_M1
 .globl cpct_getScreenPtr_asm
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -43,14 +44,12 @@
 ;;     > call cpct_drawLineM1_f
 ;;
 ;; Fast-Path Special Cases:
-;;
 ;;    - Single Point  (DX = 0, DY = 0)  : Direct pixel plot.
 ;;    - Horizontal    (DY = 0, DX != 0) : Byte-aligned fast solid fill.
 ;;    - Vertical      (DX = 0, DY != 0) : 8-line scanline stepping.
 ;;
 ;; Optimized Bresenham Architecture:
 ;;    1. Dual-Path Split:
-;;
 ;;       - Gentle Slope (DX >= DY) : X is the driving axis (steps unconditionally)
 ;;       - Steep Slope  (DY > DX)  : Y is the driving axis (steps unconditionally)
 ;;    2. Pixel write with a constant solid color byte: (VRAM ^ solid) & mask ^ solid,
@@ -61,7 +60,6 @@
 ;;    4. Pixel counter split in IXL / IXH (8-bit decrement in the loop).
 ;;
 ;; Known limitations:
-;;
 ;;  * This function will not work from ROM, as it uses self-modifying code.
 ;;  * This function disables interrupts while drawing sloped lines (alternate
 ;;    registers are used) and restores the previous interrupt status on exit.
@@ -70,7 +68,7 @@
 ;;    AF, BC, DE, HL, BC', DE', HL'
 ;;
 ;; Required memory:
-;;    939 bytes (901 bytes routine + 12 bytes data + 26 bytes binding wrapper)
+;;    1030 bytes (992 bytes routine + 12 bytes data + 26 bytes binding wrapper)
 ;;
 ;; Time Measures (From C, including call and binding wrapper overhead; sloped lines
 ;; estimated from <cpct_drawLineM1> measures and per pixel cycle differences, as
@@ -79,7 +77,8 @@
 ;;    Case / Coordinates                       | Pixels | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
 ;;    Single Point  (50,50) to (50,50) [Fast]  | 1      | ~290           | ~1160
-;;    Horizontal    (0,0)   to (100,0) [Fast]  | 101    | ~860           | ~3440
+;;    Horizontal    (0,0)   to (100,0) [Fast]  | 101    | ~390           | ~1560
+;;    Horizontal    (0,0)   to (319,0) [Fast]  | 320    | ~606           | ~1818
 ;;    Vertical      (0,0)   to (0,100) [Fast]  | 101    | ~2570          | ~10280
 ;;    Shallow Slope (0,0)   to (100,25)        | 101    | ~3290          | ~13160
 ;;    Diagonal 45°  (0,0)   to (100,100)       | 101    | ~4390          | ~17560
@@ -139,6 +138,7 @@ rb_byte_start:  .db 0          ;; Start byte column (0..79)
 rb_byte_end:    .db 0          ;; End byte column (0..79)
 rb_mid_count:   .db 0          ;; Number of full intermediate bytes
 screen_start:   .ds 2          ;; Base VRAM address (16-bit)
+nbHOctets:                     ;; nb Horizontal Octets (color_pen not used in horizontal_line)
 color_pen:      .db 0          ;; Pre-multiplied color index (color * 4)
 y0_val:         .db 0          ;; Current Y coordinate (RAM storage)
 x0_val:         .dw 0          ;; Current X0 coordinate (RAM storage)
@@ -167,113 +167,117 @@ single_draw:
     jp    end_draw_line           ;; [3] Jump to binding end
 
 ;; ============================================================================
-;; HORIZONTAL LINE FAST-PATH (DY = 0)
+;; HORIZONTAL LINE FAST-PATH (DY = 0) - HL = DX, B=color
 ;; ============================================================================
 horizontal_draw:
-    COLOR_PEN_FROM_B              ;; [7] Calculate pre-multiplied color index
-    push  hl                      ;; [4] Preserve HL = signed DX
-    ld    a, (color_pen)          ;; [4] A = color * 4
-    ld    c, a                    ;; [1] C = color * 4
-    ld    h, #0                   ;; [2] Clear H
-    ld    l, c                    ;; [1] HL = color * 4
-    ld    de, #cpct_plotColorTable_M1 ;; [3] DE = color table base address
-    add   hl, de                  ;; [3] HL = &color_table[color * 4]
-    ld    a, (hl)                 ;; [2] Load pixel 0 byte pattern
-    inc   hl                      ;; [2] Next pixel byte
-    or    (hl)                    ;; [2] Merge pixel 1 byte pattern
-    inc   hl                      ;; [2] Next pixel byte
-    or    (hl)                    ;; [2] Merge pixel 2 byte pattern
-    inc   hl                      ;; [2] Next pixel byte
-    or    (hl)                    ;; [2] Merge pixel 3 byte pattern -> A = solid pattern
-    ld    (solid_op + 1), a       ;; [4] Store solid byte pattern into SMC
-    pop   hl                      ;; [3] Restore HL = signed DX
-    ld    de, (x0_val)            ;; [5] DE = X0 coordinate
-    add   hl, de                  ;; [3] HL = X1 = X0 + DX
-    push  hl                      ;; [4] Save X1 on stack
-    push  de                      ;; [4] Save X0 on stack
-    or    a                       ;; [1] Clear carry flag
-    sbc   hl, de                  ;; [3] Compare X1 and X0
-    jr    c, h_swap               ;; [2/3] IF X1 < X0 THEN swap start and end
-    pop   hl                      ;; [3] HL = start_x = min(X0, X1)
-    pop   de                      ;; [3] DE = end_x = max(X0, X1)
-    jr    h_have                  ;; [3] Jump to start processing
-h_swap:
-    pop   de                      ;; [3] DE = end_x = max(X0, X1)
-    pop   hl                      ;; [3] HL = start_x = min(X0, X1)
-h_have:
-    ld    a, l                    ;; [1] A = start_x low byte
-    and   #3                      ;; [2] A = start pixel offset (0..3)
-    ld    (rb_off_start), a       ;; [4] Store start offset
-    DIV4_HL                       ;; [8] Convert start_x to byte column
-    ld    a, l                    ;; [1] A = start byte column
-    ld    (rb_byte_start), a      ;; [4] Store start byte column
-    ld    a, e                    ;; [1] A = end_x low byte
-    and   #3                      ;; [2] A = end pixel offset (0..3)
-    ld    (rb_off_end), a         ;; [4] Store end offset
-    ex    de, hl                  ;; [1] HL = end_x, E = start byte column
-    ld    d, e                    ;; [1] D = start byte column
-    DIV4_HL                       ;; [8] Convert end_x to byte column
-    ld    a, l                    ;; [1] A = end byte column
-    ld    (rb_byte_end), a        ;; [4] Store end byte column
-    ld    e, a                    ;; [1] E = end byte column
-    ld    a, e                    ;; [1] A = end byte column
-    sub   d                       ;; [1] A = end_byte - start_byte
-    dec   a                       ;; [1] A = middle byte count
-    ld    (rb_mid_count), a       ;; [4] Store middle count
-    ld    c, d                    ;; [1] C = start byte column
-    ld    a, (y0_val)             ;; [4] A = Y0 coordinate
-    ld    b, a                    ;; [1] B = Y0 coordinate
-    ld    de, (screen_start)      ;; [5] DE = base VRAM address
-    call  cpct_getScreenPtr_asm   ;; [5] Call VRAM starting byte address helper
-    ld    a, (rb_byte_start)      ;; [4] A = start byte column
-    ld    c, a                    ;; [1] C = start byte column
-    ld    a, (rb_byte_end)        ;; [4] A = end byte column
-    cp    c                       ;; [1] Compare start_byte and end_byte
-    jp    nz, h_multi             ;; [3] IF start_byte != end_byte THEN multi-byte
+    SOLID_FROM_B                  ;; [7] a = full octet color_pen
+    ld    (solid_val),a           ;; [4] Store full octet
 
-    ;; --- MONO-BYTE CASE: pixels [off_start .. off_end] ---
-    ld    a, (rb_off_start)       ;; [4] A = start pixel offset
-    ld    c, a                    ;; [1] C = current pixel offset
-h_single_loop:
-    call  h_plot_one              ;; [5] Plot pixel in single byte
-    ld    a, (rb_off_end)         ;; [4] A = end pixel offset
-    cp    c                       ;; [1] Compare with current offset
-    jp    z, end_draw_line        ;; [3] IF finished THEN jump end
-    inc   c                       ;; [1] Move to next pixel offset
-    jr    h_single_loop           ;; [3] Loop next pixel
-h_multi:
-    ;; --- START BYTE: pixels [off_start .. 3] ---
-    ld    a, (rb_off_start)       ;; [4] A = start pixel offset
-    ld    c, a                    ;; [1] C = current pixel offset
-h_start_loop:
-    call  h_plot_one              ;; [5] Plot pixel in start byte
-    inc   c                       ;; [1] Move to next pixel offset
-    ld    a, c                    ;; [1] A = current pixel offset
-    cp    #4                      ;; [2] Check byte boundary (4 pixels/byte)
-    jr    nz, h_start_loop        ;; [2/3] IF not byte boundary THEN loop
-    inc   hl                      ;; [2] Move to first middle byte column
-solid_op:
-    ld    d, #0x00                ;; [2] SMC patched solid color byte
-    ;; --- MIDDLE BYTES: Fast solid fill loop ---
-    ld    a, (rb_mid_count)       ;; [4] A = middle bytes count
-    or    a                       ;; [1] Check if 0
-    jr    z, h_no_mid             ;; [2/3] IF 0 middle bytes THEN skip loop
-    ld    b, a                    ;; [1] B = middle bytes counter
-h_mid_loop:
-    ld    (hl), d                 ;; [2] Write solid color byte directly to VRAM
-    inc   hl                      ;; [2] Move to next byte column
-    djnz  h_mid_loop              ;; [3/4] Loop until middle bytes filled
-h_no_mid:
-    ;; --- END BYTE: pixels [0 .. off_end] ---
-    ld    c, #0                   ;; [2] C = 0 (start offset for final byte)
-h_end_loop:
-    call  h_plot_one              ;; [5] Plot pixel in end byte
-    ld    a, (rb_off_end)         ;; [4] A = end pixel offset
-    cp    c                       ;; [1] Compare with current offset
-    jp    z, end_draw_line        ;; [3] IF finished THEN jump end
-    inc   c                       ;; [1] Move to next pixel offset
-    jr    h_end_loop              ;; [3] Loop next pixel
+;; Recompute X1 and make sure that DE < HL at the end
+    ld    a,h                     ;; [1] a = High byte of DX
+    ld    de,(x0_val)             ;; [6] DE = X0 Coordinate (which is > X1)
+    add   hl,de                   ;; [3] HL = DX + X0 = (X1 - X0) + X0 = X1  
+    rla                           ;; [1] put high bit of DX in carry to check if DX is < 0
+    jr    nc, h_noExchange        ;; [2/3] Check carry of rla, Jump if DX is positif so X0 < X1 (DE < HL)
+    ex    de,hl                   ;; [1] DX < 0, Exchange X0 and X1 so DE = X1, HL = X0 so DE < HL
+h_noExchange:
+;; From here DE = X0 < HL = X1
+;; Compute left adress and sub pixel, and line size + last subpixel
+    ld    a,e                     ;; [1] a= low left X0
+    and   #0x03	                  ;; [2] Keep only the 2 least significant bits of X0 : subPixel
+    ld    (rb_off_start),a        ;; [4] Store starting subpixel
 
+    sra   d                       ;; [2] d can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
+    rr    e                       ;; [2] rotate e once with carry from d
+    srl   e                       ;; [2] Now e is the left byte offset in the line (0-39)
+    ld    a,e                     ;; [1] a = left octet in line
+    ld    (rb_byte_start),a       ;; [4] Store starting octet
+    ld    a,l                     ;; [1] a= low X1
+    and   #0x03	                  ;; [2] Keep only the 2 least significant bits of X1 : subPixel
+    ld    (rb_off_end),a          ;; [4] Store Ending subpixel
+    sra   h                       ;; [2] h can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
+    rr    l                       ;; [2] rotate l once with carry from b
+    srl   l                       ;; [2] Shift l right, now l is the Right byte offset in the line (0-39)
+    ld    a,l                     ;; [1] a = right octet in line
+    sub   e                       ;; [1] a = right octet - left octet = nbOctet to process (0 if same octet)
+    ld    (nbHOctets),a           ;; [4] Store nb octet
+
+    ld    a,(y0_val)              ;; [4] a = Y0
+    ld    b,a                     ;; [1] b = Y0
+    ld    c,e                     ;; [1] c = left octet
+    ld    de,(screen_start)       ;; [6] de = Screen start
+    call  cpct_getScreenPtr_asm   ;; [5] HL = Left Adress
+
+;; Start of horizontal draw - prepare registers and check if first octet = last octet
+    ld    a,(solid_val)           ;; [4] a = solid octet color
+    ld    d,a                     ;; [1] d = full color octet
+    ld    a,(nbHOctets)           ;; [4] a = nbOctet
+    ld    e,a                     ;; [1] e = nbOctet for doFullOctets
+    or    a                       ;; [1] check nbOctet is zero
+    ld    a,(rb_off_start)        ;; [4] a = left subpixel before jump
+    jp    z,h_doLastOctet         ;; [3] nbOctet = 0 : jump to last octet
+
+;; Drawing line - Check if first octet is not full 
+    or    a                       ;; [1] check if left subpixel is zero
+    jr    z,h_doFullOctets        ;; [2/3] LeftSubpixel = 0 : jump to Full Octet accelerator
+
+;; Need to deal with first octet from LeftSubpixel to 3
+    ld    c,#3                    ;; [2] c=right Subpixel (a = left subpixel)
+    call  h_setScreenOctetFromSubpixels  ;; [5] set screen octet from a to 3
+    dec   e                       ;; [1] Decrease nbOctet counter
+    xor   a                       ;; [1] Set a = 0
+    ld    (rb_off_start),a        ;; [4] Set Left subpixel = 0
+h_doFullOctets:
+    push  hl                      ;; [4] Save screen Adress
+    ld    hl,#h_jumpTable_end     ;; [3] hl points to end of draw octets
+
+    ;; e can be 0 HERE so in this case we will jump over everything
+    ld    a,e                     ;; [1] a = nbOctets
+    add   a,a                     ;; [1] a = a * 2 (ld (hl),d / inc hl) - CF not set (E<80)
+    ld    b,#0                    ;; [2] reset b
+    ld    c,a                     ;; [1] c = jump length 
+    sbc   hl,bc                   ;; [4] hl = h_jumpTable_end - nbOctect*2 (CF not set)
+    ld    (h_jumpAdress),hl       ;; [5] SMC to use the correct amount of ld (hl),d inc hl based on nbOctet
+    pop   hl                      ;; [3] Restore screen adress
+h_jumpAdress=. + 1
+    jp    h_jumpTable_end         ;; [3] SMC to jump over necessary code - JR does not work because between -128 to +127
+.rept 79
+    ld    (hl),d                  ;; [2] Set screen octet with full color
+    inc   hl                      ;; [2] Next screen adress
+.endm
+h_jumpTable_end:
+h_doLastOctet:
+    ld    a,(rb_off_end)          ;; [4] Get right subpixel
+    ld    c,a                     ;; [1] C = right subpixel 
+    ld    a,(rb_off_start)        ;; [4] a = left subpixel
+    call  h_setScreenOctetFromSubpixels  ;; [5] Set last octet subpixels from a to c with color
+    jp    end_draw_line           ;; [3] Jump to binding end
+
+;; input a = left Subpixel, c = rightsubpixel, d=full color octet, hl=screen adress
+;; output a = mask to use between subpixels, hl=hl+1 , BC modified
+h_setScreenOctetFromSubpixels:               
+;; Compute mask
+    push  hl                      ;; [4] Preserve hl
+    ld    b,#0                    ;; [2] reset b
+    add   a,a                     ;; [1] a = lsp*2
+    add   a,a                     ;; [1] a = lsp*4
+    add   a,c                     ;; [1] a = lsp*4 + rsp
+    ld    hl, #cpct_subPixelHorizontalMask_M1  ;; [3] mask table
+    ld    c,a                     ;; [1] bc = index in table
+    add   hl,bc                   ;; [3] hl = adress of mask to use
+    ld    a,(hl)                  ;; [2] a = mask to use for reset pixels with new color
+    pop   hl                      ;; [3] Restore adress
+;; Use mask on screen octet
+    ld    c,a                     ;; [1] save mask
+    and   (hl)                    ;; [2] a = current screen pixels with clear pixels from mask
+    ld    b,a                     ;; [1] b = current screen octet (cleared from left subpixel to subpixel 3)
+    ld    a,c                     ;; [1] retrieve mask
+    cpl                           ;; [1] invert mask
+    and   d                       ;; [1] set requested color to inverted pixelsmask
+    or    b                       ;; [1] merge result with current screen octet
+    ld    (hl),a                  ;; [2] Set screen octet
+    inc   hl                      ;; [2] Next screen octet
+    ret                           ;; [3] return
 ;; ============================================================================
 ;; VERTICAL LINE FAST-PATH (DX = 0)
 ;; ============================================================================

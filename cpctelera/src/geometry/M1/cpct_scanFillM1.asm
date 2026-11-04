@@ -117,6 +117,7 @@ screen_start:     .dw 0          ;; (2) Screen start from input
 
 ;; Keep cur values ordered like this for easy incremental access
 ;; Byte and subpixel maybe stored as a 16bit register so do not swap order
+;; cur and left are based on actual drawn line (above and below are using delta Y from there)
 cur_byte_offset:  .db 0          ;; (1) Current byte offset
 cur_subpixel:     .db 0          ;; (1) Current subpixel
 cur_y_val:        .db 0          ;; (1) Current y coordinate
@@ -258,17 +259,17 @@ ml_searchNewPoints:              ;; Check lines above and below for new points
    ld    de, (left_byte_offset)  ;; [6]
 
    ;; Move along upper line to check if new points should be stacked
-   call  changeYUp               ;; [5] Compute a new HL and C, z if top of screen reached
-   jr    z,checkBelow            ;; [2/3] Cannot move up, check other line
+   call  changeYUp               ;; [5] Compute a new HL and C (c = Y -1), z if c==0 when called
+   jr    z,ml_checkBelow         ;; [2/3] Cannot move up, check other line
    call  searchNewPoints         ;; [5] Push new points inside stack if old_color found above drawn line
-checkBelow:
-   ld    hl, (left_adress)       ;; [5] Retrieve left values
+   inc   c                       ;; [1] Accomodate Y valuebefore resetting HL to current line
+ml_checkBelow:                   ;; C was not changed if from jr z
+   ld    hl, (left_adress)       ;; [5] Retrieve left values (C = Y)
    ld    de, (left_byte_offset)  ;; [6]
-   call  changeYDown             ;; [5] Compute a new HL and C
    call  changeYDown             ;; [5] Compute a new HL and C, z if top of screen reached
-   jr    z,continue              ;; [2/3] Cannot move up, check other line
+   jr    z,ml_continue              ;; [2/3] Cannot move up, check other line
    call  searchNewPoints         ;; [5] Push new points inside stack if old_color found above drawn line
-continue:
+ml_continue:
    jr    mainLoop                ;; [3] Check new point in stack
 
 searchAndDrawLeft:
@@ -546,8 +547,20 @@ changeYUp:
    or    a                       ;; [1] Check if 0
    ret   z                       ;; [2/4] Top of screen reached, return ZFlag ON
    dec   c                       ;; [1] c = Y - 1
-   call  computeAdress           ;; [5] Compute new adress
-   or    #0x01                   ;; [2] make sure ZFlag is OFF because of previous call
+   and   #7                      ;; [2] Check Y char line 
+   or    a                       ;; [1] Check if Y was on char line 0
+   jr    z,cyu_adjustHL          ;; [2/3] if so, needs to adjust whole hl value
+   ld    a,h                     ;; [1] a = MSB screen adress
+   sub   a,#8                    ;; [2] a = a - 8 - Move to next line
+   ld    h,a                     ;; [1] HL = HL - 0x800
+   or    #1                      ;; [2] Resets zero flag if needed (can happe,n if VMEMStart = 0x0000)
+   ret                           ;; [3] returns
+cyu_adjustHL:
+   push  bc                      ;; [4]
+   ld    bc,#0x37B0              ;; [3] Set bc = 0x4000-0x50-0x800 to move from char line 0 to char line 7 of preious char line
+   add   hl,bc                   ;; [3] Adjust hl to previous line
+   pop   bc                      ;; [3]
+   or    #0x01                   ;; [2] make sure ZFlag is OFF (we arrived with a jr z and add hl,bc does not impact it)
    ret                           ;; [3] return
 
 changeYDown:
@@ -555,9 +568,22 @@ changeYDown:
    ld    a,c                     ;; [1] a = c = Y value
    cp    #YMax                   ;; [2] Compare with max screen height
    ret   z                       ;; [2/4] Top of screen reached, return ZFlag ON
-   inc   c                       ;; [1] c = Y + 1
-   call  computeAdress           ;; [5] Compute new adress
-   or    #0x01                   ;; [2] make sure ZFlag is OFF because of previous call
+   inc   a                       ;; [1] a = Y + 1
+   ld    c,a                     ;; [1] c = Y + 1
+   and   #7                      ;; [2] check if Y+1 is on a new char line
+   jr    z,cyd_adjustHL          ;; [2/3] if yes, adjust HL 
+
+   ld    a,h                     ;; [1] a = MSB screen adress
+   add   a,#8                    ;; [2] a = a + 8 - Move to next line
+   ld    h,a                     ;; [1] HL = HL + 0x800
+   or    #1                      ;; [2] make sure ZFlag is OFF (not sure it can happen here)
+   ret                           ;; [3] returns
+cyd_adjustHL:
+   push  bc                      ;; [4]
+   ld    bc,#0xc850              ;; [3] Set bc = 0x800 - 0x4000 + 0x50  to move from char line 7 to char line 0 of next char line
+   add   hl,bc                   ;; [3] Adjust hl to next line
+   pop   bc                      ;; [3]
+   or    #0x01                   ;; [2] make sure ZFlag is OFF (we arrived with a jr z and add hl,bc does not impact it)
    ret                           ;; [3] return
 
 decreaseSubpixel:

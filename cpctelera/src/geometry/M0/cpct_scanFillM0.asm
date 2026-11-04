@@ -396,7 +396,6 @@ snp_setColorToJump:
 snp_loopFullOctet:
    ld    a,(cur_byte_offset)     ;; [4] a = right X Offset
    cp    e                       ;; [1] compare with current X Offset
-   ;; jr    z, snp_mainLoop      ;; We are on last octet (a == e), move slowly and check with subpixels
    ret   c                       ;; [2/4] We move above last pixel (e > a), ret from there
    ld    a,b                     ;; [1] a = color full octet to skip
    cp    (hl)                    ;; [2] compare with screen octet

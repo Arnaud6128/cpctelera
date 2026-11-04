@@ -40,17 +40,21 @@
 ;;    > call cpct_getColorAtM1_asm 
 ;;
 ;; Destroyed Register values:
-;;    AF, BC, DE, HL
+;;          AF, BC, DE, HL
+;;
+;; Comment
+;;  Uses cpct_getScreenPtr_asm (30us - 18 octets)
+;;  Uses self modifying code, cannot be used in ROM
 ;;
 ;; (start code)
 ;; Required memory:
 ;;    44 bytes (41 bytes core routine + 3 bytes binding wrapper)
 ;;
-;; Time Measures (+10 us for c binding wrapper):
+;; Time Measures (including cpct_getScreenPtr_asm 30us) (add +10 us for c binding wrapper):
 ;;    Case                               | microSecs (us) | CPU Cycles
 ;;   ---------------------------------------------------------------------------------
-;;    Get color 0 on a subPixel 0        | XX             | XX
-;;    Get color 3 on a subPixel 3        | XX             | XX
+;;    Get any color on a subPixel 0      | 80             | 320
+;;    Get any color on a subPixel 3      | 83             | 332
 ;; (end code)
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,7 +62,7 @@
     ld      a,e                     ;; [1] a = low X
     and     #0x03                   ;; [2] Keep only the 2 least significant bits of X0 : subPixel
 
-    push    af                      ;; [4] save subpixel
+    push    af                      ;; [4] save subpixel AND Z Flag for subpixel 0 if needed
     srl     d                       ;; [2] d can only be 1 or 0 (319 is < 512), so one shift right to carry is enough
     rr      e                       ;; [2] rotate e once with carry from d
     srl     e                       ;; [2] Now e is the byte offset in the line (0-79)
@@ -66,30 +70,25 @@
     ld      c, e                    ;; [1] c = X in bytes
     ex      de,hl                   ;; [1] de = SCREEN_ADRESS
     call    cpct_getScreenPtr_asm   ;; [5] HL = Current adress
-    pop     af                      ;; [3] retrieve subpixel in a
+    pop     bc                      ;; [3] retrieve subpixel in b
 
-    ld      c,(hl)                  ;; [2] Get screen octet
-    or      a                       ;; [1] Check if subpixel is 0, if so start the check
-    jr      z,computeColor          ;; [2/3] if last, jump
-
-    ld      b,a                     ;; [1] for loop
-subpixel_loop:
-    sla     c                       ;; [2] shift screen octet to the left
-    djnz    subpixel_loop           ;; [3/4] until last subpixel on left
+    ld      a,#3                    ;; [2] Set a to max subpixel
+    sub     b                       ;; [1] a = 3 - subpixel (0..3) = number of rlca to perform
+    ld      (smc_jpoverrlca),a      ;; [4] (SMC) Modifies the JR reaching
+    ld      a,(hl)                  ;; [2] Get screen octet
+smc_jpoverrlca=.+1                  ;; (SMC) 
+    jr      computeColor            ;; [3] Skip rotations for subpixel 0 (SMC)
+    rlca                            ;; [1] Rotate octet left to align the selected pixel
+    rlca                            ;; [1] Rotate octet left to align the selected pixel
+    rlca                            ;; [1] Rotate octet left to align the selected pixel
 computeColor:
-    ld      a,c                     ;; [1] let's decode screen value
     and     #0x88                   ;; [2] and 0b10001000 to mask subpixel 0
 
     ld      l,#0                    ;; [2] Future color
-    rla                             ;; [1] Get Low bit of color from bit 7 in carry - a = 000x0000 (x is the high bit of subpixel)
-                                    ;; (after the AND #88 Carry=0 so bit 0 = 0)
-    rl      l                       ;; [2] Set bit 0 of l using carry (carry = 0 after)
-                                    ;; l = low bit of color (0 or 1, don't care)
-;; Check high bit of color
-    or      a                       ;; [1] if a != 0 add 2 to current color
-    ld      a,l                     ;; [1] a = 0 or a=1
-    jr      z,end_getColorAt        ;; [2/3] Jump over increase if no high bit found with 'or a'
-    inc     a                       ;; [1] a += 2 to set high bit of INK
-    inc     a                       ;; [1]
-end_getColorAt:                     ;; Here a = output color
+    rla                             ;; [1] Move octet bit 7 to carry and bit 3 to bit 4
+    rl      l                       ;; [2] Transfer bit 7 to color bit 0 (L starts at 0)
+    rrca                            ;; [1] Move bit 3 of the octet to bit 1 of the color
+    rrca                            ;; [1]
+    rrca                            ;; [1]
+    or      l                       ;; [1] Combine both color bits
     ret                             ;; [3] returns
