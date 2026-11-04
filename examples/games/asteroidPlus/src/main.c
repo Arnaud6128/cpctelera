@@ -78,27 +78,25 @@ const u16 paletteDown[] =
     cpctm_asicColor(0xF, 0xF, 0xF)
 };
 
-#define DATA_SPRITE_SHIP_REAR			0
-#define DATA_SPRITE_SHIP_FRONT			1
-#define DATA_SPRITE_ASTEROID_LARGE_0	2
-#define DATA_SPRITE_ASTEROID_LARGE_1	3
-#define DATA_SPRITE_ASTEROID_LARGE_2	4
-#define DATA_SPRITE_ASTEROID_LARGE_3	5
-#define DATA_SPRITE_ASTEROID_MEDIUM		6
-#define DATA_SPRITE_ASTEROID_SMALL		7
-#define DATA_SPRITE_SHIP_REACTOR		8
+#define DATA_SPRITE_SHIP_REAR           0
+#define DATA_SPRITE_SHIP_FRONT          1
+#define DATA_SPRITE_ASTEROID_LARGE_0    2
+#define DATA_SPRITE_ASTEROID_LARGE_1    3
+#define DATA_SPRITE_ASTEROID_LARGE_2    4
+#define DATA_SPRITE_ASTEROID_LARGE_3    5
+#define DATA_SPRITE_ASTEROID_MEDIUM     6
+#define DATA_SPRITE_ASTEROID_SMALL      7
 
 u8* const allSprites[] = 
 {
-    sprite_ship_00, //sprite_ship_rear,
-    sprite_ship_01, // sprite_ship_front, 
-    sprite_ship_02, //sprite_large_asteroid_1,
-    sprite_ship_03, // sprite_large_asteroid_2, 
-    sprite_ship_04, // sprite_large_asteroid_3, 
-    sprite_ship_05, // sprite_large_asteroid_4,
-    sprite_ship_06, // sprite_medium_asteroid, 
-    sprite_ship_07, // sprite_small_asteroid,
-    sprite_reactor_0,
+    sprite_ship_0,    // sprite_ship_rear,
+    sprite_ship_1,    // sprite_ship_front, 
+    sprite_ship_2,    // sprite_large_asteroid_1,
+    sprite_ship_3,    // sprite_large_asteroid_2, 
+    sprite_ship_4,    // sprite_large_asteroid_3, 
+    sprite_ship_5,    // sprite_large_asteroid_4,
+    sprite_ship_6,    // sprite_medium_asteroid, 
+    sprite_ship_7,    // sprite_small_asteroid,
 };
 
 // Definition of position structure
@@ -300,8 +298,8 @@ void UpdateShipPosition(void)
             gShip.pos.x -= SCROLL_SPEED;
             
             // Update four parts explosion sprites at screen
-			i16 x = gShip.pos.x - SPRITE_WIDTH_SCREEN;
-			u8 y = gShip.pos.y - SPRITE_HEIGHT_SCREEN;
+            i16 x = gShip.pos.x - SPRITE_WIDTH_SCREEN;
+            u8 y = gShip.pos.y - SPRITE_HEIGHT_SCREEN;
             cpct_asicSetSpritePosition(HW_SPRITE_REACTOR,    x, y);
             cpct_asicSetSpritePosition(HW_SPRITE_SHIP_REAR,  x + SPRITE_WIDTH_SCREEN*2, y);
             cpct_asicSetSpritePosition(HW_SPRITE_SHIP_FRONT, x, y + SPRITE_HEIGHT_SCREEN*2);
@@ -375,7 +373,7 @@ void SetShipExplosionSprites(void)
 //        
 void InitMoon(void)
 {
-    cpct_asicCopySpriteData(HW_SPRITE_MOON, moon);
+    cpct_asicCopySpriteData(HW_SPRITE_MOON, sprite_moon);
 }
 
 ////////////////////////////////////////////////////
@@ -632,7 +630,7 @@ void InPlay(void)
     if (sFire++ > REACTOR_SPEED_ANIMATION)
     {
         // Copy reactor sprite to HWSprite data
-		cpct_asicCopySpriteEntrelacedData(HW_SPRITE_REACTOR, sReactorSprite, allSprites[DATA_SPRITE_SHIP_REACTOR]);
+        cpct_asicCopySpriteEntrelacedData(HW_SPRITE_REACTOR, sReactorSprite, sprite_reactor_0);
         
         // Flip reactor sprites
         sReactorSprite = !sReactorSprite;            
