@@ -577,6 +577,13 @@ cpct_PLY_AKG_Stop_asm::
 
 _cpct_PLY_AKG_Play::
 cpct_PLY_AKG_Play:
+    push  ix                ;; The player modifies IX and IY: save them (the SDCC code of the caller uses IX as frame pointer)
+    push  iy
+    call  cpct_PLY_AKG_Play_asm
+    pop   iy
+    pop   ix
+    ret
+
 cpct_PLY_AKG_Play_asm::
     ld (PLY_AKG_PSGREG13_END+1),sp
     xor a

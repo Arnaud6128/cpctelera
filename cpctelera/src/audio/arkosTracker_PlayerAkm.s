@@ -419,6 +419,7 @@ cpct_PLY_AKM_Init_asm::
     inc hl
     ld h,(hl)
     ld l,a
+    push ix                 ;; IX is used below: preserve it for the C caller
     ld ix,#PLY_AKM_INITVARS_START
     ld a,#13
 PLY_AKM_INITVARS_LOOP: ld e,+0(ix)
@@ -428,6 +429,7 @@ PLY_AKM_INITVARS_LOOP: ld e,+0(ix)
     ldi
     dec a
     jr nz,PLY_AKM_INITVARS_LOOP
+    pop ix
     ld (PLY_AKM_PATTERNREMAININGHEIGHT+1),a
     ex de,hl
     ld hl,#PLY_AKM_PTLINKER+1
@@ -508,12 +510,19 @@ cpct_PLY_AKM_Stop_asm::
 ;;    void cpct_PLY_AKM_Play(void);
 ;;
 ;; Assembly call (Input parameters on registers):
-;;    > call Pcpct_PLY_AKM_Play_asm
+;;    > call cpct_PLY_AKM_Play_asm
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 	
 _cpct_PLY_AKM_Play::
 cpct_PLY_AKM_Play:
+    push  ix                ;; The player modifies IX and IY: save them (the SDCC code of the caller uses IX as frame pointer)
+    push  iy
+    call  cpct_PLY_AKM_Play_asm
+    pop   iy
+    pop   ix
+    ret
+
 cpct_PLY_AKM_Play_asm::
     ld (PLY_AKM_SENDPSGREGISTEREND+1),sp
 PLY_AKM_TICKCOUNTER: ld a,#0
