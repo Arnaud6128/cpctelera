@@ -32,10 +32,5 @@ _cpct_asicSetSpriteData::
    ;; L = Value
    ld h, l      ;; [1] H = L = Value
    ld l, a      ;; [1] L = A = HWSprite Id
-
-   ;; Getting parameters from stack
-  ;; pop  af      ;; [3] AF = Return address
-  ;; pop  hl      ;; [3] H (Value) / L (HWSprite Id)
-  ;; push af      ;; [4] Put returning address in the stack again as this function uses __z88dk_callee convention      
    
 .include /cpct_asicSetSpriteData.asm/      

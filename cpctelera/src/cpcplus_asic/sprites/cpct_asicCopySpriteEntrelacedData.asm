@@ -33,12 +33,13 @@
 ;;
 ;; Input Parameters (4 Bytes):
 ;;   (1B A ) hardware_sprite_id - Hardware sprite identifier (0..15)
-;;   (1B L ) frame              - Frame to load: 0 = low nibble, any other value = high nibble
+;;   (1B L ) frame              - Frame to load: 0 = low nibble, 1 = high nibble
 ;;   (2B DE) src                - Source buffer 256 bytes, interlaced
 ;;
 ;; Parameter Restrictions:
 ;;   * *hardware_sprite_id* hardware sprite identifier from 0 to 15
-;;   * *frame* 0 or 1
+;;   * *frame* must be exactly 0 or 1. Any other value is not valid (the code only tests for 1, so
+;; the frame 0 is loaded): beware of variables that are not initialized, or that hold a bool as 0x54/0x55
 ;;
 ;; Requirements and limitations:
 ;;
