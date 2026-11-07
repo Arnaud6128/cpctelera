@@ -1,0 +1,6 @@
+src/banks.h
+src/g_palette_*.c
+src/g_palette_*.h
+assets/*.bin
+assets/*.h
+assets/*.h.s
