@@ -1,6 +1,7 @@
 #!/bin/bash
 ##-----------------------------LICENSE NOTICE------------------------------------
 ##  This file is part of CPCtelera: An Amstrad CPC Game Engine 
+##  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 ##  Copyright (C) 2015-2019 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
 ##
 ##  This program is free software: you can redistribute it and/or modify
@@ -42,6 +43,9 @@
 ##    -a | --asm                     - Generates an assembler-based project
 ##    -c | --cpcrslib                - Generates a CPCRSLib enabled project
 ##    -h | --help                    - Shows help information on the terminal.
+##    -k | --cartridge               - Generates a cartridge project (CPR for CPC Plus / GX4000): the
+## crt0 of the cartridge is copied in cart/ and the banks are configured in cfg/cartridge.mk. The default
+## load address is 0x8100 in this case.
 ##    -l | --load-address [loadaddr] - Lets you establish the memory address where
 ## the binary of your project should be loaded into CPC memory. Default value is 0x4000.
 ## You always can change this value by editing cfg/build_config.mk
@@ -61,12 +65,15 @@ CPCRSLIB=false
 VSCODE=true
 ASMPROJ=false
 ANDROID=true
+CARTRIDGE=false
+LOADSET=false
 
 ## Required template files
 getFullPath $0 SCRIPT_FULL_PATH
 TEMPLATE_DIRECTORY=${SCRIPT_FULL_PATH}/templates/newprj
 TEMPLATE_EXPORT_DIRECTORY=${TEMPLATE_DIRECTORY}/cfg/export
 TEMPLATE_DIRECTORY_RSLIB=${SCRIPT_FULL_PATH}/templates
+TEMPLATE_DIRECTORY_CART=${SCRIPT_FULL_PATH}/templates/cartridge
 CPCTELERA_DIRECTORY=$(dirname $(dirname "$SCRIPT_FULL_PATH"))
 SRC_TEMPLATE=${TEMPLATE_DIRECTORY}/src/main.c
 MAKE_TEMPLATE=${TEMPLATE_DIRECTORY}/Makefile
@@ -110,6 +117,8 @@ current folder."
    echo "${COLOR_CYAN}       Generates a CPCRSLib enabled project."
    echo "${COLOR_LIGHT_BLUE}  -h | --help"
    echo "${COLOR_CYAN}       Shows this help information"
+   echo "${COLOR_LIGHT_BLUE}  -k | --cartridge"
+   echo "${COLOR_CYAN}       Generates a cartridge project (CPR for CPC Plus / GX4000), with its crt0 in cart/ and the banks in cfg/cartridge.mk."
    echo "${COLOR_LIGHT_BLUE}  -l | --load-address ${COLOR_LIGHT_CYAN}<hexadecimal address>"
    echo "${COLOR_CYAN}       Establishes the hexadecimal address where the binary of the project will be loaded \
 inside Amstrad CPC's memory."
@@ -160,6 +169,10 @@ while (( $# >= 1 )); do
       "-h" | "--help")
          usage
       ;;
+      ## Generate a cartridge project (CPC Plus / GX4000)
+      "-k" | "--cartridge")
+         CARTRIDGE=true
+      ;;
       ## Get Load Address
       "-l" | "--load-address")
          if ! isHex "$2"; then
@@ -168,6 +181,7 @@ while (( $# >= 1 )); do
             paramError "LoadAddres (-l) should be between 1 and 4 digits (0000 - FFFF)" 5
          fi
          LOADADDRESS="$2"
+         LOADSET=true
          shift
       ;;
       ## Get an specific project name
@@ -199,6 +213,29 @@ while (( $# >= 1 )); do
    esac
    shift
 done
+
+###############################################################
+###############################################################
+## Cartridge project: its own templates
+##
+if $CARTRIDGE; then
+   if $ASMPROJ || $CPCRSLIB; then
+      paramError "Option -k/--cartridge can not be used with -a/--asm or -c/--cpcrslib" 10
+   fi
+   CFG_TEMPLATE=${TEMPLATE_DIRECTORY_CART}/cfg/build_config.mk
+   MAKE_TEMPLATE=${TEMPLATE_DIRECTORY_CART}/Makefile
+   SRC_TEMPLATE=${TEMPLATE_DIRECTORY_CART}/src/main.c
+   CART_MK_TEMPLATE=${TEMPLATE_DIRECTORY_CART}/cfg/cartridge.mk
+   CART_CRT0_TEMPLATE=${TEMPLATE_DIRECTORY_CART}/cart/cpct_cart_crt0.s
+   CART_GITIGNORE_TEMPLATE=${TEMPLATE_DIRECTORY_CART}/.gitignore
+   for F in ${CFG_TEMPLATE} ${MAKE_TEMPLATE} ${SRC_TEMPLATE} ${CART_MK_TEMPLATE} ${CART_CRT0_TEMPLATE} ${CART_GITIGNORE_TEMPLATE}; do
+      EnsureExists file "$F" "It is a template file required to create new cartridge projects."
+   done
+   ANDROID=false
+   if ! $LOADSET; then
+      LOADADDRESS=8100
+   fi
+fi
 
 ###############################################################
 ###############################################################
@@ -242,8 +279,11 @@ NEW_MAKE=${PROJECTDIR}/$(basename ${MAKE_TEMPLATE})
 # Welcome message
 stageMessage "CPCtelera" "Creating new project in ${COLOR_WHITE}${PROJECTDIR}/"
 
-## ASM-project or CPCRSLib enabled
-if $ASMPROJ; then
+## ASM-project, CPCRSLib enabled or cartridge
+if $CARTRIDGE; then
+   coloredMachineEcho "${COLOR_CYAN}" 0.005 "> Setting up ${COLOR_WHITE}cartridge (CPC Plus / GX4000)${COLOR_CYAN} defaults..."
+   drawOK
+elif $ASMPROJ; then
    coloredMachineEcho "${COLOR_CYAN}" 0.005 "> Setting up ${COLOR_WHITE}assembler-based${COLOR_CYAN} defaults..."
    drawOK  
 elif $CPCRSLIB; then
@@ -255,8 +295,11 @@ fi
 coloredMachineEcho "${COLOR_CYAN}" 0.005 "> Creating project folder structure..."
 mkdir -p ${SOURCE_DIR}
 mkdir -p ${CONFIG_DIR}
-mkdir -p ${DSKINC_DIR}
-mkdir -p ${CONFIG_EXPORT_DIR}
+## A cartridge project has no dsk/ folder (files to add to a DSK) nor Android exporter
+if ! $CARTRIDGE; then
+   mkdir -p ${DSKINC_DIR}
+   mkdir -p ${CONFIG_EXPORT_DIR}
+fi
 drawOK
 
 ## Copy templates substituting tags
@@ -267,10 +310,22 @@ cp ${MAKE_TEMPLATE} ${NEW_MAKE}
 cp ${IMGCON_TEMPLATE} ${NEW_IMGCON}
 cp ${TMXCON_TEMPLATE} ${NEW_TMXCON}
 cp ${MUSCON_TEMPLATE} ${NEW_MUSCON}
-cp ${PACKIN_TEMPLATE} ${NEW_PACKIN}
-cp ${CDTMAN_TEMPLATE} ${NEW_CDTMAN}
-cp ${DSKMAN_TEMPLATE} ${NEW_DSKMAN}
-cp ${ANDROID_EXPORT_TEMPLATE} ${NEW_EXPORT_ANDROID}
+## Compression, CDT, sectorial DSK and Android exporter are not used by a cartridge project
+if ! $CARTRIDGE; then
+   cp ${PACKIN_TEMPLATE} ${NEW_PACKIN}
+   cp ${CDTMAN_TEMPLATE} ${NEW_CDTMAN}
+   cp ${DSKMAN_TEMPLATE} ${NEW_DSKMAN}
+   cp ${ANDROID_EXPORT_TEMPLATE} ${NEW_EXPORT_ANDROID}
+fi
+if $CARTRIDGE; then
+   mkdir -p ${PROJECTDIR}/cart
+   cp ${CART_MK_TEMPLATE} ${CONFIG_DIR}/cartridge.mk
+   cp ${CART_CRT0_TEMPLATE} ${PROJECTDIR}/cart/cpct_cart_crt0.s
+   cp -r ${TEMPLATE_DIRECTORY_CART}/resources ${PROJECTDIR}/resources     # picture of the example
+   cp -r ${TEMPLATE_DIRECTORY_CART}/assets ${PROJECTDIR}/assets           # where the images are converted (cfg/image_conversion.mk)
+   cp ${TEMPLATE_DIRECTORY_CART}/cfg/image_conversion.mk ${CONFIG_DIR}/image_conversion.mk
+   cp ${CART_GITIGNORE_TEMPLATE} ${PROJECTDIR}/.gitignore
+fi
 drawOK
 
 ## Copy VSCode config directory template

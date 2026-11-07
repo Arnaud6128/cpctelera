@@ -1,0 +1,6 @@
+src/banks.h
+src/g_palette.c
+src/g_palette.h
+assets/sprite.bin
+assets/sprite.h
+assets/sprite.h.s
