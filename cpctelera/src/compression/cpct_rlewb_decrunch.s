@@ -29,8 +29,8 @@
 ;;   void cpct_rlewb_decrunch(u8* dst, const u8* src) __z88dk_callee;
 ;;
 ;; Input Parameters (4 bytes):
-;;   (2B DE) dst   - Pointer to source (compressed data)
-;;   (2B HL) src   - Pointer to destination array
+;;   (2B DE) dst   - Pointer to destination array
+;;   (2B HL) src   - Pointer to source (compressed data)
 ;;
 ;; Details:
 ;;
@@ -79,7 +79,7 @@ RLEWB_END=#0xFF
 ;;  1 microSecs, 1 bytes
 ;;
 _cpct_rlewb_decrunch::
-     ex  de, hl                ;; [1] HL = dst; DE = src compressed
+     ex  de, hl                ;; [1] HL = src compressed; DE = dst
 	 
 ;; ASM bindings for <cpct_rlewb_decrunch>
 ;;
