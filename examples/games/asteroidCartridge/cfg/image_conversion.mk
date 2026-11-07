@@ -50,8 +50,6 @@ $(eval $(call IMG2SP, CONVERT         , assets/reactor.png , 16, 16, sprite_reac
 
 # Loading screen: assets/title.png (mode 0, 160x200) is converted into a screen of 16 KB, assets/title.bin, that
 # cfg/cartridge.mk puts in a bank of the cartridge: the game copies it to the screen at start (ShowTitle in src/main.c).
-# Its 16 pens are the ones of assets/SHIP.PAL (hardware colours, converted to firmware numbers). The palette is also
-# written as hardware values in src/g_palette_title.c/.h, to be set with cpct_setPalette
 PALETTE_TITLE=0 13 1 11 26 23 10 16 15 25 14 20 3 4 22 6
 
 $(eval $(call IMG2SP, SET_MODE        , 0 ))
