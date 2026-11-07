@@ -28,9 +28,9 @@
 ;;
 ;; Input Parameters:
 ;;    (2B HL)  vmem       - Base VRAM memory address (typically 0xC000)
-;;    (2B DE)  x          -  X coordinate (0-319 no checks)
+;;    (2B DE)  x          -  X coordinate (0-159 no checks)
 ;;    (1B  C)  y          -  Y coordinate (0-199 no checks)
-;;    (1B  B)  newColor   -  Color to use (0-3)
+;;    (1B  B)  newColor   -  Color to use (0-15)
 ;;
 ;; Assembly call:
 ;;    > call cpct_scanFillM0_asm
