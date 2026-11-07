@@ -1,0 +1,332 @@
+#!/bin/bash
+##-----------------------------LICENSE NOTICE------------------------------------
+##  This file is part of CPCtelera: An Amstrad CPC Game Engine
+##  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
+##  Adapted from cpct_winape: Copyright (C) 2018 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+##
+##  This program is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU Lesser General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU Lesser General Public License for more details.
+##
+##  You should have received a copy of the GNU Lesser General Public License
+##  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##------------------------------------------------------------------------------
+
+###########################################################################
+## CPCTELERA ENGINE
+###########################################################################
+
+##
+## File: cpct_acedl
+##    This script helps to launch a DSK, a SNA or a cartridge (CPR) in Ace-DL
+## from the command line.
+##
+## Usage:
+##    <cpct_acedl> [options] [DSKFile/SNAFile/CPRFile]
+##
+## Description:
+##    This script launches Ace-DL (an emulator of the CPC and of the CPC Plus / GX4000,
+## that runs cartridges) with the file given as parameter:
+##    * DSK : loaded in the drive A, and the first file of the catalogue is automatically
+##            run (RUN"FILE), like cpct_winape does.
+##    * SNA : restored into memory, the execution continues from the PC of the snapshot.
+##    * CPR : cartridge of the CPC Plus / GX4000, started as the machine is switched on.
+##
+##    The path of Ace-DL (AceDL.exe) is read from the file .cpct_acedl.config, next to this
+## script. If it does not exist the script asks for it and writes it. Ace-DL is not
+## installed by this script (it is not part of CPCtelera). On Windows/Cygwin it is
+## executed directly.
+##
+## Command line options:
+##    -a  | --any-dsk                  - Launches Ace-DL and loads first DSK file to match *.dsk
+##    -as | --any-sna                  - Launches Ace-DL and loads first SNA file to match *.sna
+##    -ac | --any-cpr                  - Launches Ace-DL and loads first CPR file to match *.cpr
+##    -c  | --crtc <0-4>               - Type of CRTC (Ace-DL option -crtc)
+##    -f  | --foreground               - Launches Ace-DL as a foreground command (Default: background)
+##    -h  | --help                     - Shows help information on the terminal.
+##    -k  | --skip-config              - Does not load/save the configuration of Ace-DL (-skipConfigFile)
+##    -n  | --no-execute               - Does not automatically RUN the first file of a DSK.
+##    -r  | --ram <64|128|320|576>     - Memory of the machine in KB (Ace-DL option -ram)
+##    -w  | --webapi [port]            - Enables the web API of Ace-DL (default port 8800)
+##
+
+##
+## Global configuration
+##
+
+# Script configuration
+CPCT_SCRIPTS_FOLDER=$(dirname $0)
+ACEDL_EXE=AceDL.exe
+ACEDL=/path/to/AceDL.exe ## Should be read from config file
+CONFIG_FILE=${CPCT_SCRIPTS_FOLDER}/.cpct_acedl.config
+BACKGROUND=true
+
+# Command line parameter variables
+FILE=""
+EXECUTE=true
+OPTIONS=()
+
+## Bash Include files
+source $(dirname $0)/lib/bash_library.sh
+
+## Show how this script is to be used and exit
+##
+function usage() {
+   echo "${COLOR_LIGHT_YELLOW}USAGE"
+   echo "  ${COLOR_LIGHT_BLUE}$(basename $0) ${COLOR_LIGHT_CYAN}[options] [DSK/SNA/CPR File]"
+   echo
+   echo "${COLOR_CYAN}  Launches Ace-DL from the command line with a DSK, a SNA or a cartridge (CPR) \
+of the CPC Plus / GX4000."
+   echo
+   echo "${COLOR_CYAN}     A DSK file is loaded in the drive A and the first file of its catalogue \
+is automatically run (RUN\"FILE). SNA files are restored into memory and the execution continues \
+from their PC. CPR files are started as the machine is switched on. The path of AceDL.exe is \
+read from the file .cpct_acedl.config, next to this script: if it does not exist, the script \
+asks for it."
+   echo
+   echo "${COLOR_LIGHT_YELLOW}OPTIONS"
+   echo "${COLOR_LIGHT_BLUE}  -a | --any-dsk"
+   echo "${COLOR_CYAN}       Launches Ace-DL and loads first DSK file to match *.dsk."
+   echo "${COLOR_LIGHT_BLUE}  -as| --any-sna"
+   echo "${COLOR_CYAN}       Launches Ace-DL and loads first SNA file to match *.sna."
+   echo "${COLOR_LIGHT_BLUE}  -ac| --any-cpr"
+   echo "${COLOR_CYAN}       Launches Ace-DL and loads first CPR file to match *.cpr."
+   echo "${COLOR_LIGHT_BLUE}  -c | --crtc ${COLOR_LIGHT_CYAN}<0-4>"
+   echo "${COLOR_CYAN}       Type of CRTC (Ace-DL option -crtc)."
+   echo "${COLOR_LIGHT_BLUE}  -f | --foreground"
+   echo "${COLOR_CYAN}       Launches Ace-DL as a foreground command (Default: background)"
+   echo "${COLOR_LIGHT_BLUE}  -h | --help"
+   echo "${COLOR_CYAN}       Shows this help information"
+   echo "${COLOR_LIGHT_BLUE}  -k | --skip-config"
+   echo "${COLOR_CYAN}       Does not load nor save the configuration of Ace-DL (-skipConfigFile)."
+   echo "${COLOR_LIGHT_BLUE}  -n | --no-execute"
+   echo "${COLOR_CYAN}       Does not automatically RUN the first file of a DSK."
+   echo "${COLOR_LIGHT_BLUE}  -r | --ram ${COLOR_LIGHT_CYAN}<64|128|320|576>"
+   echo "${COLOR_CYAN}       Memory of the machine in KB (Ace-DL option -ram)."
+   echo "${COLOR_LIGHT_BLUE}  -w | --webapi ${COLOR_LIGHT_CYAN}[port]"
+   echo "${COLOR_CYAN}       Enables the web API of Ace-DL (default port 8800)."
+   echo ${COLOR_NORMAL}
+   exit 1
+}
+
+## Ensures that cygpath is installed, as it will be required for execution.
+##
+function ensureExecutionPrerequisitesAreInstalled {
+   if checkSystem cygwin; then
+      EnsureCommandAvailable cygpath "cygpath has not been found on the system, and it's required for \
+running this script. Please, check cygwin installation and run this script again."
+   elif checkSystem win10linux; then
+      EnsureCommandAvailable wslpath "wslpath has not been found on the system, and it's required \
+for running this script."
+   else
+      echo "${COLOR_RED}[Error]${COLOR_CYAN} Ace-DL is a Windows program: this script only works on Windows \
+(Cygwin or WSL).${COLOR_NORMAL}"
+      exit -1
+   fi
+}
+
+## Transforms a Linux Path into a Windows path.
+##  $1: System path
+##
+function getMySystemPath {
+   if checkSystem cygwin; then
+      echo "$(cygpath -a -w "${1}" 2> /dev/null)"
+   else
+      echo "$(wslpath -w "$(realpath "${1}")" 2> /dev/null)"
+   fi
+}
+
+## Shows a colored error message on screen
+##  $1: Message to show
+##
+function showErrorMsg {
+   echo "${COLOR_RED}[Error]${COLOR_CYAN} ${1}${COLOR_NORMAL}"
+}
+
+## Asks for the path of AceDL.exe and writes it into the configuration file
+##
+function configureAcedl {
+   local VALID=false
+
+   while ! $VALID; do
+      echo
+      echo "${COLOR_CYAN}This script needs the path of your Ace-DL installation."
+      echo
+      echo "Please, provide ${COLOR_LIGHT_CYAN}full path${COLOR_CYAN} for \
+${COLOR_LIGHT_CYAN}${ACEDL_EXE}${COLOR_CYAN}, or leave it blank if you prefer to exit now and \
+configure this script later on."
+      printf "${COLOR_LIGHT_BLUE}Path to ${COLOR_LIGHT_CYAN}${ACEDL_EXE}${COLOR_LIGHT_BLUE}: ${COLOR_NORMAL}"
+      read -e -r PATHACE
+      if [[ "$PATHACE" == "" ]]; then
+         echo
+         echo "${COLOR_LIGHT_YELLOW}No configuration has been modified."
+         echo "${COLOR_CYAN}You will have to configure the Ace-DL launch script later on if you wanted to use it.${COLOR_NORMAL}"
+         exit -1
+      elif [ -f "$PATHACE" ]; then
+         updateVarValueInConfigFile "ACEDL" "$PATHACE" $CONFIG_FILE
+         ACEDL="$PATHACE"
+         VALID=true
+      else
+         showErrorMsg "'${COLOR_WHITE}$PATHACE${COLOR_CYAN}' does not refer to a valid, readable file."
+      fi
+   done
+}
+
+## Generate a blank config file
+##
+function generateNewConfigFile() {
+##-------------- HERE DOCUMENT FOR CONFIG FILE ------------#
+cat > $CONFIG_FILE <<CPCT_ACEDL_CONFIG_FILE
+# cpct_acedl config file
+#################################
+
+# Ace-DL's Full path
+ACEDL=/path/to/AceDL.exe
+CPCT_ACEDL_CONFIG_FILE
+##-------------- HERE DOCUMENT FOR CONFIG FILE ------------#
+}
+
+## Read config file or create it if it does not not exist
+##
+function readConfigFile {
+   if ! isFileReadable $CONFIG_FILE; then
+      generateNewConfigFile
+   fi
+   ACEDL=$(extractVarValueFromConfigFile "ACEDL" $CONFIG_FILE)
+}
+
+## Name of the first file of the catalogue of a DSK (NAME.EXT), the one that AMSDOS runs with RUN"
+## The directory is in the first sector (R=0xC1) of the track 0: 16 entries of 32 bytes
+## (user, name 8, extension 3, extent...), erased entries have the user 0xE5
+##  $1: DSK file
+##
+function getFirstFileOfDsk {
+   local DSK="$1" NSECT i R OFS="" E B n e c j
+   NSECT=$(od -An -tu1 -j $((0x100 + 0x15)) -N1 "$DSK" | tr -d ' ')
+   [[ "$NSECT" =~ ^[0-9]+$ ]] || return 1
+   for ((i = 0; i < NSECT; i++)); do
+      R=$(od -An -tu1 -j $((0x100 + 0x18 + 8 * i + 2)) -N1 "$DSK" | tr -d ' ')
+      if [[ "$R" == "193" ]]; then OFS=$((0x200 + i * 0x200)); break; fi
+   done
+   [[ "$OFS" == "" ]] && return 1
+   for ((E = 0; E < 16; E++)); do
+      read -r -a B <<< "$(od -An -tu1 -v -j $((OFS + E * 32)) -N13 "$DSK")"
+      (( ${#B[@]} == 13 )) || continue
+      (( B[0] < 16 && B[12] == 0 )) || continue
+      n=""; e=""
+      for j in 1 2 3 4 5 6 7 8; do printf -v c "\\x$(printf %02x $((B[j] & 127)))"; n+="$c"; done
+      for j in 9 10 11; do printf -v c "\\x$(printf %02x $((B[j] & 127)))"; e+="$c"; done
+      n="${n%"${n##*[! ]}"}"; e="${e%"${e##*[! ]}"}"
+      [[ "$n" == "" ]] && continue
+      if [[ "$e" == "" ]]; then echo "$n"; else echo "$n.$e"; fi
+      return 0
+   done
+   return 1
+}
+
+# First of all, read the config file
+readConfigFile
+
+# Proccess command line parameters
+while (( $# > 0 )); do
+   case "$1" in
+      "-f" | "--foreground")
+         BACKGROUND=false
+      ;;
+      "-n" | "--no-execute")
+         EXECUTE=false
+      ;;
+      "-k" | "--skip-config")
+         OPTIONS+=("-skipConfigFile")
+      ;;
+      "-c" | "--crtc")
+         if ! [[ "$2" =~ ^[0-4]$ ]]; then
+            paramError "-c / --crtc must be followed by a number from 0 to 4." 9
+         fi
+         OPTIONS+=("-crtc" "$2")
+         shift
+      ;;
+      "-r" | "--ram")
+         if ! [[ "$2" =~ ^(64|128|320|576)$ ]]; then
+            paramError "-r / --ram must be followed by 64, 128, 320 or 576." 10
+         fi
+         OPTIONS+=("-ram" "$2")
+         shift
+      ;;
+      "-w" | "--webapi")
+         PORT=8800
+         if [[ "$2" =~ ^[0-9]+$ ]]; then PORT="$2"; shift; fi
+         OPTIONS+=("-enable_webapi" "-web_port" "$PORT")
+      ;;
+      "-a" | "--any-dsk")
+         FILE="*.[dD][sS][kK]"
+      ;;
+      "-as" | "--any-sna")
+         FILE="*.[sS][nN][aA]"
+      ;;
+      "-ac" | "--any-cpr")
+         FILE="*.[cC][pP][rR]"
+      ;;
+      "-h" | "--help")
+        usage
+      ;;
+      *)
+         if isCommandLineOption "$1"; then
+            paramError "Unrecognized command line option '$1'" 7
+         elif [[ "$FILE" == "" ]]; then
+            if [ ! -f "$1" ]; then
+               paramError "'$1' is not a valid readable file (a DSK/SNA/CPR file was expected)." 8
+            fi
+            FILE="${1}"
+         else
+            paramError "'${1}' unexpected parameter. Are you trying to provide more than one DSK/SNA/CPR file?"
+         fi
+      ;;
+   esac
+   shift
+done
+
+# Check Ace-DL installation
+if [ ! -f "$ACEDL" ]; then
+   echo
+   echo "${COLOR_LIGHT_CYAN}[Warning]${COLOR_LIGHT_YELLOW} Ace-DL is not configured for your system yet."
+   configureAcedl
+fi
+
+# Check prerrequisites and calculate the appropriate FILE path (the first match of a pattern)
+ensureExecutionPrerequisitesAreInstalled
+if [[ "$FILE" == "" ]]; then
+   usage
+fi
+if [ ! -f "$FILE" ]; then
+   MATCHES=($FILE)
+   if [ -f "${MATCHES[0]}" ]; then FILE="${MATCHES[0]}"; else
+      paramError "no file matches '$FILE' in the current folder."
+   fi
+fi
+FILEPATH=$(getMySystemPath "$FILE")
+
+# A DSK: its first file is run (-autoRunFile), as WinAPE does with /A
+EXT=$(echo ${FILE:${#FILE}-3:${#FILE}} | tr /a-z/ /A-Z/)
+if [[ "$EXT" == "DSK" ]] && $EXECUTE; then
+   FIRST=$(getFirstFileOfDsk "$FILE")
+   if [[ "$FIRST" != "" ]]; then
+      OPTIONS+=("-autoRunFile" "$FIRST")
+   else
+      echo "${COLOR_LIGHT_CYAN}[Warning]${COLOR_CYAN} no file found in the catalogue of '${FILE}': it is not run.${COLOR_NORMAL}"
+   fi
+fi
+
+# Launch Ace-DL from its own folder (it looks for its files there), with the path of the file in Windows format
+ACEDIR=$(dirname "$ACEDL")
+if $BACKGROUND; then
+   ( cd "$ACEDIR" && nohup "$ACEDL" "$FILEPATH" "${OPTIONS[@]}" > /dev/null 2>&1 < /dev/null & )
+else
+   ( cd "$ACEDIR" && "$ACEDL" "$FILEPATH" "${OPTIONS[@]}" > /dev/null 2>&1 < /dev/null )
+fi
