@@ -26,11 +26,11 @@
 ;;   Decompresses RLEWB-compressed data directly to RAM (linear memory array).
 ;;
 ;; C Definition:
-;;   void cpct_rlewb_decrunch(const u8* src, u8* dst) __z88dk_callee;
+;;   void cpct_rlewb_decrunch(u8* dst, const u8* src) __z88dk_callee;
 ;;
 ;; Input Parameters (4 bytes):
-;;   (2B HL) dst   - Pointer to destination array
-;;   (2B DE) src   - Pointer to source (compressed data)
+;;   (2B DE) dst   - Pointer to source (compressed data)
+;;   (2B HL) src   - Pointer to destination array
 ;;
 ;; Details:
 ;;
