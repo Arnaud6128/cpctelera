@@ -237,5 +237,47 @@
 #define cpctm_declareInterruptHandlerWrapper(customIHWName) \
 extern void customIHWName (void)
 
+//
+// Macro: cpctm_disableInterrupts
+//
+//    Disables the interrupts of the Z80 (inline assembly *di* instruction).
+//
+// C Definition:
+//   #define <cpctm_disableInterrupts> ()
+//
+// Details:
+//   Produces a *di* instruction in the place where it is used (1 byte, 1 microsecond), without a call.
+// The interrupts stay disabled until <cpctm_enableInterrupts> (or a function that ends with an *ei*, like
+// <cpct_setInterruptHandler>) is used. The state before is not saved: if the interrupts could be disabled
+// before, <cpctm_enableInterrupts> would enable them.
+//
+// Example of use:
+//   The interrupt vector (0x0038) is the one of a cartridge bank while the lower ROM is enabled.
+// (start code)
+//    cpctm_disableInterrupts();
+//    cpct_cartSetLowerRomBank(bank);
+//    cpct_enableLowerROM();
+//    cpct_memcpy(dst, (void*)ofs, size);
+//    cpct_disableLowerROM();
+//    cpctm_enableInterrupts();
+// (end code)
+//
+#define cpctm_disableInterrupts() __asm__("di")
+
+//
+// Macro: cpctm_enableInterrupts
+//
+//    Enables the interrupts of the Z80 (inline assembly *ei* instruction).
+//
+// C Definition:
+//   #define <cpctm_enableInterrupts> ()
+//
+// Details:
+//   Produces an *ei* instruction in the place where it is used (1 byte, 1 microsecond), without a call.
+// The interrupt vector (0x0038) must point to a valid handler when it is used: the one of
+// <cpct_setInterruptHandler>, or the null handler (*EI : RET*) that <cpct_disableFirmware> installs.
+// Remember that the interrupt is accepted after the instruction that follows the *ei*.
+//
+#define cpctm_enableInterrupts() __asm__("ei")
 
  #endif

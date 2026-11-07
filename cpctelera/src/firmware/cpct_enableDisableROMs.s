@@ -30,7 +30,7 @@
 ;; cpct_disableUpperROM - Disables upper ROM [0xC000 - 0xFFFF]
 ;; cpct_disableLowerROM - Disables Lower ROM [0x0000 - 0x3FFF]
 ;;
-;;    This 4 functions enable / disable lower or upper ROMs.
+;;    These 4 functions enable / disable lower or upper ROMs.
 ;;
 ;; C Definitions:
 ;;    void <cpct_enableUpperROM> ()
@@ -39,13 +39,13 @@
 ;;
 ;;    void <cpct_disableUpperROM> ()
 ;;
-;;    void <cpct_enableUpperROM> ()
+;;    void <cpct_disableLowerROM> ()
 ;;
 ;; Assembly calls:
 ;;   > call cpct_enableUpperROM_asm
 ;;   > call cpct_enableLowerROM_asm
 ;;   > call cpct_disableUpperROM_asm
-;;   > call cpct_enableUpperROM_asm
+;;   > call cpct_disableLowerROM_asm
 ;;
 ;; Known limitations:
 ;;
@@ -61,7 +61,7 @@
 ;; firmware may be unaware of your currently selected MODE and will try to 
 ;; re-establish its own MODE. Take it into account and disable interrupts 
 ;; if you need.
-;;  * This function *will not work from ROM*, as it uses self-modifying code.
+;;  * These functions *will not work from ROM*, as they use self-modifying code.
 ;;
 ;; Details:
 ;;    These 4 functions enable / disable lower or upper ROMs. By default, *CPCtelera* 
@@ -80,6 +80,21 @@
 ;; to worry about that. Also, Gate Array always gets video memory values from 
 ;; RAM (it never reads from ROM), so enabling Upper ROM does not have any impact
 ;; on the screen.
+;;
+;; That makes the same addresses two different memories: with a ROM enabled the CPU
+;; READS the ROM and WRITES the RAM under it. It can be used to copy the contents of
+;; a ROM to the RAM of those same addresses, for instance a picture of the upper ROM
+;; to the video memory:
+;;
+;; (start code)
+;;    cpct_enableUpperROM();
+;;    cpct_memcpy((void*)0xC000, (void*)0xC000, 0x4000);  // reads the ROM, writes the RAM
+;;    cpct_disableUpperROM();                             // reading gives the RAM again
+;; (end code)
+;;
+;; Without the ROM enabled that call would copy the RAM on itself. On the cartridge of
+;; the CPC Plus / GX4000 the banks seen by these ROMs are chosen with <cpct_cartSetUpperRomBank>
+;; and <cpct_cartSetLowerRomBank>.
 ;;
 ;;
 ;; Destroyed Register values: 

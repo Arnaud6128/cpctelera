@@ -27,3 +27,8 @@
 .equ ASIC_PALETTE_SPRITE,   0x6420
 .equ ASIC_RASTER_INT,       0x6800
 .equ ASIC_SSCR,             0x6804
+
+;; Cartridge (banks of 16 KB: the upper ROM 0xC000-0xFFFF sees 32, the lower ROM 0x0000-0x3FFF the first 8)
+.equ CART_GA_PORT_HI,     0x7F   ;; High byte of the port of the Gate Array (RMR2)
+.equ CART_ROM_PORT_HI,    0xDF   ;; High byte of the port of the upper ROM select
+.equ CART_RMR2_LOWER,     0xA0   ;; 101x xbbb: lower ROM bank bbb, ASIC page disconnected

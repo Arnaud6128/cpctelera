@@ -30,5 +30,6 @@
 #include "sprites/sprites.h"
 #include "video/video.h"
 #include "firmware/firmware.h"
+#include "cartridge/cartridge.h"
 
 #endif
