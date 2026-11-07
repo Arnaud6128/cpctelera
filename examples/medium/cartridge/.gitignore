@@ -4,3 +4,4 @@ src/g_palette_*.h
 assets/*.bin
 assets/*.h
 assets/*.h.s
+*.cpr
