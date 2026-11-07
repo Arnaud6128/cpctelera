@@ -23,3 +23,4 @@ src/sfx.s
 src/music.h
 src/music.c
 assets/molusk.bin
+*.cpr
