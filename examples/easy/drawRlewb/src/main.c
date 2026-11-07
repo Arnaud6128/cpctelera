@@ -49,7 +49,7 @@ void main(void)
     cpct_setPalette(g_palette, sizeof(g_palette));
 
     // Compress sprite to 0x2000 
-    cpct_rlewb_compress(winner, (u8*)0x2000, WINNER_W*WINNER_H);
+    cpct_rlewb_compress((u8*)0x2000, winner, WINNER_W*WINNER_H);
        
     // Show draw speed functions in 1s
     gTick = 0;
@@ -84,7 +84,7 @@ void main(void)
         u8* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, VIDEO_W_BYTES - WINNER_W, y++);
         
         // Decompress sprite RLEWB to 0x8000 
-        cpct_rlewb_decrunch(winner_rlewb, (u8*)0x8000);
+        cpct_rlewb_decrunch((u8*)0x8000, winner_rlewb);
         
         // Draw sprite previoulsy decompressed at 0x8000
         cpct_drawSprite((u8*)0x8000, pvmem, WINNER_W, WINNER_H);
