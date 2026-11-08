@@ -1,6 +1,7 @@
 //-----------------------------LICENSE NOTICE------------------------------------
 //  This file is part of CPCtelera: An Amstrad CPC Game Engine
 //  Copyright (C) 2015 ronaldo / Fremos / Cheesetea / ByteRealms (@FranGallegoBR)
+//  Copyright (C) 2026 Arnaud Bouche (@Arnaud6128)
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License as published by
@@ -29,6 +30,7 @@
 extern void cpct_etm_drawTilemap2x4_f(u8 map_width, u8 map_height, void* pvideomem, const void* ptilemap) __z88dk_callee;
 extern void cpct_etm_drawTileBox2x4  (u8 x, u8 y, u8 w, u8 h, u8 map_width, void* pvideomem, const void* ptilemap) __z88dk_callee;
 extern void cpct_etm_drawTileRow2x4  (u8 numtiles, void* video_memory, const void* ptilemap) __z88dk_callee;
+extern void cpct_etm_drawTileColumn2x4(const void* ptilemap, void* pvideomem, u16 map_width, u16 nrows) __z88dk_callee;
 extern void cpct_etm_setTileset2x4   (const void* ptileset) __z88dk_fastcall;
 
 extern void cpct_etm_setDrawTilemap4x8_ag (u8 width, u8 height, u16 tilemapWidth, const void* tileset) __z88dk_callee;
