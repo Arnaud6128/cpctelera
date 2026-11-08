@@ -33,7 +33,7 @@
 ;  the program, linked at Z80CODELOC (RAM, at least PROG_ROM: checked by cfg/modules/cartridge.mk). The boot:
 ;    1. sets the CRTC (no firmware on a cartridge: standard 50 Hz screen at 0xC000)
 ;    2. copies the program from the ROM to the RAM and jumps to init, in the RAM. The bank 0 holds PROG_MAX
-;       bytes of the program: if it is longer (the length is known at link time: s__ENDPROG - s__CODE) the
+;       bytes of the program: if it is longer (the length is given by cpct_mkcart in image_len) the
 ;       boot copies PROG_MAX bytes and keeps the rest (on the stack) for init
 ;  init, that is in the program, then:
 ;    3. unlocks the ASIC (the sequence of cpct_asicUnlock, that may be in the part not copied yet)
@@ -51,7 +51,6 @@
 	.optsdcc -mz80 sdcccall(1)
 	.globl	_main
 	.globl	s__CODE
-	.globl	s__ENDPROG
 
 PROG_ROM = 0x0100               ;; the program in the bank 0 (same value as PROG_ROM of cpct_mkcart)
 BANK_SIZE = 0x4000
@@ -87,6 +86,12 @@ CRTC_SEL = 0xBC00               ;; CRTC register select (data: 0xBD00)
 	ei
 	reti
 
+	;; Length of the image to copy to the RAM (from Z80CODELOC to the last byte of the link: Highest address of
+	;; hex2bin). The linker does not know it before hex2bin: cpct_mkcart writes it here (0xFFFF = to be filled in)
+	.org	0x3E
+image_len:
+	.dw	0xFFFF
+
 	.org	0x40
 boot:
 	di
@@ -107,11 +112,8 @@ crtc_loop:
 	dec	d
 	jr	nz, crtc_loop
 
-	ld	hl, #s__ENDPROG          ;; length of the program: from the start of the code to the end of
-	ld	de, #s__CODE            ;; the last area (ENDPROG, one byte)
-	or	a, a
-	sbc	hl, de
-	inc	hl
+	ld	hl, (image_len)           ;; length of the program, written by cpct_mkcart (see image_len)
+	ld	de, #s__CODE            ;; destination of the copy: the start of the code (Z80CODELOC)
 	ld	bc, #PROG_MAX           ;; the bank 0 holds PROG_MAX bytes of the program at most
 	or	a, a
 	sbc	hl, bc                  ;; HL = bytes left for the banks 1.., or negative (all in the bank 0)

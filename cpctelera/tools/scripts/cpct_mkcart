@@ -28,7 +28,8 @@
 ## Description:
 ##    -B <n>: the program may be longer than the bank 0 (16 KB minus the boot). Its banks are 0 to n-1 (default 1):
 ## the bank 0 gets the boot and the first 16128 bytes, each next bank 16384 bytes. The boot of the crt0 of the
-## project has to copy them to the RAM (see HurleGx). The files cannot go in these banks.
+## project has to copy them to the RAM (see HurleGx). The length of the program is written by this script in the word
+## image_len (0x3E) of the boot, if the crt0 has it (0xFFFF there): the crt0 needs no symbol from the linker. The files cannot go in these banks.
 ##    The bank 0 is made from <program.bin> (hex2bin of the link: it starts at 0 with the reset and the boot of
 ## cpct_cart_crt0.s, then the program from <Z80CODELOC>): the first 256 bytes, then the program at 0x0100, that
 ## the boot copies to the RAM at <Z80CODELOC>. The banks 1-31
@@ -39,6 +40,7 @@
 
 BANK_SIZE=16384
 PROG_ROM=256
+IMAGELEN_OFS=62                # image_len in the header of the crt0 (.org 0x3E)
 
 function fail { echo -e "\033[1;31m<<ERROR>> [CARTRIDGE]\033[0m $*" >&2; exit 1; }
 
@@ -80,6 +82,11 @@ if [ -z "$HEADERONLY" ]; then
     # PROGBANKS-1 (16 KB each, the boot of the crt0 copies them to the RAM)
     tail -c +$((CODELOC + 1)) "$PROG" > "$WORK/program.bin"
     head -c $PROG_ROM "$PROG" > "$WORK/bank0.bin"
+    # image_len of the crt0 (at IMAGELEN_OFS, 0xFFFF = to be filled in): length of the program, that the boot copies
+    # to the RAM (hex2bin Highest address of the link, minus Z80CODELOC): nothing to give to the linker
+    if [ "$(od -An -tx1 -j$IMAGELEN_OFS -N2 "$WORK/bank0.bin" | tr -d ' ')" = "ffff" ]; then
+        printf "\\x$(printf %02x $((PLEN & 255)))\\x$(printf %02x $((PLEN >> 8)))" | dd of="$WORK/bank0.bin" bs=1 seek=$IMAGELEN_OFS conv=notrunc status=none
+    fi
     head -c $((BANK_SIZE - PROG_ROM)) "$WORK/program.bin" >> "$WORK/bank0.bin"
     for ((k = 1; k < PROGBANKS; k++)); do
         tail -c +$((BANK_SIZE - PROG_ROM + (k - 1) * BANK_SIZE + 1)) "$WORK/program.bin" | head -c $BANK_SIZE > "$WORK/bank$k.bin"
