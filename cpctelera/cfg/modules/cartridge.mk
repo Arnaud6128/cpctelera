@@ -41,6 +41,7 @@ CART_HEADER      :=
 CART_MKCART      ?= $(CPCT_PATH)/tools/scripts/cpct_mkcart
 CART_FILES_ARGS  :=
 CART_ALL_FILES   :=
+CART_PROG_BANKS  := 1
 
 #################
 # ADD_BANK_FILE: Add a file at the end of a bank
@@ -51,9 +52,20 @@ CART_ALL_FILES   :=
 define CARTRIDGE_ADD_BANK_FILE
     $(if $(filter $(2),$(CART_VALID_BANKS)),,$(error <<ERROR>> [CARTRIDGE] '$(2)' is not a valid bank for '$(1)': 1-31 (the bank 0 is the boot and the program)))
     $(if $(filter-out LOWER UPPER,$(3)),$(if $(strip $(3)),$(error <<ERROR>> [CARTRIDGE] '$(3)' is not a valid ROM for '$(1)': LOWER or UPPER)))
+    $(if $(shell test $(2) -lt $(CART_PROG_BANKS) && echo bad),$(error <<ERROR>> [CARTRIDGE] bank '$(2)' of '$(1)' is used by the program (PROGRAM_BANKS $(CART_PROG_BANKS))))
     $(if $(filter LOWER,$(3)),$(if $(filter $(2),$(CART_LOWER_BANKS)),,$(error <<ERROR>> [CARTRIDGE] '$(1)' is read by the lower ROM: bank '$(2)' must be 1-7)))
     CART_FILES_ARGS += $(2):$(1)
     CART_ALL_FILES  += $(1)
+endef
+
+#################
+# PROGRAM_BANKS: Number of banks of the program (default 1), before any ADD_BANK_FILE
+# $(1): The banks 0 to n-1 hold the boot and the program (1-8); the crt0 of the project copies them to the RAM
+#################
+define CARTRIDGE_PROGRAM_BANKS
+    $(if $(filter $(1),1 2 3 4 5 6 7 8),,$(error <<ERROR>> [CARTRIDGE] PROGRAM_BANKS '$(1)': 1-8))
+    $(if $(CART_ALL_FILES),$(error <<ERROR>> [CARTRIDGE] PROGRAM_BANKS must come before ADD_BANK_FILE))
+    CART_PROG_BANKS := $(1)
 endef
 
 #################
@@ -64,7 +76,7 @@ endef
 define CARTRIDGE_SET_HEADER
     CART_HEADER := $(1)
 $(1): $$$$(CART_ALL_FILES) cfg/cartridge.mk
-	@$$(CART_MKCART) -n -H "$(1)" -w "$$(OBJDIR)/cart" $$(CART_FILES_ARGS)
+	@$$(CART_MKCART) -n -H "$(1)" -B $$(CART_PROG_BANKS) -w "$$(OBJDIR)/cart" $$(CART_FILES_ARGS)
 $$(C_OBJFILES): $(1)
 endef
 
@@ -73,7 +85,7 @@ endef
 #################
 define CARTRIDGE
 # Set the list of valid commands
-$(eval CARTRIDGE_F_FUNCTIONS := ADD_BANK_FILE SET_HEADER)
+$(eval CARTRIDGE_F_FUNCTIONS := ADD_BANK_FILE SET_HEADER PROGRAM_BANKS)
 
 # Check that command parameter ($(1)) is exactly one-word
 $(call ENSURE_SINGLE_VALUE,$(1),<<ERROR>> [CARTRIDGE] '$(strip $(1))' is not a valid command.)
@@ -91,6 +103,9 @@ endef
 # Recipe: the cartridge (the files of the banks are known when this rule is expanded)
 #################
 ifneq ($(strip $(CPR)),)
+# The first 256 bytes of the binary are the reset, the vectors and the boot of the crt0 (cpct_mkcart puts the
+# program in the cartridge from there): the program can not start under 0x0100 (nor in the vectors of the RAM)
+$(if $(shell [ $$(($(Z80CODELOC))) -lt 256 ] && echo bad),$(error <<ERROR>> [CARTRIDGE] Z80CODELOC ($(Z80CODELOC)) must be at least 0x0100: the boot of the crt0 and the interrupt vectors are below. Change it in cfg/build_config.mk))
 # The crt0 of the cartridge: assembled, and linked first with the program
 $(CART_CRT0): $$(CART_CRT0_SRC)
 	@mkdir -p $(dir $@)
@@ -100,7 +115,7 @@ $(IHXFILE): $(CART_CRT0)
 
 $(CPR): $(BINFILE) $$(CART_ALL_FILES) cfg/cartridge.mk
 	@$(call PRINT,$(PROJNAME),"Creating cartridge '$(CPR)'")
-	@$(CART_MKCART) -r "$(RASM)" -o "$(CPR)" -p "$(BINFILE)" -a "$(Z80CODELOC)" \
+	@$(CART_MKCART) -r "$(RASM)" -o "$(CPR)" -p "$(BINFILE)" -a "$(Z80CODELOC)" -B $(CART_PROG_BANKS) \
 	    $(if $(CART_HEADER),-H "$(CART_HEADER)") -w "$(OBJDIR)/cart" $(CART_FILES_ARGS)
 	@$(call PRINT,$(PROJNAME),"Cartridge '$(CPR)' ready")
 

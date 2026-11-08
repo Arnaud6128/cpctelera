@@ -30,12 +30,16 @@
 ;--------------------------------------------------------------------------
 ;  The bank 0 of the cartridge is the lower ROM (0x0000-0x3FFF) at the reset. cpct_mkcart puts
 ;  there the first 256 bytes of the binary (this header: the reset and the boot) and, at PROG_ROM,
-;  the program, linked at Z80CODELOC (RAM). The boot:
+;  the program, linked at Z80CODELOC (RAM, at least PROG_ROM: checked by cfg/modules/cartridge.mk). The boot:
 ;    1. sets the CRTC (no firmware on a cartridge: standard 50 Hz screen at 0xC000)
-;    2. copies the program from the ROM to the RAM and jumps to init, in the RAM
+;    2. copies the program from the ROM to the RAM and jumps to init, in the RAM. The bank 0 holds PROG_MAX
+;       bytes of the program: if it is longer (the length is known at link time: s__ENDPROG - s__CODE) the
+;       boot copies PROG_MAX bytes and keeps the rest (on the stack) for init
 ;  init, that is in the program, then:
-;    3. unlocks the ASIC with cpct_asicUnlock (12 bits palette, see cpct_asic functions)
-;    4. calls main. As in a classic CPCtelera project (no crt0), the global variables are NOT initialized:
+;    3. unlocks the ASIC (the sequence of cpct_asicUnlock, that may be in the part not copied yet)
+;    4. copies the rest of the program (if any) from the banks 1.. (CARTRIDGE PROGRAM_BANKS n in
+;       cfg/cartridge.mk) through the UPPER ROM: the lower ROM would hide a program in 0x0100-0x3FFF
+;    5. calls main. As in a classic CPCtelera project (no crt0), the global variables are NOT initialized:
 ;       there is no gsinit (the variables with an initial value must be set by the program)
 ;  The ROMs and the mode are then handled by the functions of CPCtelera (cpct_enableUpperROM, cpct_setVideoMode...),
 ;  and the banks are chosen with cpct_cartSetUpperRomBank / cpct_cartSetLowerRomBank.
@@ -48,9 +52,11 @@
 	.globl	_main
 	.globl	s__CODE
 	.globl	s__ENDPROG
-	.globl	_cpct_asicUnlock
 
-PROG_ROM = 0x0100               ;; the program in the bank 0
+PROG_ROM = 0x0100               ;; the program in the bank 0 (same value as PROG_ROM of cpct_mkcart)
+BANK_SIZE = 0x4000
+PROG_MAX = BANK_SIZE - PROG_ROM ;; bytes of the program in the bank 0; the rest is in the banks 1.. (PROGRAM_BANKS)
+CART_ROM_PORT = 0xDF00          ;; upper ROM select (value 128 + bank)
 CRTC_SEL = 0xBC00               ;; CRTC register select (data: 0xBD00)
 
 	.area	_HEADER (ABS)
@@ -106,9 +112,17 @@ crtc_loop:
 	or	a, a
 	sbc	hl, de
 	inc	hl
+	ld	bc, #PROG_MAX           ;; the bank 0 holds PROG_MAX bytes of the program at most
+	or	a, a
+	sbc	hl, bc                  ;; HL = bytes left for the banks 1.., or negative (all in the bank 0)
+	jr	nc, long_prog
+	add	hl, bc                  ;; the program fits in the bank 0: all of it is copied
 	ld	b, h
 	ld	c, l
-	ld	hl, #PROG_ROM           ;; the program, from the ROM to the RAM
+	ld	hl, #0                  ;; nothing left
+long_prog:
+	push	hl                      ;; bytes left for init (it takes them off the stack)
+	ld	hl, #PROG_ROM           ;; the program (or its first PROG_MAX bytes), from the ROM to the RAM
 	ldir
 	jp	init
 
@@ -139,16 +153,72 @@ init:
 	ld	bc, #0x7F8D
 	out	(c), c
 
-	;; The ASIC is unlocked by the function of the library (it is in the RAM now). The function enables the
-	;; interrupts at its end: the interrupt vector of the RAM (0x0038, the lower ROM is disabled) must be
-	;; a valid handler (EI : RET) before, and the interrupts are disabled again after it, for main()
+	;; Unlock the ASIC (same sequence as cpct_asicUnlock, that may be in the part of the program not copied yet)
+	ld	hl, #asic_code
+	ld	d, #17
+	ld	bc, #0xBC00
+unlock:
+	ld	a, (hl)
+	out	(c), a
+	inc	hl
+	dec	d
+	jr	nz, unlock
+
+	;; The program is longer than the bank 0: the rest is in the banks 1.. and is copied after the first part
+	;; (HL = bytes left, pushed by the boot). It is read through the UPPER ROM (0xC000-0xFFFF): the code is
+	;; at Z80CODELOC, possibly in 0x0100-0x3FFF, that the lower ROM would hide. The stack is below 0xC000
+	pop	hl
+	ld	de, #s__CODE + PROG_MAX  ;; where the bank 1 goes
+	ld	a, #1                   ;; next bank
+more_banks:
+	push	af
+	ld	a, h
+	or	a, l
+	jr	z, banks_done
+	pop	af
+	push	af
+	or	a, #0x80                ;; port 0xDF00: 128 + bank selects the bank of the upper ROM
+	ld	b, #>CART_ROM_PORT
+	ld	c, a
+	out	(c), c
+	ld	bc, #0x7F85             ;; RMR: mode 1, lower ROM disabled, upper ROM enabled
+	out	(c), c
+	ld	bc, #BANK_SIZE
+	push	hl
+	or	a, a
+	sbc	hl, bc                  ;; left - 16 KB
+	jr	nc, whole_bank          ;; at least 16 KB left: BC = 16 KB, left = HL
+	pop	hl                      ;; the end of the program: what is left
+	ld	b, h
+	ld	c, l
+	ld	hl, #0
+	jr	copy_bank
+whole_bank:
+	inc	sp                      ;; the old value of HL is not needed
+	inc	sp
+copy_bank:
+	push	hl                      ;; bytes left after this bank
+	ld	hl, #0xC000             ;; the bank, seen by the upper ROM
+	ldir
+	ld	bc, #0x7F8D             ;; RMR: both ROMs disabled again
+	out	(c), c
+	pop	hl
+	pop	af
+	inc	a
+	jr	more_banks
+banks_done:
+	pop	af
+
+	;; The interrupt vector of the RAM (0x0038, the lower ROM is disabled) must be a valid handler (EI : RET)
+	;; as soon as the interrupts are enabled (cpct_disableFirmware / cpct_setInterruptHandler change it)
 	ld	hl, #0xC9FB             ;; EI (0xFB) : RET (0xC9)
 	ld	(0x0038), hl
-	call	_cpct_asicUnlock
-	di
 
 	call	_main
 	jp	_exit
+
+asic_code:
+	.db	255, 0, 255, 119, 179, 81, 168, 212, 98, 57, 156, 70, 43, 21, 138, 205, 238
 
 _exit::
 	di

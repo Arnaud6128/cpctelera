@@ -21,11 +21,14 @@
 ##    Builds a cartridge (.cpr) of the CPC Plus / GX4000 with RASM (cfg/modules/cartridge.mk).
 ##
 ## Usage:
-##    cpct_mkcart -r <rasm> -o <out.cpr> -p <program.bin> -a <Z80CODELOC>
+##    cpct_mkcart -r <rasm> -o <out.cpr> -p <program.bin> -a <Z80CODELOC> [-B <program banks>]
 ##                [-H <header.h>] -w <work dir> <bank>:<file> [<bank>:<file> ...]
-##    cpct_mkcart -n -H <header.h> -w <work dir> <bank>:<file> [<bank>:<file> ...]   (header only)
+##    cpct_mkcart -n -H <header.h> [-B <program banks>] -w <work dir> <bank>:<file> [<bank>:<file> ...]   (header only)
 ##
 ## Description:
+##    -B <n>: the program may be longer than the bank 0 (16 KB minus the boot). Its banks are 0 to n-1 (default 1):
+## the bank 0 gets the boot and the first 16128 bytes, each next bank 16384 bytes. The boot of the crt0 of the
+## project has to copy them to the RAM (see HurleGx). The files cannot go in these banks.
 ##    The bank 0 is made from <program.bin> (hex2bin of the link: it starts at 0 with the reset and the boot of
 ## cpct_cart_crt0.s, then the program from <Z80CODELOC>): the first 256 bytes, then the program at 0x0100, that
 ## the boot copies to the RAM at <Z80CODELOC>. The banks 1-31
@@ -39,10 +42,12 @@ PROG_ROM=256
 
 function fail { echo -e "\033[1;31m<<ERROR>> [CARTRIDGE]\033[0m $*" >&2; exit 1; }
 
-while getopts "r:o:p:a:H:w:n" opt; do
+PROGBANKS=1
+
+while getopts "r:o:p:a:H:w:nB:" opt; do
     case $opt in
         r) RASM=$OPTARG;; o) OUT=$OPTARG;; p) PROG=$OPTARG;; a) CODELOC=$OPTARG;;
-        H) HEADER=$OPTARG;; w) WORK=$OPTARG;; n) HEADERONLY=1;;
+        H) HEADER=$OPTARG;; w) WORK=$OPTARG;; n) HEADERONLY=1;; B) PROGBANKS=$OPTARG;;
         *) fail "Unknown option";;
     esac
 done
@@ -64,23 +69,36 @@ if [ -z "$HEADERONLY" ]; then
     TOTAL=$(stat -L -c%s "$PROG")
     PLEN=$((TOTAL - CODELOC))
     [ $PLEN -gt 0 ] || fail "$PROG does not contain the program (starts at 0x$(printf %X $CODELOC))"
-    if [ $((PROG_ROM + PLEN)) -gt $BANK_SIZE ]; then
-        fail "The program does not fit in the bank 0: $PLEN bytes, $((BANK_SIZE - PROG_ROM)) available after the boot"
+    if [ $((PROG_ROM + PLEN)) -gt $((PROGBANKS * BANK_SIZE)) ]; then
+        fail "The program does not fit in the $PROGBANKS bank(s) of the program: $PLEN bytes, $((PROGBANKS * BANK_SIZE - PROG_ROM)) available after the boot"
     fi
     # the boot (first PROG_ROM bytes) must not go over the program: nothing between them in the binary
     if [ $(head -c $CODELOC "$PROG" | tail -c +$((PROG_ROM + 1)) | tr -d '\0' | wc -c) -ne 0 ]; then
         fail "The boot of the crt0 is longer than $PROG_ROM bytes"
     fi
+    # bank 0: the boot, then the beginning of the program; if it is longer, the rest follows in the banks 1 to
+    # PROGBANKS-1 (16 KB each, the boot of the crt0 copies them to the RAM)
+    tail -c +$((CODELOC + 1)) "$PROG" > "$WORK/program.bin"
     head -c $PROG_ROM "$PROG" > "$WORK/bank0.bin"
-    tail -c +$((CODELOC + 1)) "$PROG" >> "$WORK/bank0.bin"
+    head -c $((BANK_SIZE - PROG_ROM)) "$WORK/program.bin" >> "$WORK/bank0.bin"
+    for ((k = 1; k < PROGBANKS; k++)); do
+        tail -c +$((BANK_SIZE - PROG_ROM + (k - 1) * BANK_SIZE + 1)) "$WORK/program.bin" | head -c $BANK_SIZE > "$WORK/bank$k.bin"
+    done
 fi
 
 # Banks: the files one after the other
 declare -A USED
 BANKS=""
 : > "$WORK/layout.txt"
+if [ -z "$HEADERONLY" ]; then
+    for ((k = 1; k < PROGBANKS; k++)); do
+        [ -s "$WORK/bank$k.bin" ] || continue        # the program does not go that far
+        BANKS="$BANKS $k"; USED[$k]=$BANK_SIZE
+    done
+fi
 for arg in "$@"; do
     b=${arg%%:*}; f=${arg#*:}
+    [ $b -ge $PROGBANKS ] || fail "Bank $b of '$f' is used by the program (banks 0 to $((PROGBANKS - 1)))"
     [ -f "$f" ] || fail "Bank $b: file '$f' not found"
     size=$(stat -L -c%s "$f")
     off=${USED[$b]:-0}
@@ -129,7 +147,7 @@ fi
     || { cat "$WORK/rasm.log" >&2; fail "RASM failed"; }
 
 # Summary
-echo "  Bank 0: boot + program $((PROG_ROM + PLEN)) bytes of $BANK_SIZE"
+echo "  Bank 0: boot + program $((PROG_ROM + PLEN)) bytes of $((PROGBANKS * BANK_SIZE)) ($PROGBANKS bank(s) for the program)"
 for b in $BANKS; do
     echo "  Bank $b: ${USED[$b]} bytes of $BANK_SIZE ($((USED[$b] * 100 / BANK_SIZE))%)"
     while read lb off size f; do
