@@ -59,9 +59,9 @@ setting up tools, library and examples."
    echo
    echo "${COLOR_LIGHT_BLUE}  -sl | --slim"
    echo "${COLOR_CYAN}       Once everything is installed, removes the intermediate files generated \
-while building SDCC (its build tree, hundreds of MB) to save disk space. SDCC's sources are not \
-removed and the installed tools keep working, but SDCC will be rebuilt from scratch next time \
-setup is run."
+while building the tools: SDCC's build tree (hundreds of MB) and the object files of the other \
+tools. Sources are not removed and the installed tools keep working, but they will be rebuilt \
+from scratch next time setup is run."
    echo
    echo "${COLOR_LIGHT_BLUE}  -h | --help"
    echo "${COLOR_CYAN}       Shows this help information"
@@ -414,18 +414,50 @@ makeWithProgressSupervision "$CPCT_EXAMPLES_DIR" "$CPCT_EXAMPLES_BUILD_LOG" "" \
                                "There was an error building CPCtelera examples."
 
 ###------
-# Slim installation: remove SDCC intermediate build files, if the user requested it
+# Slim installation: remove intermediate build files of the tools, if the user requested it
 ###------
 if $SLIM; then
-   coloredMachineEcho "${COLOR_CYAN}" 0.005 $'\n'">>> Removing SDCC intermediate build files (--slim): "
-   SLIM_BEFORE_MB=$(du -sm "${CPCT_TOOLS_SDCC_DIR}" | cut -f1)
+   coloredMachineEcho "${COLOR_CYAN}" 0.005 $'\n'">>> Removing intermediate build files of the tools (--slim): "
+   SLIM_BEFORE_MB=$(du -sm "${CPCT_TOOLS_DIR}" | cut -f1)
+
+   ## Tools other than SDCC. Their 'clean' target only removes obj/ folders and object files, never the
+   ## executables (rlewb is left out: its 'clean' target removes files that do not match its output)
+   SLIM_TOOLS_DIRS=("${CPCT_TOOLS_2CDT_DIR}" "${CPCT_TOOLS_CPC2CDT_DIR}" "${CPCT_TOOLS_HEX2BIN_DIR}"
+                    "${CPCT_TOOLS_IDSK_DIR}" "${CPCT_TOOLS_IMG2CPC_DIR}" "${CPCT_TOOLS_DSKGEN_DIR}"
+                    "${CPCT_TOOLS_DIR}/zx0" "${CPCT_TOOLS_DIR}/zx1" "${CPCT_TOOLS_ZX7B_DIR}"
+                    "${CPCT_TOOLS_RASM_DIR}" "${CPCT_SCRIPTS_DIR}/c_scripts")
+
+   ## Remember every executable of these tools, to check later that none of them has been removed
+   SLIM_EXES=()
+   while IFS= read -r SLIM_FILE; do
+      SLIM_EXES+=("${SLIM_FILE}")
+   done < <(find "${SLIM_TOOLS_DIRS[@]}" "${CPCT_SCRIPTS_DIR}" -maxdepth 3 -type f -perm -u+x 2> /dev/null)
+
+   ## SDCC build tree: the biggest part
    if ! make -C "${CPCT_TOOLS_SDCC_DIR}" clean >> "${CPCT_TOOLS_BUILD_LOG}" 2>&1; then
       Error "There was an error removing SDCC intermediate build files. Please, check '${CPCT_TOOLS_BUILD_LOG}' for details." 125
    fi
-   ## Installed compiler must have survived the cleaning
+
+   ## Object files of the other tools (a failure here does not prevent using the tools)
+   for SLIM_DIR in "${SLIM_TOOLS_DIRS[@]}"; do
+      if [[ -d "${SLIM_DIR}" ]] && ! make -C "${SLIM_DIR}" clean >> "${CPCT_TOOLS_BUILD_LOG}" 2>&1; then
+         coloredMachineEcho "${COLOR_LIGHT_YELLOW}" 0.002 $'\n'"> Warning: could not clean '${SLIM_DIR}' (see '${CPCT_TOOLS_BUILD_LOG}')."
+      fi
+   done
+
+   ## Library built for tmx2data: its 'cleanall' removes obj/ and the static library (tmx2data is already linked)
+   SLIM_DIR="${CPCT_SCRIPTS_DIR}/c_scripts/tmx2data/libs/tmxlite"
+   if [[ -d "${SLIM_DIR}" ]] && ! make -C "${SLIM_DIR}" cleanall >> "${CPCT_TOOLS_BUILD_LOG}" 2>&1; then
+      coloredMachineEcho "${COLOR_LIGHT_YELLOW}" 0.002 $'\n'"> Warning: could not clean '${SLIM_DIR}' (see '${CPCT_TOOLS_BUILD_LOG}')."
+   fi
+
+   ## Installed tools must have survived the cleaning
    ensureExistsAndIsExecutable file "${CPCT_TOOLS_SDCC_DIR}/bin/sdcc"
+   for SLIM_FILE in "${SLIM_EXES[@]}"; do
+      ensureExistsAndIsExecutable file "${SLIM_FILE}"
+   done
    drawOK
-   SLIM_AFTER_MB=$(du -sm "${CPCT_TOOLS_SDCC_DIR}" | cut -f1)
+   SLIM_AFTER_MB=$(du -sm "${CPCT_TOOLS_DIR}" | cut -f1)
    coloredMachineEcho "${COLOR_LIGHT_GREEN}" 0.002 "> Disk space saved: $(( SLIM_BEFORE_MB - SLIM_AFTER_MB )) MB"$'\n'
 fi
 
