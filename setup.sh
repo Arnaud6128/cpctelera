@@ -427,11 +427,14 @@ if $SLIM; then
                     "${CPCT_TOOLS_DIR}/zx0" "${CPCT_TOOLS_DIR}/zx1" "${CPCT_TOOLS_ZX7B_DIR}"
                     "${CPCT_TOOLS_RASM_DIR}" "${CPCT_SCRIPTS_DIR}/c_scripts")
 
-   ## Remember every executable of these tools, to check later that none of them has been removed
+   ## Remember every executable of these tools, to check later that none of them has been removed.
+   ## Object files, libraries and obj/ folders are left out: they are the very files the cleaning removes, and
+   ## some file systems (Cygwin/NTFS) mark them as executable
    SLIM_EXES=()
    while IFS= read -r SLIM_FILE; do
       SLIM_EXES+=("${SLIM_FILE}")
-   done < <(find "${SLIM_TOOLS_DIRS[@]}" "${CPCT_SCRIPTS_DIR}" -maxdepth 3 -type f -perm -u+x 2> /dev/null)
+   done < <(find "${SLIM_TOOLS_DIRS[@]}" "${CPCT_SCRIPTS_DIR}" -maxdepth 3 -type f -perm -u+x \
+                 ! -name '*.o' ! -name '*.a' ! -name '*.obj' ! -path '*/obj/*' 2> /dev/null)
 
    ## SDCC build tree: the biggest part
    if ! make -C "${CPCT_TOOLS_SDCC_DIR}" clean >> "${CPCT_TOOLS_BUILD_LOG}" 2>&1; then
