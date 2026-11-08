@@ -1,5 +1,28 @@
-# Works starting with git 2.10 . On git 2.9 and earlier, this will
-# probably not work.
-# See https://github.com/git/git/blob/master/Documentation/RelNotes/2.10.0.txt#L248
-setup.sh text eol=lf
-cpctelera/tools/scripts/lib/bash_library.sh text eol=lf
+# Line endings: LF in the repository for CPCtelera's own code.
+/.gitattributes            text eol=lf
+/.gitignore                 text eol=lf
+/LICENSE                    text eol=lf
+/GPL-LICENSE                text eol=lf
+/README.md                  text eol=lf
+setup.sh                    text eol=lf
+cpctelera/cfg/**            text=auto eol=lf
+cpctelera/src/**            text=auto eol=lf
+cpctelera/tools/scripts/**  text=auto eol=lf
+examples/**                 text=auto eol=lf
+
+# Exceptions and binary files, never converted (keep these last: the last matching line wins)
+cpctelera/tools/scripts/templates/winape/**  -text
+*.png                       binary
+*.jpg                       binary
+*.gif                       binary
+*.ico                       binary
+*.exe                       binary
+*.dll                       binary
+*.apk                       binary
+*.jar                       binary
+*.zip                       binary
+*.dsk                       binary
+*.cdt                       binary
+*.sna                       binary
+*.cpr                       binary
+*.rom                       binary
