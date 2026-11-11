@@ -59,8 +59,8 @@ setting up tools, library and examples."
    echo
    echo "${COLOR_LIGHT_BLUE}  -sl | --slim"
    echo "${COLOR_CYAN}       Once everything is installed, removes the intermediate files generated \
-while building the tools: SDCC's build tree (hundreds of MB) and the object files of the other \
-tools. The compressed sources of SDCC (sdcc-4.6.0.tar.gz) are kept, so SDCC can be rebuilt. The installed \
+while building the tools: SDCC's build tree (hundreds of MB), the object files of the other \
+tools and the object files of the examples (their .dsk/.cdt/.cpr files are kept). The compressed sources of SDCC (sdcc-4.6.0.tar.gz) are kept, so SDCC can be rebuilt. The installed \
 tools keep working."
    echo
    echo "${COLOR_LIGHT_BLUE}  -h | --help"
@@ -421,7 +421,7 @@ makeWithProgressSupervision "$CPCT_EXAMPLES_DIR" "$CPCT_EXAMPLES_BUILD_LOG" "" \
 ###------
 if $SLIM; then
    coloredMachineEcho "${COLOR_CYAN}" 0.005 $'\n'">>> Removing intermediate build files of the tools (--slim): "
-   SLIM_BEFORE_MB=$(du -sm "${CPCT_TOOLS_DIR}" | cut -f1)
+   SLIM_BEFORE_MB=$(du -sm "${CPCT_TOOLS_DIR}" "${CPCT_EXAMPLES_DIR}" | awk '{s+=$1} END {print s}')
 
    ## Tools other than SDCC. Their 'clean' target only removes obj/ folders and object files, never the
    ## executables (rlewb is left out: its 'clean' target removes files that do not match its output)
@@ -457,13 +457,19 @@ if $SLIM; then
       coloredMachineEcho "${COLOR_LIGHT_YELLOW}" 0.002 $'\n'"> Warning: could not clean '${SLIM_DIR}' (see '${CPCT_TOOLS_BUILD_LOG}')."
    fi
 
+   ## Examples: 'clean' removes their obj/ folders (and the files generated from their assets), but not the
+   ## final .dsk/.cdt/.cpr/.sna. A failure here does not prevent using CPCtelera
+   if ! make -C "${CPCT_EXAMPLES_DIR}" clean >> "${CPCT_EXAMPLES_BUILD_LOG}" 2>&1; then
+      coloredMachineEcho "${COLOR_LIGHT_YELLOW}" 0.002 $'\n'"> Warning: could not clean the examples (see '${CPCT_EXAMPLES_BUILD_LOG}')."
+   fi
+
    ## Installed tools must have survived the cleaning
    ensureExistsAndIsExecutable file "${CPCT_TOOLS_SDCC_DIR}/bin/sdcc"
    for SLIM_FILE in "${SLIM_EXES[@]}"; do
       ensureExistsAndIsExecutable file "${SLIM_FILE}"
    done
    drawOK
-   SLIM_AFTER_MB=$(du -sm "${CPCT_TOOLS_DIR}" | cut -f1)
+   SLIM_AFTER_MB=$(du -sm "${CPCT_TOOLS_DIR}" "${CPCT_EXAMPLES_DIR}" | awk '{s+=$1} END {print s}')
    coloredMachineEcho "${COLOR_LIGHT_GREEN}" 0.002 "> Disk space saved: $(( SLIM_BEFORE_MB - SLIM_AFTER_MB )) MB"$'\n'
 fi
 
