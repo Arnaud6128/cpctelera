@@ -27,7 +27,7 @@
 # LOCATIONS
 INSTALLDIRS=bin share
 SRCDIR=src
-SRCZIP=sdcc-4.6.0.zip
+SRCARCHIVE=sdcc-4.6.0.tar.gz
 SRCSTAMP=.src_extracted
 OBJDIR=obj
 MAIN_MAKE=$(OBJDIR)/Makefile
@@ -55,16 +55,16 @@ endef
 # MAIN TARGET
 all: $(TARGET)
 
-# SDCC: $(SRCZIP) holds the sources ($(SRCDIR)) and the files SDCC needs to work (share, libexec, peep).
+# SDCC: $(SRCARCHIVE) holds the sources ($(SRCDIR)) and the files SDCC needs to work (share, libexec, peep).
 # They are extracted for the build; once SDCC is installed only the sources and the build tree are removed:
 # share, libexec and peep stay in place. If '$(SRCDIR)' already exists (extracted by hand), it is used and kept.
-ifeq ($(wildcard $(SRCDIR)/configure)$(wildcard $(SRCZIP)),)
+ifeq ($(wildcard $(SRCDIR)/configure)$(wildcard $(SRCARCHIVE)),)
 ifneq ($(wildcard bin/sdcc bin/sdcc.exe),)
 sdcc:
 	@echo "SDCC is already installed and its sources are not available: nothing to build."
 else
 sdcc:
-	$(error <<ERROR>> Neither '$(SRCZIP)' nor '$(SRCDIR)' found: the sources of SDCC are missing)
+	$(error <<ERROR>> Neither '$(SRCARCHIVE)' nor '$(SRCDIR)' found: the sources of SDCC are missing)
 endif
 else
 sdcc:
@@ -75,8 +75,8 @@ endif
 
 extract-src:
 	@if [ ! -f "$(SRCDIR)/configure" ]; then \
-	   echo "Extracting SDCC ($(SRCZIP))..."; \
-	   unzip -qo "$(SRCZIP)" && touch "$(SRCSTAMP)" || { echo "Error extracting '$(SRCZIP)'"; exit 1; }; \
+	   echo "Extracting SDCC ($(SRCARCHIVE))..."; \
+	   tar -xzf "$(SRCARCHIVE)" && touch "$(SRCSTAMP)" || { echo "Error extracting '$(SRCARCHIVE)'"; exit 1; }; \
 	fi
 
 build-sdcc:

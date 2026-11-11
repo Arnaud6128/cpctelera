@@ -26,3 +26,4 @@ cpctelera/tools/scripts/templates/winape/**  -text
 *.sna                       binary
 *.cpr                       binary
 *.rom                       binary
+*.gz                       binary

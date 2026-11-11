@@ -60,7 +60,7 @@ setting up tools, library and examples."
    echo "${COLOR_LIGHT_BLUE}  -sl | --slim"
    echo "${COLOR_CYAN}       Once everything is installed, removes the intermediate files generated \
 while building the tools: SDCC's build tree (hundreds of MB) and the object files of the other \
-tools. The compressed sources of SDCC (sdcc-4.6.0.zip) are kept, so SDCC can be rebuilt. The installed \
+tools. The compressed sources of SDCC (sdcc-4.6.0.tar.gz) are kept, so SDCC can be rebuilt. The installed \
 tools keep working."
    echo
    echo "${COLOR_LIGHT_BLUE}  -h | --help"
@@ -161,7 +161,7 @@ CPCT_TAG_MAINPATH="%%%CPCTELERA_PATH%%%"
 CPCT_TAG_SCRIPTSPATH="%%%CPCTELERA_SCRIPTS_PATH%%%"
 
 ## Required stuff for running CPCtelera
-REQUIRED_COMMANDS=(gcc g++ make bison flex clang unzip)
+REQUIRED_COMMANDS=(gcc g++ make bison flex clang tar)
 COMM_NUM=0
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} compiler is required to compile tools. Please \
 install it or build-essentials and run setup again."
