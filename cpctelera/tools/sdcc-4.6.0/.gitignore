@@ -1,2 +1,7 @@
 share/
 libexec/sdcc/*/*/cc1
+/src/
+/obj/
+/.src_extracted
+/libexec/
+/peep/

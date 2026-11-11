@@ -27,6 +27,8 @@
 # LOCATIONS
 INSTALLDIRS=bin share
 SRCDIR=src
+SRCZIP=sdcc-4.6.0.zip
+SRCSTAMP=.src_extracted
 OBJDIR=obj
 MAIN_MAKE=$(OBJDIR)/Makefile
 TMP_MAIN_MAKE=$(OBJDIR)/Makefile.tmp.replace
@@ -48,13 +50,36 @@ define replaceTag
 endef
 
 # TARGETS
-.PHONY: all clean cleanall $(TARGET)
+.PHONY: all clean cleanall $(TARGET) extract-src build-sdcc remove-src
 
 # MAIN TARGET
 all: $(TARGET)
 
-# SDCC
+# SDCC: $(SRCZIP) holds the sources ($(SRCDIR)) and the files SDCC needs to work (share, libexec, peep).
+# They are extracted for the build; once SDCC is installed only the sources and the build tree are removed:
+# share, libexec and peep stay in place. If '$(SRCDIR)' already exists (extracted by hand), it is used and kept.
+ifeq ($(wildcard $(SRCDIR)/configure)$(wildcard $(SRCZIP)),)
+ifneq ($(wildcard bin/sdcc bin/sdcc.exe),)
 sdcc:
+	@echo "SDCC is already installed and its sources are not available: nothing to build."
+else
+sdcc:
+	$(error <<ERROR>> Neither '$(SRCZIP)' nor '$(SRCDIR)' found: the sources of SDCC are missing)
+endif
+else
+sdcc:
+	@$(MAKE) --no-print-directory extract-src
+	@$(MAKE) --no-print-directory build-sdcc
+	@$(MAKE) --no-print-directory remove-src
+endif
+
+extract-src:
+	@if [ ! -f "$(SRCDIR)/configure" ]; then \
+	   echo "Extracting SDCC ($(SRCZIP))..."; \
+	   unzip -qo "$(SRCZIP)" && touch "$(SRCSTAMP)" || { echo "Error extracting '$(SRCZIP)'"; exit 1; }; \
+	fi
+
+build-sdcc:
 	@echo "Configuring SDCC for z80..."
 	cd $(SRCDIR) && ./$(CONFIG)
 	@echo "Inserting MAKEINFO=true into main Makefile..."
@@ -62,6 +87,13 @@ sdcc:
 	@echo "Compiling SDCC for z80..."
 	$(MAKE) -C $(OBJDIR) 
 	$(MAKE) -C $(OBJDIR) install MAKEINFO=true
+
+# Sources and build tree are removed only if they were extracted by this makefile
+remove-src:
+	@if [ -f "$(SRCSTAMP)" ]; then \
+	   echo "Removing the sources and the build tree of SDCC (share, libexec and peep are kept)..."; \
+	   rm -rf "$(SRCDIR)" "$(OBJDIR)" "$(SRCSTAMP)"; \
+	fi
 
 # CLEANING TARGETS
 cleanall: clean

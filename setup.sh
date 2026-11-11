@@ -60,8 +60,8 @@ setting up tools, library and examples."
    echo "${COLOR_LIGHT_BLUE}  -sl | --slim"
    echo "${COLOR_CYAN}       Once everything is installed, removes the intermediate files generated \
 while building the tools: SDCC's build tree (hundreds of MB) and the object files of the other \
-tools. Sources are not removed and the installed tools keep working, but they will be rebuilt \
-from scratch next time setup is run."
+tools. The compressed sources of SDCC (sdcc-4.6.0.zip) are kept, so SDCC can be rebuilt. The installed \
+tools keep working."
    echo
    echo "${COLOR_LIGHT_BLUE}  -h | --help"
    echo "${COLOR_CYAN}       Shows this help information"
@@ -161,7 +161,7 @@ CPCT_TAG_MAINPATH="%%%CPCTELERA_PATH%%%"
 CPCT_TAG_SCRIPTSPATH="%%%CPCTELERA_SCRIPTS_PATH%%%"
 
 ## Required stuff for running CPCtelera
-REQUIRED_COMMANDS=(gcc g++ make bison flex clang)
+REQUIRED_COMMANDS=(gcc g++ make bison flex clang unzip)
 COMM_NUM=0
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} compiler is required to compile tools. Please \
 install it or build-essentials and run setup again."
@@ -179,6 +179,9 @@ COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to c
 and run setup again."
 COMM_NUM=$((COMM_NUM + 1))
 COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to compile rasm. Please, install it \
+and run setup again."
+COMM_NUM=$((COMM_NUM + 1))
+COMMAND_EXPLANATION[$COMM_NUM]="${REQUIRED_COMMANDS[$COMM_NUM]} is required to extract the sources of SDCC. Please, install it \
 and run setup again."
 COMM_NUM=$((COMM_NUM + 1))
 GCC_MINIMUM_VERSION="5.1"
